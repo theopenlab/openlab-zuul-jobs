@@ -84,6 +84,7 @@
       Run terraform unit test
     run: playbooks/terraform-unittest/run
     post-run: playbooks/terraform-unittest/post
+    nodeset: ubuntu-xenial
 
 - job:
     name: terraform-acceptance-test
@@ -94,3 +95,4 @@
     timeout: 3600
     required-projects:
       - openstack-infra/devstack-gate
+    nodeset: ubuntu-xenial

@@ -27,8 +27,7 @@
     mkdir -p $GOPATH/src/github.com/hashicorp/
     cp -r $GOPATH/src/github.com/theopenlab/terraform  $GOPATH/src/github.com/hashicorp/
     cd $GOPATH/src/github.com/hashicorp/terraform
-    sleep 3600
-    make testacc
+    make testacc TEST=./
   args:
     chdir: "{{ ansible_user_dir }}/workspace"
     executable: /bin/bash
