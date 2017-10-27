@@ -1,0 +1,37 @@
+# Shared jobs specific to the OpenLab Project
+
+- job:
+    name: gophercloud-unittest
+    description: |
+      Run gophercloud unit test
+    run: playbooks/gophercloud-unittest/run
+    post-run: playbooks/gophercloud-unittest/post
+
+- job:
+    name: gophercloud-acctest
+    description: |
+      Run gophercloud acceptance test
+    pre-run: playbooks/gophercloud-acctest/pre
+    run: playbooks/gophercloud-acctest/run
+    post-run: playbooks/gophercloud-acctest/post
+    timeout: 3600
+    required-projects:
+      - openstack-infra/devstack-gate
+    nodeset: ubuntu-xenial
+
+- job:
+    name: gophercloud-acctest-mitaka
+    parent: gophercloud-acctest
+    description: |
+      Run gophercloud acceptance test with stable/mitaka OpenStack
+    vars:
+      openstack_branch: refs/tags/mitaka-eol
+    nodeset: ubuntu-trusty
+
+- job:
+    name: gophercloud-acctest-pike
+    parent: gophercloud-acctest
+    description: |
+      Run gophercloud acceptance test with stable/pike OpenStack
+    vars:
+      openstack_branch: stable/pike

@@ -1,0 +1,46 @@
+- name: Ensure legacy workspace directory
+  file:
+    path: '{{ ansible_user_dir }}/workspace'
+    state: directory
+
+- shell: |
+    sudo apt-get update
+    sudo apt-get install -y golang-go
+
+- name: Run gophercloud acceptance test
+  shell: |
+    set -e
+    set -x
+
+    # Prep the testing environment by creating the required testing resources and environment variables
+    pushd /opt/stack/new/devstack
+    source openrc admin
+    nova flavor-create m1.acctest 99 512 5 1 --ephemeral 10
+    nova flavor-create m1.resize 98 512 6 1 --ephemeral 10
+    _NETWORK_ID=$(openstack network list | grep private | awk -F\| '{print $2}' | tr -d ' ')
+    _EXTGW_ID=$(openstack network list | grep public | awk -F\| '{print $2}' | tr -d ' ')
+    _IMAGE=$(openstack image list | grep -i cirros | head -1)
+    _IMAGE_ID=$(echo $_IMAGE | awk -F\| '{print $2}' | tr -d ' ')
+    _IMAGE_NAME=$(echo $_IMAGE | awk -F\| '{print $3}' | tr -d ' ')
+    echo export OS_IMAGE_NAME="$_IMAGE_NAME" >> openrc
+    echo export OS_IMAGE_ID="$_IMAGE_ID" >> openrc
+    echo export OS_NETWORK_ID=$_NETWORK_ID >> openrc
+    echo export OS_EXTGW_ID=$_EXTGW_ID >> openrc
+    echo export OS_POOL_NAME="public" >> openrc
+    echo export OS_FLAVOR_ID=99 >> openrc
+    echo export OS_FLAVOR_ID_RESIZE=98 >> openrc
+    echo export OS_DOMAIN_NAME=Default >> openrc
+    echo export OS_SHARE_NETWORK_ID=foobar >> openrc
+    source openrc admin
+    popd
+
+    # Install dependences
+    export GOPATH=/home/zuul
+    go get ./...
+
+    # Only run identity and computev2 test
+    go test -v -tags "fixtures acceptance" ./acceptance/openstack/identity/v3/
+    go test -v -tags "fixtures acceptance" ./acceptance/openstack/imageservice/v2/
+  args:
+    chdir: "{{ zuul_work_dir }}"
+    executable: /bin/bash

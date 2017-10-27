@@ -1,0 +1,13 @@
+# Shared nodesets specific to the OpenLab Project
+
+- nodeset:
+    name: ubuntu-trusty
+    nodes:
+      - name: ubuntu-trusty
+        label: ubuntu-trusty
+
+- nodeset:
+    name: ubuntu-xenial
+    nodes:
+      - name: ubuntu-xenial
+        label: ubuntu-xenial

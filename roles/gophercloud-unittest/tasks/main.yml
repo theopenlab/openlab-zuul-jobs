@@ -1,0 +1,19 @@
+- name: Ensure legacy workspace directory
+  file:
+    path: '{{ ansible_user_dir }}/workspace'
+    state: directory
+
+- shell: |
+    sudo apt-get update
+    sudo apt-get install -y golang-go
+
+- name: Run gophercloud unit test
+  shell: |
+    set -e
+    set -x
+    export GOPATH=/home/zuul
+    go get ./...
+    ./script/unittest
+  args:
+    chdir: "{{ zuul_work_dir }}"
+    executable: /bin/bash
