@@ -2,4 +2,4 @@
   become: yes
 
   roles:
-    - gophercloud-acctest
+    - gophercloud-acceptance-test

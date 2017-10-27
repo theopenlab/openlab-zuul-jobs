@@ -1,0 +1,4 @@
+- hosts: all
+
+  roles:
+    - terraform-provider-openstack-acceptance-test

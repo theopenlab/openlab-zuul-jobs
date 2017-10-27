@@ -2,10 +2,10 @@
 
 # Acceptance test base job
 - job:
-    name: acctest
+    name: acceptance-test
     description: |
       Base job for all types of acceptance test jobs.
-    pre-run: playbooks/acctest/pre
+    pre-run: playbooks/acceptance-test/pre
     timeout: 3600
     required-projects:
       - openstack-infra/devstack-gate
@@ -20,16 +20,16 @@
     post-run: playbooks/gophercloud-unittest/post
 
 - job:
-    name: gophercloud-acctest
-    parent: acctest
+    name: gophercloud-acceptance-test
+    parent: acceptance-test
     description: |
       Run gophercloud acceptance test
-    run: playbooks/gophercloud-acctest/run
-    post-run: playbooks/gophercloud-acctest/post
+    run: playbooks/gophercloud-acceptance-test/run
+    post-run: playbooks/gophercloud-acceptance-test/post
 
 - job:
-    name: gophercloud-acctest-mitaka
-    parent: gophercloud-acctest
+    name: gophercloud-acceptance-test-mitaka
+    parent: gophercloud-acceptance-test
     description: |
       Run gophercloud acceptance test with stable/mitaka OpenStack
     vars:
@@ -37,8 +37,8 @@
     nodeset: ubuntu-trusty
 
 - job:
-    name: gophercloud-acctest-pike
-    parent: gophercloud-acctest
+    name: gophercloud-acceptance-test-pike
+    parent: gophercloud-acceptance-test
     description: |
       Run gophercloud acceptance test with stable/pike OpenStack
     vars:
@@ -46,34 +46,34 @@
 
 # Terraform-provider-openstack jobs
 - job:
-    name: terraform-openstack-unittest
+    name: terraform-provider-openstack-unittest
     description: |
-      Run terraform openstack unit test
-    run: playbooks/terraform-openstack-unittest/run
-    post-run: playbooks/terraform-openstack-unittest/post
+      Run terraform provider openstack unit test
+    run: playbooks/terraform-provider-openstack-unittest/run
+    post-run: playbooks/terraform-provider-openstack-unittest/post
 
 - job:
-    name: terraform-openstack-acctest
-    parent: acctest
+    name: terraform-provider-openstack-acceptance-test
+    parent: acceptance-test
     description: |
-      Run terraform openstack acceptance test
-    run: playbooks/terraform-openstack-acctest/run
-    post-run: playbooks/terraform-openstack-acctest/post
+      Run terraform provider openstack acceptance test
+    run: playbooks/terraform-provider-openstack-acceptance-test/run
+    post-run: playbooks/terraform-provider-openstack-acceptance-test/post
 
 - job:
-    name: terraform-openstack-acctest-mitaka
-    parent: terraform-openstack-acctest
+    name: terraform-provider-openstack-acceptance-test-mitaka
+    parent: terraform-provider-openstack-acceptance-test
     description: |
-      Run terraform openstack acceptance test with stable/mitaka OpenStack
+      Run terraform provider openstack acceptance test with stable/mitaka OpenStack
     vars:
       openstack_branch: refs/tags/mitaka-eol
     nodeset: ubuntu-trusty
 
 - job:
-    name: terraform-openstack-acctest-pike
-    parent: terraform-openstack-acctest
+    name: terraform-provider-openstack-acceptance-test-pike
+    parent: terraform-provider-openstack-acceptance-test
     description: |
-      Run terraform openstack acceptance test with stable/pike OpenStack
+      Run terraform provider openstack acceptance test with stable/pike OpenStack
     vars:
       openstack_branch: stable/pike
 
