@@ -36,11 +36,13 @@
 
     # Install dependences
     export GOPATH=/home/zuul
-    go get ./...
+    go get ./... ||true
 
     # Only run identity and computev2 test
-    go test -v -tags "fixtures acceptance" ./acceptance/openstack/identity/v3/
+    go test -v -tags "fixtures acceptance" ./acceptance/openstack/identity/v3/ 
     go test -v -tags "fixtures acceptance" ./acceptance/openstack/imageservice/v2/
+    go test -v -tags "fixtures acceptance" ./acceptance/openstack/compute/v2/
+
   args:
     chdir: "{{ zuul_work_dir }}"
     executable: /bin/bash

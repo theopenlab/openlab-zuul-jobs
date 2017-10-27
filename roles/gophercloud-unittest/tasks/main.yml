@@ -12,7 +12,7 @@
     set -x
     set -e
     export GOPATH=/home/zuul
-    go get ./...
+    go get ./... ||true
     ./script/unittest
   args:
     chdir: "{{ zuul_work_dir }}"
