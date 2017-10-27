@@ -26,10 +26,10 @@
     export OS_FLAVOR_ID=1
 
     # Run acc test
+    mkdir -p $GOPATH/{bin,pkg}
     mkdir -p $GOPATH/src/github.com/terraform-providers/
-    cd $GOPATH/src/github.com/terraform-providers/
-    git clone git://github.com/terraform-providers/terraform-provider-openstack
-    cd terraform-provider-openstack
-    make testacc
+    cp -r $GOPATH/src/github.com/theopenlab/terraform-provider-openstack  $GOPATH/src/github.com/terraform-providers/
+    cd $GOPATH/src/github.com/terraform-providers/terraform-provider-openstack
+    make testacc TEST=./
   args:
     executable: /bin/bash
