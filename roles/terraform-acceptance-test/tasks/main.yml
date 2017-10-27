@@ -23,6 +23,8 @@
     export GOPATH={{ ansible_user_dir }}
     export PATH=$PATH:$GOPATH/bin:/usr/local/go/bin
     export GOBIN=$GOPATH/bin
+    mkdir -p $GOPATH/{bin,pkg}
+    mkdir -p $GOPATH/src/github.com/hashicorp/
     cp -r $GOPATH/src/github.com/theopenlab/terraform  $GOPATH/src/github.com/hashicorp/
     cd $GOPATH/src/github.com/hashicorp/terraform
     make testacc
