@@ -76,3 +76,21 @@
       Run terraform openstack acceptance test with stable/pike OpenStack
     vars:
       openstack_branch: stable/pike
+
+# Terraform jobs
+- job:
+    name: terraform-unittest
+    description: |
+      Run terraform unit test
+    run: playbooks/terraform-unittest/run
+    post-run: playbooks/terraform-unittest/post
+
+- job:
+    name: terraform-acceptance-test
+    description: |
+      Run terraform acceptance test
+    run: playbooks/terraform-acceptance-test/run
+    post-run: playbooks/terraform-unittest/post
+    timeout: 3600
+    required-projects:
+      - openstack-infra/devstack-gate
