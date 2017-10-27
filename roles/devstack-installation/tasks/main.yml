@@ -6,8 +6,8 @@
 - name: Clone devstack-gate to workspace
   shell:
     cmd: |
-      set -e
       set -x
+      set -e
       cat > clonemap.yaml << EOF
       clonemap:
         - name: openstack-infra/devstack-gate
@@ -22,8 +22,8 @@
 - name: Run devstack installation
   shell:
     cmd: |
-      set -e
       set -x
+      set -e
       export PYTHONUNBUFFERED=true
       export GIT_BASE=https://github.com
       if [[ "{{ openstack_branch }}" =~ eol ]]; then

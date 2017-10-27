@@ -1,0 +1,26 @@
+- name: Ensure legacy workspace directory
+  file:
+    path: '{{ ansible_user_dir }}/workspace'
+    state: directory
+
+- shell: |
+    set -x
+    set -e
+    wget -c https://storage.googleapis.com/golang/go1.9.linux-amd64.tar.gz
+    sudo tar -C /usr/local/ -xvzf go1.9.linux-amd64.tar.gz
+    echo 'export PATH=$PATH:/usr/local/go/bin' > /etc/profile.d/goenv.sh
+
+- name: Run terraform openstack unit test
+  shell: |
+    set -x
+    set -e
+    export GOPATH={{ ansible_user_dir }}
+    export PATH=$PATH:$GOPATH/bin:/usr/local/go/bin
+    export GOBIN=$GOPATH/bin
+    mkdir -p $GOPATH/src/github.com/terraform-providers/
+    cd $GOPATH/src/github.com/terraform-providers/
+    git clone git://github.com/terraform-providers/terraform-provider-openstack
+    cd terraform-provider-openstack
+    make test
+  args:
+    executable: /bin/bash

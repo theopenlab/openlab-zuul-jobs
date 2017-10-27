@@ -2,4 +2,4 @@
   become: yes
 
   roles:
-    - devstack-installation
+    - copy-files-on-node

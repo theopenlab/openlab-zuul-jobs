@@ -1,0 +1,36 @@
+- name: Ensure legacy workspace directory
+  file:
+    path: '{{ ansible_user_dir }}/workspace'
+    state: directory
+
+- shell: |
+    set -x
+    set -e
+    wget -c https://storage.googleapis.com/golang/go1.9.linux-amd64.tar.gz
+    sudo tar -C /usr/local/ -xvzf go1.9.linux-amd64.tar.gz
+    echo 'export PATH=$PATH:/usr/local/go/bin' > /etc/profile.d/goenv.sh
+
+- name: Run terraform openstack acceptance test
+  shell: |
+    set -x
+    set -e
+    # Install env variables
+    export GOPATH={{ ansible_user_dir }}
+    export PATH=$PATH:$GOPATH/bin:/usr/local/go/bin
+    export GOBIN=$GOPATH/bin
+
+    source /opt/stack/new/devstack/openrc admin admin
+    export OS_NETWORK_ID=$(openstack network show private -c id -f value)
+    export OS_EXTGW_ID=$(openstack network show public -c  id -f value)
+    export OS_IMAGE_ID=$(openstack image list -f value -c ID | awk 'NR==1{print}')
+    export OS_POOL_NAME="public"
+    export OS_FLAVOR_ID=1
+
+    # Run acc test
+    mkdir -p $GOPATH/src/github.com/terraform-providers/
+    cd $GOPATH/src/github.com/terraform-providers/
+    git clone git://github.com/terraform-providers/terraform-provider-openstack
+    cd terraform-provider-openstack
+    make testacc
+  args:
+    executable: /bin/bash

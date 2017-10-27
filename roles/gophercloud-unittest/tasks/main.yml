@@ -9,8 +9,8 @@
 
 - name: Run gophercloud unit test
   shell: |
-    set -e
     set -x
+    set -e
     export GOPATH=/home/zuul
     go get ./...
     ./script/unittest

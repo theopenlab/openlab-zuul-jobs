@@ -9,8 +9,8 @@
 
 - name: Run gophercloud acceptance test
   shell: |
-    set -e
     set -x
+    set -e
 
     # Prep the testing environment by creating the required testing resources and environment variables
     pushd /opt/stack/new/devstack

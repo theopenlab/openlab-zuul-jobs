@@ -1,5 +1,17 @@
 # Shared jobs specific to the OpenLab Project
 
+# Acceptance test base job
+- job:
+    name: acctest
+    description: |
+      Base job for all types of acceptance test jobs.
+    pre-run: playbooks/acctest/run
+    timeout: 3600
+    required-projects:
+      - openstack-infra/devstack-gate
+    nodeset: ubuntu-xenial
+
+# Gophercloud jobs
 - job:
     name: gophercloud-unittest
     description: |
@@ -9,15 +21,11 @@
 
 - job:
     name: gophercloud-acctest
+    parent: acctest
     description: |
       Run gophercloud acceptance test
-    pre-run: playbooks/gophercloud-acctest/pre
     run: playbooks/gophercloud-acctest/run
     post-run: playbooks/gophercloud-acctest/post
-    timeout: 3600
-    required-projects:
-      - openstack-infra/devstack-gate
-    nodeset: ubuntu-xenial
 
 - job:
     name: gophercloud-acctest-mitaka
@@ -33,5 +41,38 @@
     parent: gophercloud-acctest
     description: |
       Run gophercloud acceptance test with stable/pike OpenStack
+    vars:
+      openstack_branch: stable/pike
+
+# Terraform-provider-openstack jobs
+- job:
+    name: terraform-openstack-unittest
+    description: |
+      Run terraform openstack unit test
+    run: playbooks/terraform-openstack-unittest/run
+    post-run: playbooks/terraform-openstack-unittest/post
+
+- job:
+    name: terraform-openstack-acctest
+    parent: acctest
+    description: |
+      Run terraform openstack acceptance test
+    run: playbooks/terraform-openstack-acctest/run
+    post-run: playbooks/terraform-openstack-acctest/post
+
+- job:
+    name: terraform-openstack-acctest-mitaka
+    parent: terraform-openstack-acctest
+    description: |
+      Run terraform openstack acceptance test with stable/mitaka OpenStack
+    vars:
+      openstack_branch: refs/tags/mitaka-eol
+    nodeset: ubuntu-trusty
+
+- job:
+    name: terraform-openstack-acctest-pike
+    parent: terraform-openstack-acctest
+    description: |
+      Run terraform openstack acceptance test with stable/pike OpenStack
     vars:
       openstack_branch: stable/pike
