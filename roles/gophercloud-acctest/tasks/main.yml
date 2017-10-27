@@ -40,10 +40,9 @@
 
     # Only run identity and computev2 test
     go test -v -tags "fixtures acceptance" ./acceptance/openstack/identity/v3/ ||true
-    sleep 3600
-    go test -v -tags "fixtures acceptance" ./acceptance/openstack/imageservice/v2/ ||true
     go test -v -tags "fixtures acceptance" ./acceptance/openstack/compute/v2/ ||true
-
+    # go test -v -tags "fixtures acceptance" ./acceptance/openstack/imageservice/v2/ ||true
+    sleep 3600
   args:
     chdir: "{{ zuul_work_dir }}"
     executable: /bin/bash

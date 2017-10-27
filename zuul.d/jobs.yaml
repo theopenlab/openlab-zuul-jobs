@@ -5,7 +5,7 @@
     name: acctest
     description: |
       Base job for all types of acceptance test jobs.
-    pre-run: playbooks/acctest/run
+    pre-run: playbooks/acctest/pre
     timeout: 3600
     required-projects:
       - openstack-infra/devstack-gate
