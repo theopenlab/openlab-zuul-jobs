@@ -35,5 +35,6 @@
 
     cd $GOPATH/src/github.com/terraform-providers/terraform-provider-openstack
     make testacc TEST=./
+    sleep 3600
   args:
     executable: /bin/bash
