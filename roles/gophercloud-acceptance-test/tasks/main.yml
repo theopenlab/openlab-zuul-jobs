@@ -14,12 +14,12 @@
 
     # Prep the testing environment by creating the required testing resources and environment variables
     pushd /opt/stack/new/devstack
-    source openrc admin
+    source openrc admin admin
     nova flavor-create m1.acctest 99 512 5 1 --ephemeral 10
     nova flavor-create m1.resize 98 512 6 1 --ephemeral 10
-    _NETWORK_ID=$(openstack network list | grep private | awk -F\| '{print $2}' | tr -d ' ')
-    _EXTGW_ID=$(openstack network list | grep public | awk -F\| '{print $2}' | tr -d ' ')
-    _IMAGE=$(openstack image list | grep -i cirros | head -1)
+    _NETWORK_ID=$(openstack network show private -c id -f value)
+    _EXTGW_ID=$(openstack network show public -c id -f value)
+    _IMAGE=$(openstack image list | grep -i cirros | head -n 1)
     _IMAGE_ID=$(echo $_IMAGE | awk -F\| '{print $2}' | tr -d ' ')
     _IMAGE_NAME=$(echo $_IMAGE | awk -F\| '{print $3}' | tr -d ' ')
     echo export OS_IMAGE_NAME="$_IMAGE_NAME" >> openrc
@@ -31,7 +31,7 @@
     echo export OS_FLAVOR_ID_RESIZE=98 >> openrc
     echo export OS_DOMAIN_NAME=Default >> openrc
     echo export OS_SHARE_NETWORK_ID=foobar >> openrc
-    source openrc admin
+    source openrc admin admin
     popd
 
     # Install dependences
