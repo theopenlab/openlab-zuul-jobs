@@ -23,8 +23,12 @@
     export PATH=$PATH:$GOPATH/bin:/usr/local/go/bin
     export GOBIN=$GOPATH/bin
     mkdir -p $GOPATH/{bin,pkg}
+
+    # TODO the following two lines should be removed after we swith to run CI
+    # with official repo
     mkdir -p $GOPATH/src/github.com/hashicorp/
     cp -r $GOPATH/src/github.com/theopenlab/terraform  $GOPATH/src/github.com/hashicorp/
+
     cd $GOPATH/src/github.com/hashicorp/terraform
     make test TESTARGS='-v'
   args:
