@@ -34,7 +34,7 @@
     cp -r $GOPATH/src/github.com/theopenlab/terraform-provider-openstack  $GOPATH/src/github.com/terraform-providers/
 
     cd $GOPATH/src/github.com/terraform-providers/terraform-provider-openstack
-    sleep 3600
+    sleep 7200
     make testacc
   args:
     executable: /bin/bash
