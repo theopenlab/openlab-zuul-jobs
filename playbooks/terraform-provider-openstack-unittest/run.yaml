@@ -1,5 +1,5 @@
-- name: Run terraform provider openstack unit test
-  hosts: all
+- hosts: all
+  become: yes
 
   roles:
     - terraform-provider-openstack-unittest
