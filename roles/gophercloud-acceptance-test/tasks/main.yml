@@ -32,6 +32,9 @@
     echo export OS_DOMAIN_NAME=Default >> openrc
     echo export OS_SHARE_NETWORK_ID=foobar >> openrc
     source openrc admin admin
+    if [[ "$OS_IDENTITY_API_VERSION" =~ 2 ]]; then
+        unset OS_DOMAIN_NAME
+    fi
     popd
 
     # Install dependences
