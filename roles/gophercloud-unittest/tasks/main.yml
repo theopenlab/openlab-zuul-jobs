@@ -13,7 +13,7 @@
     set -e
     export GOPATH=/home/zuul
     go get ./... ||true
-    ./script/unittest
+    ./script/unittest -v
   args:
     chdir: "{{ zuul_work_dir }}"
     executable: /bin/bash
