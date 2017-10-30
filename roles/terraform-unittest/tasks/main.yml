@@ -15,6 +15,7 @@
     chdir: "{{ ansible_user_dir }}"
     executable: /bin/bash
 
+# TODO delete the mkdir/cp instructions when move to offcial project
 - name: Compile and run terraform unit test
   shell: |
     set -x
