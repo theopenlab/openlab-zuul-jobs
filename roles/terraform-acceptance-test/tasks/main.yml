@@ -33,6 +33,7 @@
     fi
 
     cd $GOPATH/src/github.com/hashicorp/terraform
+    sleep 3600
     make testacc TEST=./
   args:
     chdir: "{{ ansible_user_dir }}/workspace"
