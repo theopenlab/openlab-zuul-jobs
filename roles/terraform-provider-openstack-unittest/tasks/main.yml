@@ -19,10 +19,11 @@
     export GOBIN=$GOPATH/bin
     mkdir -p $GOPATH/{bin,pkg}
 
-    # TODO the following two lines should be removed after we swith to run CI
-    # with official repo
-    mkdir -p $GOPATH/src/github.com/terraform-providers/
-    cp -r $GOPATH/src/github.com/theopenlab/terraform-provider-openstack  $GOPATH/src/github.com/terraform-providers/
+    if [[ ! -d $GOPATH/src/github.com/terraform-providers/terraform-provider-openstack/ ]]; then
+        echo "Warnning: this is a temporary workaround because this job is not triggered from official git repo."
+        mkdir -p $GOPATH/src/github.com/terraform-providers/
+        cp -r $GOPATH/src/github.com/theopenlab/terraform-provider-openstack  $GOPATH/src/github.com/terraform-providers/
+    fi
 
     cd $GOPATH/src/github.com/terraform-providers/terraform-provider-openstack
     make test TESTARGS='-v'

@@ -7,11 +7,20 @@
     sudo apt-get update
     sudo apt-get install -y golang-go
 
+# TODO delete the mkdir/cp instructions when move to offcial project
 - name: Run gophercloud unit test
   shell: |
     set -x
     set -e
     export GOPATH=/home/zuul
+
+    if [[ ! -d $GOPATH/src/github.com/gophercloud/gophercloud/ ]]; then
+        echo "Warnning: this is a temporary workaround because this job is not triggered from official git repo."
+        mkdir -p $GOPATH/src/github.com/gophercloud/
+        cp -r $GOPATH/src/github.com/theopenlab/gophercloud  $GOPATH/src/github.com/gophercloud/
+    fi
+
+    cd $GOPATH/src/github.com/gophercloud/gophercloud
     go get ./... ||true
     ./script/unittest -v
   args:
