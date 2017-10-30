@@ -41,11 +41,13 @@
     export GOPATH=/home/zuul
     go get ./... ||true
 
-    # Only run identity and computev2 test
+    # Only run identity, networking, and partial compute tests, due to limited compute resource.
     go test -v -tags "fixtures acceptance" ./acceptance/openstack/identity/v3/ ||true
-    go test -v -tags "fixtures acceptance" ./acceptance/openstack/compute/v2/ ||true
+    go test -v -tags "fixtures acceptance" ./acceptance/openstack/networking/v2/ ||true
+    go test -v -tags "fixtures acceptance" -run "SecGroup|Flavor" ./acceptance/openstack/compute/v2/ ||true
+    # The imageservice has a failure on TestImagesListAllPages, still debugging
     # go test -v -tags "fixtures acceptance" ./acceptance/openstack/imageservice/v2/ ||true
-    sleep 3600
+    # sleep 3600
   args:
     chdir: "{{ zuul_work_dir }}"
     executable: /bin/bash
