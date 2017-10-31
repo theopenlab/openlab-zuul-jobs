@@ -33,8 +33,12 @@
     fi
 
     cd $GOPATH/src/github.com/hashicorp/terraform
-    sleep 3600
-    make testacc TEST=./
+    echo "===============================================\n"
+    echo "Running acceptance tests for terraform/tarraform"
+    TF_ACC=1 go test ./terraform -v -timeout 120m
+    echo "===============================================\n"
+    echo "Running all the acceptance tests"
+    TF_ACC=1 go test ./... -v -timeout 120m
   args:
     chdir: "{{ ansible_user_dir }}/workspace"
     executable: /bin/bash
