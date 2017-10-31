@@ -52,7 +52,7 @@
         mkdir -p $GOPATH/src/github.com/terraform-providers/
         cp -r $GOPATH/src/github.com/theopenlab/terraform-provider-openstack  $GOPATH/src/github.com/terraform-providers/
     fi
-
+    sleep 7200
     cd $GOPATH/src/github.com/terraform-providers/terraform-provider-openstack
     make testacc
   args:
