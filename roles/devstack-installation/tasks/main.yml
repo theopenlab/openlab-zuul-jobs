@@ -30,6 +30,12 @@
           export ZUUL_BRANCH=master
           export ZUUL_REF={{ openstack_branch }}
           export ZUUL_URL=https://github.com
+          export ENABLED_SERVICES+="q-fwaas-v1,q-fwaas-v2,q-lbaas,q-lbaasv2,octavia,o-cw,o-hk,o-hm,o-api"
+          export DEVSTACK_LOCAL_CONFIG+=$'\n'"enable_plugin neutron-fwaas git://git.openstack.org/openstack/neutron-fwaas"
+          export DEVSTACK_LOCAL_CONFIG+=$'\n'"enable_plugin neutron-lbaas https://git.openstack.org/openstack/neutron-lbaas"
+          export DEVSTACK_LOCAL_CONFIG+=$'\n'"enable_plugin octavia https://git.openstack.org/openstack/octavia"
+          export DEVSTACK_LOCAL_CONFIG+=$'\n'"enable_plugin barbican https://git.openstack.org/openstack/barbican"
+          export DISABLE_AMP_IMAGE_BUILD=True
       else
           export OVERRIDE_ZUUL_BRANCH="{{ openstack_branch }}"
       fi
