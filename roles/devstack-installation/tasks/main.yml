@@ -32,12 +32,13 @@
           export ZUUL_URL=https://github.com
       else
           export OVERRIDE_ZUUL_BRANCH="{{ openstack_branch }}"
-
-          export ENABLED_SERVICES+="q-fwaas-v1,q-fwaas-v2,q-lbaas,q-lbaasv2"
-          export DEVSTACK_LOCAL_CONFIG+=$'\n'"enable_plugin neutron-fwaas git://git.openstack.org/openstack/neutron-fwaas"
-          export DEVSTACK_LOCAL_CONFIG+=$'\n'"enable_plugin neutron-lbaas https://git.openstack.org/openstack/neutron-lbaas"
-          export DISABLE_AMP_IMAGE_BUILD=True
       fi
+      export PROJECTS="openstack/designate $PROJECTS"
+      export ENABLED_SERVICES+=,designate,designate-central,designate-api,designate-pool-manager,designate-zone-manager,designate-mdns
+      export ENABLED_SERVICES+="q-fwaas-v1,q-fwaas-v2,q-lbaas,q-lbaasv2"
+      export DEVSTACK_LOCAL_CONFIG+=$'\n'"enable_plugin neutron-fwaas git://git.openstack.org/openstack/neutron-fwaas"
+      export DEVSTACK_LOCAL_CONFIG+=$'\n'"enable_plugin neutron-lbaas https://git.openstack.org/openstack/neutron-lbaas"
+      export DISABLE_AMP_IMAGE_BUILD=True
 
       cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
       ./safe-devstack-vm-gate-wrap.sh
