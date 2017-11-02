@@ -36,12 +36,8 @@
     echo export OS_POOL_NAME="public" >> openrc
     echo export OS_FLAVOR_ID=99 >> openrc
     echo export OS_FLAVOR_ID_RESIZE=98 >> openrc
-    echo export OS_DOMAIN_NAME=Default >> openrc
     echo export OS_SHARE_NETWORK_ID=foobar >> openrc
     source openrc admin admin
-    if [[ "$OS_IDENTITY_API_VERSION" =~ 2 ]]; then
-        unset OS_DOMAIN_NAME
-    fi
     popd
 
     # Run acc test
@@ -53,7 +49,6 @@
         cp -r $GOPATH/src/github.com/theopenlab/terraform-provider-openstack  $GOPATH/src/github.com/terraform-providers/
     fi
     cd $GOPATH/src/github.com/terraform-providers/terraform-provider-openstack
-    sleep 7200
     make testacc
   args:
     executable: /bin/bash
