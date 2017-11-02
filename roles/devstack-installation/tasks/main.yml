@@ -26,16 +26,18 @@
       set -e
       export PYTHONUNBUFFERED=true
       export GIT_BASE=https://github.com
-      if [[ "{{ openstack_branch }}" =~ eol ]]; then
+      if [[ "{{ openstack_branch }}" = "refs/tags/mitaka-eol" ]]; then
           export ZUUL_BRANCH=master
           export ZUUL_REF={{ openstack_branch }}
           export ZUUL_URL=https://github.com
+          export ENABLED_SERVICES+="q-fwaas,"
       else
           export OVERRIDE_ZUUL_BRANCH="{{ openstack_branch }}"
+          export ENABLED_SERVICES+="q-fwaas-v1,q-fwaas-v2,"
       fi
       export PROJECTS="openstack/designate $PROJECTS"
       export ENABLED_SERVICES+="designate,designate-central,designate-api,designate-pool-manager,designate-zone-manager,designate-mdns,"
-      export ENABLED_SERVICES+="q-fwaas-v1,q-fwaas-v2,q-lbaasv2,"
+      export ENABLED_SERVICES+="q-lbaasv2,"
       export DEVSTACK_LOCAL_CONFIG+=$'\n'"enable_plugin neutron-fwaas git://git.openstack.org/openstack/neutron-fwaas"
       export DEVSTACK_LOCAL_CONFIG+=$'\n'"enable_plugin neutron-lbaas https://git.openstack.org/openstack/neutron-lbaas"
       export DEVSTACK_LOCAL_CONFIG+=$'\n'"enable_plugin designate https://git.openstack.org/openstack/designate"
