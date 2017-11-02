@@ -37,7 +37,7 @@
     echo export OS_FLAVOR_ID=99 >> openrc
     echo export OS_FLAVOR_ID_RESIZE=98 >> openrc
     echo export OS_SHARE_NETWORK_ID=foobar >> openrc
-    source openrc admin admin
+    source openrc demo demo
     popd
 
     # Run acc test
