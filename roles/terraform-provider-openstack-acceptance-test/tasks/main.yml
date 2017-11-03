@@ -49,6 +49,6 @@
         cp -r $GOPATH/src/github.com/theopenlab/terraform-provider-openstack  $GOPATH/src/github.com/terraform-providers/
     fi
     cd $GOPATH/src/github.com/terraform-providers/terraform-provider-openstack
-    make testacc
+    TF_ACC=1 go test ./openstack -v -timeout 120m
   args:
     executable: /bin/bash
