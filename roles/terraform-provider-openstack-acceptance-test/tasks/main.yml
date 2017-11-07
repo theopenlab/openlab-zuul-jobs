@@ -50,6 +50,5 @@
     fi
     cd $GOPATH/src/github.com/terraform-providers/terraform-provider-openstack
     TF_ACC=1 go test ./openstack -v -timeout 120m
-    sleep 7200
   args:
     executable: /bin/bash
