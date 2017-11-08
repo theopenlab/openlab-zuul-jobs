@@ -38,7 +38,6 @@
     echo export OS_FLAVOR_ID_RESIZE=98 >> openrc
     echo export OS_SHARE_NETWORK_ID=foobar >> openrc
     source openrc demo demo
-    sleep 7200
     popd
 
     # Run acc test
@@ -51,5 +50,6 @@
     fi
     cd $GOPATH/src/github.com/terraform-providers/terraform-provider-openstack
     TF_ACC=1 go test ./openstack -v -timeout 120m
+    sleep 7200
   args:
     executable: /bin/bash

@@ -43,6 +43,13 @@
       export DEVSTACK_LOCAL_CONFIG+=$'\n'"enable_plugin designate https://git.openstack.org/openstack/designate"
       export DISABLE_AMP_IMAGE_BUILD=True
 
+      export DEVSTACK_GATE_FIXED_RANGE=10.0.0.0/20
+      cat << 'EOF' >>"/tmp/dg-local.conf"
+      [[local|localrc]]
+      NETWORK_GATEWAY 10.0.0.1
+
+      EOF
+
       cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
       ./safe-devstack-vm-gate-wrap.sh
     executable: /bin/bash
