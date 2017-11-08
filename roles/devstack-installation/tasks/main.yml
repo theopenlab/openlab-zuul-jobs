@@ -46,7 +46,7 @@
       export DEVSTACK_GATE_FIXED_RANGE=10.0.0.0/20
       cat << 'EOF' >>"/tmp/dg-local.conf"
       [[local|localrc]]
-      NETWORK_GATEWAY 10.0.0.1
+      NETWORK_GATEWAY=10.0.0.1
 
       EOF
 
