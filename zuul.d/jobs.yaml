@@ -58,6 +58,7 @@
       Run terraform provider openstack acceptance test
     run: playbooks/terraform-provider-openstack-acceptance-test/run
     post-run: playbooks/terraform-provider-openstack-acceptance-test/post
+    timeout: 7200
     required-projects:
       - openstack-infra/devstack-gate
 
