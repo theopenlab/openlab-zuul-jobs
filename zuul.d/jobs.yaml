@@ -27,21 +27,21 @@
     post-run: playbooks/gophercloud-acceptance-test/post
 
 - job:
-    name: gophercloud-acceptance-test-mitaka
-    parent: gophercloud-acceptance-test
-    description: |
-      Run gophercloud acceptance test with stable/mitaka OpenStack
-    vars:
-      openstack_branch: refs/tags/mitaka-eol
-    nodeset: ubuntu-trusty
-
-- job:
     name: gophercloud-acceptance-test-pike
-    parent: gophercloud-acceptance-test
+    parent: acceptance-test
     description: |
       Run gophercloud acceptance test with stable/pike OpenStack
-    vars:
-      openstack_branch: stable/pike
+    run: playbooks/gophercloud-acceptance-test-pike/run
+    post-run: playbooks/gophercloud-acceptance-test-pike/post
+
+- job:
+    name: gophercloud-acceptance-test-mitaka
+    parent: acceptance-test
+    description: |
+      Run gophercloud acceptance test with stable/mitaka OpenStack
+    run: playbooks/gophercloud-acceptance-test-mitaka/run
+    post-run: playbooks/gophercloud-acceptance-test-mitaka/post
+    nodeset: ubuntu-trusty
 
 # Terraform-provider-openstack jobs
 - job:
