@@ -5,8 +5,7 @@
     name: acceptance-test
     description: |
       Base job for all types of acceptance test jobs.
-    pre-run: playbooks/acceptance-test/pre
-    timeout: 10800
+    timeout: 7200
     required-projects:
       - openstack-infra/devstack-gate
     nodeset: ubuntu-xenial
