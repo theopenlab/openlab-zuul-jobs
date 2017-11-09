@@ -60,6 +60,7 @@
 
           # Install env variables
           export GOPATH={{ ansible_user_dir }}
+          mkdir -p $GOPATH/{bin,pkg}
           export PATH=$PATH:$GOPATH/bin:/usr/local/go/bin
           export GOBIN=$GOPATH/bin
 
@@ -85,17 +86,17 @@
           popd
 
           # Run acc test
-          mkdir -p $GOPATH/{bin,pkg}
           if [[ ! -d $GOPATH/src/github.com/terraform-providers/terraform-provider-openstack/ ]]; then
               echo "Warnning: this is a temporary workaround because this job is not triggered from official git repo."
               mkdir -p $GOPATH/src/github.com/terraform-providers/
               cp -r $GOPATH/src/github.com/theopenlab/terraform-provider-openstack  $GOPATH/src/github.com/terraform-providers/
+              cd $GOPATH/src/github.com/terraform-providers/terraform-provider-openstack
           fi
-          cd $GOPATH/src/github.com/terraform-providers/terraform-provider-openstack
 
           # Run except the DNS/FW/LB test 100 testcases at a time
           testcases=`go test ./openstack/ -v -list 'Acc'`
           testcases=`echo "$testcases" | sed '$d' | grep -v -e DNS -e FW -e LB`
           echo "$testcases" | xargs -t -n100 sh -c 'TF_ACC=1 go test ./openstack -v -timeout 120m -run $(echo "$@" | tr " " "|")' argv0
         executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ zuul | zuul_legacy_vars }}'

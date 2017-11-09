@@ -58,6 +58,7 @@
 
           # Install env variables
           export GOPATH={{ ansible_user_dir }}
+          mkdir -p $GOPATH/{bin,pkg}
           export PATH=$PATH:$GOPATH/bin:/usr/local/go/bin
           export GOBIN=$GOPATH/bin
 

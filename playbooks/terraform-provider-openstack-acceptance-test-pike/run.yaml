@@ -29,7 +29,9 @@
           set -x
           cat << 'EOF' >>"/tmp/dg-local.conf"
           [[local|localrc]]
-          # pass
+          # Enable ssl
+          ENABLED_SERVICES+=,tls-proxy
+          NETWORK_GATEWAY=10.0.0.1
 
           EOF
         executable: /bin/bash
@@ -42,6 +44,8 @@
           set -x
           export PYTHONUNBUFFERED=true
           export GIT_BASE=https://github.com
+          export DEVSTACK_GATE_FIXED_RANGE=10.0.0.0/20
+          export OVERRIDE_ZUUL_BRANCH=stable/pike
           cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
           ./safe-devstack-vm-gate-wrap.sh
         executable: /bin/bash
@@ -79,17 +83,21 @@
           echo export OS_FLAVOR_ID=99 >> openrc
           echo export OS_FLAVOR_ID_RESIZE=98 >> openrc
           echo export OS_SHARE_NETWORK_ID=foobar >> openrc
-          echo export OS_DOMAIN_NAME=Default >> openrc
           source openrc demo demo
           popd
 
-          go get ./... || true
-          # Only run identity, networking, and partial compute tests, due to limited compute resource.
-          go test -v -tags "fixtures acceptance" ./acceptance/openstack/identity/v3/ || true
-          go test -v -tags "fixtures acceptance" ./acceptance/openstack/networking/v2/ || true
-          go test -v -tags "fixtures acceptance" -run "SecGroup|Flavor" ./acceptance/openstack/compute/v2/ || true
-          # The imageservice has a failure on TestImagesListAllPages, still debugging
-          # go test -v -tags "fixtures acceptance" ./acceptance/openstack/imageservice/v2/ ||true
+          # Run acc test
+          if [[ ! -d $GOPATH/src/github.com/terraform-providers/terraform-provider-openstack/ ]]; then
+              echo "Warnning: this is a temporary workaround because this job is not triggered from official git repo."
+              mkdir -p $GOPATH/src/github.com/terraform-providers/
+              cp -r $GOPATH/src/github.com/theopenlab/terraform-provider-openstack  $GOPATH/src/github.com/terraform-providers/
+              cd $GOPATH/src/github.com/terraform-providers/terraform-provider-openstack
+          fi
+
+          # Run except the DNS/FW/LB test 100 testcases at a time
+          testcases=`go test ./openstack/ -v -list 'Acc'`
+          testcases=`echo "$testcases" | sed '$d' | grep -v -e DNS -e FW -e LB`
+          echo "$testcases" | xargs -t -n100 sh -c 'TF_ACC=1 go test ./openstack -v -timeout 120m -run $(echo "$@" | tr " " "|")' argv0
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ zuul | zuul_legacy_vars }}'

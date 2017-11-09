@@ -53,30 +53,28 @@
 
 - job:
     name: terraform-provider-openstack-acceptance-test
+    parent: acceptance-test
     description: |
       Run terraform provider openstack acceptance test
     run: playbooks/terraform-provider-openstack-acceptance-test/run
     post-run: playbooks/terraform-provider-openstack-acceptance-test/post
-    timeout: 7200
-    required-projects:
-      - openstack-infra/devstack-gate
-
-- job:
-    name: terraform-provider-openstack-acceptance-test-mitaka
-    parent: terraform-provider-openstack-acceptance-test
-    description: |
-      Run terraform provider openstack acceptance test with stable/mitaka OpenStack
-    vars:
-      openstack_branch: refs/tags/mitaka-eol
-    nodeset: ubuntu-trusty
 
 - job:
     name: terraform-provider-openstack-acceptance-test-pike
-    parent: terraform-provider-openstack-acceptance-test
+    parent: acceptance-test
     description: |
       Run terraform provider openstack acceptance test with stable/pike OpenStack
-    vars:
-      openstack_branch: stable/pike
+    run: playbooks/terraform-provider-openstack-acceptance-test-pike/run
+    post-run: playbooks/terraform-provider-openstack-acceptance-test-pike/post
+
+- job:
+    name: terraform-provider-openstack-acceptance-test-mitaka
+    parent: acceptance-test
+    description: |
+      Run terraform provider openstack acceptance test with stable/mitaka OpenStack
+    run: playbooks/terraform-provider-openstack-acceptance-test-mitaka/run
+    post-run: playbooks/terraform-provider-openstack-acceptance-test-mitaka/post
+    nodeset: ubuntu-trusty
 
 # Terraform jobs
 - job:
