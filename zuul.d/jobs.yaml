@@ -54,11 +54,12 @@
 
 - job:
     name: terraform-provider-openstack-acceptance-test
-    parent: acceptance-test
     description: |
       Run terraform provider openstack acceptance test
     run: playbooks/terraform-provider-openstack-acceptance-test/run
     post-run: playbooks/terraform-provider-openstack-acceptance-test/post
+    required-projects:
+      - openstack-infra/devstack-gate
 
 - job:
     name: terraform-provider-openstack-acceptance-test-mitaka
