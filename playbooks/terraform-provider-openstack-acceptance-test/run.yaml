@@ -31,6 +31,7 @@
           [[local|localrc]]
           # Enable ssl
           ENABLED_SERVICES+=,tls-proxy
+          NETWORK_GATEWAY=10.0.0.1
 
           EOF
         executable: /bin/bash
@@ -43,6 +44,7 @@
           set -x
           export PYTHONUNBUFFERED=true
           export GIT_BASE=https://github.com
+          export DEVSTACK_GATE_FIXED_RANGE=10.0.0.0/20
           cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
           ./safe-devstack-vm-gate-wrap.sh
         executable: /bin/bash
