@@ -1,5 +1,28 @@
 - hosts: all
   become: yes
+  tasks:
 
-  roles:
-    - gophercloud-unittest
+    - name: Ensure legacy workspace directory
+      file:
+        path: '{{ ansible_user_dir }}/workspace'
+        state: directory
+
+    - shell:
+        cmd: |
+          set -e
+          set -x
+          sudo apt-get update
+          sudo apt-get install -y golang-go
+          export GOPATH={{ ansible_user_dir }}
+
+          if [[ ! -d $GOPATH/src/github.com/gophercloud/gophercloud/ ]]; then
+              echo "Warnning: this is a temporary workaround because this job is not triggered from official git repo."
+              mkdir -p $GOPATH/src/github.com/gophercloud/
+              cp -r $GOPATH/src/github.com/theopenlab/gophercloud  $GOPATH/src/github.com/gophercloud/
+          fi
+
+          cd $GOPATH/src/github.com/gophercloud/gophercloud
+          go get ./... || true
+          ./script/unittest -v
+        executable: /bin/bash
+      environment: '{{ zuul | zuul_legacy_vars }}'
