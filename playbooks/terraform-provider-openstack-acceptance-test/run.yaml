@@ -30,7 +30,7 @@
           cat << 'EOF' >>"/tmp/dg-local.conf"
           [[local|localrc]]
           # Enable ssl
-          enable_service tls-proxy
+          ENABLED_SERVICES+=,tls-proxy
 
           EOF
         executable: /bin/bash
