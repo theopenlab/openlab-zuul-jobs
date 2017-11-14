@@ -80,16 +80,16 @@
           echo export OS_FLAVOR_ID_RESIZE=98 >> openrc
           echo export OS_SHARE_NETWORK_ID=foobar >> openrc
           echo export OS_DOMAIN_NAME=Default >> openrc
-          source openrc demo demo
+          source openrc admin admin
           popd
 
           go get ./... || true
           # Only run identity, networking, and partial compute tests, due to limited compute resource.
-          go test -v -tags "fixtures acceptance" ./acceptance/openstack/identity/v3/ || true
-          go test -v -tags "fixtures acceptance" ./acceptance/openstack/networking/v2/ || true
-          go test -v -tags "fixtures acceptance" -run "SecGroup|Flavor" ./acceptance/openstack/compute/v2/ || true
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/identity/v3/
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/networking/v2/
+          go test -v -tags "fixtures acceptance" -run "SecGroup|Flavor" ./acceptance/openstack/compute/v2/
           # The imageservice has a failure on TestImagesListAllPages, still debugging
-          # go test -v -tags "fixtures acceptance" ./acceptance/openstack/imageservice/v2/ ||true
+          # go test -v -tags "fixtures acceptance" ./acceptance/openstack/imageservice/v2/
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ zuul | zuul_legacy_vars }}'
