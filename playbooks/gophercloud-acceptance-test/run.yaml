@@ -84,12 +84,15 @@
           popd
 
           go get ./... || true
-          # Only run identity, networking, and partial compute tests, due to limited compute resource.
+          # Only enable these successful test cases
           go test -v -tags "fixtures acceptance" ./acceptance/openstack/identity/v3/
           go test -v -tags "fixtures acceptance" ./acceptance/openstack/networking/v2/
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/blockstorage/v2/
           go test -v -tags "fixtures acceptance" -run "SecGroup|Flavor" ./acceptance/openstack/compute/v2/
-          # The imageservice has a failure on TestImagesListAllPages, still debugging
+          # To enable more after the fix of https://github.com/gophercloud/gophercloud/issues/608
           # go test -v -tags "fixtures acceptance" ./acceptance/openstack/imageservice/v2/
+          # go test -v -tags "fixtures acceptance" ./acceptance/openstack/identity/v2/
+          # go test -v -tags "fixtures acceptance" ./acceptance/openstack/compute/v2/
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ zuul | zuul_legacy_vars }}'
