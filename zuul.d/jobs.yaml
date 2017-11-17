@@ -5,10 +5,8 @@
     name: acceptance-test
     description: |
       Base job for all types of acceptance test jobs.
+    pre-run: playbooks/acceptance-test/pre
     timeout: 7200
-    required-projects:
-      - openstack-infra/devstack-gate
-    nodeset: ubuntu-xenial
 
 # Gophercloud jobs
 - job:
@@ -83,15 +81,11 @@
       Run terraform unit test
     run: playbooks/terraform-unittest/run
     post-run: playbooks/terraform-unittest/post
-    nodeset: ubuntu-xenial
 
 - job:
     name: terraform-acceptance-test
+    parent: acceptance-test
     description: |
       Run terraform acceptance test
     run: playbooks/terraform-acceptance-test/run
-    post-run: playbooks/terraform-unittest/post
-    timeout: 3600
-    required-projects:
-      - openstack-infra/devstack-gate
-    nodeset: ubuntu-xenial
+    post-run: playbooks/terraform-acceptance-test/post

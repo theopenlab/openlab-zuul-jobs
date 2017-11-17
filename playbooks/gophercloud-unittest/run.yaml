@@ -1,11 +1,8 @@
 - hosts: all
   become: yes
+  roles:
+    - ensure-legacy-workspace-directory
   tasks:
-
-    - name: Ensure legacy workspace directory
-      file:
-        path: '{{ ansible_user_dir }}/workspace'
-        state: directory
 
     - shell:
         cmd: |
