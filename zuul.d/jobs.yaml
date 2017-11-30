@@ -33,6 +33,22 @@
     post-run: playbooks/gophercloud-acceptance-test-pike/post
 
 - job:
+    name: gophercloud-acceptance-test-ocata
+    parent: acceptance-test
+    description: |
+      Run gophercloud acceptance test with stable/ocata OpenStack
+    run: playbooks/gophercloud-acceptance-test-ocata/run
+    post-run: playbooks/gophercloud-acceptance-test-ocata/post
+
+- job:
+    name: gophercloud-acceptance-test-newton
+    parent: acceptance-test
+    description: |
+      Run gophercloud acceptance test with stable/newton OpenStack
+    run: playbooks/gophercloud-acceptance-test-newton/run
+    post-run: playbooks/gophercloud-acceptance-test-newton/post
+
+- job:
     name: gophercloud-acceptance-test-mitaka
     parent: acceptance-test
     description: |
@@ -64,6 +80,22 @@
       Run terraform provider openstack acceptance test with stable/pike OpenStack
     run: playbooks/terraform-provider-openstack-acceptance-test-pike/run
     post-run: playbooks/terraform-provider-openstack-acceptance-test-pike/post
+
+- job:
+    name: terraform-provider-openstack-acceptance-test-ocata
+    parent: acceptance-test
+    description: |
+      Run terraform provider openstack acceptance test with stable/ocata OpenStack
+    run: playbooks/terraform-provider-openstack-acceptance-test-ocata/run
+    post-run: playbooks/terraform-provider-openstack-acceptance-test-ocata/post
+
+- job:
+    name: terraform-provider-openstack-acceptance-test-newton
+    parent: acceptance-test
+    description: |
+      Run terraform provider openstack acceptance test with stable/newton OpenStack
+    run: playbooks/terraform-provider-openstack-acceptance-test-newton/run
+    post-run: playbooks/terraform-provider-openstack-acceptance-test-newton/post
 
 - job:
     name: terraform-provider-openstack-acceptance-test-mitaka
