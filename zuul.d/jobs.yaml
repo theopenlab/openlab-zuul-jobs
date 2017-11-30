@@ -1,8 +1,17 @@
 # Shared jobs specific to the OpenLab Project
 
+# Common test base job
+- job:
+    name: init-test
+    description: |
+      Base job for all types of test jobs. Ensure workspace and copy log files.
+    pre-run: playbooks/init-test/pre
+    post-run: playbooks/init-test/post
+
 # Acceptance test base job
 - job:
     name: acceptance-test
+    parent: init-test
     description: |
       Base job for all types of acceptance test jobs.
     pre-run: playbooks/acceptance-test/pre
@@ -11,10 +20,10 @@
 # Gophercloud jobs
 - job:
     name: gophercloud-unittest
+    parent: init-test
     description: |
       Run gophercloud unit test
     run: playbooks/gophercloud-unittest/run
-    post-run: playbooks/gophercloud-unittest/post
 
 - job:
     name: gophercloud-acceptance-test
@@ -22,7 +31,6 @@
     description: |
       Run gophercloud acceptance test
     run: playbooks/gophercloud-acceptance-test/run
-    post-run: playbooks/gophercloud-acceptance-test/post
 
 - job:
     name: gophercloud-acceptance-test-pike
@@ -30,7 +38,6 @@
     description: |
       Run gophercloud acceptance test with stable/pike OpenStack
     run: playbooks/gophercloud-acceptance-test-pike/run
-    post-run: playbooks/gophercloud-acceptance-test-pike/post
 
 - job:
     name: gophercloud-acceptance-test-ocata
@@ -38,7 +45,6 @@
     description: |
       Run gophercloud acceptance test with stable/ocata OpenStack
     run: playbooks/gophercloud-acceptance-test-ocata/run
-    post-run: playbooks/gophercloud-acceptance-test-ocata/post
 
 - job:
     name: gophercloud-acceptance-test-newton
@@ -46,7 +52,6 @@
     description: |
       Run gophercloud acceptance test with stable/newton OpenStack
     run: playbooks/gophercloud-acceptance-test-newton/run
-    post-run: playbooks/gophercloud-acceptance-test-newton/post
 
 - job:
     name: gophercloud-acceptance-test-mitaka
@@ -54,16 +59,15 @@
     description: |
       Run gophercloud acceptance test with stable/mitaka OpenStack
     run: playbooks/gophercloud-acceptance-test-mitaka/run
-    post-run: playbooks/gophercloud-acceptance-test-mitaka/post
     nodeset: ubuntu-trusty
 
 # Terraform-provider-openstack jobs
 - job:
     name: terraform-provider-openstack-unittest
+    parent: init-test
     description: |
       Run terraform provider openstack unit test
     run: playbooks/terraform-provider-openstack-unittest/run
-    post-run: playbooks/terraform-provider-openstack-unittest/post
 
 - job:
     name: terraform-provider-openstack-acceptance-test
@@ -71,7 +75,6 @@
     description: |
       Run terraform provider openstack acceptance test
     run: playbooks/terraform-provider-openstack-acceptance-test/run
-    post-run: playbooks/terraform-provider-openstack-acceptance-test/post
 
 - job:
     name: terraform-provider-openstack-acceptance-test-pike
@@ -79,7 +82,6 @@
     description: |
       Run terraform provider openstack acceptance test with stable/pike OpenStack
     run: playbooks/terraform-provider-openstack-acceptance-test-pike/run
-    post-run: playbooks/terraform-provider-openstack-acceptance-test-pike/post
 
 - job:
     name: terraform-provider-openstack-acceptance-test-ocata
@@ -87,7 +89,6 @@
     description: |
       Run terraform provider openstack acceptance test with stable/ocata OpenStack
     run: playbooks/terraform-provider-openstack-acceptance-test-ocata/run
-    post-run: playbooks/terraform-provider-openstack-acceptance-test-ocata/post
 
 - job:
     name: terraform-provider-openstack-acceptance-test-newton
@@ -95,7 +96,6 @@
     description: |
       Run terraform provider openstack acceptance test with stable/newton OpenStack
     run: playbooks/terraform-provider-openstack-acceptance-test-newton/run
-    post-run: playbooks/terraform-provider-openstack-acceptance-test-newton/post
 
 - job:
     name: terraform-provider-openstack-acceptance-test-mitaka
@@ -103,16 +103,15 @@
     description: |
       Run terraform provider openstack acceptance test with stable/mitaka OpenStack
     run: playbooks/terraform-provider-openstack-acceptance-test-mitaka/run
-    post-run: playbooks/terraform-provider-openstack-acceptance-test-mitaka/post
     nodeset: ubuntu-trusty
 
 # Terraform jobs
 - job:
     name: terraform-unittest
+    parent: init-test
     description: |
       Run terraform unit test
     run: playbooks/terraform-unittest/run
-    post-run: playbooks/terraform-unittest/post
 
 - job:
     name: terraform-acceptance-test
@@ -120,4 +119,3 @@
     description: |
       Run terraform acceptance test
     run: playbooks/terraform-acceptance-test/run
-    post-run: playbooks/terraform-acceptance-test/post

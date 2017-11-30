@@ -1,6 +1,4 @@
 - hosts: all
-  roles:
-    - ensure-legacy-workspace-directory
   tasks:
 
     - shell:
