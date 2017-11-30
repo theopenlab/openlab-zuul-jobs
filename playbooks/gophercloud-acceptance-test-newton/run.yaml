@@ -21,7 +21,9 @@
           set -x
           export PYTHONUNBUFFERED=true
           export GIT_BASE=https://github.com
-          export OVERRIDE_ZUUL_BRANCH=stable/newton
+          export ZUUL_BRANCH=master
+          export ZUUL_REF=refs/tags/newton-eol
+          export ZUUL_URL=https://github.com
           cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
           ./safe-devstack-vm-gate-wrap.sh
         executable: /bin/bash
@@ -59,7 +61,6 @@
           echo export OS_FLAVOR_ID=99 >> openrc
           echo export OS_FLAVOR_ID_RESIZE=98 >> openrc
           echo export OS_SHARE_NETWORK_ID=foobar >> openrc
-          echo export OS_DOMAIN_NAME=Default >> openrc
           source openrc admin admin
           popd
 

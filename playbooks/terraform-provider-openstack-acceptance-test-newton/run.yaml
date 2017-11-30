@@ -24,7 +24,9 @@
           export PYTHONUNBUFFERED=true
           export GIT_BASE=https://github.com
           export DEVSTACK_GATE_FIXED_RANGE=10.0.0.0/20
-          export OVERRIDE_ZUUL_BRANCH=stable/newton
+          export ZUUL_BRANCH=master
+          export ZUUL_REF=refs/tags/newton-eol
+          export ZUUL_URL=https://github.com
           cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
           ./safe-devstack-vm-gate-wrap.sh
         executable: /bin/bash
