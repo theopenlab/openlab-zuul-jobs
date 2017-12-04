@@ -1,0 +1,11 @@
+- name: Format test result report to html
+  shell:
+    cmd: |
+      set -e
+      set -x
+      go-junit-report < test_results.txt > test_results.xml
+      xunit-viewer --results=test_results.xml --output=test_results.html --title='OpenLab'
+      rm test_results.txt test_results.xml
+    executable: /bin/bash
+    chdir: '{{ zuul.executor.log_root }}'
+  environment: '{{ zuul | zuul_legacy_vars }}'

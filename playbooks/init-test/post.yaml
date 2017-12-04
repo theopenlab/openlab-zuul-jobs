@@ -2,3 +2,8 @@
   become: yes
   roles:
     - copy-files-on-node
+
+- hosts: localhost
+  become: yes
+  roles:
+    - format-test-result-report

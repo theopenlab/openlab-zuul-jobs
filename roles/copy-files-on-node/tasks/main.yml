@@ -84,7 +84,7 @@
     copy_links: true
     verify_host: true
     rsync_opts:
-      - --include=/test_results.html
+      - --include=/test_results.txt
       - --include=*/
       - --exclude=*
       - --prune-empty-dirs

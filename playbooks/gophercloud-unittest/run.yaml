@@ -25,16 +25,7 @@
           fi
 
           go get ./... || true
-          go get -u github.com/jstemmer/go-junit-report
-          TXT_LOG_FILE='{{ ansible_user_dir }}/workspace/test_results.txt'
-          XML_LOG_FILE='{{ ansible_user_dir }}/workspace/test_results.xml'
-          HTML_LOG_FILE='{{ ansible_user_dir }}/workspace/test_results.html'
-          ./script/unittest -v 2>&1 | tee $TXT_LOG_FILE
-          go-junit-report < $TXT_LOG_FILE > $XML_LOG_FILE
-
-          sudo apt install python-pip -y
-          pip install junit2html
-          junit2html $XML_LOG_FILE $HTML_LOG_FILE
+          ./script/unittest -v 2>&1 | tee test_results.txt
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ zuul | zuul_legacy_vars }}'
