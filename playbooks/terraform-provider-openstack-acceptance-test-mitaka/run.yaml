@@ -78,10 +78,23 @@
               cd $GOPATH/src/github.com/terraform-providers/terraform-provider-openstack
           fi
 
+          TEST_RESULTS_TXT='{{ ansible_user_dir }}/workspace/test_results.txt'
+          TEST_RESULTS_XML='{{ ansible_user_dir }}/workspace/test_results.xml'
+          TEST_RESULTS_HTML='{{ ansible_user_dir }}/workspace/test_results.html'
+
           # Run except the DNS/FW/LB test 100 testcases at a time
           testcases=`go test ./openstack/ -v -list 'Acc'`
           testcases=`echo "$testcases" | sed '$d' | grep -v -e DNS -e FW -e LB`
-          echo "$testcases" | xargs -t -n100 sh -c 'TF_ACC=1 go test ./openstack -v -timeout 120m -run $(echo "$@" | tr " " "|")' argv0
+          echo "$testcases" | xargs -t -n100 sh -c 'TF_ACC=1 go test ./openstack -v -timeout 120m -run $(echo "$@" | tr " " "|")' argv0 2>&1 | tee -a $TEST_RESULTS_TXT
+
+          go get -u github.com/jstemmer/go-junit-report
+          go-junit-report < $TEST_RESULTS_TXT > $TEST_RESULTS_XML
+          apt install npm -y > /dev/null
+          npm install -g npm > /dev/null
+          npm install -g n > /dev/null
+          n stable > /dev/null
+          npm install -g xunit-viewer > /dev/null
+          xunit-viewer --results=$TEST_RESULTS_XML --output=$TEST_RESULTS_HTML --title='OpenLab Test Result'
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ zuul | zuul_legacy_vars }}'

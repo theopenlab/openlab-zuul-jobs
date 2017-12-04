@@ -47,12 +47,25 @@
               cd $GOPATH/src/github.com/hashicorp/terraform
           fi
 
+          TEST_RESULTS_TXT='{{ ansible_user_dir }}/workspace/test_results.txt'
+          TEST_RESULTS_XML='{{ ansible_user_dir }}/workspace/test_results.xml'
+          TEST_RESULTS_HTML='{{ ansible_user_dir }}/workspace/test_results.html'
+
           echo "===============================================\n"
           echo "Running acceptance tests for terraform/tarraform"
-          TF_ACC=1 go test ./terraform -v -timeout 120m
+          TF_ACC=1 go test ./terraform -v -timeout 120m 2>&1 | tee -a $TEST_RESULTS_TXT
           echo "===============================================\n"
           echo "Running all the acceptance tests"
-          TF_ACC=1 go test ./... -v -timeout 120m
+          TF_ACC=1 go test ./... -v -timeout 120m 2>&1 | tee -a $TEST_RESULTS_TXT
+
+          go get -u github.com/jstemmer/go-junit-report
+          go-junit-report < $TEST_RESULTS_TXT > $TEST_RESULTS_XML
+          apt install npm -y > /dev/null
+          npm install -g npm > /dev/null
+          npm install -g n > /dev/null
+          n stable > /dev/null
+          npm install -g xunit-viewer > /dev/null
+          xunit-viewer --results=$TEST_RESULTS_XML --output=$TEST_RESULTS_HTML --title='OpenLab Test Result'
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ zuul | zuul_legacy_vars }}'
