@@ -9,7 +9,7 @@
           set -e
           set -x
           wget -c https://storage.googleapis.com/golang/go1.9.linux-amd64.tar.gz
-          sudo tar -C /usr/local/ -xvzf go1.9.linux-amd64.tar.gz
+          sudo tar -C /usr/local/ -xzf go1.9.linux-amd64.tar.gz
 
           # Install env variables
           export GOPATH={{ ansible_user_dir }}
@@ -24,22 +24,21 @@
               cd $GOPATH/src/github.com/gophercloud/gophercloud
           fi
 
-          TXT_LOG_FILE='{{ ansible_user_dir }}/workspace/test_results.txt'
-          XML_LOG_FILE='{{ ansible_user_dir }}/workspace/test_results.xml'
-          HTML_LOG_FILE='{{ ansible_user_dir }}/workspace/test_results.html'
+          TEST_RESULTS_TXT='{{ ansible_user_dir }}/workspace/test_results.txt'
+          TEST_RESULTS_XML='{{ ansible_user_dir }}/workspace/test_results.xml'
+          TEST_RESULTS_HTML='{{ ansible_user_dir }}/workspace/test_results.html'
+
           go get ./... || true
-          ./script/unittest -v 2>&1 | tee $TXT_LOG_FILE
+          ./script/unittest -v 2>&1 | tee -a $TEST_RESULTS_TXT
 
           go get -u github.com/jstemmer/go-junit-report
-          go-junit-report < $TXT_LOG_FILE > $XML_LOG_FILE
-
-          apt install npm -y
-          npm install -g npm
-          npm install -g n
-          n stable
-          ln -sf /usr/local/n/versions/node/9.2.0/bin/node /usr/bin/node
-          npm install -g xunit-viewer
-          xunit-viewer --results=$XML_LOG_FILE --output=$HTML_LOG_FILE --title='OpenLab'
+          go-junit-report < $TEST_RESULTS_TXT > $TEST_RESULTS_XML
+          apt install npm -y > /dev/null
+          npm install -g npm > /dev/null
+          npm install -g n > /dev/null
+          n stable > /dev/null
+          npm install -g xunit-viewer > /dev/null
+          xunit-viewer --results=$TEST_RESULTS_XML --output=$TEST_RESULTS_HTML --title='OpenLab Test Result'
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ zuul | zuul_legacy_vars }}'
