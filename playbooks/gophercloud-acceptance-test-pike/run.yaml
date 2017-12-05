@@ -64,22 +64,19 @@
           popd
 
           TEST_RESULTS_TXT='{{ ansible_user_dir }}/workspace/test_results.txt'
-          TEST_RESULTS_XML='{{ ansible_user_dir }}/workspace/test_results.xml'
-          TEST_RESULTS_HTML='{{ ansible_user_dir }}/workspace/test_results.html'
 
           go get ./... || true
+          {
           # Only enable these successful test cases
-          go test -v -tags "fixtures acceptance" ./acceptance/openstack/identity/v3/ 2>&1 | tee -a $TEST_RESULTS_TXT
-          go test -v -tags "fixtures acceptance" ./acceptance/openstack/networking/v2/ 2>&1 | tee -a $TEST_RESULTS_TXT
-          go test -v -tags "fixtures acceptance" ./acceptance/openstack/blockstorage/v2/ 2>&1 | tee -a $TEST_RESULTS_TXT
-          go test -v -tags "fixtures acceptance" -run "SecGroup|Flavor" ./acceptance/openstack/compute/v2/ 2>&1 | tee -a $TEST_RESULTS_TXT
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/identity/v3/ 2>&1
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/networking/v2/ 2>&1
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/blockstorage/v2/ 2>&1
+          go test -v -tags "fixtures acceptance" -run "SecGroup|Flavor" ./acceptance/openstack/compute/v2/ 2>&1
           # To enable more after the fix of https://github.com/gophercloud/gophercloud/issues/608
           # go test -v -tags "fixtures acceptance" ./acceptance/openstack/imageservice/v2/
           # go test -v -tags "fixtures acceptance" ./acceptance/openstack/identity/v2/
           # go test -v -tags "fixtures acceptance" ./acceptance/openstack/compute/v2/
-
-          go get -u github.com/jstemmer/go-junit-report
-          go-junit-report < $TEST_RESULTS_TXT > $TEST_RESULTS_XML
+          } > $TEST_RESULTS_TXT
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ zuul | zuul_legacy_vars }}'
