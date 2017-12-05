@@ -19,7 +19,7 @@
           export OPENSDS_DIR=$GOPATH/src/github.com/opensds
           export OPENSDS_ROOT=$OPENSDS_DIR/opensds
 
-          # OpenSDS Download
+          # OpenSDS Download and Build
           if [ ! -d $OPENSDS_DIR ]; then
             mkdir -p $OPENSDS_DIR
           fi
@@ -28,11 +28,17 @@
             git clone https://github.com/opensds/opensds.git -b development
           fi
           cd $OPENSDS_ROOT
+          if [ ! -d $OPENSDS_ROOT/build ]; then
+            make
+          fi
 
           # Start unit test.
           go test -v github.com/opensds/opensds/client/... -cover
           go test -v github.com/opensds/opensds/pkg/... -cover
           go test -v github.com/opensds/opensds/contrib/... -cover
+          # Start integration test.
+          sudo ./test/integration/prepare.sh
+          go test -v github.com/opensds/opensds/test/integration/... -tags integration
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ zuul | zuul_legacy_vars }}'
