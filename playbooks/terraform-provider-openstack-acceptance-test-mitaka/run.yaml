@@ -67,7 +67,7 @@
           # Default value is 2.0 in Mitaka, and 2.0 API will be deprecated
           # in the future, test against V3 API in stead.
           echo export OS_IDENTITY_API_VERSION=3 >> openrc
-          echo export OS_AUTH_URL=${OS_AUTH_URL/v2.0/v3} >> openrc
+          echo export OS_AUTH_URL=${OS_AUTH_URL/5000\/v2.0/35357\/v3} >> openrc
           echo export OS_DOMAIN_NAME=Default >> openrc
           source openrc demo demo
           popd
