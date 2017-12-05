@@ -65,6 +65,7 @@
           # in the future, test against V3 API in stead.
           echo export OS_IDENTITY_API_VERSION=3 >> openrc
           echo export OS_AUTH_URL=${OS_AUTH_URL/v2.0/v3} >> openrc
+          echo export OS_DOMAIN_NAME=Default >> openrc
           source openrc admin admin
           popd
 
