@@ -81,12 +81,6 @@
 
           go get -u github.com/jstemmer/go-junit-report
           go-junit-report < $TEST_RESULTS_TXT > $TEST_RESULTS_XML
-          apt install npm -y > /dev/null
-          npm install -g npm > /dev/null
-          npm install -g n > /dev/null
-          n stable > /dev/null
-          npm install -g xunit-viewer > /dev/null
-          xunit-viewer --results=$TEST_RESULTS_XML --output=$TEST_RESULTS_HTML --title='OpenLab Test Result'
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ zuul | zuul_legacy_vars }}'
