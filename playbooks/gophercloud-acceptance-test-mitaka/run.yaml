@@ -8,8 +8,9 @@
           set -x
           cat << 'EOF' >>"/tmp/dg-local.conf"
           [[local|localrc]]
-          # pass
-
+          # Default value is 2.0 in Mitaka, and 2.0 API will be deprecated
+          # in the future, test against V3 API in stead.
+          IDENTITY_API_VERSION=3
           EOF
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'
@@ -24,9 +25,6 @@
           export ZUUL_BRANCH=master
           export ZUUL_REF=refs/tags/mitaka-eol
           export ZUUL_URL=https://github.com
-          # Default value is 2.0 in Mitaka, and 2.0 API will be deprecated
-          # in the future, test against V3 API in stead.
-          export IDENTITY_API_VERSION=3
           cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
           ./safe-devstack-vm-gate-wrap.sh
         executable: /bin/bash
