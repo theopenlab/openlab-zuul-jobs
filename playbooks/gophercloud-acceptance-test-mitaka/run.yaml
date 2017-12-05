@@ -24,6 +24,9 @@
           export ZUUL_BRANCH=master
           export ZUUL_REF=refs/tags/mitaka-eol
           export ZUUL_URL=https://github.com
+          # Default value is 2.0 in Mitaka, and 2.0 API will be deprecated
+          # in the future, test against V3 API in stead.
+          export IDENTITY_API_VERSION=3
           cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
           ./safe-devstack-vm-gate-wrap.sh
         executable: /bin/bash
@@ -61,10 +64,6 @@
           echo export OS_FLAVOR_ID=99 >> openrc
           echo export OS_FLAVOR_ID_RESIZE=98 >> openrc
           echo export OS_SHARE_NETWORK_ID=foobar >> openrc
-          # Default value is 2.0 in Mitaka, and 2.0 API will be deprecated
-          # in the future, test against V3 API in stead.
-          echo export OS_IDENTITY_API_VERSION=3 >> openrc
-          echo export OS_AUTH_URL=${OS_AUTH_URL/5000\/v2.0/35357\/v3} >> openrc
           echo export OS_DOMAIN_NAME=Default >> openrc
           source openrc admin admin
           popd
