@@ -1,11 +1,7 @@
 - hosts: all
-  roles:
-    - set-golang-env-fact
   tasks:
     - shell:
         cmd: |
-          echo $PATH
-          echo $GOPATH
           set -e
           set -x
 

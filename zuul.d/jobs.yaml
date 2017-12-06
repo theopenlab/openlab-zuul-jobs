@@ -17,13 +17,20 @@
     pre-run: playbooks/acceptance-test/pre
     timeout: 7200
 
+# Golang test base job
+- job:
+    name: golang-test
+    parent: init-test
+    description: |
+      Base job for all types of golang test jobs.
+    pre-run: playbooks/golang-test/pre
+
 # Gophercloud jobs
 - job:
     name: gophercloud-unittest
-    parent: init-test
+    parent: golang-test
     description: |
       Run gophercloud unit test
-    pre-run: playbooks/gophercloud-unittest/pre
     run: playbooks/gophercloud-unittest/run
 
 - job:
