@@ -23,6 +23,7 @@
     parent: init-test
     description: |
       Run gophercloud unit test
+    pre-run: playbooks/gophercloud-unittest/pre
     run: playbooks/gophercloud-unittest/run
 
 - job:
