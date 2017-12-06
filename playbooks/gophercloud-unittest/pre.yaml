@@ -8,8 +8,10 @@
       extra_env:
         GOPATH: '{{ ansible_user_dir }}'
   tasks:
-    - shell: |
-        source /etc/environment
+    - shell:
+        cmd: |
+          source /etc/environment
+        executable: /bin/bash
 
   environment:
     PATH: '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/local/go/bin:/home/zuul/bin'
