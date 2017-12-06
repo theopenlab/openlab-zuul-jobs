@@ -8,3 +8,63 @@
     regexp: '^PATH=(["]*)((?!.*?{{ extra_path }}).*?)(["]*)$'
     line: 'PATH=\1\2:{{ extra_path }}\3'
   when: extra_path is defined
+
+- name: update system wide PATH
+  become: yes
+  lineinfile:
+    dest: /etc/profile
+    state: present
+    backrefs: yes
+    regexp: '^PATH=(["]*)((?!.*?{{ extra_path }}).*?)(["]*)$'
+    line: 'PATH=\1\2:{{ extra_path }}\3'
+  when: extra_path is defined
+
+- name: update system wide PATH
+  become: yes
+  lineinfile:
+    dest: /etc/bash.bashrc
+    state: present
+    backrefs: yes
+    regexp: '^PATH=(["]*)((?!.*?{{ extra_path }}).*?)(["]*)$'
+    line: 'PATH=\1\2:{{ extra_path }}\3'
+  when: extra_path is defined
+
+- name: update system wide PATH
+  become: yes
+  lineinfile:
+    dest: /home/zuul/.bash_profile
+    state: present
+    backrefs: yes
+    regexp: '^PATH=(["]*)((?!.*?{{ extra_path }}).*?)(["]*)$'
+    line: 'PATH=\1\2:{{ extra_path }}\3'
+  when: extra_path is defined
+
+- name: update system wide PATH
+  become: yes
+  lineinfile:
+    dest: /home/zuul/.bash_login
+    state: present
+    backrefs: yes
+    regexp: '^PATH=(["]*)((?!.*?{{ extra_path }}).*?)(["]*)$'
+    line: 'PATH=\1\2:{{ extra_path }}\3'
+  when: extra_path is defined
+
+- name: update system wide PATH
+  become: yes
+  lineinfile:
+    dest: /home/zuul/.profile
+    state: present
+    backrefs: yes
+    regexp: '^PATH=(["]*)((?!.*?{{ extra_path }}).*?)(["]*)$'
+    line: 'PATH=\1\2:{{ extra_path }}\3'
+  when: extra_path is defined
+
+- name: update system wide PATH
+  become: yes
+  lineinfile:
+    dest: /home/zuul/.bashrc
+    state: present
+    backrefs: yes
+    regexp: '^PATH=(["]*)((?!.*?{{ extra_path }}).*?)(["]*)$'
+    line: 'PATH=\1\2:{{ extra_path }}\3'
+  when: extra_path is defined
