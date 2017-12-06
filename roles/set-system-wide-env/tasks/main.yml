@@ -1,0 +1,11 @@
+---
+- name: set system wide env
+  become: yes
+  lineinfile:
+    dest: /etc/environment
+    state: present
+    regexp: '^{{ item.key }}='
+    line: '{{ item.key }}="{{ item.value }}"'
+  with_dict:
+    '{{ extra_env }}'
+  when: extra_env is defined
