@@ -8,6 +8,8 @@
       extra_env:
         GOPATH: '{{ ansible_user_dir }}'
 
+- hosts: all
+  become: yes
   tasks:
 
     - shell:
