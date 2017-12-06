@@ -1,4 +1,6 @@
 - hosts: all
+  roles:
+    - set-golang-env-fact
   tasks:
     - shell:
         cmd: |

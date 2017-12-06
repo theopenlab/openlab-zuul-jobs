@@ -2,4 +2,3 @@
   become: yes
   roles:
     - install-golang
-    - set-golang-env-fact
