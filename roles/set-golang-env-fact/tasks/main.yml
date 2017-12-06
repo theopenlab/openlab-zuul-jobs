@@ -3,4 +3,4 @@
   set_fact:
     golang_env:
       GOPATH: '{{ ansible_user_dir }}'
-      PATH: '{{ ansible_env.PATH }}:{{ ansible_user_dir }}/bin'
+      PATH: '{{ ansible_env.PATH }}:/usr/local/go/bin:{{ ansible_user_dir }}/bin'
