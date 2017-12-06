@@ -3,7 +3,7 @@
   roles:
     - install-golang
     - role: update-system-wide-path
-      extra_path: '/usr/local/go/bin:{{ ansible_user_dir }}/bin'
+      extra_path: '/usr/local/go/bin'
     - role: set-system-wide-env
       extra_env:
         GOPATH: '{{ ansible_user_dir }}'
