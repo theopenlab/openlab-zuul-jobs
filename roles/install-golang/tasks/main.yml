@@ -22,15 +22,3 @@
     dest: /usr/local
     remote_src: yes
   when: go_version|failed
-
-- name: Add the Go bin directory to the PATH environment variable for all users
-  copy:
-    src: go-bin.sh
-    dest: /etc/profile.d
-  when: go_version|failed
-
-- name: Set GOPATH for all users
-  copy:
-    src: go-path.sh
-    dest: /etc/profile.d
-  when: go_version|failed
