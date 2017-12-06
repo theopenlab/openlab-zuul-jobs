@@ -12,7 +12,7 @@
 
     - shell:
         cmd: |
-          sleep 1200
+          echo $PATH
           set -e
           set -x
 
