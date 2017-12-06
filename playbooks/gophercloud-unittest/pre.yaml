@@ -7,3 +7,7 @@
     - role: set-system-wide-env
       extra_env:
         GOPATH: '{{ ansible_user_dir }}'
+
+  environment:
+    PATH: '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/local/go/bin:/home/zuul/bin'
+    GOPATH: '/home/zuul'
