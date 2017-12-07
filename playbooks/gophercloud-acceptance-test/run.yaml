@@ -43,8 +43,8 @@
           # Prep the testing environment by creating the required testing resources and environment variables
           pushd /opt/stack/new/devstack
           source openrc admin admin
-          nova flavor-create m1.acctest 99 512 5 1 --ephemeral 10
-          nova flavor-create m1.resize 98 512 6 1 --ephemeral 10
+          openstack flavor create m1.acctest --id 99 --ram 512 --disk 5 --vcpu 1 --ephemeral 10
+          openstack flavor create m1.resize --id 98 --ram 512 --disk 6 --vcpu 1 --ephemeral 10
           _NETWORK_ID=$(openstack network show private -c id -f value)
           _EXTGW_ID=$(openstack network show public -c id -f value)
           _IMAGE=$(openstack image list | grep -i cirros | head -n 1)
@@ -62,16 +62,20 @@
           source openrc admin admin
           popd
 
+          TEST_RESULTS_TXT='{{ ansible_user_dir }}/workspace/test_results.txt'
+
           go get ./... || true
+          {
           # Only enable these successful test cases
-          go test -v -tags "fixtures acceptance" ./acceptance/openstack/identity/v3/
-          go test -v -tags "fixtures acceptance" ./acceptance/openstack/networking/v2/
-          go test -v -tags "fixtures acceptance" ./acceptance/openstack/blockstorage/v2/
-          go test -v -tags "fixtures acceptance" -run "SecGroup|Flavor" ./acceptance/openstack/compute/v2/
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/identity/v3/ 2>&1
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/networking/v2/ 2>&1
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/blockstorage/v2/ 2>&1
+          go test -v -tags "fixtures acceptance" -run "SecGroup|Flavor" ./acceptance/openstack/compute/v2/ 2>&1
           # To enable more after the fix of https://github.com/gophercloud/gophercloud/issues/608
           # go test -v -tags "fixtures acceptance" ./acceptance/openstack/imageservice/v2/
           # go test -v -tags "fixtures acceptance" ./acceptance/openstack/identity/v2/
           # go test -v -tags "fixtures acceptance" ./acceptance/openstack/compute/v2/
+          } > $TEST_RESULTS_TXT
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ zuul | zuul_legacy_vars }}'

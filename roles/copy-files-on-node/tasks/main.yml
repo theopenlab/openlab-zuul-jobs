@@ -75,3 +75,16 @@
       - --include=*/
       - --exclude=*
       - --prune-empty-dirs
+
+- name: Copy files from {{ ansible_user_dir }}/workspace/ on node
+  synchronize:
+    src: '{{ ansible_user_dir }}/workspace/'
+    dest: '{{ zuul.executor.log_root }}'
+    mode: pull
+    copy_links: true
+    verify_host: true
+    rsync_opts:
+      - --include=/test_results.html
+      - --include=*/
+      - --exclude=*
+      - --prune-empty-dirs

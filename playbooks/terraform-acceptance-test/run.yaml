@@ -47,12 +47,12 @@
               cd $GOPATH/src/github.com/hashicorp/terraform
           fi
 
-          echo "===============================================\n"
-          echo "Running acceptance tests for terraform/tarraform"
-          TF_ACC=1 go test ./terraform -v -timeout 120m
-          echo "===============================================\n"
-          echo "Running all the acceptance tests"
-          TF_ACC=1 go test ./... -v -timeout 120m
+          TEST_RESULTS_TXT='{{ ansible_user_dir }}/workspace/test_results.txt'
+
+          {
+          TF_ACC=1 go test ./terraform -v -timeout 120m 2>&1
+          TF_ACC=1 go test ./... -v -timeout 120m 2>&1
+          } > $TEST_RESULTS_TXT
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ zuul | zuul_legacy_vars }}'

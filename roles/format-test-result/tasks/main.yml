@@ -1,0 +1,20 @@
+- name: Format test result to html
+  shell:
+    cmd: |
+      set -e
+      set -x
+      TEST_RESULTS_TXT='{{ ansible_user_dir }}/workspace/test_results.txt'
+      TEST_RESULTS_XML='{{ ansible_user_dir }}/workspace/test_results.xml'
+      TEST_RESULTS_HTML='{{ ansible_user_dir }}/workspace/test_results.html'
+      export GOPATH={{ ansible_user_dir }}
+      export PATH=$PATH:$GOPATH/bin:/usr/local/go/bin
+      export GOBIN=$GOPATH/bin
+
+      go get -u github.com/jstemmer/go-junit-report
+      go-junit-report < $TEST_RESULTS_TXT > $TEST_RESULTS_XML
+
+      apt install python-pip -y
+      pip install junit2html
+      junit2html $TEST_RESULTS_XML $TEST_RESULTS_HTML
+    executable: /bin/bash
+  environment: '{{ zuul | zuul_legacy_vars }}'

@@ -24,7 +24,9 @@
           export PYTHONUNBUFFERED=true
           export GIT_BASE=https://github.com
           export DEVSTACK_GATE_FIXED_RANGE=10.0.0.0/20
-          export OVERRIDE_ZUUL_BRANCH=stable/newton
+          export ZUUL_BRANCH=master
+          export ZUUL_REF=refs/tags/newton-eol
+          export ZUUL_URL=https://github.com
           cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
           ./safe-devstack-vm-gate-wrap.sh
         executable: /bin/bash
@@ -47,8 +49,8 @@
           # Prep the testing environment by creating the required testing resources and environment variables
           pushd /opt/stack/new/devstack
           source openrc admin admin
-          nova flavor-create m1.acctest 99 512 5 1 --ephemeral 10
-          nova flavor-create m1.resize 98 512 6 1 --ephemeral 10
+          openstack flavor create m1.acctest --id 99 --ram 512 --disk 5 --vcpu 1 --ephemeral 10
+          openstack flavor create m1.resize --id 98 --ram 512 --disk 6 --vcpu 1 --ephemeral 10
           _NETWORK_ID=$(openstack network show private -c id -f value)
           _EXTGW_ID=$(openstack network show public -c id -f value)
           _IMAGE=$(openstack image list | grep -i cirros | head -n 1)
@@ -73,10 +75,12 @@
               cd $GOPATH/src/github.com/terraform-providers/terraform-provider-openstack
           fi
 
+          TEST_RESULTS_TXT='{{ ansible_user_dir }}/workspace/test_results.txt'
+
           # Run except the DNS/FW/LB test 100 testcases at a time
           testcases=`go test ./openstack/ -v -list 'Acc'`
           testcases=`echo "$testcases" | sed '$d' | grep -v -e DNS -e FW -e LB`
-          echo "$testcases" | xargs -t -n100 sh -c 'TF_ACC=1 go test ./openstack -v -timeout 120m -run $(echo "$@" | tr " " "|")' argv0
+          echo "$testcases" | xargs -t -n100 sh -c 'TF_ACC=1 go test ./openstack -v -timeout 120m -run $(echo "$@" | tr " " "|")' argv0 2>&1 > $TEST_RESULTS_TXT
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ zuul | zuul_legacy_vars }}'
