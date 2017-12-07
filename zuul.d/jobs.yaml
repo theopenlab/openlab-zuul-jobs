@@ -39,6 +39,7 @@
     parent: golang-test
     description: |
       Gophercloud test base job
+    timeout: 7200
     vars:
       sdk: 'gophercloud'
 
@@ -53,8 +54,8 @@
     name: gophercloud-acceptance-test
     parent: gophercloud-test
     description: |
-      Run gophercloud acceptance test on master branch with devstack
-    run: playbooks/gophercloud-acceptance-test-devstack/run
+      Run gophercloud acceptance test on master branch
+    run: playbooks/gophercloud-acceptance-test/run
     vars:
       os_branch: 'master'
 
@@ -62,7 +63,7 @@
     name: gophercloud-acceptance-test-pike
     parent: gophercloud-acceptance-test
     description: |
-      Run gophercloud acceptance test on pike branch with devstack
+      Run gophercloud acceptance test on pike branch
     vars:
       os_branch: 'stable/pike'
 
@@ -70,7 +71,7 @@
     name: gophercloud-acceptance-test-ocata
     parent: gophercloud-acceptance-test
     description: |
-      Run gophercloud acceptance test on ocata branch with devstack
+      Run gophercloud acceptance test on ocata branch
     vars:
       os_branch: 'stable/ocata'
 
@@ -78,7 +79,7 @@
     name: gophercloud-acceptance-test-newton
     parent: gophercloud-acceptance-test
     description: |
-      Run gophercloud acceptance test on newton branch with devstack
+      Run gophercloud acceptance test on newton branch
     vars:
       os_branch: 'newton-eol'
     nodeset: ubuntu-trusty
@@ -87,7 +88,7 @@
     name: gophercloud-acceptance-test-mitaka
     parent: gophercloud-acceptance-test
     description: |
-      Run gophercloud acceptance test on mitaka branch with devstack
+      Run gophercloud acceptance test on mitaka branch
     vars:
       os_branch: 'mitaka-eol'
     nodeset: ubuntu-trusty

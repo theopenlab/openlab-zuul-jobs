@@ -1,4 +1,4 @@
-- name: create devstack local conf
+- name: create devstack local conf if stable branches
   shell:
     cmd: |
       set -e
@@ -14,7 +14,7 @@
     - sdk == 'gophercloud'
     - os_branch in stable_branches
 
-- name: create devstack local conf
+- name: create devstack local conf if eol branches
   shell:
     cmd: |
       set -e

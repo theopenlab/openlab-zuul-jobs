@@ -1,4 +1,4 @@
-- name: install devstack
+- name: install devstack if stable branches
   shell:
     cmd: |
       set -e
@@ -15,7 +15,7 @@
     - sdk == 'gophercloud'
     - os_branch in stable_branches
 
-- name: install devstack
+- name: install devstack if eol branches
   shell:
     cmd: |
       set -e
