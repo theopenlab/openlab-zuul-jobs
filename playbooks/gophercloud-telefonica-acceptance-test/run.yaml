@@ -6,15 +6,15 @@
           # NOTE: the following commands may include sensitive information please do not print in job logs
           set -e
           set -x
-          export OS_PASSWORD="{{ telefonica_credentials.password }}"
-          export OS_AUTH_TYPE="{{ telefonica_credentials.auth_type }}"
-          export OS_AUTH_URL="{{ telefonica_credentials.auth_url }}"
-          export OS_IDENTITY_API_VERSION="{{ telefonica_credentials.identity_api_version }}"
-          export OS_DOMAIN_NAME="{{ telefonica_credentials.domain_name }}"
-          export OS_PROJECT_NAME="{{ telefonica_credentials.project_name }}"
-          export OS_REGION_NAME="{{ telefonica_credentials.region_name }}"
-          export OS_TENANT_NAME="{{ telefonica_credentials.project_name }}"
-          export OS_USERNAME="{{ telefonica_credentials.user_name }}"
+          export OS_PASSWORD="`echo {{ telefonica_credentials.password }}`"
+          export OS_AUTH_TYPE="`echo {{ telefonica_credentials.auth_type }}`"
+          export OS_AUTH_URL="`echo {{ telefonica_credentials.auth_url }}`"
+          export OS_IDENTITY_API_VERSION="`echo {{ telefonica_credentials.identity_api_version }}`"
+          export OS_DOMAIN_NAME="`echo {{ telefonica_credentials.domain_name }}`"
+          export OS_PROJECT_NAME="`echo {{ telefonica_credentials.project_name}}`"
+          export OS_REGION_NAME="`echo {{ telefonica_credentials.region_name}}`"
+          export OS_TENANT_NAME="`echo {{ telefonica_credentials.project_name }}`"
+          export OS_USERNAME="`echo {{ telefonica_credentials.user_name }}`"
 
           export
 
