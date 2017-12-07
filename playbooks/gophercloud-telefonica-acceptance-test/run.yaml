@@ -20,11 +20,6 @@
 
           go get ./... || true
           go test -v -tags "fixtures acceptance" ./acceptance/openstack/networking/v2/ -run TestSubnetsList
-          # {
-          # Only enable these successful test cases
-          # go test -v -tags "fixtures acceptance" ./acceptance/openstack/networking/v2/ -run TestSubnetsList 2>&1
-          # } > $TEST_RESULTS_TXT
-          echo "fake" | $TEST_RESULTS_TXT
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env }}'
