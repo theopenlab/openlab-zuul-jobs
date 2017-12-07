@@ -26,4 +26,4 @@
           } > $TEST_RESULTS_TXT
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
-      environment: '{{ zuul | zuul_legacy_vars | golang_env }}'
+      environment: '{{ golang_env }}'
