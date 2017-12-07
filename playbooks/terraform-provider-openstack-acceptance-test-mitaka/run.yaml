@@ -1,7 +1,5 @@
 - hosts: all
   become: yes
-  roles:
-    - set-golang-env-fact
   tasks:
 
     - shell:
@@ -10,8 +8,7 @@
           set -x
           cat << 'EOF' >>"/tmp/dg-local.conf"
           [[local|localrc]]
-          # Enable ssl
-          USE_SSL=True
+          # Disable ssl, it do not work until Ocata
           # ENABLED_SERVICES+=,tls-proxy
           NETWORK_GATEWAY=10.0.0.1
           # Default value is 2.0 in Mitaka, and 2.0 API will be deprecated

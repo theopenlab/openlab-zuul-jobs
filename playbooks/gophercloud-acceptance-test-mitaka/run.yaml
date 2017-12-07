@@ -1,7 +1,5 @@
 - hosts: all
   become: yes
-  roles:
-    - set-golang-env-fact
   tasks:
 
     - shell:
