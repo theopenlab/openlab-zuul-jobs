@@ -1,7 +1,8 @@
 - hosts: all
   become: yes
+  roles:
+    - set-golang-env-fact
   tasks:
-
     - name: Create credentials rc tempfile
       tempfile:
         state: file
@@ -15,9 +16,9 @@
 
     - shell:
         cmd: |
+          source "{{ credentials_rc_tmp.path }}"
           set -e
           set -x
-          source "{{ credentials_rc_tmp.path }}"
           TEST_RESULTS_TXT='{{ ansible_user_dir }}/workspace/test_results.txt'
 
           go get ./... || true
