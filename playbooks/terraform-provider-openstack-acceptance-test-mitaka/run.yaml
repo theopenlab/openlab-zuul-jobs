@@ -11,7 +11,8 @@
           cat << 'EOF' >>"/tmp/dg-local.conf"
           [[local|localrc]]
           # Enable ssl
-          ENABLED_SERVICES+=,tls-proxy
+          USE_SSL=True
+          # ENABLED_SERVICES+=,tls-proxy
           NETWORK_GATEWAY=10.0.0.1
           # Default value is 2.0 in Mitaka, and 2.0 API will be deprecated
           # in the future, test against V3 API in stead.

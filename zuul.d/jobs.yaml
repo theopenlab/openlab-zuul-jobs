@@ -145,3 +145,4 @@
     run: playbooks/gophercloud-telefonica-acceptance-test/run
     secrets:
       - telefonica_credentials
+    post-review: false
