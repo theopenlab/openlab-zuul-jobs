@@ -50,7 +50,7 @@
     run: playbooks/gophercloud-unittest/run
 
 - job:
-    name: gophercloud-acceptance-test-devstack
+    name: gophercloud-acceptance-test
     parent: gophercloud-test
     description: |
       Run gophercloud acceptance test on master branch with devstack
@@ -59,24 +59,24 @@
       os_branch: 'master'
 
 - job:
-    name: gophercloud-acceptance-test-devstack-pike
-    parent: gophercloud-acceptance-test-devstack
+    name: gophercloud-acceptance-test-pike
+    parent: gophercloud-acceptance-test
     description: |
       Run gophercloud acceptance test on pike branch with devstack
     vars:
       os_branch: 'stable/pike'
 
 - job:
-    name: gophercloud-acceptance-test-devstack-ocata
-    parent: gophercloud-acceptance-test-devstack
+    name: gophercloud-acceptance-test-ocata
+    parent: gophercloud-acceptance-test
     description: |
       Run gophercloud acceptance test on ocata branch with devstack
     vars:
       os_branch: 'stable/ocata'
 
 - job:
-    name: gophercloud-acceptance-test-devstack-newton
-    parent: gophercloud-acceptance-test-devstack
+    name: gophercloud-acceptance-test-newton
+    parent: gophercloud-acceptance-test
     description: |
       Run gophercloud acceptance test on newton branch with devstack
     vars:
@@ -84,8 +84,8 @@
     nodeset: ubuntu-trusty
 
 - job:
-    name: gophercloud-acceptance-test-devstack-mitaka
-    parent: gophercloud-acceptance-test-devstack
+    name: gophercloud-acceptance-test-mitaka
+    parent: gophercloud-acceptance-test
     description: |
       Run gophercloud acceptance test on mitaka branch with devstack
     vars:
