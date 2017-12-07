@@ -1,7 +1,6 @@
 - hosts: all
   become: yes
   tasks:
-
     - name: Create credentials rc tempfile
       tempfile:
         state: file
@@ -15,9 +14,9 @@
 
     - shell:
         cmd: |
+          source "{{ credentials_rc_tmp.path }}"
           set -e
           set -x
-          source "{{ credentials_rc_tmp.path }}"
           TEST_RESULTS_TXT='{{ ansible_user_dir }}/workspace/test_results.txt'
 
           go get ./... || true
@@ -27,4 +26,4 @@
           } > $TEST_RESULTS_TXT
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
-      environment: '{{ zuul | zuul_legacy_vars }}'
+      environment: '{{ golang_env }}'

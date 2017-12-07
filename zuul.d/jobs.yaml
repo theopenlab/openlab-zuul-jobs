@@ -149,7 +149,7 @@
 # Gophercloud acceptance tests with Telefonica cloud
 - job:
     name: gophercloud-telefonica-acceptance-test
-    parent: init-test
+    parent: golang-test
     description: |
       Run gophercloud acceptance test with telefonica cloud
     run: playbooks/gophercloud-telefonica-acceptance-test/run
