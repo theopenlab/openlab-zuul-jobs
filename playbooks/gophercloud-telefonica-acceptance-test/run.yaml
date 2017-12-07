@@ -20,6 +20,7 @@
           go get ./... || true
           #{
           # Only enable these successful test cases
+          sleep 1800
           go test -v -tags "fixtures acceptance" ./acceptance/openstack/networking/v2/ -run TestSubnetsList
           #} > $TEST_RESULTS_TXT
         executable: /bin/bash
