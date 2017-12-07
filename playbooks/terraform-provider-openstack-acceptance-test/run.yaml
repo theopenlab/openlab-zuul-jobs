@@ -1,5 +1,7 @@
 - hosts: all
   become: yes
+  roles:
+    - set-golang-env-fact
   tasks:
 
     - shell:
@@ -34,14 +36,6 @@
         cmd: |
           set -e
           set -x
-          wget -c https://storage.googleapis.com/golang/go1.9.linux-amd64.tar.gz
-          sudo tar -C /usr/local/ -xvzf go1.9.linux-amd64.tar.gz
-
-          # Install env variables
-          export GOPATH={{ ansible_user_dir }}
-          mkdir -p $GOPATH/{bin,pkg}
-          export PATH=$PATH:$GOPATH/bin:/usr/local/go/bin
-          export GOBIN=$GOPATH/bin
 
           # Prep the testing environment by creating the required testing resources and environment variables
           pushd /opt/stack/new/devstack
@@ -72,12 +66,10 @@
               cd $GOPATH/src/github.com/terraform-providers/terraform-provider-openstack
           fi
 
-          TEST_RESULTS_TXT='{{ ansible_user_dir }}/workspace/test_results.txt'
-
           # Run except the DNS/FW/LB test 100 testcases at a time
           testcases=`go test ./openstack/ -v -list 'Acc'`
           testcases=`echo "$testcases" | sed '$d' | grep -v -e DNS -e FW -e LB`
           echo "$testcases" | xargs -t -n100 sh -c 'TF_ACC=1 go test ./openstack -v -timeout 120m -run $(echo "$@" | tr " " "|")' argv0 2>&1 > $TEST_RESULTS_TXT
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
-      environment: '{{ zuul | zuul_legacy_vars }}'
+      environment: '{{ golang_env }}'

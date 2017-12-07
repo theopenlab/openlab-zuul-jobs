@@ -8,15 +8,6 @@
     pre-run: playbooks/init-test/pre
     post-run: playbooks/init-test/post
 
-# Acceptance test base job
-- job:
-    name: acceptance-test
-    parent: init-test
-    description: |
-      Base job for all types of acceptance test jobs.
-    pre-run: playbooks/acceptance-test/pre
-    timeout: 7200
-
 # Golang test base job
 - job:
     name: golang-test
@@ -24,6 +15,15 @@
     description: |
       Base job for all types of golang test jobs.
     post-run: playbooks/golang-test/post
+
+# Golang acceptance test base job
+- job:
+    name: golang-acceptance-test
+    parent: golang-test
+    description: |
+      Base job for all types of golang acceptance test jobs.
+    pre-run: playbooks/golang-acceptance-test/pre
+    timeout: 7200
 
 # Gophercloud jobs
 - job:
@@ -35,35 +35,35 @@
 
 - job:
     name: gophercloud-acceptance-test
-    parent: acceptance-test
+    parent: golang-acceptance-test
     description: |
       Run gophercloud acceptance test
     run: playbooks/gophercloud-acceptance-test/run
 
 - job:
     name: gophercloud-acceptance-test-pike
-    parent: acceptance-test
+    parent: golang-acceptance-test
     description: |
       Run gophercloud acceptance test with stable/pike OpenStack
     run: playbooks/gophercloud-acceptance-test-pike/run
 
 - job:
     name: gophercloud-acceptance-test-ocata
-    parent: acceptance-test
+    parent: golang-acceptance-test
     description: |
       Run gophercloud acceptance test with stable/ocata OpenStack
     run: playbooks/gophercloud-acceptance-test-ocata/run
 
 - job:
     name: gophercloud-acceptance-test-newton
-    parent: acceptance-test
+    parent: golang-acceptance-test
     description: |
       Run gophercloud acceptance test with stable/newton OpenStack
     run: playbooks/gophercloud-acceptance-test-newton/run
 
 - job:
     name: gophercloud-acceptance-test-mitaka
-    parent: acceptance-test
+    parent: golang-acceptance-test
     description: |
       Run gophercloud acceptance test with stable/mitaka OpenStack
     run: playbooks/gophercloud-acceptance-test-mitaka/run
@@ -72,42 +72,42 @@
 # Terraform-provider-openstack jobs
 - job:
     name: terraform-provider-openstack-unittest
-    parent: init-test
+    parent: golang-test
     description: |
       Run terraform provider openstack unit test
     run: playbooks/terraform-provider-openstack-unittest/run
 
 - job:
     name: terraform-provider-openstack-acceptance-test
-    parent: acceptance-test
+    parent: golang-acceptance-test
     description: |
       Run terraform provider openstack acceptance test
     run: playbooks/terraform-provider-openstack-acceptance-test/run
 
 - job:
     name: terraform-provider-openstack-acceptance-test-pike
-    parent: acceptance-test
+    parent: golang-acceptance-test
     description: |
       Run terraform provider openstack acceptance test with stable/pike OpenStack
     run: playbooks/terraform-provider-openstack-acceptance-test-pike/run
 
 - job:
     name: terraform-provider-openstack-acceptance-test-ocata
-    parent: acceptance-test
+    parent: golang-acceptance-test
     description: |
       Run terraform provider openstack acceptance test with stable/ocata OpenStack
     run: playbooks/terraform-provider-openstack-acceptance-test-ocata/run
 
 - job:
     name: terraform-provider-openstack-acceptance-test-newton
-    parent: acceptance-test
+    parent: golang-acceptance-test
     description: |
       Run terraform provider openstack acceptance test with stable/newton OpenStack
     run: playbooks/terraform-provider-openstack-acceptance-test-newton/run
 
 - job:
     name: terraform-provider-openstack-acceptance-test-mitaka
-    parent: acceptance-test
+    parent: golang-acceptance-test
     description: |
       Run terraform provider openstack acceptance test with stable/mitaka OpenStack
     run: playbooks/terraform-provider-openstack-acceptance-test-mitaka/run
@@ -116,14 +116,14 @@
 # Terraform jobs
 - job:
     name: terraform-unittest
-    parent: init-test
+    parent: golang-test
     description: |
       Run terraform unit test
     run: playbooks/terraform-unittest/run
 
 - job:
     name: terraform-acceptance-test
-    parent: acceptance-test
+    parent: golang-acceptance-test
     description: |
       Run terraform acceptance test
     run: playbooks/terraform-acceptance-test/run

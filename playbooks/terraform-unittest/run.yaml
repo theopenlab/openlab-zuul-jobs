@@ -1,21 +1,13 @@
 - name: Run terraform unit test
   hosts: all
   roles:
-    - ensure-legacy-workspace-directory
+    - set-golang-env-fact
   tasks:
 
     - shell:
         cmd: |
           set -e
           set -x
-          wget -c https://storage.googleapis.com/golang/go1.9.linux-amd64.tar.gz
-          sudo tar -C /usr/local/ -xvzf go1.9.linux-amd64.tar.gz
-
-          # Install env variables
-          export GOPATH={{ ansible_user_dir }}
-          mkdir -p $GOPATH/{bin,pkg}
-          export PATH=$PATH:$GOPATH/bin:/usr/local/go/bin
-          export GOBIN=$GOPATH/bin
 
           if [[ ! -d $GOPATH/src/github.com/hashicorp/terraform/ ]]; then
               echo "Warnning: this is a temporary workaround because this job is not triggered from official git repo."
@@ -24,9 +16,7 @@
               cd $GOPATH/src/github.com/hashicorp/terraform
           fi
 
-          TEST_RESULTS_TXT='{{ ansible_user_dir }}/workspace/test_results.txt'
-
           make test TESTARGS='-v' 2>&1 > $TEST_RESULTS_TXT
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
-      environment: '{{ zuul | zuul_legacy_vars }}'
+      environment: '{{ golang_env }}'
