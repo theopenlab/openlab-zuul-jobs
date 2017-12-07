@@ -4,6 +4,8 @@
     - shell:
         cmd: |
           # NOTE: the following commands may include sensitive information please do not print in job logs
+          set -e
+          set -x
           export OS_PASSWORD="{{ telefonica_credentials.password }}"
           export OS_AUTH_TYPE="{{ telefonica_credentials.auth_type }}"
           export OS_AUTH_URL="{{ telefonica_credentials.auth_url }}"
@@ -14,8 +16,8 @@
           export OS_TENANT_NAME="{{ telefonica_credentials.project_name }}"
           export OS_USERNAME="{{ telefonica_credentials.user_name }}"
 
-          set -e
-          set -x
+          export
+
           TEST_RESULTS_TXT='{{ ansible_user_dir }}/workspace/test_results.txt'
           go get ./... || true
           #{
