@@ -33,6 +33,16 @@
     pre-run: playbooks/golang-acceptance-test/pre
     timeout: 7200
 
+- job:
+    name: gophercloud-acceptance-test-devstack
+    parent: golang-test
+    description: |
+      Run gophercloud acceptance test
+    run: playbooks/gophercloud-acceptance-test-devstack/run
+    vars:
+      language: 'golang'
+      os_branch: 'master'
+
 # Gophercloud jobs
 - job:
     name: gophercloud-unittest

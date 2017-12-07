@@ -1,0 +1,15 @@
+- name: create devstack local conf
+  shell:
+    cmd: |
+      set -e
+      set -x
+      cat << EOF >> /tmp/dg-local.conf
+      [[local|localrc]]
+      # pass
+      EOF
+    executable: /bin/bash
+    chdir: '{{ ansible_user_dir }}/workspace'
+  environment: '{{ zuul | zuul_legacy_vars }}'
+  when:
+    - language == 'golang'
+    - os_branch == 'master'
