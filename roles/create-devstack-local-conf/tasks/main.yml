@@ -11,5 +11,25 @@
     chdir: '{{ ansible_user_dir }}/workspace'
   environment: '{{ zuul | zuul_legacy_vars }}'
   when:
-    - language == 'golang'
-    - os_branch == 'master'
+    - sdk == 'gophercloud'
+    - os_branch in stable_branches
+
+- name: create devstack local conf
+  shell:
+    cmd: |
+      set -e
+      set -x
+      cat << EOF >> /tmp/dg-local.conf
+      [[local|localrc]]
+      # Default value is 2.0 in Mitaka, and 2.0 API will be deprecated
+      # in the future, test against V3 API in stead.
+      IDENTITY_API_VERSION=3
+      OS_USER_DOMAIN_ID=default
+      OS_PROJECT_DOMAIN_ID=default
+      EOF
+    executable: /bin/bash
+    chdir: '{{ ansible_user_dir }}/workspace'
+  environment: '{{ zuul | zuul_legacy_vars }}'
+  when:
+    - sdk == 'gophercloud'
+    - os_branch in eol_branches
