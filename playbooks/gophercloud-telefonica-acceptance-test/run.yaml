@@ -3,7 +3,7 @@
   tasks:
     - shell:
         cmd: |
-          # NOTE: the following commands may include sensitive information please don't print in job logs
+          # NOTE: the following commands may include sensitive information please do not print in job logs
           export OS_AUTH_TYPE='{{ telefonica_credentials.auth_type }}'
           export OS_AUTH_URL='{{ telefonica_credentials.auth_url }}'
           export OS_IDENTITY_API_VERSION='{{ telefonica_credentials.identity_api_version }}'
