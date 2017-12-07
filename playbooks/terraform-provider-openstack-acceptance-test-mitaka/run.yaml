@@ -8,8 +8,6 @@
           set -x
           cat << 'EOF' >>"/tmp/dg-local.conf"
           [[local|localrc]]
-          # Disable ssl, it do not work until Ocata
-          # ENABLED_SERVICES+=,tls-proxy
           NETWORK_GATEWAY=10.0.0.1
           # Default value is 2.0 in Mitaka, and 2.0 API will be deprecated
           # in the future, test against V3 API in stead.
@@ -73,7 +71,7 @@
 
           # Run except the DNS/FW/LB test 100 testcases at a time
           testcases=`go test ./openstack/ -v -list 'Acc'`
-          testcases=`echo "$testcases" | sed '$d' | grep -v -e DNS -e FW -e LB -e Cert`
+          testcases=`echo "$testcases" | sed '$d' | grep -v -e DNS -e FW -e LB`
           echo "$testcases" | xargs -t -n100 sh -c 'TF_ACC=1 go test ./openstack -v -timeout 120m -run $(echo "$@" | tr " " "|")' argv0 2>&1 > $TEST_RESULTS_TXT
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
