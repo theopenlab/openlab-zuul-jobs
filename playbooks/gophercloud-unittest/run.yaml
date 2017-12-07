@@ -14,8 +14,6 @@
               cd $GOPATH/src/github.com/gophercloud/gophercloud
           fi
 
-          TEST_RESULTS_TXT='{{ ansible_user_dir }}/workspace/test_results.txt'
-
           go get ./... || true
           ./script/unittest -v 2>&1 > $TEST_RESULTS_TXT
         executable: /bin/bash

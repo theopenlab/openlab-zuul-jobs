@@ -23,7 +23,7 @@
     parent: init-test
     description: |
       Base job for all types of golang test jobs.
-    pre-run: playbooks/golang-test/pre
+    post-run: playbooks/golang-test/post
 
 # Gophercloud jobs
 - job:
