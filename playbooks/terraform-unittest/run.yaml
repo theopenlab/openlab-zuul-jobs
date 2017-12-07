@@ -1,7 +1,6 @@
-- name: Run terraform unit test
-  hosts: all
+- hosts: all
+  become: yes
   tasks:
-
     - shell:
         cmd: |
           set -e

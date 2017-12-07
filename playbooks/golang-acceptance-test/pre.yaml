@@ -1,3 +1,0 @@
-- hosts: all
-  roles:
-    - clone-devstack-gate-to-workspace

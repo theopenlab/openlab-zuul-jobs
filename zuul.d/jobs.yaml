@@ -24,22 +24,12 @@
         TEST_RESULTS_XML: '{{ ansible_user_dir }}/workspace/test_results.xml'
         TEST_RESULTS_HTML: '{{ ansible_user_dir }}/workspace/test_results.html'
 
-# Golang acceptance test base job
-- job:
-    name: golang-acceptance-test
-    parent: golang-test
-    description: |
-      Base job for all types of golang acceptance test jobs.
-    pre-run: playbooks/golang-acceptance-test/pre
-    timeout: 7200
-
 # Gophercloud jobs
 - job:
     name: gophercloud-test
     parent: golang-test
     description: |
       Gophercloud test base job
-    timeout: 7200
     vars:
       sdk: 'gophercloud'
 
@@ -56,6 +46,7 @@
     description: |
       Run gophercloud acceptance test on master branch
     run: playbooks/gophercloud-acceptance-test/run
+    timeout: 7200
     vars:
       os_branch: 'master'
 
@@ -95,62 +86,89 @@
 
 # Terraform-provider-openstack jobs
 - job:
-    name: terraform-provider-openstack-unittest
+    name: terraform-provider-openstack-test
     parent: golang-test
+    description: |
+      Terraform provider openstack test base job
+    vars:
+      sdk: 'terraform-provider-openstack'
+
+- job:
+    name: terraform-provider-openstack-unittest
+    parent: terraform-provider-openstack-test
     description: |
       Run terraform provider openstack unit test
     run: playbooks/terraform-provider-openstack-unittest/run
 
 - job:
     name: terraform-provider-openstack-acceptance-test
-    parent: golang-acceptance-test
+    parent: terraform-provider-openstack-test
     description: |
-      Run terraform provider openstack acceptance test
+      Run terraform provider openstack acceptance test on master branch
     run: playbooks/terraform-provider-openstack-acceptance-test/run
+    timeout: 7200
+    vars:
+      os_branch: 'master'
 
 - job:
     name: terraform-provider-openstack-acceptance-test-pike
-    parent: golang-acceptance-test
+    parent: terraform-provider-openstack-acceptance-test
     description: |
-      Run terraform provider openstack acceptance test with stable/pike OpenStack
-    run: playbooks/terraform-provider-openstack-acceptance-test-pike/run
+      Run terraform provider openstack acceptance test on pike branch
+    vars:
+      os_branch: 'stable/pike'
 
 - job:
     name: terraform-provider-openstack-acceptance-test-ocata
-    parent: golang-acceptance-test
+    parent: terraform-provider-openstack-acceptance-test
     description: |
-      Run terraform provider openstack acceptance test with stable/ocata OpenStack
-    run: playbooks/terraform-provider-openstack-acceptance-test-ocata/run
+      Run terraform provider openstack acceptance test on ocata branch
+    vars:
+      os_branch: 'stable/ocata'
 
 - job:
     name: terraform-provider-openstack-acceptance-test-newton
-    parent: golang-acceptance-test
+    parent: terraform-provider-openstack-acceptance-test
     description: |
-      Run terraform provider openstack acceptance test with stable/newton OpenStack
-    run: playbooks/terraform-provider-openstack-acceptance-test-newton/run
+      Run terraform provider openstack acceptance test on newton branch
+    vars:
+      os_branch: 'newton-eol'
+    nodeset: ubuntu-trusty
 
 - job:
     name: terraform-provider-openstack-acceptance-test-mitaka
-    parent: golang-acceptance-test
+    parent: terraform-provider-openstack-acceptance-test
     description: |
-      Run terraform provider openstack acceptance test with stable/mitaka OpenStack
-    run: playbooks/terraform-provider-openstack-acceptance-test-mitaka/run
+      Run terraform provider openstack acceptance test on mitaka branch
+    vars:
+      os_branch: 'mitaka-eol'
     nodeset: ubuntu-trusty
 
 # Terraform jobs
 - job:
-    name: terraform-unittest
+    name: terraform-test
     parent: golang-test
+    description: |
+      Terraform test base job
+    vars:
+      sdk: 'terraform'
+
+- job:
+    name: terraform-unittest
+    parent: terraform-test
     description: |
       Run terraform unit test
     run: playbooks/terraform-unittest/run
 
 - job:
     name: terraform-acceptance-test
-    parent: golang-acceptance-test
+    parent: terraform-test
     description: |
-      Run terraform acceptance test
+      Run terraform acceptance test on master branch
     run: playbooks/terraform-acceptance-test/run
+    timeout: 7200
+    vars:
+      os_branch: 'master'
 
 # Gophercloud acceptance tests with Telefonica cloud
 - job:
