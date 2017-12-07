@@ -1,0 +1,30 @@
+- hosts: all
+  become: yes
+  tasks:
+
+    - name: Create credentials rc tempfile
+      tempfile:
+        state: file
+      register: credentials_rc_tmp
+
+    - name: Create Telefonica credentials rc file
+      copy:
+        content: "{{ telefonica_credentials.credentials }}"
+        dest: "{{ credentials_rc_tmp.path }}"
+        mode: 0644
+
+    - shell:
+        cmd: |
+          set -e
+          set -x
+          source "{{ credentials_rc_tmp.path }}"
+          TEST_RESULTS_TXT='{{ ansible_user_dir }}/workspace/test_results.txt'
+
+          go get ./... || true
+          {
+          # Only enable these successful test cases
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/networking/v2/ -run TestSubnetsList 2>&1
+          } > $TEST_RESULTS_TXT
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ zuul | zuul_legacy_vars }}'
