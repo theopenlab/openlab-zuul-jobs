@@ -1,5 +1,5 @@
 - name: install devstack
-- shell:
+  shell:
     cmd: |
       set -e
       set -x
