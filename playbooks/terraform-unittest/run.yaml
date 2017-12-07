@@ -1,7 +1,5 @@
 - name: Run terraform unit test
   hosts: all
-  roles:
-    - set-golang-env-fact
   tasks:
 
     - shell:
