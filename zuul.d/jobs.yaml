@@ -7,6 +7,15 @@
       Base job for all types of test jobs. Ensure workspace and copy log files.
     pre-run: playbooks/init-test/pre
     post-run: playbooks/init-test/post
+    timeout: 7200
+    vars:
+      stable_branches:
+        - master
+        - stable/pike
+        - stable/ocata
+      eol_branches:
+        - newton-eol
+        - mitaka-eol
 
 # Golang test base job
 - job:
@@ -46,7 +55,6 @@
     description: |
       Run gophercloud acceptance test on master branch
     run: playbooks/gophercloud-acceptance-test/run
-    timeout: 7200
     vars:
       os_branch: 'master'
 
@@ -106,7 +114,6 @@
     description: |
       Run terraform provider openstack acceptance test on master branch
     run: playbooks/terraform-provider-openstack-acceptance-test/run
-    timeout: 7200
     vars:
       os_branch: 'master'
 
@@ -166,7 +173,6 @@
     description: |
       Run terraform acceptance test on master branch
     run: playbooks/terraform-acceptance-test/run
-    timeout: 7200
     vars:
       os_branch: 'master'
 
