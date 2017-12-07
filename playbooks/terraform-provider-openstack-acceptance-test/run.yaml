@@ -1,35 +1,10 @@
 - hosts: all
   become: yes
+  roles:
+    - clone-devstack-gate-to-workspace
+    - create-devstack-local-conf
+    - install-devstack
   tasks:
-
-    - shell:
-        cmd: |
-          set -e
-          set -x
-          cat << 'EOF' >>"/tmp/dg-local.conf"
-          [[local|localrc]]
-          # Enable ssl
-          ENABLED_SERVICES+=,tls-proxy
-          NETWORK_GATEWAY=10.0.0.1
-
-          EOF
-        executable: /bin/bash
-        chdir: '{{ ansible_user_dir }}/workspace'
-      environment: '{{ zuul | zuul_legacy_vars }}'
-
-    - shell:
-        cmd: |
-          set -e
-          set -x
-          export PYTHONUNBUFFERED=true
-          export GIT_BASE=https://github.com
-          export DEVSTACK_GATE_FIXED_RANGE=10.0.0.0/20
-          cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
-          ./safe-devstack-vm-gate-wrap.sh
-        executable: /bin/bash
-        chdir: '{{ ansible_user_dir }}/workspace'
-      environment: '{{ zuul | zuul_legacy_vars }}'
-
     - shell:
         cmd: |
           set -e

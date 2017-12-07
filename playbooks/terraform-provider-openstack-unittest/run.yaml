@@ -1,7 +1,6 @@
 - hosts: all
   become: yes
   tasks:
-
     - shell:
         cmd: |
           set -e
