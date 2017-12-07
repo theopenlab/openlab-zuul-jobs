@@ -1,5 +1,5 @@
 # gophercloud
-- name: install devstack if stable branches
+- name: install devstack with {{ os_branch }} for {{ sdk }}
   shell:
     cmd: |
       set -e
@@ -16,7 +16,7 @@
     - sdk == 'gophercloud'
     - os_branch in stable_branches
 
-- name: install devstack if eol branches
+- name: install devstack with {{ os_branch }} for {{ sdk }}
   shell:
     cmd: |
       set -e
@@ -36,7 +36,7 @@
     - os_branch in eol_branches
 
 # terraform-provider-openstack
-- name: install devstack if stable branches
+- name: install devstack with {{ os_branch }} for {{ sdk }}
   shell:
     cmd: |
       set -e
@@ -54,7 +54,7 @@
     - sdk == 'terraform-provider-openstack'
     - os_branch in stable_branches
 
-- name: install devstack if eol branches
+- name: install devstack with {{ os_branch }} for {{ sdk }}
   shell:
     cmd: |
       set -e
@@ -75,7 +75,7 @@
     - os_branch in eol_branches
 
 # terraform
-- name: install devstack if stable branches
+- name: install devstack with {{ os_branch }} for {{ sdk }}
   shell:
     cmd: |
       set -e

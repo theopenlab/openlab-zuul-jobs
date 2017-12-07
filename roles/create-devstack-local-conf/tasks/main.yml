@@ -1,5 +1,5 @@
 # gophercloud
-- name: create devstack local conf if stable branches
+- name: create devstack local conf with {{ os_branch }} for {{ sdk }}
   shell:
     cmd: |
       set -e
@@ -15,7 +15,7 @@
     - sdk == 'gophercloud'
     - os_branch in stable_branches
 
-- name: create devstack local conf if eol branches
+- name: create devstack local conf with {{ os_branch }} for {{ sdk }}
   shell:
     cmd: |
       set -e
@@ -36,7 +36,7 @@
     - os_branch in eol_branches
 
 # terraform-provider-openstack
-- name: create devstack local conf if stable branches
+- name: create devstack local conf with {{ os_branch }} for {{ sdk }}
   shell:
     cmd: |
       set -e
@@ -54,7 +54,7 @@
     - sdk == 'terraform-provider-openstack'
     - os_branch in stable_branches
 
-- name: create devstack local conf if eol branches
+- name: create devstack local conf with {{ os_branch }} for {{ sdk }}
   shell:
     cmd: |
       set -e
@@ -76,7 +76,7 @@
     - os_branch in eol_branches
 
 # terraform
-- name: create devstack local conf if stable branches
+- name: create devstack local conf with {{ os_branch }} for {{ sdk }}
   shell:
     cmd: |
       set -e
