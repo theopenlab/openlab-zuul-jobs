@@ -4,8 +4,6 @@
     - shell:
         cmd: |
           # NOTE: the following commands may include sensitive information please do not print in job logs
-          set -e
-          set -x
           export OS_PASSWORD="`echo {{ telefonica_credentials.password }}`"
           export OS_AUTH_TYPE="`echo {{ telefonica_credentials.auth_type }}`"
           export OS_AUTH_URL="`echo {{ telefonica_credentials.auth_url }}`"
@@ -16,14 +14,14 @@
           export OS_TENANT_NAME="`echo {{ telefonica_credentials.project_name }}`"
           export OS_USERNAME="`echo {{ telefonica_credentials.user_name }}`"
 
-          export
-
+          set -e
+          set -x
           TEST_RESULTS_TXT='{{ ansible_user_dir }}/workspace/test_results.txt'
           go get ./... || true
-          #{
+          {
           # Only enable these successful test cases
           go test -v -tags "fixtures acceptance" ./acceptance/openstack/networking/v2/ -run TestSubnetsList
-          #} > $TEST_RESULTS_TXT
+          } > $TEST_RESULTS_TXT
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env }}'
