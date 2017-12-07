@@ -16,8 +16,8 @@
           # Default value is 2.0 in Mitaka, and 2.0 API will be deprecated
           # in the future, test against V3 API in stead.
           IDENTITY_API_VERSION=3
-          OS_USER_DOMAIN_ID=default
-          OS_PROJECT_DOMAIN_ID=default
+          export OS_USER_DOMAIN_ID=default
+          export OS_PROJECT_DOMAIN_ID=default
           EOF
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'
