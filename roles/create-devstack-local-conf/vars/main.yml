@@ -1,0 +1,8 @@
+---
+stable_branches:
+  - master
+  - stable/pike
+  - stable/ocata
+eol_branches:
+  - newton-eol
+  - mitaka-eol
