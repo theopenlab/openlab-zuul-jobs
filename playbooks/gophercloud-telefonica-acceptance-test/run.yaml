@@ -1,20 +1,19 @@
 - hosts: all
   become: yes
   tasks:
-    - name: Create credentials rc tempfile
-      tempfile:
-        state: file
-      register: credentials_rc_tmp
-
-    - name: Create Telefonica credentials rc file
-      copy:
-        content: "{{ telefonica_credentials.credentials }}"
-        dest: "{{ credentials_rc_tmp.path }}"
-        mode: 0644
-
     - shell:
         cmd: |
-          source "{{ credentials_rc_tmp.path }}"
+          # NOTE: the following commands may include sensitive information please don't print in job logs
+          export OS_AUTH_TYPE='{{ telefonica_credentials.auth_type }}'
+          export OS_AUTH_URL='{{ telefonica_credentials.auth_url }}'
+          export OS_IDENTITY_API_VERSION='{{ telefonica_credentials.identity_api_version }}'
+          export OS_PASSWORD='{{ telefonica_credentials.password }}'
+          export OS_DOMAIN_NAME='{{ telefonica_credentials.domain_name }}'
+          export OS_PROJECT_NAME='{{ telefonica_credentials.project_name }}'
+          export OS_REGION_NAME='{{ telefonica_credentials.region_name }}'
+          export OS_TENANT_NAME='{{ telefonica_credentials.project_name }}'
+          export OS_USERNAME='{{ telefonica_credentials.user_name }}'
+
           set -e
           set -x
           TEST_RESULTS_TXT='{{ ansible_user_dir }}/workspace/test_results.txt'
