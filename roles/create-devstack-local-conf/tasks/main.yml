@@ -43,8 +43,6 @@
       set -x
       cat << EOF >> /tmp/dg-local.conf
       [[local|localrc]]
-      # Enable ssl
-      ENABLED_SERVICES+=,tls-proxy
       NETWORK_GATEWAY=10.0.0.1
       EOF
     executable: /bin/bash
