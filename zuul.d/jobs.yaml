@@ -81,7 +81,6 @@
       Run gophercloud acceptance test on newton branch
     vars:
       os_branch: 'newton-eol'
-    nodeset: ubuntu-trusty
 
 - job:
     name: gophercloud-acceptance-test-mitaka
@@ -140,7 +139,6 @@
       Run terraform provider openstack acceptance test on newton branch
     vars:
       os_branch: 'newton-eol'
-    nodeset: ubuntu-trusty
 
 - job:
     name: terraform-provider-openstack-acceptance-test-mitaka
