@@ -5,8 +5,8 @@
     name: init-test
     description: |
       Base job for all types of test jobs. Ensure workspace and copy log files.
-    pre-run: playbooks/init-test/pre
-    post-run: playbooks/init-test/post
+    pre-run: playbooks/init-test/pre.yaml
+    post-run: playbooks/init-test/post.yaml
     timeout: 7200
     vars:
       stable_branches:
@@ -23,8 +23,8 @@
     parent: init-test
     description: |
       Base job for all types of golang test jobs.
-    pre-run: playbooks/golang-test/pre
-    post-run: playbooks/golang-test/post
+    pre-run: playbooks/golang-test/pre.yaml
+    post-run: playbooks/golang-test/post.yaml
     vars:
       golang_env:
         GOPATH: '{{ ansible_user_dir }}'
@@ -47,14 +47,14 @@
     parent: gophercloud-test
     description: |
       Run gophercloud unit test
-    run: playbooks/gophercloud-unittest/run
+    run: playbooks/gophercloud-unittest/run.yaml
 
 - job:
     name: gophercloud-acceptance-test
     parent: gophercloud-test
     description: |
       Run gophercloud acceptance test on master branch
-    run: playbooks/gophercloud-acceptance-test/run
+    run: playbooks/gophercloud-acceptance-test/run.yaml
     vars:
       os_branch: 'master'
 
@@ -105,14 +105,14 @@
     parent: terraform-provider-openstack-test
     description: |
       Run terraform provider openstack unit test
-    run: playbooks/terraform-provider-openstack-unittest/run
+    run: playbooks/terraform-provider-openstack-unittest/run.yaml
 
 - job:
     name: terraform-provider-openstack-acceptance-test
     parent: terraform-provider-openstack-test
     description: |
       Run terraform provider openstack acceptance test on master branch
-    run: playbooks/terraform-provider-openstack-acceptance-test/run
+    run: playbooks/terraform-provider-openstack-acceptance-test/run.yaml
     vars:
       os_branch: 'master'
 
@@ -163,14 +163,14 @@
     parent: terraform-test
     description: |
       Run terraform unit test
-    run: playbooks/terraform-unittest/run
+    run: playbooks/terraform-unittest/run.yaml
 
 - job:
     name: terraform-acceptance-test
     parent: terraform-test
     description: |
       Run terraform acceptance test on master branch
-    run: playbooks/terraform-acceptance-test/run
+    run: playbooks/terraform-acceptance-test/run.yaml
     vars:
       os_branch: 'master'
 
@@ -180,6 +180,6 @@
     parent: golang-test
     description: |
       Run gophercloud acceptance test with telefonica cloud
-    run: playbooks/gophercloud-telefonica-acceptance-test/run
+    run: playbooks/gophercloud-telefonica-acceptance-test/run.yaml
     secrets:
       - telefonica_credentials
