@@ -44,6 +44,10 @@
       cat << EOF >> /tmp/dg-local.conf
       [[local|localrc]]
       NETWORK_GATEWAY=10.0.0.1
+      # Enable designate
+      enable_plugin designate https://git.openstack.org/openstack/designate
+      # Enable core Designate services
+      enable_service designate,designate-central,designate-api,designate-pool-manager,designate-zone-manager,designate-mdns
       EOF
     executable: /bin/bash
     chdir: '{{ ansible_user_dir }}/workspace'
