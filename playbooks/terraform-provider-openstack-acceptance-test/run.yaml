@@ -40,6 +40,9 @@
           fi
 
           # Run except the DNS/FW/LB test 100 testcases at a time
+          export OS_DB_ENVIRONMENT=1 # for Trove tests
+          export OS_DNS_ENVIRONMENT=1 # for Designate tests
+          export OS_SWIFT_ENVIRONMENT=1 # for Swift tests
           testcases=`go test ./openstack/ -v -list 'Acc'`
           testcases=`echo "$testcases" | sed '$d' | grep -v -e DNS -e FW -e LB`
           echo "$testcases" | xargs -t -n100 sh -c 'TF_ACC=1 go test ./openstack -v -timeout 120m -run $(echo "$@" | tr " " "|")' argv0 2>&1 > $TEST_RESULTS_TXT
