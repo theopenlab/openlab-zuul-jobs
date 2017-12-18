@@ -45,17 +45,6 @@
       export GIT_BASE=https://github.com
       export OVERRIDE_ZUUL_BRANCH='{{ os_branch }}'
       export DEVSTACK_GATE_FIXED_RANGE=10.0.0.0/20
-      export PROJECTS="openstack/trove"
-      export PROJECTS="openstack/trove-integration $PROJECTS"
-      function post_test_hook {
-          sudo su - devstack
-          export BRIDGE_IP=10.1.0.1
-          export DEST=$BASE/new
-          export PATH_DEVSTACK_SRC=$DEST/devstack
-          cd /opt/stack/new/trove-integration/scripts
-          ./redstack kick-start mysql
-      }
-      export -f post_test_hook
       cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
       ./safe-devstack-vm-gate-wrap.sh
     executable: /bin/bash
