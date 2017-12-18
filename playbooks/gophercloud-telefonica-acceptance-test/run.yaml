@@ -15,13 +15,14 @@
           export OS_USERNAME="`echo {{ telefonica_credentials.user_name }}`"
 
           set -e
+          set -o pipefail
           set -x
           TEST_RESULTS_TXT='{{ ansible_user_dir }}/workspace/test_results.txt'
           go get ./... || true
           {
           # Only enable these successful test cases
           go test -v -tags "fixtures acceptance" ./acceptance/openstack/networking/v2/ -run TestSubnetsList
-          } > $TEST_RESULTS_TXT
+          } 2>&1 | tee $TEST_RESULTS_TXT
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env }}'

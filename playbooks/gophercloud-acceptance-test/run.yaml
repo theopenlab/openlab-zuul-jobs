@@ -8,6 +8,7 @@
     - shell:
         cmd: |
           set -e
+          set -o pipefail
           set -x
 
           # Prep the testing environment by creating the required testing resources and environment variables
@@ -35,15 +36,15 @@
           go get ./... || true
           {
           # Only enable these successful test cases
-          go test -v -tags "fixtures acceptance" ./acceptance/openstack/identity/v3/ 2>&1
-          go test -v -tags "fixtures acceptance" ./acceptance/openstack/networking/v2/ 2>&1
-          go test -v -tags "fixtures acceptance" ./acceptance/openstack/blockstorage/v2/ 2>&1
-          go test -v -tags "fixtures acceptance" -run "SecGroup|Flavor" ./acceptance/openstack/compute/v2/ 2>&1
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/identity/v3/
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/networking/v2/
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/blockstorage/v2/
+          go test -v -tags "fixtures acceptance" -run "SecGroup|Flavor" ./acceptance/openstack/compute/v2/
           # To enable more after the fix of https://github.com/gophercloud/gophercloud/issues/608
           # go test -v -tags "fixtures acceptance" ./acceptance/openstack/imageservice/v2/
           # go test -v -tags "fixtures acceptance" ./acceptance/openstack/identity/v2/
           # go test -v -tags "fixtures acceptance" ./acceptance/openstack/compute/v2/
-          } > $TEST_RESULTS_TXT
+          } 2>&1 | tee $TEST_RESULTS_TXT
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env }}'
