@@ -42,7 +42,6 @@
 
           # Run except the DNS/FW/LB test 100 testcases at a time
           export OS_DB_ENVIRONMENT=1 # for Trove tests
-          export OS_DNS_ENVIRONMENT=1 # for Designate tests
           export OS_SWIFT_ENVIRONMENT=1 # for Swift tests
           testcases=`go test ./openstack/ -v -list 'Acc'`
           testcases=`echo "$testcases" | sed '$d' | grep -v -e FW -e LB`
