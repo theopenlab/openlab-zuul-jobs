@@ -24,24 +24,26 @@
           export OS_IMAGE_NAME="cirros"
           export OS_NETWORK_NAME="gophercloud-test"
 
-          set -e
+          # set -e
+          ret=0
           set -o pipefail
           set -x
           TEST_RESULTS_TXT='{{ ansible_user_dir }}/workspace/test_results.txt'
           go get ./... || true
           {
           # Only enable these successful test cases
-          go test -v -tags "fixtures acceptance" ./acceptance/openstack/ -run TestReauth
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/ -run TestReauth || exitcode=$?
           go test -v -tags "fixtures acceptance" ./acceptance/openstack/blockstorage/extensions -run \
-              'TestVolumeActionsAttachCreateDestroy|TestVolumeActionsReserveUnreserve|TestVolumeActionsExtendSize'
-          go test -v -tags "fixtures acceptance" ./acceptance/openstack/blockstorage/v2
-          go test -v -tags "fixtures acceptance" ./acceptance/openstack/compute/v2
-          go test -v -tags "fixtures acceptance" ./acceptance/openstack/identity/v2
-          go test -v -tags "fixtures acceptance" ./acceptance/openstack/identity/v3
-          go test -v -tags "fixtures acceptance" ./acceptance/openstack/imageservice/v2
-          go test -v -tags "fixtures acceptance" ./acceptance/openstack/networking/v2
-          go test -v -tags "fixtures acceptance" ./acceptance/openstack/networking/v2/extensions
-          go test -v -tags "fixtures acceptance" ./acceptance/openstack/networking/v2/extensions/layer3
+              'TestVolumeActionsAttachCreateDestroy|TestVolumeActionsReserveUnreserve|TestVolumeActionsExtendSize' || exitcode=$?
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/blockstorage/v2 || exitcode=$?
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/compute/v2 || exitcode=$?
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/identity/v2 || exitcode=$?
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/identity/v3 || exitcode=$?
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/imageservice/v2 || exitcode=$?
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/networking/v2 || exitcode=$?
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/networking/v2/extensions || exitcode=$?
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/networking/v2/extensions/layer3 || exitcode=$?
+          exit $exitstatus
           } 2>&1 | tee $TEST_RESULTS_TXTT
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
