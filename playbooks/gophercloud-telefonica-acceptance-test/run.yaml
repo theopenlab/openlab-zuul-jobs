@@ -33,7 +33,7 @@
           # Only enable these successful test cases
           go test -v -tags "fixtures acceptance" ./acceptance/openstack/ -run TestReauth
           go test -v -tags "fixtures acceptance" ./acceptance/openstack/blockstorage/extensions -run \
-          TestVolumeActionsAttachCreateDestroy|TestVolumeActionsReserveUnreserve|TestVolumeActionsExtendSize
+              TestVolumeActionsAttachCreateDestroy|TestVolumeActionsReserveUnreserve|TestVolumeActionsExtendSize
           go test -v -tags "fixtures acceptance" ./acceptance/openstack/blockstorage/v2
           go test -v -tags "fixtures acceptance" ./acceptance/openstack/compute/v2
           go test -v -tags "fixtures acceptance" ./acceptance/openstack/identity/v2
