@@ -14,13 +14,33 @@
           export OS_TENANT_NAME="`echo {{ telefonica_credentials.project_name }}`"
           export OS_USERNAME="`echo {{ telefonica_credentials.user_name }}`"
 
+          export OS_SHARE_NETWORK_ID="foobar"
+          export OS_FLAVOR_ID_RESIZE=2
+          export OS_FLAVOR_ID=1
+          export OS_POOL_NAME="admin_external_net"
+          export OS_EXTGW_ID="0a2228f2-7f8a-45f1-8e09-9039e1d09975"
+          export OS_NETWORK_ID="52ae49fd-41a9-4d7d-ab80-fd4e7b495fcc"
+          export OS_IMAGE_ID="0d8249a2-afdd-4fef-8933-36acd83c5c6a"
+          export OS_IMAGE_NAME="cirros"
+          export OS_NETWORK_NAME="gophercloud-test"
+
           set -e
           set -x
           TEST_RESULTS_TXT='{{ ansible_user_dir }}/workspace/test_results.txt'
           go get ./... || true
           {
           # Only enable these successful test cases
-          go test -v -tags "fixtures acceptance" ./acceptance/openstack/networking/v2/ -run TestSubnetsList
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/ -run TestReauth
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/blockstorage/extensions -run \
+          TestVolumeActionsAttachCreateDestroy|TestVolumeActionsReserveUnreserve|TestVolumeActionsExtendSize
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/blockstorage/v2
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/compute/v2
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/identity/v2
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/identity/v3
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/imageservice/v2
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/networking/v2
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/networking/v2/extensions
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/networking/v2/extensions/layer3
           } > $TEST_RESULTS_TXT
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
