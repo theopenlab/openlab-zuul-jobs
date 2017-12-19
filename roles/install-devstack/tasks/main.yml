@@ -46,6 +46,7 @@
       export OVERRIDE_ZUUL_BRANCH='{{ os_branch }}'
       export DEVSTACK_GATE_FIXED_RANGE=10.0.0.0/20
       export PROJECTS=openstack/trove
+      export PROJECTS="openstack/designate $PROJECTS"
       cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
       ./safe-devstack-vm-gate-wrap.sh
     executable: /bin/bash

@@ -44,8 +44,12 @@
       cat << EOF >> /tmp/dg-local.conf
       [[local|localrc]]
       NETWORK_GATEWAY=10.0.0.1
+      # Enable trove
       enable_service trove tr-api tr-tmgr tr-cond
       enable_plugin trove git://git.openstack.org/openstack/trove
+      # Enable designate
+      enable_service designate,designate-central,designate-api,designate-pool-manager,designate-zone-manager,designate-mdns
+      enable_plugin designate git://git.openstack.org/openstack/designate
       EOF
     executable: /bin/bash
     chdir: '{{ ansible_user_dir }}/workspace'
