@@ -8,6 +8,7 @@
     - shell:
         cmd: |
           set -e
+          set -o pipefail
           set -x
 
           if [[ ! -d $GOPATH/src/github.com/hashicorp/terraform/ ]]; then
@@ -20,7 +21,7 @@
           {
           TF_ACC=1 go test ./terraform -v -timeout 120m 2>&1
           TF_ACC=1 go test ./... -v -timeout 120m 2>&1
-          } > $TEST_RESULTS_TXT
+          }  2>&1 | tee $TEST_RESULTS_TXT
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env }}'

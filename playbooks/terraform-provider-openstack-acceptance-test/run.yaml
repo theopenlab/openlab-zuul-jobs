@@ -8,6 +8,7 @@
     - shell:
         cmd: |
           set -e
+          set -o pipefail
           set -x
 
           # Prep the testing environment by creating the required testing resources and environment variables
@@ -40,9 +41,10 @@
           fi
 
           # Run except the DNS/FW/LB test 100 testcases at a time
+          export OS_SWIFT_ENVIRONMENT=1 # for Swift tests
           testcases=`go test ./openstack/ -v -list 'Acc'`
-          testcases=`echo "$testcases" | sed '$d' | grep -v -e DNS -e FW -e LB`
-          echo "$testcases" | xargs -t -n100 sh -c 'TF_ACC=1 go test ./openstack -v -timeout 120m -run $(echo "$@" | tr " " "|")' argv0 2>&1 > $TEST_RESULTS_TXT
+          testcases=`echo "$testcases" | sed '$d' | grep -v -e FW -e LB`
+          echo "$testcases" | xargs -t -n100 sh -c 'TF_ACC=1 go test ./openstack -v -timeout 120m -run $(echo "$@" | tr " " "|")' argv0 2>&1 | tee $TEST_RESULTS_TXT
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env }}'

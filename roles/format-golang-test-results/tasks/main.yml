@@ -8,6 +8,6 @@
       go-junit-report < $TEST_RESULTS_TXT > $TEST_RESULTS_XML
 
       pip install junit2html
-      junit2html $TEST_RESULTS_XML $TEST_RESULTS_HTML
+      python `which junit2html` $TEST_RESULTS_XML $TEST_RESULTS_HTML
     executable: /bin/bash
   environment: '{{ golang_env }}'
