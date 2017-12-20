@@ -38,7 +38,7 @@
               export DEST=$BASE/new
               export PATH_DEVSTACK_SRC=$DEST/devstack
               cd /opt/stack/new/trove/integration/scripts
-              sudo -u zuul ./trovestack dsvm-gate-tests mysql
+              su - zuul -c './trovestack dsvm-gate-tests mysql'
           }
           export -f post_test_hook
 
