@@ -1,0 +1,52 @@
+- hosts: all
+  become: yes
+  tasks:
+    - shell:
+        cmd: |
+          apt-get install python-pip -y
+          pip install -U python-openstackclient
+          # NOTE: the following commands may include sensitive information please do not print in job logs
+          export OS_PASSWORD="`echo {{ telefonica_credentials.password }}`"
+          export OS_AUTH_TYPE="`echo {{ telefonica_credentials.auth_type }}`"
+          export OS_AUTH_URL="`echo {{ telefonica_credentials.auth_url }}`"
+          export OS_IDENTITY_API_VERSION="`echo {{ telefonica_credentials.identity_api_version }}`"
+          export OS_DOMAIN_NAME="`echo {{ telefonica_credentials.domain_name }}`"
+          export OS_PROJECT_NAME="`echo {{ telefonica_credentials.project_name}}`"
+          export OS_REGION_NAME="`echo {{ telefonica_credentials.region_name}}`"
+          export OS_TENANT_NAME="`echo {{ telefonica_credentials.project_name }}`"
+          export OS_USERNAME="`echo {{ telefonica_credentials.user_name }}`"
+
+          export OS_SHARE_NETWORK_ID="foobar"
+          export OS_FLAVOR_ID_RESIZE=2
+          export OS_FLAVOR_ID=1
+          export OS_POOL_NAME="admin_external_net"
+          export OS_EXTGW_ID="$(openstack network show $OS_POOL_NAME -f value -c id)"
+          export OS_IMAGE_NAME="cirros-0.3.5-x86_64-disk"
+          export OS_IMAGE_ID="$(openstack image show $OS_IMAGE_NAME -f value -c id)"
+          if [ -z "$OS_IMAGE_ID" ]; then
+              curl -O http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img
+              export OS_IMAGE_ID="$(openstack image create --file ./cirros-0.3.5-x86_64-disk.img --min-disk 1 --container-format bare --disk-format raw cirros-0.3.5-x86_64-disk -f value -c id)"
+              rm cirros-0.3.5-x86_64-disk.img
+          fi
+          export OS_NETWORK_NAME="terraform-provider-telefonicaopencloud-test"
+          export OS_NETWORK_ID="$(openstack network show $OS_NETWORK_NAME -f value -c id)"
+          if [ -z "$OS_NETWORK_ID" ]; then
+              export OS_NETWORK_ID="$(openstack network create $OS_NETWORK_NAME -f value -c id)"
+              openstack subnet create --network $OS_NETWORK_ID --subnet-range 10.0.20.0/24 terraform-provider-telefonicaopencloud-test
+          fi
+          # set -e
+          ret=0
+          set -o pipefail
+          set -x
+          # Run except the DNS/FW/LB test 100 testcases at a time
+          export OS_SWIFT_ENVIRONMENT=1 # for Swift tests
+          export OS_DB_ENVIRONMENT=1 # for Trove tests
+          export OS_DNS_ENVIRONMENT=1 # for Designate tests
+          testcases=`go test github.com/huawei-clouds/terraform-provider-telefonicaopencloud/telefonicaopencloud/ -v -list 'Acc'`
+          # testcases=`echo "$testcases" | sed '$d' | grep -v -e FW -e LB`
+          # echo "$testcases" | xargs -t -n100 sh -c 'TF_ACC=1 go test ./openstack -v -timeout 120m -run $(echo "$@" | tr " " "|")' argv0 2>&1 | tee $TEST_RESULTS_TXT
+          TF_ACC=1 go test github.com/huawei-clouds/terraform-provider-telefonicaopencloud/telefonicaopencloud/ -v -run TestAccNetworkingV2Subnet_basic 2>&1 | tee $TEST_RESULTS_TXT
+
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ golang_env }}'

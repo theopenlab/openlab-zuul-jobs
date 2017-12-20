@@ -5,17 +5,17 @@
     name: init-test
     description: |
       Base job for all types of test jobs. Ensure workspace and copy log files.
-    pre-run: playbooks/init-test/pre
-    post-run: playbooks/init-test/post
-
-# Acceptance test base job
-- job:
-    name: acceptance-test
-    parent: init-test
-    description: |
-      Base job for all types of acceptance test jobs.
-    pre-run: playbooks/acceptance-test/pre
+    pre-run: playbooks/init-test/pre.yaml
+    post-run: playbooks/init-test/post.yaml
     timeout: 7200
+    vars:
+      stable_branches:
+        - master
+        - stable/pike
+        - stable/ocata
+      eol_branches:
+        - newton-eol
+        - mitaka-eol
 
 # Golang test base job
 - job:
@@ -23,118 +23,173 @@
     parent: init-test
     description: |
       Base job for all types of golang test jobs.
-    post-run: playbooks/golang-test/post
+    pre-run: playbooks/golang-test/pre.yaml
+    post-run: playbooks/golang-test/post.yaml
+    vars:
+      golang_env:
+        GOPATH: '{{ ansible_user_dir }}'
+        PATH: '{{ ansible_env.PATH }}:/usr/local/go/bin:{{ ansible_user_dir }}/bin'
+        TEST_RESULTS_TXT: '{{ ansible_user_dir }}/workspace/test_results.txt'
+        TEST_RESULTS_XML: '{{ ansible_user_dir }}/workspace/test_results.xml'
+        TEST_RESULTS_HTML: '{{ ansible_user_dir }}/workspace/test_results.html'
 
 # Gophercloud jobs
 - job:
-    name: gophercloud-unittest
+    name: gophercloud-test
     parent: golang-test
     description: |
+      Gophercloud test base job
+    vars:
+      sdk: 'gophercloud'
+
+- job:
+    name: gophercloud-unittest
+    parent: gophercloud-test
+    description: |
       Run gophercloud unit test
-    run: playbooks/gophercloud-unittest/run
+    run: playbooks/gophercloud-unittest/run.yaml
 
 - job:
     name: gophercloud-acceptance-test
-    parent: acceptance-test
+    parent: gophercloud-test
     description: |
-      Run gophercloud acceptance test
-    run: playbooks/gophercloud-acceptance-test/run
+      Run gophercloud acceptance test on master branch
+    run: playbooks/gophercloud-acceptance-test/run.yaml
+    vars:
+      os_branch: 'master'
 
 - job:
     name: gophercloud-acceptance-test-pike
-    parent: acceptance-test
+    parent: gophercloud-acceptance-test
     description: |
-      Run gophercloud acceptance test with stable/pike OpenStack
-    run: playbooks/gophercloud-acceptance-test-pike/run
+      Run gophercloud acceptance test on pike branch
+    vars:
+      os_branch: 'stable/pike'
 
 - job:
     name: gophercloud-acceptance-test-ocata
-    parent: acceptance-test
+    parent: gophercloud-acceptance-test
     description: |
-      Run gophercloud acceptance test with stable/ocata OpenStack
-    run: playbooks/gophercloud-acceptance-test-ocata/run
+      Run gophercloud acceptance test on ocata branch
+    vars:
+      os_branch: 'stable/ocata'
 
 - job:
     name: gophercloud-acceptance-test-newton
-    parent: acceptance-test
+    parent: gophercloud-acceptance-test
     description: |
-      Run gophercloud acceptance test with stable/newton OpenStack
-    run: playbooks/gophercloud-acceptance-test-newton/run
+      Run gophercloud acceptance test on newton branch
+    vars:
+      os_branch: 'newton-eol'
 
 - job:
     name: gophercloud-acceptance-test-mitaka
-    parent: acceptance-test
+    parent: gophercloud-acceptance-test
     description: |
-      Run gophercloud acceptance test with stable/mitaka OpenStack
-    run: playbooks/gophercloud-acceptance-test-mitaka/run
+      Run gophercloud acceptance test on mitaka branch
+    vars:
+      os_branch: 'mitaka-eol'
     nodeset: ubuntu-trusty
 
 # Terraform-provider-openstack jobs
 - job:
+    name: terraform-provider-openstack-test
+    parent: golang-test
+    description: |
+      Terraform provider openstack test base job
+    vars:
+      sdk: 'terraform-provider-openstack'
+
+- job:
     name: terraform-provider-openstack-unittest
-    parent: init-test
+    parent: terraform-provider-openstack-test
     description: |
       Run terraform provider openstack unit test
-    run: playbooks/terraform-provider-openstack-unittest/run
+    run: playbooks/terraform-provider-openstack-unittest/run.yaml
 
 - job:
     name: terraform-provider-openstack-acceptance-test
-    parent: acceptance-test
+    parent: terraform-provider-openstack-test
     description: |
-      Run terraform provider openstack acceptance test
-    run: playbooks/terraform-provider-openstack-acceptance-test/run
+      Run terraform provider openstack acceptance test on master branch
+    run: playbooks/terraform-provider-openstack-acceptance-test/run.yaml
+    vars:
+      os_branch: 'master'
 
 - job:
     name: terraform-provider-openstack-acceptance-test-pike
-    parent: acceptance-test
+    parent: terraform-provider-openstack-acceptance-test
     description: |
-      Run terraform provider openstack acceptance test with stable/pike OpenStack
-    run: playbooks/terraform-provider-openstack-acceptance-test-pike/run
+      Run terraform provider openstack acceptance test on pike branch
+    vars:
+      os_branch: 'stable/pike'
 
 - job:
     name: terraform-provider-openstack-acceptance-test-ocata
-    parent: acceptance-test
+    parent: terraform-provider-openstack-acceptance-test
     description: |
-      Run terraform provider openstack acceptance test with stable/ocata OpenStack
-    run: playbooks/terraform-provider-openstack-acceptance-test-ocata/run
+      Run terraform provider openstack acceptance test on ocata branch
+    vars:
+      os_branch: 'stable/ocata'
 
 - job:
     name: terraform-provider-openstack-acceptance-test-newton
-    parent: acceptance-test
+    parent: terraform-provider-openstack-acceptance-test
     description: |
-      Run terraform provider openstack acceptance test with stable/newton OpenStack
-    run: playbooks/terraform-provider-openstack-acceptance-test-newton/run
+      Run terraform provider openstack acceptance test on newton branch
+    vars:
+      os_branch: 'newton-eol'
 
 - job:
     name: terraform-provider-openstack-acceptance-test-mitaka
-    parent: acceptance-test
+    parent: terraform-provider-openstack-acceptance-test
     description: |
-      Run terraform provider openstack acceptance test with stable/mitaka OpenStack
-    run: playbooks/terraform-provider-openstack-acceptance-test-mitaka/run
+      Run terraform provider openstack acceptance test on mitaka branch
+    vars:
+      os_branch: 'mitaka-eol'
     nodeset: ubuntu-trusty
 
 # Terraform jobs
 - job:
+    name: terraform-test
+    parent: golang-test
+    description: |
+      Terraform test base job
+    vars:
+      sdk: 'terraform'
+
+- job:
     name: terraform-unittest
-    parent: init-test
+    parent: terraform-test
     description: |
       Run terraform unit test
-    run: playbooks/terraform-unittest/run
+    run: playbooks/terraform-unittest/run.yaml
 
 - job:
     name: terraform-acceptance-test
-    parent: acceptance-test
+    parent: terraform-test
     description: |
-      Run terraform acceptance test
-    run: playbooks/terraform-acceptance-test/run
+      Run terraform acceptance test on master branch
+    run: playbooks/terraform-acceptance-test/run.yaml
+    vars:
+      os_branch: 'master'
 
 # Gophercloud acceptance tests with Telefonica cloud
 - job:
     name: gophercloud-telefonica-acceptance-test
-    parent: init-test
+    parent: golang-test
     description: |
       Run gophercloud acceptance test with telefonica cloud
-    run: playbooks/gophercloud-telefonica-acceptance-test/run
+    run: playbooks/gophercloud-telefonica-acceptance-test/run.yaml
     secrets:
       - telefonica_credentials
-    post-review: false
+
+# Gophercloud acceptance tests with Telefonica cloud
+- job:
+    name: terraform-provider-telefonicaopencloud-acceptance-test
+    parent: golang-test
+    description: |
+      Run acceptance tests of terraform-provider-telefonicaopencloud repo
+    run: playbooks/terraform-provider-telefonicaopencloud-acceptance-test/run.yaml
+    secrets:
+      - telefonica_credentials

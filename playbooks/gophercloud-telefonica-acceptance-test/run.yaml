@@ -1,30 +1,50 @@
 - hosts: all
   become: yes
   tasks:
-
-    - name: Create credentials rc tempfile
-      tempfile:
-        state: file
-      register: credentials_rc_tmp
-
-    - name: Create Telefonica credentials rc file
-      copy:
-        content: "{{ telefonica_credentials.credentials }}"
-        dest: "{{ credentials_rc_tmp.path }}"
-        mode: 0644
-
     - shell:
         cmd: |
-          set -e
-          set -x
-          source "{{ credentials_rc_tmp.path }}"
-          TEST_RESULTS_TXT='{{ ansible_user_dir }}/workspace/test_results.txt'
+          # NOTE: the following commands may include sensitive information please do not print in job logs
+          export OS_PASSWORD="`echo {{ telefonica_credentials.password }}`"
+          export OS_AUTH_TYPE="`echo {{ telefonica_credentials.auth_type }}`"
+          export OS_AUTH_URL="`echo {{ telefonica_credentials.auth_url }}`"
+          export OS_IDENTITY_API_VERSION="`echo {{ telefonica_credentials.identity_api_version }}`"
+          export OS_DOMAIN_NAME="`echo {{ telefonica_credentials.domain_name }}`"
+          export OS_PROJECT_NAME="`echo {{ telefonica_credentials.project_name}}`"
+          export OS_REGION_NAME="`echo {{ telefonica_credentials.region_name}}`"
+          export OS_TENANT_NAME="`echo {{ telefonica_credentials.project_name }}`"
+          export OS_USERNAME="`echo {{ telefonica_credentials.user_name }}`"
 
+          export OS_SHARE_NETWORK_ID="foobar"
+          export OS_FLAVOR_ID_RESIZE=2
+          export OS_FLAVOR_ID=1
+          export OS_POOL_NAME="admin_external_net"
+          export OS_EXTGW_ID="0a2228f2-7f8a-45f1-8e09-9039e1d09975"
+          export OS_NETWORK_ID="52ae49fd-41a9-4d7d-ab80-fd4e7b495fcc"
+          export OS_IMAGE_ID="0d8249a2-afdd-4fef-8933-36acd83c5c6a"
+          export OS_IMAGE_NAME="cirros"
+          export OS_NETWORK_NAME="gophercloud-test"
+
+          # set -e
+          ret=0
+          set -o pipefail
+          set -x
+          TEST_RESULTS_TXT='{{ ansible_user_dir }}/workspace/test_results.txt'
           go get ./... || true
           {
           # Only enable these successful test cases
-          go test -v -tags "fixtures acceptance" ./acceptance/openstack/networking/v2/ -run TestSubnetsList 2>&1
-          } > $TEST_RESULTS_TXT
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/ -run TestReauth || exitcode=$?
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/blockstorage/extensions -run \
+              'TestVolumeActionsAttachCreateDestroy|TestVolumeActionsReserveUnreserve|TestVolumeActionsExtendSize' || exitcode=$?
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/blockstorage/v2 || exitcode=$?
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/compute/v2 || exitcode=$?
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/identity/v2 || exitcode=$?
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/identity/v3 || exitcode=$?
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/imageservice/v2 || exitcode=$?
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/networking/v2 || exitcode=$?
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/networking/v2/extensions || exitcode=$?
+          go test -v -tags "fixtures acceptance" ./acceptance/openstack/networking/v2/extensions/layer3 || exitcode=$?
+          exit $exitstatus
+          } 2>&1 | tee $TEST_RESULTS_TXTT
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
-      environment: '{{ zuul | zuul_legacy_vars }}'
+      environment: '{{ golang_env }}'

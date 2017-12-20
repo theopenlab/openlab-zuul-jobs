@@ -1,0 +1,22 @@
+- name: clone devstack-gate to workspace
+  shell:
+    cmd: |
+      set -e
+      set -x
+      PROJECT=openstack-infra/devstack-gate
+      SHORT_PROJECT=`basename $PROJECT`
+      if [ -d /opt/git/$PROJECT ]; then
+          rsync -a /opt/git/$PROJECT/ $SHORT_PROJECT
+          cd $SHORT_PROJECT
+          git remote set-url origin https://github.com/$PROJECT
+          git remote update
+          git remote prune origin
+          git checkout master
+          git reset --hard remotes/origin/master
+          git clean -x -f -d -q
+      else
+          git clone https://github.com/$PROJECT
+      fi
+    executable: /bin/bash
+    chdir: '{{ ansible_user_dir }}/workspace'
+  environment: '{{ zuul | zuul_legacy_vars }}'
