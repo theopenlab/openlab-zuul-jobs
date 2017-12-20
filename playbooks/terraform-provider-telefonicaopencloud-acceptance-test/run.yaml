@@ -28,20 +28,18 @@
               export OS_IMAGE_ID="$(openstack image create --file ./cirros-0.3.5-x86_64-disk.img --min-disk 1 --container-format bare --disk-format raw cirros-0.3.5-x86_64-disk -f value -c id)"
               rm cirros-0.3.5-x86_64-disk.img
           fi
-          export OS_NETWORK_NAME="terraform-provider-telefonicaopencloud-test"
+          _NET_PREFIX="terraform-provider-telefonicaopencloud"
+          export OS_NETWORK_NAME="$_NET_PREFIX-net"
           export OS_NETWORK_ID="$(openstack network show $OS_NETWORK_NAME -f value -c id)"
           if [ -z "$OS_NETWORK_ID" ]; then
               export OS_NETWORK_ID="$(openstack network create $OS_NETWORK_NAME -f value -c id)"
-              openstack subnet create --network $OS_NETWORK_ID --subnet-range 10.0.20.0/24 $OS_NETWORK_NAME
+              openstack subnet create --network $OS_NETWORK_ID --subnet-range 10.0.20.0/24 $_NET_PREFIX-subnet
           fi
           # set -e
           ret=0
           set -o pipefail
           set -x
           # Run except the DNS/FW/LB test 100 testcases at a time
-          export OS_SWIFT_ENVIRONMENT=1 # for Swift tests
-          export OS_DB_ENVIRONMENT=1 # for Trove tests
-          export OS_DNS_ENVIRONMENT=1 # for Designate tests
           testcases=`go test github.com/huawei-clouds/terraform-provider-telefonicaopencloud/telefonicaopencloud/ -v -list 'Acc'`
           # testcases=`echo "$testcases" | sed '$d' | grep -v -e FW -e LB`
           # echo "$testcases" | xargs -t -n100 sh -c 'TF_ACC=1 go test ./openstack -v -timeout 120m -run $(echo "$@" | tr " " "|")' argv0 2>&1 | tee $TEST_RESULTS_TXT
