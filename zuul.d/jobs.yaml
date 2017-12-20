@@ -183,3 +183,13 @@
     run: playbooks/gophercloud-telefonica-acceptance-test/run.yaml
     secrets:
       - telefonica_credentials
+
+# Gophercloud acceptance tests with Telefonica cloud
+- job:
+    name: terraform-provider-telefonicaopencloud-acceptance-test
+    parent: golang-test
+    description: |
+      Run acceptance tests of terraform-provider-telefonicaopencloud repo
+    run: playbooks/terraform-provider-telefonicaopencloud-acceptance-test/run.yaml
+    secrets:
+      - telefonica_credentials
