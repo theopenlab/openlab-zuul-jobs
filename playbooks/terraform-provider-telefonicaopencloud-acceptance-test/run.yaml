@@ -32,7 +32,7 @@
           export OS_NETWORK_ID="$(openstack network show $OS_NETWORK_NAME -f value -c id)"
           if [ -z "$OS_NETWORK_ID" ]; then
               export OS_NETWORK_ID="$(openstack network create $OS_NETWORK_NAME -f value -c id)"
-              openstack subnet create --network $OS_NETWORK_ID --subnet-range 10.0.20.0/24 terraform-provider-telefonicaopencloud-test
+              openstack subnet create --network $OS_NETWORK_ID --subnet-range 10.0.20.0/24 $OS_NETWORK_NAME
           fi
           # set -e
           ret=0

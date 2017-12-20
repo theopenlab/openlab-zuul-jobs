@@ -3,6 +3,8 @@
   tasks:
     - shell:
         cmd: |
+          apt-get install python-pip -y
+          pip install -U python-openstackclient
           # NOTE: the following commands may include sensitive information please do not print in job logs
           export OS_PASSWORD="`echo {{ telefonica_credentials.password }}`"
           export OS_AUTH_TYPE="`echo {{ telefonica_credentials.auth_type }}`"
@@ -18,11 +20,20 @@
           export OS_FLAVOR_ID_RESIZE=2
           export OS_FLAVOR_ID=1
           export OS_POOL_NAME="admin_external_net"
-          export OS_EXTGW_ID="0a2228f2-7f8a-45f1-8e09-9039e1d09975"
-          export OS_NETWORK_ID="52ae49fd-41a9-4d7d-ab80-fd4e7b495fcc"
-          export OS_IMAGE_ID="0d8249a2-afdd-4fef-8933-36acd83c5c6a"
-          export OS_IMAGE_NAME="cirros"
-          export OS_NETWORK_NAME="gophercloud-test"
+          export OS_EXTGW_ID="$(openstack network show $OS_POOL_NAME -f value -c id)"
+          export OS_IMAGE_NAME="cirros-0.3.5-x86_64-disk"
+          export OS_IMAGE_ID="$(openstack image show $OS_IMAGE_NAME -f value -c id)"
+          if [ -z "$OS_IMAGE_ID" ]; then
+              curl -O http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img
+              export OS_IMAGE_ID="$(openstack image create --file ./cirros-0.3.5-x86_64-disk.img --min-disk 1 --container-format bare --disk-format raw cirros-0.3.5-x86_64-disk -f value -c id)"
+              rm cirros-0.3.5-x86_64-disk.img
+          fi
+          export OS_NETWORK_NAME="gophercloud-telefonica-test"
+          export OS_NETWORK_ID="$(openstack network show $OS_NETWORK_NAME -f value -c id)"
+          if [ -z "$OS_NETWORK_ID" ]; then
+              export OS_NETWORK_ID="$(openstack network create $OS_NETWORK_NAME -f value -c id)"
+              openstack subnet create --network $OS_NETWORK_ID --subnet-range 10.0.10.0/24 gophercloud-telefonica-test
+          fi
 
           # set -e
           ret=0
