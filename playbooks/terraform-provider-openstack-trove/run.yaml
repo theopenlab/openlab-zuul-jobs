@@ -1,5 +1,6 @@
 - hosts: all
   name: Autoconverted job legacy-trove-legacy-functional-dsvm-mysql from old job gate-trove-legacy-functional-dsvm-mysql
+  become: yes
   roles:
     - clone-devstack-gate-to-workspace
   tasks:
