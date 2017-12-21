@@ -1,55 +1,35 @@
 - hosts: all
-  name: Autoconverted job legacy-trove-legacy-functional-dsvm-mysql from old job gate-trove-legacy-functional-dsvm-mysql
-  become: yes
-  roles:
-    - clone-devstack-gate-to-workspace
+  name:  Install and init trove environment
   tasks:
-
     - shell:
         cmd: |
           set -e
           set -x
-          cat << 'EOF' >>"/tmp/dg-local.conf"
-          [[local|localrc]]
-          enable_plugin trove git://git.openstack.org/openstack/trove
-
-          EOF
+          git clone git://git.openstack.org/openstack/trove /opt/stack/trove
+          cd /opt/stack/trove/integration/scripts/
+          ./trovestack install
+          ./trovestack kick-start mysql
+          trove datastore-list
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'
       environment: '{{ zuul | zuul_legacy_vars }}'
 
+- hosts: all
+  name: Run acceptance tests of trove
+  become: yes
+  tasks:
     - shell:
         cmd: |
           set -e
           set -x
-          ENABLED_SERVICES=tempest
-          ENABLED_SERVICES+=,s-proxy,s-object,s-container,s-account
-          ENABLED_SERVICES+=,trove,tr-api,tr-tmgr,tr-cond
-          export ENABLED_SERVICES
-
-          export PYTHONUNBUFFERED=true
-          export DEVSTACK_GATE_TROVE=1
-          export PROJECTS="openstack/trove-dashboard $PROJECTS"
-          export DEVSTACK_PROJECT_FROM_GIT=python-troveclient
-          export PROJECTS="openstack/tripleo-image-elements $PROJECTS"
-          export PROJECTS="openstack/diskimage-builder $PROJECTS"
-          function post_test_hook {
-              sudo su - zuul
-              export BRIDGE_IP=10.1.0.1
-              export DEST=$BASE/new
-              export PATH_DEVSTACK_SRC=$DEST/devstack
-              cd /opt/stack/new/trove/integration/scripts
-              echo $USER
-              ./trovestack dsvm-gate-tests mysql
-          }
-          export -f post_test_hook
-
-          export BRANCH_OVERRIDE=default
-          if [ "$BRANCH_OVERRIDE" != "default" ] ; then
-              export OVERRIDE_ZUUL_BRANCH=$BRANCH_OVERRIDE
+          if [[ ! -d $GOPATH/src/github.com/terraform-providers/terraform-provider-openstack/ ]]; then
+              echo "Warnning: this is a temporary workaround because this job is not triggered from official git repo."
+              mkdir -p $GOPATH/src/github.com/terraform-providers/
+              cp -r $GOPATH/src/github.com/theopenlab/terraform-provider-openstack  $GOPATH/src/github.com/terraform-providers/
+              cd $GOPATH/src/github.com/terraform-providers/terraform-provider-openstack
           fi
-          cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
-          ./safe-devstack-vm-gate-wrap.sh
+          export OS_DB_ENVIRONMENT=1
+          TF_LOG=DEBUG TF_ACC=1 go test github.com/terraform-providers/terraform-provider-openstack/openstack -v -run TestAccDatabaseV1Instance_basic
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'
       environment: '{{ zuul | zuul_legacy_vars }}'
