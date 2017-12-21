@@ -6,10 +6,11 @@
           set -e
           set -x
           git clone git://git.openstack.org/openstack/trove /home/zuul/stack/trove
-          pip install -r /home/zuul/stack/trove/requirements.txt
+          sudo pip install -r /home/zuul/stack/trove/requirements.txt
           cd /home/zuul/stack/trove/integration/scripts/
           ./trovestack install
           ./trovestack kick-start mysql
+          source /home/zuul/devstack/openrc admin admin
           trove datastore-list
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'
