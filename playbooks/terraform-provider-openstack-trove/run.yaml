@@ -5,8 +5,8 @@
         cmd: |
           set -e
           set -x
-          git clone git://git.openstack.org/openstack/trove /opt/stack/trove
-          cd /opt/stack/trove/integration/scripts/
+          git clone git://git.openstack.org/openstack/trove /home/zuul/stack/trove
+          cd /home/zuul/stack/trove/integration/scripts/
           ./trovestack install
           ./trovestack kick-start mysql
           trove datastore-list
