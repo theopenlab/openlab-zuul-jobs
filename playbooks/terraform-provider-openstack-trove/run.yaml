@@ -34,11 +34,13 @@
           export PROJECTS="openstack/tripleo-image-elements $PROJECTS"
           export PROJECTS="openstack/diskimage-builder $PROJECTS"
           function post_test_hook {
+              sudo su - zuul
               export BRIDGE_IP=10.1.0.1
               export DEST=$BASE/new
               export PATH_DEVSTACK_SRC=$DEST/devstack
               cd /opt/stack/new/trove/integration/scripts
-              su - zuul -c './trovestack dsvm-gate-tests mysql'
+              echo $USER
+              ./trovestack dsvm-gate-tests mysql
           }
           export -f post_test_hook
 
