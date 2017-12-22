@@ -57,4 +57,4 @@
           TF_LOG=DEBUG TF_ACC=1 go test github.com/terraform-providers/terraform-provider-openstack/openstack -v -run TestAccDatabaseV1Instance_basic
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'
-      environment: '{{ zuul | zuul_legacy_vars }}'
+      environment: '{{ golang_env }}'
