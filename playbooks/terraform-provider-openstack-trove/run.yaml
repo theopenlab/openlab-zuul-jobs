@@ -38,7 +38,8 @@
           echo export OS_NETWORK_ID=$_NETWORK_ID >> openrc
           echo export OS_EXTGW_ID=$_EXTGW_ID >> openrc
           echo export OS_POOL_NAME="public" >> openrc
-          echo export OS_FLAVOR_ID=99 >> openrc
+          # echo export OS_FLAVOR_ID=99 >> openrc
+          echo export OS_FLAVOR_ID=15 >> openrc
           echo export OS_FLAVOR_ID_RESIZE=98 >> openrc
           echo export OS_SHARE_NETWORK_ID=foobar >> openrc
           source openrc demo demo
@@ -51,6 +52,8 @@
               cd $GOPATH/src/github.com/terraform-providers/terraform-provider-openstack
           fi
           export OS_DB_ENVIRONMENT=1
+          export OS_DB_DATASTORE_VERSION="5.6"
+          export OS_DB_DATASTORE_TYPE=mysql
           TF_LOG=DEBUG TF_ACC=1 go test github.com/terraform-providers/terraform-provider-openstack/openstack -v -run TestAccDatabaseV1Instance_basic
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'
