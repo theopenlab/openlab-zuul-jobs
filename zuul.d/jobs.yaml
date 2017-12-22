@@ -197,7 +197,7 @@
 # Test trove job with terraform-provider-openstack
 - job:
     name: terraform-provider-openstack-trove
-    parent: init-test
+    parent: golang-test
     description: |
       Run terraform-provider-openstack trove test
     run: playbooks/terraform-provider-openstack-trove/run.yaml

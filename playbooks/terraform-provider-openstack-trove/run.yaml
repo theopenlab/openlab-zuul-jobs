@@ -5,9 +5,9 @@
         cmd: |
           set -e
           set -x
-          git clone git://git.openstack.org/openstack/trove /home/zuul/stack/trove
-          sudo pip install -r /home/zuul/stack/trove/requirements.txt
-          cd /home/zuul/stack/trove/integration/scripts/
+          sudo git clone git://git.openstack.org/openstack/trove /opt/stack/trove
+          sudo pip install -r /opt/stack/trove/requirements.txt
+          cd /opt/stack/trove/integration/scripts/
           ./trovestack install
           ./trovestack kick-start mysql
           source /home/zuul/devstack/openrc admin admin
