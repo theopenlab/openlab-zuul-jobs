@@ -7,7 +7,7 @@
       go get -u github.com/theopenlab/go2xunit
       go2xunit -input $TEST_RESULTS_TXT -output $TEST_RESULTS_XML
 
-      apt-get install xsltproc
+      apt-get install --yes xsltproc
       wget https://raw.githubusercontent.com/theopenlab/nosetest-xunit-xslt/master/nosetests.xslt
       xsltproc nosetests.xslt $TEST_RESULTS_XML > $TEST_RESULTS_HTML
     executable: /bin/bash
