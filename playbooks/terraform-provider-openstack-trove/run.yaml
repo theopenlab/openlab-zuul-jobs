@@ -5,6 +5,7 @@
         cmd: |
           set -e
           set -x
+          sudo mkdir -p /opt/stack/
           cp -r /opt/git/openstack/* /opt/stack/
           cp -r /opt/git/openstack-dev/devstack /home/zuul/
           if [ ! -d /opt/stack/trove ]; then
