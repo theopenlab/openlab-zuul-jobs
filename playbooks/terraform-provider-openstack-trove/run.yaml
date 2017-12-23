@@ -1,5 +1,6 @@
 - hosts: all
-  name:  Install and init trove environment
+  name:  Prepare git repos for trove environment
+  become: yes
   tasks:
     - shell:
         cmd: |
@@ -9,9 +10,22 @@
           cp -r /opt/git/openstack/* /opt/stack/
           cp -r /opt/git/openstack-dev/devstack /home/zuul/
           if [ ! -d /opt/stack/trove ]; then
-              sudo git clone git://git.openstack.org/openstack/trove /opt/stack/trove
+              git clone git://git.openstack.org/openstack/trove /opt/stack/trove
           fi
-          sudo pip install -r /opt/stack/trove/requirements.txt
+          pip install -r /opt/stack/trove/requirements.txt
+          chown zuul.zuul /opt/stack/ -R
+          chown zuul.zuul /home/zuul/ -R
+        executable: /bin/bash
+        chdir: '{{ ansible_user_dir }}/workspace'
+      environment: '{{ zuul | zuul_legacy_vars }}'
+
+- hosts: all
+  name:  Install and init trove environment
+  tasks:
+    - shell:
+        cmd: |
+          set -e
+          set -x
           cd /opt/stack/trove/integration/scripts/
           ./trovestack install
           ./trovestack kick-start mysql
