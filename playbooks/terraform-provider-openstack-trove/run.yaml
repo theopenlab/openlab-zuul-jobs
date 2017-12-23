@@ -30,7 +30,13 @@
           ./trovestack install
           ./trovestack kick-start mysql
           source /home/zuul/devstack/openrc admin admin
+
+          # Following commands show some info for debugging
           trove datastore-list
+          openstack image list
+          openstack image show ubuntu_mysql
+          trove flavor-list
+          df -h
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'
       environment: '{{ zuul | zuul_legacy_vars }}'
