@@ -4,10 +4,11 @@
       set -e
       set -x
 
-      go get -u github.com/jstemmer/go-junit-report
-      go-junit-report < $TEST_RESULTS_TXT > $TEST_RESULTS_XML
+      go get -u github.com/theopenlab/go2xunit
+      go2xunit -input $TEST_RESULTS_TXT -output $TEST_RESULTS_XML
 
-      pip install junit2html
-      python `which junit2html` $TEST_RESULTS_XML $TEST_RESULTS_HTML
+      apt-get install xsltproc
+      wget https://raw.githubusercontent.com/theopenlab/nosetest-xunit-xslt/master/nosetests.xslt
+      xsltproc nosetests.xslt $TEST_RESULTS_XML > $TEST_RESULTS_HTML
     executable: /bin/bash
   environment: '{{ golang_env }}'
