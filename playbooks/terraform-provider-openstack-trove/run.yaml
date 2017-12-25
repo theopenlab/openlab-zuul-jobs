@@ -82,7 +82,7 @@
           export OS_DB_ENVIRONMENT=1
           export OS_DB_DATASTORE_VERSION="5.6"
           export OS_DB_DATASTORE_TYPE=mysql
-          TF_LOG=DEBUG TF_ACC=1 go test github.com/terraform-providers/terraform-provider-openstack/openstack -v -timeout 20m -run TestAccDatabaseV1Instance_basic
+          TF_LOG=DEBUG TF_ACC=1 go test github.com/terraform-providers/terraform-provider-openstack/openstack -v -timeout 20m -run TestAccDatabaseV1Instance_basic 2>&1 | tee $TEST_RESULTS_TXT
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'
       environment: '{{ golang_env }}'
