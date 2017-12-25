@@ -48,6 +48,7 @@
     - shell:
         cmd: |
           set -e
+          set -o pipefail
           set -x
           pushd /home/zuul/devstack
           source openrc admin admin

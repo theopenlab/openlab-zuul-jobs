@@ -158,6 +158,13 @@
     vars:
       os_branch: 'master'
 
+- job:
+    name: terraform-provider-openstack-acceptance-test-trove
+    parent: golang-test
+    description: |
+      Run terraform-provider-openstack trove acceptance test on master branch
+    run: playbooks/terraform-provider-openstack-acceptance-test-trove/run.yaml
+
 # Gophercloud acceptance tests with Telefonica cloud
 - job:
     name: gophercloud-telefonica-acceptance-test
@@ -177,11 +184,3 @@
     run: playbooks/terraform-provider-telefonicaopencloud-acceptance-test/run.yaml
     secrets:
       - telefonica_credentials
-
-# Test trove job with terraform-provider-openstack
-- job:
-    name: terraform-provider-openstack-trove
-    parent: golang-test
-    description: |
-      Run terraform-provider-openstack trove test
-    run: playbooks/terraform-provider-openstack-trove/run.yaml
