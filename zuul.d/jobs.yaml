@@ -158,31 +158,6 @@
     vars:
       os_branch: 'master'
 
-# Terraform jobs
-- job:
-    name: terraform-test
-    parent: golang-test
-    description: |
-      Terraform test base job
-    vars:
-      sdk: 'terraform'
-
-- job:
-    name: terraform-unittest
-    parent: terraform-test
-    description: |
-      Run terraform unit test
-    run: playbooks/terraform-unittest/run.yaml
-
-- job:
-    name: terraform-acceptance-test
-    parent: terraform-test
-    description: |
-      Run terraform acceptance test on master branch
-    run: playbooks/terraform-acceptance-test/run.yaml
-    vars:
-      os_branch: 'master'
-
 # Gophercloud acceptance tests with Telefonica cloud
 - job:
     name: gophercloud-telefonica-acceptance-test
