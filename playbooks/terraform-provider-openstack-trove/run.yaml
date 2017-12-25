@@ -70,7 +70,8 @@
           source openrc demo demo
           popd
 
-          iptables -I openstack-INPUT 5 -p tcp -m state --state NEW -m tcp --dport 5672 -j ACCEPT
+          # Fix iptables rules that prevent amqp connections from the devstack box to the guests
+          sudo iptables -D openstack-INPUT -j REJECT --reject-with icmp-host-prohibited || true
 
           if [[ ! -d $GOPATH/src/github.com/terraform-providers/terraform-provider-openstack/ ]]; then
               echo "Warnning: this is a temporary workaround because this job is not triggered from official git repo."
