@@ -39,6 +39,14 @@
           ret=0
           set -o pipefail
           set -x
+
+          if [[ ! -d $GOPATH/src/github.com/huawei-clouds/terraform-provider-telefonicaopencloud/ ]]; then
+              echo "Warnning: this is a temporary workaround because this job is not triggered from official git repo."
+              mkdir -p $GOPATH/src/github.com/huawei-clouds/
+              cp -r $GOPATH/src/github.com/liu-sheng/terraform-provider-telefonicaopencloud  $GOPATH/src/github.com/huawei-clouds/
+              cd $GOPATH/src/github.com/huawei-clouds/terraform-provider-telefonicaopencloud/
+          fi
+
           # Run except the DNS/FW/LB test 100 testcases at a time
           testcases=`go test github.com/huawei-clouds/terraform-provider-telefonicaopencloud/telefonicaopencloud/ -v -list 'Acc'`
           testcases=`echo "$testcases" | sed '$d' | grep -v -e FW -e LB`
