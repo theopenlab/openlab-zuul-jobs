@@ -35,7 +35,7 @@
 
           go get ./... || true
           # Temporally enable all tests with openlab repo and only enable part tests with official repo
-          if [ '{{ zuul.project.src_dir }}' =~ "theopenlab" ];then
+          if [[ '{{ zuul.project.src_dir }}' =~ "theopenlab" ]];then
               go test -v -tags "fixtures acceptance" ./acceptance/openstack/... 2>&1 | tee $TEST_RESULTS_TXT
           else:
               {
