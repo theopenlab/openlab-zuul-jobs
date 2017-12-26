@@ -40,10 +40,10 @@
               cd $GOPATH/src/github.com/terraform-providers/terraform-provider-openstack
           fi
 
-          # Run except the DNS/FW/LB test 100 testcases at a time
-          export OS_SWIFT_ENVIRONMENT=1 # for Swift tests
+          # Run the DNS test 100 testcases at a time
+          export OS_DNS_ENVIRONMENT=1 # for Designate tests
           testcases=`go test ./openstack/ -v -list 'Acc'`
-          testcases=`echo "$testcases" | sed '$d' | grep -v -e FW -e LB`
+          testcases=`echo "$testcases" | sed '$d' | grep DNS`
           echo "$testcases" | xargs -t -n100 sh -c 'TF_LOG=DEBUG TF_ACC=1 go test ./openstack -v -timeout 120m -run $(echo "$@" | tr " " "|")' argv0 2>&1 | tee $TEST_RESULTS_TXT
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'

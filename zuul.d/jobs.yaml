@@ -149,47 +149,38 @@
       os_branch: 'mitaka-eol'
     nodeset: ubuntu-trusty
 
-# Terraform jobs
 - job:
-    name: terraform-test
-    parent: golang-test
+    name: terraform-provider-openstack-acceptance-test-designate
+    parent: terraform-provider-openstack-acceptance-test
     description: |
-      Terraform test base job
-    vars:
-      sdk: 'terraform'
-
-- job:
-    name: terraform-unittest
-    parent: terraform-test
-    description: |
-      Run terraform unit test
-    run: playbooks/terraform-unittest/run.yaml
-
-- job:
-    name: terraform-acceptance-test
-    parent: terraform-test
-    description: |
-      Run terraform acceptance test on master branch
-    run: playbooks/terraform-acceptance-test/run.yaml
+      Run terraform provider openstack designate acceptance test on master branch
+    run: playbooks/terraform-provider-openstack-acceptance-test-designate/run.yaml
     vars:
       os_branch: 'master'
 
-# Gophercloud acceptance tests with Telefonica cloud
 - job:
-    name: gophercloud-telefonica-acceptance-test
+    name: terraform-provider-openstack-acceptance-test-trove
     parent: golang-test
     description: |
-      Run gophercloud acceptance test with telefonica cloud
-    run: playbooks/gophercloud-telefonica-acceptance-test/run.yaml
-    secrets:
-      - telefonica_credentials
+      Run terraform-provider-openstack trove acceptance test on master branch
+    run: playbooks/terraform-provider-openstack-acceptance-test-trove/run.yaml
 
 # Gophercloud acceptance tests with Telefonica cloud
 - job:
-    name: terraform-provider-telefonicaopencloud-acceptance-test
+    name: gophercloud-acceptance-test-telefonica
     parent: golang-test
     description: |
-      Run acceptance tests of terraform-provider-telefonicaopencloud repo
-    run: playbooks/terraform-provider-telefonicaopencloud-acceptance-test/run.yaml
+      Run gophercloud acceptance test against telefonica cloud
+    run: playbooks/gophercloud-acceptance-test-telefonica/run.yaml
+    secrets:
+      - telefonica_credentials
+
+# terraform-provider-telefonicaopencloud acceptance tests with Telefonica cloud
+- job:
+    name: terraform-provider-telefonicaopencloud-acceptance-test-telefonica
+    parent: golang-test
+    description: |
+      Run acceptance tests of terraform-provider-telefonicaopencloud repo against telefonica cloud
+    run: playbooks/terraform-provider-telefonicaopencloud-acceptance-test-telefonica/run.yaml
     secrets:
       - telefonica_credentials

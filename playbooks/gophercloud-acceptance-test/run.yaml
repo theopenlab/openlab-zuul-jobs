@@ -34,17 +34,22 @@
           popd
 
           go get ./... || true
-          {
-          # Only enable these successful test cases
-          go test -v -tags "fixtures acceptance" ./acceptance/openstack/identity/v3/
-          go test -v -tags "fixtures acceptance" ./acceptance/openstack/networking/v2/
-          go test -v -tags "fixtures acceptance" ./acceptance/openstack/blockstorage/v2/
-          go test -v -tags "fixtures acceptance" -run "SecGroup|Flavor" ./acceptance/openstack/compute/v2/
-          # To enable more after the fix of https://github.com/gophercloud/gophercloud/issues/608
-          # go test -v -tags "fixtures acceptance" ./acceptance/openstack/imageservice/v2/
-          # go test -v -tags "fixtures acceptance" ./acceptance/openstack/identity/v2/
-          # go test -v -tags "fixtures acceptance" ./acceptance/openstack/compute/v2/
-          } 2>&1 | tee $TEST_RESULTS_TXT
+          # Temporally enable all tests with openlab repo and only enable part tests with official repo
+          if [[ '{{ zuul.project.src_dir }}' =~ "theopenlab" ]];then
+              go test -v -tags "fixtures acceptance" ./acceptance/openstack/... 2>&1 | tee $TEST_RESULTS_TXT
+          else:
+              {
+              # Only enable these successful test cases
+              go test -v -tags "fixtures acceptance" ./acceptance/openstack/identity/v3/
+              go test -v -tags "fixtures acceptance" ./acceptance/openstack/networking/v2/
+              go test -v -tags "fixtures acceptance" ./acceptance/openstack/blockstorage/v2/
+              go test -v -tags "fixtures acceptance" -run "SecGroup|Flavor" ./acceptance/openstack/compute/v2/
+              # To enable more after the fix of https://github.com/gophercloud/gophercloud/issues/608
+              # go test -v -tags "fixtures acceptance" ./acceptance/openstack/imageservice/v2/
+              # go test -v -tags "fixtures acceptance" ./acceptance/openstack/identity/v2/
+              # go test -v -tags "fixtures acceptance" ./acceptance/openstack/compute/v2/
+              } 2>&1 | tee $TEST_RESULTS_TXT
+          fi
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env }}'
