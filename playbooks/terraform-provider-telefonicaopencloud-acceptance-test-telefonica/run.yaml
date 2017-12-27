@@ -35,6 +35,9 @@
               export OS_NETWORK_ID="$(openstack network create $OS_NETWORK_NAME -f value -c id)"
               openstack subnet create --network $OS_NETWORK_ID --subnet-range 10.0.20.0/24 $_NET_PREFIX-subnet
           fi
+
+          export OS_SWIFT_ENVIRONMENT=1
+
           # set -e
           ret=0
           set -o pipefail
