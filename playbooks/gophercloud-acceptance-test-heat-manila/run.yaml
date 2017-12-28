@@ -32,9 +32,9 @@
         enable_plugin heat git://git.openstack.org/openstack/heat
         enable_plugin manila git://git.openstack.org/openstack/manila
         EOF
-    executable: /bin/bash
-    chdir: '{{ ansible_user_dir }}/workspace'
-  environment: '{{ zuul | zuul_legacy_vars }}'
+      executable: /bin/bash
+      chdir: '{{ ansible_user_dir }}/workspace'
+    environment: '{{ zuul | zuul_legacy_vars }}'
 
 
 - hosts: all
