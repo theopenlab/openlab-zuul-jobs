@@ -1,52 +1,41 @@
 - name: create devstack local conf with heat and manila enabled
   roles:
     - clone-devstack-gate-to-workspace
-  shell:
-    cmd: |
-      set -e
-      set -x
-      cat << EOF >> /tmp/dg-local.conf
-      [[local|localrc]]
-      NETWORK_GATEWAY=10.0.0.1
+  tasks:
+    - shell:
+      cmd: |
+        set -e
+        set -x
+        cat << EOF >> /tmp/dg-local.conf
+        [[local|localrc]]
+        NETWORK_GATEWAY=10.0.0.1
 
-      MANILA_BACKEND1_CONFIG_GROUP_NAME=london
-      MANILA_BACKEND2_CONFIG_GROUP_NAME=paris
-      MANILA_SHARE_BACKEND1_NAME=LONDON
-      MANILA_SHARE_BACKEND2_NAME=PARIS
-      MANILA_OPTGROUP_london_driver_handles_share_servers=True
-      MANILA_OPTGROUP_paris_driver_handles_share_servers=True
-      MANILA_USE_SERVICE_INSTANCE_PASSWORD=True
-      MANILA_USE_DOWNGRADE_MIGRATIONS=True
-      MANILA_MULTI_BACKEND=True
-      MANILA_ADMIN_NET_RANGE=10.2.5.0/24
-      MANILA_DATA_NODE_IP=10.2.5.0/24
-      MANILA_DATA_COPY_CHECK_HASH=True
-      MANILA_SHARE_MIGRATION_PERIOD_TASK_INTERVAL=1
-      SHARE_DRIVER=manila.share.drivers.generic.GenericShareDriver
-      MANILA_SERVICE_IMAGE_ENABLED=True
-      MANILA_DEFAULT_SHARE_TYPE_EXTRA_SPECS='snapshot_support=True create_share_from_snapshot_support=True'
-      # LIBS_FROM_GIT=python-manilaclient
-      # LIBS_FROM_GIT=python-heatclient
+        MANILA_BACKEND1_CONFIG_GROUP_NAME=london
+        MANILA_BACKEND2_CONFIG_GROUP_NAME=paris
+        MANILA_SHARE_BACKEND1_NAME=LONDON
+        MANILA_SHARE_BACKEND2_NAME=PARIS
+        MANILA_OPTGROUP_london_driver_handles_share_servers=True
+        MANILA_OPTGROUP_paris_driver_handles_share_servers=True
+        MANILA_USE_SERVICE_INSTANCE_PASSWORD=True
+        MANILA_USE_DOWNGRADE_MIGRATIONS=True
+        MANILA_MULTI_BACKEND=True
+        MANILA_ADMIN_NET_RANGE=10.2.5.0/24
+        MANILA_DATA_NODE_IP=10.2.5.0/24
+        MANILA_DATA_COPY_CHECK_HASH=True
+        MANILA_SHARE_MIGRATION_PERIOD_TASK_INTERVAL=1
+        SHARE_DRIVER=manila.share.drivers.generic.GenericShareDriver
+        MANILA_SERVICE_IMAGE_ENABLED=True
+        MANILA_DEFAULT_SHARE_TYPE_EXTRA_SPECS='snapshot_support=True create_share_from_snapshot_support=True'
+        # LIBS_FROM_GIT=python-manilaclient
+        # LIBS_FROM_GIT=python-heatclient
 
-      enable_plugin heat git://git.openstack.org/openstack/heat
-      enable_plugin manila git://git.openstack.org/openstack/manila
-      EOF
+        enable_plugin heat git://git.openstack.org/openstack/heat
+        enable_plugin manila git://git.openstack.org/openstack/manila
+        EOF
     executable: /bin/bash
     chdir: '{{ ansible_user_dir }}/workspace'
   environment: '{{ zuul | zuul_legacy_vars }}'
 
-- name: install devstack with heat and manila enabled
-  shell:
-    cmd: |
-      set -e
-      set -x
-      export PYTHONUNBUFFERED=true
-      export GIT_BASE=https://github.com
-      cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
-      ./safe-devstack-vm-gate-wrap.sh
-    executable: /bin/bash
-    chdir: '{{ ansible_user_dir }}/workspace'
-  environment: '{{ zuul | zuul_legacy_vars }}'
 
 - hosts: all
   become: yes
