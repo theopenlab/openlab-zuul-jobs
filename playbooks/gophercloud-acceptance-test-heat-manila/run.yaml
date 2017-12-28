@@ -71,6 +71,7 @@
           popd
 
           go get ./... || true
+          sleep 7200
           # Temporally enable all tests with openlab repo and only enable part tests with official repo
           if [[ '{{ zuul.project.src_dir }}' =~ "theopenlab" ]];then
               go test -v -tags "fixtures acceptance" ./acceptance/openstack/... 2>&1 | tee $TEST_RESULTS_TXT
