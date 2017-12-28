@@ -184,3 +184,13 @@
     run: playbooks/terraform-provider-telefonicaopencloud-acceptance-test-telefonica/run.yaml
     secrets:
       - telefonica_credentials
+
+# ------------------------------- temporary testing job -----------------------------
+- job:
+    name: gophercloud-acceptance-test-heat-manila
+    parent: gophercloud-test
+    description: |
+      Run gophercloud acceptance test on master branch
+    run: playbooks/gophercloud-acceptance-test-heat-manila/run.yaml
+    vars:
+      os_branch: 'master'
