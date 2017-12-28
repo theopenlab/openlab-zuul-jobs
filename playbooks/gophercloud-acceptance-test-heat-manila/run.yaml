@@ -35,18 +35,6 @@
     chdir: '{{ ansible_user_dir }}/workspace'
   environment: '{{ zuul | zuul_legacy_vars }}'
 
-- name: install devstack with heat and manila enabled
-  shell:
-    cmd: |
-      set -e
-      set -x
-      export PYTHONUNBUFFERED=true
-      export GIT_BASE=https://github.com
-      cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
-      ./safe-devstack-vm-gate-wrap.sh
-    executable: /bin/bash
-    chdir: '{{ ansible_user_dir }}/workspace'
-  environment: '{{ zuul | zuul_legacy_vars }}'
 
 - hosts: all
   become: yes
