@@ -192,5 +192,3 @@
     description: |
       Run acceptance tests of terraform-provider-openstack repo against orange cloud
     run: playbooks/terraform-provider-openstack-acceptance-test-orange/run.yaml
-    secrets:
-      - orange_credentials
