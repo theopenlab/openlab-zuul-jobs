@@ -187,10 +187,10 @@
 
 # terraform-provider-openstack acceptance tests with orange cloud
 - job:
-    name: terraform-provider-openstack-acceptance-test-orange
+    name: terraform-provider-flexibleengine-acceptance-test-orange
     parent: golang-test
     description: |
-      Run acceptance tests of terraform-provider-openstack repo against orange cloud
-    run: playbooks/terraform-provider-openstack-acceptance-test-orange/run.yaml
+      Run acceptance tests of terraform-provider-flexibleengine repo against orange cloud
+    run: playbooks/terraform-provider-flexibleengine-acceptance-test-orange/run.yaml
     secrets:
       - orange_credentials
