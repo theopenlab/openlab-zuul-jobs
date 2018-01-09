@@ -9,6 +9,7 @@
       export OVERRIDE_ZUUL_BRANCH='{{ os_branch }}'
       cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
       ./safe-devstack-vm-gate-wrap.sh
+      sleep 3600
     executable: /bin/bash
     chdir: '{{ ansible_user_dir }}/workspace'
   environment: '{{ zuul | zuul_legacy_vars }}'
