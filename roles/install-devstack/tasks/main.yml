@@ -26,6 +26,7 @@
       export ZUUL_BRANCH=master
       export ZUUL_REF='refs/tags/{{ os_branch }}'
       export ZUUL_URL=https://github.com
+      export OVERRIDE_ENABLED_SERVICES=key,mysql,rabbit
       cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
       ./safe-devstack-vm-gate-wrap.sh
     executable: /bin/bash
