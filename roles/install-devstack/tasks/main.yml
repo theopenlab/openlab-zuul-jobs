@@ -24,6 +24,7 @@
   shell:
     cmd: |
       set -e
+      set -o pipefail
       set -x
       export PYTHONUNBUFFERED=true
       export GIT_BASE=https://github.com
