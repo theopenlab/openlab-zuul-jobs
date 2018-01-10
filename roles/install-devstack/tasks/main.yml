@@ -9,8 +9,6 @@
       export OVERRIDE_ZUUL_BRANCH='{{ os_branch }}'
       cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
       sed -i '611a \
-      sed -i '\''755d'\'' /opt/stack/new/devstack-gate/devstack-vm-gate.sh \
-      sed -i '\''754s/\\\\$//'\'' /opt/stack/new/devstack-gate/devstack-vm-gate.sh \
       sed -i '\''753s/-f/-vvvvv -f/'\'' /opt/stack/new/devstack-gate/devstack-vm-gate.sh \
       ' safe-devstack-vm-gate-wrap.sh
       ./safe-devstack-vm-gate-wrap.sh
