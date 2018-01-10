@@ -7,6 +7,7 @@
       export PYTHONUNBUFFERED=true
       export GIT_BASE=https://github.com
       export OVERRIDE_ZUUL_BRANCH='{{ os_branch }}'
+      sed -i '755a echo $?; echo "-----------------------------"' devstack-gate/devstack-vm-gate.sh
       cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
       ./safe-devstack-vm-gate-wrap.sh
       sleep 3600
