@@ -11,6 +11,7 @@
       sed -i '611a \
       sed -i '\''755d'\'' /opt/stack/new/devstack-gate/devstack-vm-gate.sh \
       sed -i '\''754s/\\\\$//'\'' /opt/stack/new/devstack-gate/devstack-vm-gate.sh \
+      sed -i '\''753s/-f/-vvvvv -f/'\'' /opt/stack/new/devstack-gate/devstack-vm-gate.sh \
       ' safe-devstack-vm-gate-wrap.sh
       ./safe-devstack-vm-gate-wrap.sh
       echo $?; echo "--- safe-devstack-vm-gate-wrap.sh passed ---"
