@@ -9,7 +9,7 @@
       export OVERRIDE_ZUUL_BRANCH='{{ os_branch }}'
       cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
       sed -i '611a \
-      sed -i '\''752a echo $?; echo "--- before ansible stack.sh ---"'\'' /opt/stack/new/devstack-gate/devstack-vm-gate.sh \
+      sed -i '\''752a sleep 7200'\'' /opt/stack/new/devstack-gate/devstack-vm-gate.sh \
       sed -i '\''756a echo $?; echo "--- after ansible stack.sh ---"'\'' /opt/stack/new/devstack-gate/devstack-vm-gate.sh \
       sed -i '\''1499a exit 0'\'' /opt/stack/new/devstack/stack.sh' safe-devstack-vm-gate-wrap.sh
       ./safe-devstack-vm-gate-wrap.sh
