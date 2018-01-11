@@ -7,7 +7,7 @@
       Base job for all types of test jobs. Ensure workspace and copy log files.
     pre-run: playbooks/init-test/pre.yaml
     post-run: playbooks/init-test/post.yaml
-    timeout: 7200
+    timeout: 10800
     vars:
       stable_branches:
         - master
