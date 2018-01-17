@@ -23,9 +23,7 @@
       set -x
       export PYTHONUNBUFFERED=true
       export GIT_BASE=https://github.com
-      export ZUUL_BRANCH=master
-      export ZUUL_REF='refs/tags/{{ os_branch }}'
-      export ZUUL_URL=https://github.com
+      export OVERRIDE_ZUUL_BRANCH='{{ os_branch }}'
       cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
       ./safe-devstack-vm-gate-wrap.sh
     executable: /bin/bash
@@ -45,7 +43,6 @@
       export GIT_BASE=https://github.com
       export OVERRIDE_ZUUL_BRANCH='{{ os_branch }}'
       export DEVSTACK_GATE_FIXED_RANGE=10.0.0.0/20
-      # export PROJECTS=openstack/trove
       export PROJECTS="openstack/designate $PROJECTS"
       cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
       ./safe-devstack-vm-gate-wrap.sh
@@ -63,9 +60,7 @@
       set -x
       export PYTHONUNBUFFERED=true
       export GIT_BASE=https://github.com
-      export ZUUL_BRANCH=master
-      export ZUUL_REF='refs/tags/{{ os_branch }}'
-      export ZUUL_URL=https://github.com
+      export OVERRIDE_ZUUL_BRANCH='{{ os_branch }}'
       export DEVSTACK_GATE_FIXED_RANGE=10.0.0.0/20
       cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
       ./safe-devstack-vm-gate-wrap.sh
