@@ -15,7 +15,7 @@
         - stable/ocata
       eol_branches:
         - stable/newton
-        - mitaka-eol
+        - stable/mitaka
 
 # Golang test base job
 - job:
@@ -88,7 +88,7 @@
     description: |
       Run gophercloud acceptance test on mitaka branch
     vars:
-      os_branch: 'mitaka-eol'
+      os_branch: 'stable/mitaka'
     nodeset: ubuntu-trusty
 
 # Terraform-provider-openstack jobs
@@ -146,7 +146,7 @@
     description: |
       Run terraform provider openstack acceptance test on mitaka branch
     vars:
-      os_branch: 'mitaka-eol'
+      os_branch: 'stable/mitaka'
     nodeset: ubuntu-trusty
 
 - job:
