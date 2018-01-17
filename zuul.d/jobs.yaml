@@ -14,7 +14,7 @@
         - stable/pike
         - stable/ocata
       eol_branches:
-        - newton-eol
+        - stable/newton
         - mitaka-eol
 
 # Golang test base job
@@ -80,7 +80,7 @@
     description: |
       Run gophercloud acceptance test on newton branch
     vars:
-      os_branch: 'newton-eol'
+      os_branch: 'stable/newton'
 
 - job:
     name: gophercloud-acceptance-test-mitaka
@@ -138,7 +138,7 @@
     description: |
       Run terraform provider openstack acceptance test on newton branch
     vars:
-      os_branch: 'newton-eol'
+      os_branch: 'stable/newton'
 
 - job:
     name: terraform-provider-openstack-acceptance-test-mitaka
