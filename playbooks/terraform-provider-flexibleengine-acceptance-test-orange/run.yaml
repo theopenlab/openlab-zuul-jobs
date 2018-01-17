@@ -1,0 +1,58 @@
+- hosts: all
+  become: yes
+  tasks:
+    - shell:
+        cmd: |
+          apt-get install python-pip -y
+          pip install -U python-openstackclient
+          # NOTE: the following commands may include sensitive information please do not print in job logs
+          export OS_PASSWORD="`echo {{ orange_credentials.password }}`"
+          export OS_AUTH_TYPE="`echo {{ orange_credentials.auth_type }}`"
+          export OS_AUTH_URL="`echo {{ orange_credentials.auth_url }}`"
+          export OS_IDENTITY_API_VERSION="`echo {{ orange_credentials.identity_api_version }}`"
+          export OS_DOMAIN_NAME="`echo {{ orange_credentials.domain_name }}`"
+          export OS_PROJECT_NAME="`echo {{ orange_credentials.project_name}}`"
+          export OS_REGION_NAME="`echo {{ orange_credentials.region_name}}`"
+          export OS_TENANT_NAME="`echo {{ orange_credentials.project_name }}`"
+          export OS_USERNAME="`echo {{ orange_credentials.user_name }}`"
+
+          export OS_SHARE_NETWORK_ID="foobar"
+          export OS_FLAVOR_ID_RESIZE="t2.small"
+          export OS_FLAVOR_ID="t2.micro"
+          export OS_POOL_NAME="admin_external_net"
+          export OS_EXTGW_ID="$(openstack network show $OS_POOL_NAME -f value -c id)"
+          export OS_IMAGE_NAME="cirros-0.3.5-x86_64-disk"
+          export OS_IMAGE_ID="$(openstack image show $OS_IMAGE_NAME -f value -c id)"
+          if [ -z "$OS_IMAGE_ID" ]; then
+              curl -O http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img
+              export OS_IMAGE_ID="$(openstack image create --file ./cirros-0.3.5-x86_64-disk.img --min-disk 1 --container-format bare --disk-format raw cirros-0.3.5-x86_64-disk -f value -c id)"
+              rm cirros-0.3.5-x86_64-disk.img
+          fi
+          _NET_PREFIX="terraform-provider-openstack"
+          export OS_NETWORK_NAME="$_NET_PREFIX-net"
+          export OS_NETWORK_ID="$(openstack network show $OS_NETWORK_NAME -f value -c id)"
+          if [ -z "$OS_NETWORK_ID" ]; then
+              export OS_NETWORK_ID="$(openstack network create $OS_NETWORK_NAME -f value -c id)"
+              openstack subnet create --network $OS_NETWORK_ID --subnet-range 10.0.20.0/24 $_NET_PREFIX-subnet
+          fi
+          export OS_SECRET_KEY="foobar"
+          export OS_ACCESS_KEY="foobar"
+
+          export OS_SWIFT_ENVIRONMENT=1
+
+          # set -e
+          # set -o pipefail
+          set -x
+
+          # Run acc test
+          if [[ ! -d $GOPATH/src/github.com/Karajan-project/terraform-provider-flexibleengine/ ]]; then
+              echo "Warnning: this is a temporary workaround because this job is not triggered from official git repo."
+              mkdir -p $GOPATH/src/github.com/Karajan-project/
+              cp -r $GOPATH/src/github.com/animationzl/terraform-provider-flexibleengine  $GOPATH/src/github.com/Karajan-project/
+              cd $GOPATH/src/github.com/Karajan-project/terraform-provider-flexibleengine
+          fi
+
+          make testacc 2>&1 | tee $TEST_RESULTS_TXT
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ golang_env }}'

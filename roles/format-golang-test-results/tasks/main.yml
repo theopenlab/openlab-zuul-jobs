@@ -5,10 +5,10 @@
       set -x
 
       go get -u github.com/theopenlab/go2xunit
-      go2xunit -input $TEST_RESULTS_TXT -output $TEST_RESULTS_XML
+      go2xunit -input $TEST_RESULTS_TXT -output $TEST_RESULTS_XML || true
 
       apt-get install --yes xsltproc
       wget https://raw.githubusercontent.com/theopenlab/nosetest-xunit-xslt/master/nosetests.xslt
-      xsltproc nosetests.xslt $TEST_RESULTS_XML > $TEST_RESULTS_HTML
+      xsltproc nosetests.xslt $TEST_RESULTS_XML > $TEST_RESULTS_HTML || true
     executable: /bin/bash
   environment: '{{ golang_env }}'
