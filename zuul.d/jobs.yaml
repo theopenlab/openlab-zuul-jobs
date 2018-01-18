@@ -7,7 +7,7 @@
       Base job for all types of test jobs. Ensure workspace and copy log files.
     pre-run: playbooks/init-test/pre.yaml
     post-run: playbooks/init-test/post.yaml
-    timeout: 10800
+    timeout: 7200
     vars:
       stable_branches:
         - master
@@ -172,7 +172,8 @@
     description: |
       Run gophercloud acceptance test against telefonica cloud
     run: playbooks/gophercloud-acceptance-test-telefonica/run.yaml
-
+    secrets:
+      - telefonica_credentials
 
 # terraform-provider-telefonicaopencloud acceptance tests with Telefonica cloud
 - job:
@@ -181,7 +182,8 @@
     description: |
       Run acceptance tests of terraform-provider-telefonicaopencloud repo against telefonica cloud
     run: playbooks/terraform-provider-telefonicaopencloud-acceptance-test-telefonica/run.yaml
-
+    secrets:
+      - telefonica_credentials
 
 # terraform-provider-openstack acceptance tests with orange cloud
 - job:
@@ -190,4 +192,5 @@
     description: |
       Run acceptance tests of terraform-provider-flexibleengine repo against orange cloud
     run: playbooks/terraform-provider-flexibleengine-acceptance-test-orange/run.yaml
-
+    secrets:
+      - orange_credentials
