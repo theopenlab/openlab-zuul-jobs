@@ -45,7 +45,7 @@
           set -x
 
           # Run acc test
-          if [[ ! -d $GOPATH/src/github.com/Karajan-project/terraform-provider-flexibleengine/ ]]; then
+          if [[ ! -d $GOPATH/src/github.com/Karajan-project/terraform-provider-flexibleengine/ && -d $GOPATH/src/github.com/animationzl/terraform-provider-flexibleengine ]]; then
               echo "Warnning: this is a temporary workaround because this job is not triggered from official git repo."
               mkdir -p $GOPATH/src/github.com/Karajan-project/
               cp -r $GOPATH/src/github.com/animationzl/terraform-provider-flexibleengine  $GOPATH/src/github.com/Karajan-project/
