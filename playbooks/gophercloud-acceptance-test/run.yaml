@@ -2,7 +2,10 @@
   become: yes
   roles:
     - clone-devstack-gate-to-workspace
-    - create-devstack-local-conf
+    - role: create-devstack-local-conf
+      enable_services:
+        - 'manila'
+        - 'designate'
     - install-devstack
   tasks:
     - shell:
