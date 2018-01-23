@@ -6,7 +6,6 @@
       enable_services:
         - 'manila'
         - 'designate'
-
     - install-devstack
   tasks:
     - shell:

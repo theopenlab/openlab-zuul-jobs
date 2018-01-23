@@ -8,14 +8,6 @@
     pre-run: playbooks/init-test/pre.yaml
     post-run: playbooks/init-test/post.yaml
     timeout: 10800
-    vars:
-      stable_branches:
-        - master
-        - stable/pike
-        - stable/ocata
-      eol_branches:
-        - stable/newton
-        - stable/mitaka
 
 # Golang test base job
 - job:
@@ -90,7 +82,6 @@
     description: |
       Run gophercloud acceptance test against telefonica cloud
     run: playbooks/gophercloud-acceptance-test-telefonica/run.yaml
-
 
 # Terraform-provider-openstack jobs
 - job:
@@ -174,6 +165,7 @@
     run: playbooks/terraform-provider-telefonicaopencloud-acceptance-test-telefonica/run.yaml
     secrets:
       - telefonica_credentials
+
 
 # terraform-provider-flexibleengine acceptance tests with orange cloud
 - job:
