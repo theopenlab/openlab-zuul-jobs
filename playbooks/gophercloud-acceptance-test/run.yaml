@@ -5,8 +5,7 @@
     - role: create-devstack-local-conf
       enable_services:
         - 'manila'
-        - 'manila'
-        - 'manila'
+        - 'designate'
     - install-devstack
   tasks:
     - shell:
