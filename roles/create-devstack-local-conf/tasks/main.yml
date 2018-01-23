@@ -1,3 +1,17 @@
+# Populate local conf header
+- name: create devstack local conf header
+  shell:
+    cmd: |
+      set -e
+      set -x
+      cat << EOF >> /tmp/dg-local.conf
+      [[local|localrc]]
+      EOF
+    executable: /bin/bash
+    chdir: '{{ ansible_user_dir }}/workspace'
+  environment: '{{ zuul | zuul_legacy_vars }}'
+
+
 # Populate local conf with specific branch
 - name: create devstack local conf with '{{ os_branch }}' compatible
   shell:
@@ -5,7 +19,6 @@
       set -e
       set -x
       cat << EOF >> /tmp/dg-local.conf
-      [[local|localrc]]
       # Default value is 2.0 in Mitaka, and 2.0 API will be deprecated
       # in the future, test against V3 API in stead.
       IDENTITY_API_VERSION=3
@@ -26,7 +39,6 @@
       set -e
       set -x
       cat << EOF >> /tmp/dg-local.conf
-      [[local|localrc]]
       MANILA_BACKEND1_CONFIG_GROUP_NAME=london
       MANILA_BACKEND2_CONFIG_GROUP_NAME=paris
       MANILA_SHARE_BACKEND1_NAME=LONDON
@@ -59,7 +71,6 @@
       set -e
       set -x
       cat << EOF >> /tmp/dg-local.conf
-      [[local|localrc]]
       NETWORK_GATEWAY=10.0.0.1
       enable_service designate,designate-central,designate-api,designate-pool-manager,designate-zone-manager,designate-mdns
       enable_plugin designate git://git.openstack.org/openstack/designate
