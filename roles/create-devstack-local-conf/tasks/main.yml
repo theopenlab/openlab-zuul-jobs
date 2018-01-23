@@ -51,7 +51,7 @@
     chdir: '{{ ansible_user_dir }}/workspace'
   environment: '{{ zuul | zuul_legacy_vars }}'
   when:
-    - 'manila' in enable_services
+    - '"manila" in enable_services'
 
 - name: create devstack local conf with {{ enable_services }} enabled
   shell:
@@ -68,4 +68,4 @@
     chdir: '{{ ansible_user_dir }}/workspace'
   environment: '{{ zuul | zuul_legacy_vars }}'
   when:
-    - 'designate' in enable_services
+    - '"designate" in enable_services'
