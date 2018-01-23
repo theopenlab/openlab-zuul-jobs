@@ -1,5 +1,5 @@
 # Populate local conf with specific branch
-- name: create devstack local conf with {{ os_branch }} compatible
+- name: create devstack local conf with '{{ os_branch }}' compatible
   shell:
     cmd: |
       set -e
@@ -20,7 +20,7 @@
 
 
 # Populate local conf with specific service
-- name: create devstack local conf with {{ enable_services }} enabled
+- name: create devstack local conf with '{{ enable_services }}' enabled
   shell:
     cmd: |
       set -e
@@ -53,7 +53,7 @@
   when:
     - '"manila" in enable_services'
 
-- name: create devstack local conf with {{ enable_services }} enabled
+- name: create devstack local conf with '{{ enable_services }}' enabled
   shell:
     cmd: |
       set -e

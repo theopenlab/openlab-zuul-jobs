@@ -1,4 +1,4 @@
-- name: install devstack with {{ os_branch }}
+- name: install devstack with '{{ os_branch }}'
   shell:
     cmd: |
       set -e
