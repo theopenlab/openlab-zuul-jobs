@@ -6,8 +6,8 @@
           set -o pipefail
           set -x
 
-          if [[ ! -d $GOPATH/src/github.com/gophercloud/gophercloud/ ]]; then
-              echo "Warnning: this is a temporary workaround because this job is not triggered from official git repo."
+          if [[ ! -d $GOPATH/src/github.com/gophercloud/gophercloud/ && -d $GOPATH/src/github.com/theopenlab/gophercloud ]]; then
+              echo "Warning: this is a temporary workaround because this job is not triggered from official git repo."
               mkdir -p $GOPATH/src/github.com/gophercloud/
               cp -r $GOPATH/src/github.com/theopenlab/gophercloud  $GOPATH/src/github.com/gophercloud/
               cd $GOPATH/src/github.com/gophercloud/gophercloud

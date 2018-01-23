@@ -5,6 +5,7 @@
       set -e
       set -x
       export PYTHONUNBUFFERED=true
+      export DEVSTACK_GATE_NEUTRON=1
       export GIT_BASE=https://github.com
       export OVERRIDE_ZUUL_BRANCH='{{ os_branch }}'
       export PROJECTS="openstack/python-manilaclient $PROJECTS"
@@ -42,6 +43,7 @@
       set -e
       set -x
       export PYTHONUNBUFFERED=true
+      export DEVSTACK_GATE_NEUTRON=1
       export GIT_BASE=https://github.com
       export OVERRIDE_ZUUL_BRANCH='{{ os_branch }}'
       export DEVSTACK_GATE_FIXED_RANGE=10.0.0.0/20
