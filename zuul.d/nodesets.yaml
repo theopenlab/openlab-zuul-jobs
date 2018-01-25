@@ -11,3 +11,5 @@
     nodes:
       - name: ubuntu-xenial
         label: ubuntu-xenial
+      - name: ubuntu-xenial-otc
+        label: ubuntu-xenial-otc
