@@ -14,6 +14,7 @@
           export PYTHONUNBUFFERED=true
           export GIT_BASE=https://github.com
           export OVERRIDE_ZUUL_BRANCH='{{ os_branch }}'
+          export ENABLED_SERVICES=c-api,c-bak,c-sch,c-vol,cinder,dstat,etcd3,g-api,g-reg,key,mysql,n-api,n-api-meta,n-cauth,n-cond,n-cpu,n-novnc,n-obj,n-sch,peakmem_tracker,placement-api,q-agt,q-dhcp,q-l3,q-meta,q-metering,q-svc,rabbit
 
           export DEVSTACK_GATE_NEUTRON=1
           export DEVSTACK_GATE_FIXED_RANGE=10.0.0.0/20
