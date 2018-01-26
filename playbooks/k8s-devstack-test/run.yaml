@@ -10,7 +10,7 @@
         cmd: |
           set -e
           set -x
-          sudo apt-get install libpcre3-dev
+          sudo apt-get install libpcre3-dev -y
           export PYTHONUNBUFFERED=true
           export GIT_BASE=https://github.com
           export OVERRIDE_ZUUL_BRANCH='{{ os_branch }}'
