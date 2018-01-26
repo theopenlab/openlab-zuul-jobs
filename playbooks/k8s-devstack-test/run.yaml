@@ -1,0 +1,17 @@
+- hosts: all
+  become: yes
+  roles:
+    - clone-devstack-gate-to-workspace
+    - role: create-devstack-local-conf
+      enable_services:
+        - 'openstack-cloud-controller-manager'
+    - install-devstack
+  tasks:
+    - shell:
+        cmd: |
+          set -e
+          set -o pipefail
+          set -x
+          sleep 3600
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'

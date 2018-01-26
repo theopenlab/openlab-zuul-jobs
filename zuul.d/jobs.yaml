@@ -163,3 +163,10 @@
     description: |
       Run acceptance tests of terraform-provider-flexibleengine repo against orange cloud
     run: playbooks/terraform-provider-flexibleengine-acceptance-test-orange/run.yaml
+
+- job:
+    name: k8s-devstack-test
+    parent: init-test
+    description: |
+      Run gophercloud unit test
+    run: playbooks/k8s-devstack-test/run.yaml

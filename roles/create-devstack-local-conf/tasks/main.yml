@@ -80,3 +80,17 @@
   environment: '{{ zuul | zuul_legacy_vars }}'
   when:
     - '"designate" in enable_services'
+
+- name: create devstack local conf with '{{ enable_services }}' enabled
+  shell:
+    cmd: |
+      set -e
+      set -x
+      cat << EOF >> /tmp/dg-local.conf
+      enable_plugin openstack-cloud-controller-manager https://github.com/dims/openstack-cloud-controller-manager
+      EOF
+    executable: /bin/bash
+    chdir: '{{ ansible_user_dir }}/workspace'
+  environment: '{{ zuul | zuul_legacy_vars }}'
+  when:
+    - '"openstack-cloud-controller-manager" in enable_services'
