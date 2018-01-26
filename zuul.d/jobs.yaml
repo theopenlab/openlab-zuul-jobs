@@ -48,6 +48,7 @@
     description: |
       Run gophercloud unit test
     run: playbooks/gophercloud-unittest/run.yaml
+    nodeset: ubuntu-xenial-ut
 
 - job:
     name: gophercloud-acceptance-test
@@ -106,6 +107,7 @@
     description: |
       Run terraform provider openstack unit test
     run: playbooks/terraform-provider-openstack-unittest/run.yaml
+    nodeset: ubuntu-xenial-ut
 
 - job:
     name: terraform-provider-openstack-acceptance-test
