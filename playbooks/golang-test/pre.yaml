@@ -1,4 +1,8 @@
 - hosts: all
   become: yes
-  roles:
-    - install-golang
+  tasks:
+    - name: Install golang-1.9
+      shell: |
+        add-apt-repository ppa:gophers/archive -y
+        apt-get update -y
+        apt-get install golang-1.9-go -y
