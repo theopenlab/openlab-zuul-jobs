@@ -7,15 +7,8 @@
       Base job for all types of test jobs. Ensure workspace and copy log files.
     pre-run: playbooks/init-test/pre.yaml
     post-run: playbooks/init-test/post.yaml
-    timeout: 10800
-    vars:
-      stable_branches:
-        - master
-        - stable/pike
-        - stable/ocata
-      eol_branches:
-        - stable/newton
-        - stable/mitaka
+    timeout: 7200
+
 
 # Golang test base job
 - job:
@@ -33,18 +26,11 @@
         TEST_RESULTS_XML: '{{ ansible_user_dir }}/workspace/test_results.xml'
         TEST_RESULTS_HTML: '{{ ansible_user_dir }}/workspace/test_results.html'
 
+
 # Gophercloud jobs
 - job:
-    name: gophercloud-test
-    parent: golang-test
-    description: |
-      Gophercloud test base job
-    vars:
-      sdk: 'gophercloud'
-
-- job:
     name: gophercloud-unittest
-    parent: gophercloud-test
+    parent: golang-test
     description: |
       Run gophercloud unit test
     run: playbooks/gophercloud-unittest/run.yaml
@@ -52,12 +38,10 @@
 
 - job:
     name: gophercloud-acceptance-test
-    parent: gophercloud-test
+    parent: golang-test
     description: |
       Run gophercloud acceptance test on master branch
     run: playbooks/gophercloud-acceptance-test/run.yaml
-    vars:
-      os_branch: 'master'
 
 - job:
     name: gophercloud-acceptance-test-pike
@@ -92,18 +76,19 @@
       os_branch: 'stable/mitaka'
     nodeset: ubuntu-trusty
 
-# Terraform-provider-openstack jobs
+# Gophercloud acceptance tests with Telefonica cloud
 - job:
-    name: terraform-provider-openstack-test
+    name: gophercloud-acceptance-test-telefonica
     parent: golang-test
     description: |
-      Terraform provider openstack test base job
-    vars:
-      sdk: 'terraform-provider-openstack'
+      Run gophercloud acceptance test against telefonica cloud
+    run: playbooks/gophercloud-acceptance-test-telefonica/run.yaml
 
+
+# Terraform-provider-openstack jobs
 - job:
     name: terraform-provider-openstack-unittest
-    parent: terraform-provider-openstack-test
+    parent: golang-test
     description: |
       Run terraform provider openstack unit test
     run: playbooks/terraform-provider-openstack-unittest/run.yaml
@@ -111,12 +96,10 @@
 
 - job:
     name: terraform-provider-openstack-acceptance-test
-    parent: terraform-provider-openstack-test
+    parent: golang-test
     description: |
       Run terraform provider openstack acceptance test on master branch
     run: playbooks/terraform-provider-openstack-acceptance-test/run.yaml
-    vars:
-      os_branch: 'master'
 
 - job:
     name: terraform-provider-openstack-acceptance-test-pike
@@ -157,8 +140,6 @@
     description: |
       Run terraform provider openstack designate acceptance test on master branch
     run: playbooks/terraform-provider-openstack-acceptance-test-designate/run.yaml
-    vars:
-      os_branch: 'master'
 
 - job:
     name: terraform-provider-openstack-acceptance-test-trove
@@ -167,15 +148,6 @@
       Run terraform-provider-openstack trove acceptance test on master branch
     run: playbooks/terraform-provider-openstack-acceptance-test-trove/run.yaml
 
-# Gophercloud acceptance tests with Telefonica cloud
-- job:
-    name: gophercloud-acceptance-test-telefonica
-    parent: golang-test
-    description: |
-      Run gophercloud acceptance test against telefonica cloud
-    run: playbooks/gophercloud-acceptance-test-telefonica/run.yaml
-    secrets:
-      - telefonica_credentials
 
 # terraform-provider-telefonicaopencloud acceptance tests with Telefonica cloud
 - job:
@@ -184,15 +156,19 @@
     description: |
       Run acceptance tests of terraform-provider-telefonicaopencloud repo against telefonica cloud
     run: playbooks/terraform-provider-telefonicaopencloud-acceptance-test-telefonica/run.yaml
-    secrets:
-      - telefonica_credentials
 
-# terraform-provider-openstack acceptance tests with orange cloud
+
+# terraform-provider-flexibleengine acceptance tests with orange cloud
 - job:
     name: terraform-provider-flexibleengine-acceptance-test-orange
     parent: golang-test
     description: |
       Run acceptance tests of terraform-provider-flexibleengine repo against orange cloud
     run: playbooks/terraform-provider-flexibleengine-acceptance-test-orange/run.yaml
-    secrets:
-      - orange_credentials
+
+- job:
+    name: k8s-devstack-test
+    parent: init-test
+    description: |
+      Run gophercloud unit test
+    run: playbooks/k8s-devstack-test/run.yaml

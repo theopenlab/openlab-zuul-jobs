@@ -4,78 +4,22 @@
   ignore_errors: yes
 
 # gophercloud
-- name: install devstack with {{ os_branch }} for {{ sdk }}
+- name: install devstack with '{{ os_branch }}'
   shell:
     cmd: |
       set -e
       set -x
       export PYTHONUNBUFFERED=true
-      export DEVSTACK_GATE_NEUTRON=1
       export GIT_BASE=https://github.com
       export OVERRIDE_ZUUL_BRANCH='{{ os_branch }}'
-      cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
-      ./safe-devstack-vm-gate-wrap.sh
-    executable: /bin/bash
-    chdir: '{{ ansible_user_dir }}/workspace'
-  environment: '{{ zuul | zuul_legacy_vars }}'
-  when:
-    - sdk == 'gophercloud'
-    - os_branch in stable_branches
 
-- name: install devstack with {{ os_branch }} for {{ sdk }}
-  shell:
-    cmd: |
-      set -e
-      set -x
-      export PYTHONUNBUFFERED=true
       export DEVSTACK_GATE_NEUTRON=1
-      export GIT_BASE=https://github.com
-      export OVERRIDE_ZUUL_BRANCH='{{ os_branch }}'
-      cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
-      ./safe-devstack-vm-gate-wrap.sh
-    executable: /bin/bash
-    chdir: '{{ ansible_user_dir }}/workspace'
-  environment: '{{ zuul | zuul_legacy_vars }}'
-  when:
-    - sdk == 'gophercloud'
-    - os_branch in eol_branches
-
-# terraform-provider-openstack
-- name: install devstack with {{ os_branch }} for {{ sdk }}
-  shell:
-    cmd: |
-      set -e
-      set -x
-      export PYTHONUNBUFFERED=true
-      export DEVSTACK_GATE_NEUTRON=1
-      export GIT_BASE=https://github.com
-      export OVERRIDE_ZUUL_BRANCH='{{ os_branch }}'
       export DEVSTACK_GATE_FIXED_RANGE=10.0.0.0/20
       export PROJECTS="openstack/designate $PROJECTS"
-      cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
-      ./safe-devstack-vm-gate-wrap.sh
-    executable: /bin/bash
-    chdir: '{{ ansible_user_dir }}/workspace'
-  environment: '{{ zuul | zuul_legacy_vars }}'
-  when:
-    - sdk == 'terraform-provider-openstack'
-    - os_branch in stable_branches
+      export PROJECTS="openstack/python-manilaclient $PROJECTS"
 
-- name: install devstack with {{ os_branch }} for {{ sdk }}
-  shell:
-    cmd: |
-      set -e
-      set -x
-      export PYTHONUNBUFFERED=true
-      export DEVSTACK_GATE_NEUTRON=1
-      export GIT_BASE=https://github.com
-      export OVERRIDE_ZUUL_BRANCH='{{ os_branch }}'
-      export DEVSTACK_GATE_FIXED_RANGE=10.0.0.0/20
       cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
       ./safe-devstack-vm-gate-wrap.sh
     executable: /bin/bash
     chdir: '{{ ansible_user_dir }}/workspace'
   environment: '{{ zuul | zuul_legacy_vars }}'
-  when:
-    - sdk == 'terraform-provider-openstack'
-    - os_branch in eol_branches

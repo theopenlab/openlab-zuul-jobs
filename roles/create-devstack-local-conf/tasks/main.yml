@@ -1,11 +1,44 @@
-# gophercloud
-- name: create devstack local conf with {{ os_branch }} for {{ sdk }}
+# Populate local conf header
+- name: create devstack local conf header
   shell:
     cmd: |
       set -e
       set -x
       cat << EOF >> /tmp/dg-local.conf
       [[local|localrc]]
+      EOF
+    executable: /bin/bash
+    chdir: '{{ ansible_user_dir }}/workspace'
+  environment: '{{ zuul | zuul_legacy_vars }}'
+
+
+# Populate local conf with specific branch
+- name: create devstack local conf with '{{ os_branch }}' compatible
+  shell:
+    cmd: |
+      set -e
+      set -x
+      cat << EOF >> /tmp/dg-local.conf
+      # Default value is 2.0 in Mitaka, and 2.0 API will be deprecated
+      # in the future, test against V3 API in stead.
+      IDENTITY_API_VERSION=3
+      OS_USER_DOMAIN_ID=default
+      OS_PROJECT_DOMAIN_ID=default
+      EOF
+    executable: /bin/bash
+    chdir: '{{ ansible_user_dir }}/workspace'
+  environment: '{{ zuul | zuul_legacy_vars }}'
+  when:
+    - os_branch == 'mitaka-eol'
+
+
+# Populate local conf with specific service
+- name: create devstack local conf with '{{ enable_services }}' enabled
+  shell:
+    cmd: |
+      set -e
+      set -x
+      cat << EOF >> /tmp/dg-local.conf
       MANILA_BACKEND1_CONFIG_GROUP_NAME=london
       MANILA_BACKEND2_CONFIG_GROUP_NAME=paris
       MANILA_SHARE_BACKEND1_NAME=LONDON
@@ -30,42 +63,15 @@
     chdir: '{{ ansible_user_dir }}/workspace'
   environment: '{{ zuul | zuul_legacy_vars }}'
   when:
-    - sdk == 'gophercloud'
-    - os_branch in stable_branches
+    - '"manila" in enable_services'
 
-- name: create devstack local conf with {{ os_branch }} for {{ sdk }}
+- name: create devstack local conf with '{{ enable_services }}' enabled
   shell:
     cmd: |
       set -e
       set -x
       cat << EOF >> /tmp/dg-local.conf
-      [[local|localrc]]
-      # Default value is 2.0 in Mitaka, and 2.0 API will be deprecated
-      # in the future, test against V3 API in stead.
-      IDENTITY_API_VERSION=3
-      OS_USER_DOMAIN_ID=default
-      OS_PROJECT_DOMAIN_ID=default
-      EOF
-    executable: /bin/bash
-    chdir: '{{ ansible_user_dir }}/workspace'
-  environment: '{{ zuul | zuul_legacy_vars }}'
-  when:
-    - sdk == 'gophercloud'
-    - os_branch in eol_branches
-
-# terraform-provider-openstack
-- name: create devstack local conf with {{ os_branch }} for {{ sdk }}
-  shell:
-    cmd: |
-      set -e
-      set -x
-      cat << EOF >> /tmp/dg-local.conf
-      [[local|localrc]]
       NETWORK_GATEWAY=10.0.0.1
-      # Enable trove
-      # enable_service trove tr-api tr-tmgr tr-cond
-      # enable_plugin trove git://git.openstack.org/openstack/trove
-      # Enable designate
       enable_service designate,designate-central,designate-api,designate-pool-manager,designate-zone-manager,designate-mdns
       enable_plugin designate git://git.openstack.org/openstack/designate
       EOF
@@ -73,26 +79,18 @@
     chdir: '{{ ansible_user_dir }}/workspace'
   environment: '{{ zuul | zuul_legacy_vars }}'
   when:
-    - sdk == 'terraform-provider-openstack'
-    - os_branch in stable_branches
+    - '"designate" in enable_services'
 
-- name: create devstack local conf with {{ os_branch }} for {{ sdk }}
+- name: create devstack local conf with '{{ enable_services }}' enabled
   shell:
     cmd: |
       set -e
       set -x
       cat << EOF >> /tmp/dg-local.conf
-      [[local|localrc]]
-      NETWORK_GATEWAY=10.0.0.1
-      # Default value is 2.0 in Mitaka, and 2.0 API will be deprecated
-      # in the future, test against V3 API in stead.
-      IDENTITY_API_VERSION=3
-      export OS_USER_DOMAIN_ID=default
-      export OS_PROJECT_DOMAIN_ID=default
+      enable_plugin openstack-cloud-controller-manager https://github.com/dims/openstack-cloud-controller-manager
       EOF
     executable: /bin/bash
     chdir: '{{ ansible_user_dir }}/workspace'
   environment: '{{ zuul | zuul_legacy_vars }}'
   when:
-    - sdk == 'terraform-provider-openstack'
-    - os_branch in eol_branches
+    - '"openstack-cloud-controller-manager" in enable_services'
