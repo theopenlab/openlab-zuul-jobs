@@ -37,6 +37,5 @@
           apt-get install glide
           go get ./... || true
           make test
-          sleep 3600
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
