@@ -134,7 +134,7 @@
 
 - job:
     name: terraform-provider-openstack-acceptance-test-designate
-    parent: terraform-provider-openstack-acceptance-test
+    parent: golang-test
     description: |
       Run terraform provider openstack designate acceptance test on master branch
     run: playbooks/terraform-provider-openstack-acceptance-test-designate/run.yaml
