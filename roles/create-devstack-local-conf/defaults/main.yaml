@@ -1,4 +1,9 @@
 ---
 os_branch: 'master'
 enable_services:
-  - 'default'
+  - 'nova'
+  - 'neutron'
+  - 'cinder'
+  - 'keystone'
+  - 'glance'
+  - 'swift'
