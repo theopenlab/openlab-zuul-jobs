@@ -34,6 +34,7 @@
           set -x
           add-apt-repository ppa:masterminds/glide -y
           apt-get update -y
+          source /opt/stack/new/devstack/openrc admin admin
           apt-get install glide
           go get ./... || true
           make test
