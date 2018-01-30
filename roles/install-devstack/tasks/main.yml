@@ -1,3 +1,9 @@
+- name: Install libpcre3-dev
+  shell: |
+    apt install libpcre3-dev -y
+  ignore_errors: yes
+
+# gophercloud
 - name: install devstack with '{{ os_branch }}'
   shell:
     cmd: |
