@@ -3,7 +3,7 @@
     apt install libpcre3-dev -y
   ignore_errors: yes
 
-- name: install devstack with '{{ os_branch }}'
+- name: install devstack on {{ os_branch }} branch
   shell:
     cmd: |
       set -e
