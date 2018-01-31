@@ -3,8 +3,7 @@
     apt install libpcre3-dev -y
   ignore_errors: yes
 
-# gophercloud
-- name: install devstack with '{{ os_branch }}'
+- name: install devstack on {{ os_branch }} branch
   shell:
     cmd: |
       set -e
@@ -12,7 +11,6 @@
       export PYTHONUNBUFFERED=true
       export GIT_BASE=https://github.com
       export OVERRIDE_ZUUL_BRANCH='{{ os_branch }}'
-
       export DEVSTACK_GATE_NEUTRON=1
       export DEVSTACK_GATE_FIXED_RANGE=10.0.0.0/20
       export PROJECTS="openstack/designate $PROJECTS"

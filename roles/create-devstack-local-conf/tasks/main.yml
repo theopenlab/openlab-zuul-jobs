@@ -6,6 +6,7 @@
       set -x
       cat << EOF >> /tmp/dg-local.conf
       [[local|localrc]]
+      NETWORK_GATEWAY=10.0.0.1
       EOF
     executable: /bin/bash
     chdir: '{{ ansible_user_dir }}/workspace'
@@ -13,7 +14,7 @@
 
 
 # Populate local conf with specific branch
-- name: create devstack local conf with '{{ os_branch }}' compatible
+- name: create devstack local conf on stable/mitaka branch
   shell:
     cmd: |
       set -e
@@ -29,11 +30,11 @@
     chdir: '{{ ansible_user_dir }}/workspace'
   environment: '{{ zuul | zuul_legacy_vars }}'
   when:
-    - os_branch == 'mitaka-eol'
+    - os_branch == 'stable/mitaka'
 
 
 # Populate local conf with specific service
-- name: create devstack local conf with '{{ enable_services }}' enabled
+- name: create devstack local conf with manila enabled
   shell:
     cmd: |
       set -e
@@ -65,13 +66,12 @@
   when:
     - '"manila" in enable_services'
 
-- name: create devstack local conf with '{{ enable_services }}' enabled
+- name: create devstack local conf with designate enabled
   shell:
     cmd: |
       set -e
       set -x
       cat << EOF >> /tmp/dg-local.conf
-      NETWORK_GATEWAY=10.0.0.1
       enable_service designate,designate-central,designate-api,designate-pool-manager,designate-zone-manager,designate-mdns
       enable_plugin designate git://git.openstack.org/openstack/designate
       EOF
@@ -81,7 +81,7 @@
   when:
     - '"designate" in enable_services'
 
-- name: create devstack local conf with '{{ enable_services }}' enabled
+- name: create devstack local conf with k8s controller enabled
   shell:
     cmd: |
       set -e

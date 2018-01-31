@@ -7,8 +7,7 @@
       Base job for all types of test jobs. Ensure workspace and copy log files.
     pre-run: playbooks/init-test/pre.yaml
     post-run: playbooks/init-test/post.yaml
-    timeout: 7200
-
+    timeout: 10800
 
 # Golang test base job
 - job:
@@ -84,7 +83,6 @@
       Run gophercloud acceptance test against telefonica cloud
     run: playbooks/gophercloud-acceptance-test-telefonica/run.yaml
 
-
 # Terraform-provider-openstack jobs
 - job:
     name: terraform-provider-openstack-unittest
@@ -136,7 +134,7 @@
 
 - job:
     name: terraform-provider-openstack-acceptance-test-designate
-    parent: terraform-provider-openstack-acceptance-test
+    parent: golang-test
     description: |
       Run terraform provider openstack designate acceptance test on master branch
     run: playbooks/terraform-provider-openstack-acceptance-test-designate/run.yaml
@@ -147,6 +145,14 @@
     description: |
       Run terraform-provider-openstack trove acceptance test on master branch
     run: playbooks/terraform-provider-openstack-acceptance-test-trove/run.yaml
+
+# Gophercloud acceptance tests with Telefonica cloud
+- job:
+    name: gophercloud-acceptance-test-telefonica
+    parent: golang-test
+    description: |
+      Run gophercloud acceptance test against telefonica cloud
+    run: playbooks/gophercloud-acceptance-test-telefonica/run.yaml
 
 
 # terraform-provider-telefonicaopencloud acceptance tests with Telefonica cloud
