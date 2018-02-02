@@ -37,7 +37,6 @@
           source /opt/stack/new/devstack/openrc admin admin
           apt-get install glide
           go get ./... || true
-          sleep 7200
           make test
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
