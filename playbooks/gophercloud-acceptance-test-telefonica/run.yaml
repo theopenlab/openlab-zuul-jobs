@@ -36,6 +36,12 @@
               openstack subnet create --network $OS_NETWORK_ID --subnet-range 10.0.10.0/24 $_NET_PREFIX-subnet
           fi
 
+          export OS_VPC_ID="$(openstack router show $_NET_PREFIX-vpc -f value -c id)"
+          if [ -z "$OS_VPC_ID" ]; then
+              export OS_VPC_ID="$(openstack router create $_NET_PREFIX-vpc -f value -c id)"
+              openstack router add subnet $_NET_PREFIX-vpc $_NET_PREFIX-subnet
+          fi
+
           # set -e
           ret=0
           set -o pipefail
