@@ -179,6 +179,8 @@
     description: |
       Run acceptance tests of terraform-provider-opentelekomcloud repo against telekom cloud
     run: playbooks/terraform-provider-opentelekomcloud-acceptance-test-telekom/run.yaml
+    secrets:
+      - telekom_credentials
 
 - job:
     name: k8s-devstack-test
