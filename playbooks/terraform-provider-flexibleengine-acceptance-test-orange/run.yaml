@@ -28,7 +28,7 @@
               export OS_IMAGE_ID="$(openstack image create --file ./cirros-0.3.5-x86_64-disk.img --min-disk 1 --container-format bare --disk-format raw cirros-0.3.5-x86_64-disk -f value -c id)"
               rm cirros-0.3.5-x86_64-disk.img
           fi
-          _NET_PREFIX="terraform-provider-openstack"
+          _NET_PREFIX="terraform-provider-flexibleengine"
           export OS_NETWORK_NAME="$_NET_PREFIX-net"
           export OS_NETWORK_ID="$(openstack network show $OS_NETWORK_NAME -f value -c id)"
           if [ -z "$OS_NETWORK_ID" ]; then
@@ -40,8 +40,8 @@
 
           export OS_SWIFT_ENVIRONMENT=1
 
-          # set -e
-          # set -o pipefail
+          set -e
+          set -o pipefail
           set -x
 
           # Run acc test
@@ -52,7 +52,7 @@
               cd $GOPATH/src/github.com/Karajan-project/terraform-provider-flexibleengine
           fi
 
-          make testacc 2>&1 | tee $TEST_RESULTS_TXT
+          TF_ACC=1 go test ./flexibleengine -v -timeout 240m 2>&1 | tee $TEST_RESULTS_TXT
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env }}'
