@@ -153,6 +153,13 @@
       Run terraform provider openstack lbaas acceptance test on master branch
     run: playbooks/terraform-provider-openstack-acceptance-test-lbaas/run.yaml
 
+- job:
+    name: terraform-provider-openstack-acceptance-test-fwaas
+    parent: golang-test
+    description: |
+      Run terraform provider openstack fwaas acceptance test on master branch
+    run: playbooks/terraform-provider-openstack-acceptance-test-fwaas/run.yaml
+
 # Gophercloud acceptance tests with Telefonica cloud
 - job:
     name: gophercloud-acceptance-test-telefonica
