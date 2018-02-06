@@ -20,6 +20,7 @@
 
           set -o pipefail
           set -x
+          sleep 3600
           export OS_SHARE_NETWORK_ID="foobar"
           export OS_FLAVOR_ID_RESIZE=2
           export OS_FLAVOR_ID=1
