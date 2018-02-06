@@ -3,21 +3,18 @@
   roles:
     - clone-devstack-gate-to-workspace
     - create-devstack-local-conf
-    - role: install-devstack
-      environment:
-        OVERRIDE_ENABLED_SERVICES: 'c-api,c-bak,c-sch,c-vol,cinder,dstat,etcd3,g-api,g-reg,key,mysql,n-api,n-api-meta,n-cauth,n-cond,n-cpu,n-novnc,n-obj,n-sch,peakmem_tracker,placement-api,q-agt,q-dhcp,q-l3,q-meta,q-metering,q-svc,rabbit'
-        GIT_BASE: 'https://github.com'
+    - install-devstack
+
   tasks:
     - shell:
         cmd: |
           set -e
           set -x
+          source /opt/stack/new/devstack/openrc admin admin
           add-apt-repository ppa:masterminds/glide -y
           apt-get update -y
-          source /opt/stack/new/devstack/openrc admin admin
-          apt-get install glide
-          go get ./... || true
-          make test
+          apt-get install glide -y
+          TESTARGS='-v' make test
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env }}'
