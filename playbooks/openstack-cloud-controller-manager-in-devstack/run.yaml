@@ -1,0 +1,21 @@
+- hosts: all
+  become: yes
+  roles:
+    - clone-devstack-gate-to-workspace
+    - create-devstack-local-conf
+    - install-devstack
+  tasks:
+    - shell:
+        cmd: |
+          set -e
+          set -x
+          add-apt-repository ppa:masterminds/glide -y
+          apt-get update -y
+          source /opt/stack/new/devstack/openrc admin admin
+          apt-get install glide
+          go get ./... || true
+          TESTARGS='-v' make test
+          sleep 7200
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ golang_env }}'
