@@ -184,7 +184,7 @@
 
 - job:
     name: openstack-cloud-controller-manager-unit-test
-    parent: init-test
+    parent: golang-test
     description: |
       Run K8S openstack-cloud-controller-manager unit test
     run: playbooks/openstack-cloud-controller-manager-unit-test/run.yaml
