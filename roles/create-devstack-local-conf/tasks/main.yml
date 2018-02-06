@@ -97,7 +97,23 @@
   when:
     - '"lbaas" in enable_services'
 
-- name: create devstack local conf with fwaas enabled
+
+- name: create devstack local conf with fwaas v1 enabled
+  shell:
+    cmd: |
+      set -e
+      set -x
+      cat << EOF >> /tmp/dg-local.conf
+      enable_service q-fwaas-v1
+      enable_plugin neutron-fwaas https://git.openstack.org/openstack/neutron-fwaas
+      EOF
+    executable: /bin/bash
+    chdir: '{{ ansible_user_dir }}/workspace'
+  environment: '{{ zuul | zuul_legacy_vars }}'
+  when:
+    - '"fwaas-v1" in enable_services'
+
+- name: create devstack local conf with fwaas v2 enabled
   shell:
     cmd: |
       set -e
@@ -110,4 +126,4 @@
     chdir: '{{ ansible_user_dir }}/workspace'
   environment: '{{ zuul | zuul_legacy_vars }}'
   when:
-    - '"fwaas" in enable_services'
+    - '"fwaas-v2" in enable_services'

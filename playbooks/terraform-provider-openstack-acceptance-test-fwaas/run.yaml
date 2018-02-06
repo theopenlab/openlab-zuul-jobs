@@ -4,7 +4,7 @@
     - clone-devstack-gate-to-workspace
     - role: create-devstack-local-conf
       enable_services:
-        - 'fwaas'
+        - 'fwaas-v1'
     - install-devstack
   tasks:
     - shell:
