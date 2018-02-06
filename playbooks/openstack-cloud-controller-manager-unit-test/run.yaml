@@ -20,3 +20,4 @@
           make test
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ golang_env }}'
