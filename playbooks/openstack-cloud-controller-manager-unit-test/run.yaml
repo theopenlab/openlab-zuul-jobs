@@ -14,7 +14,7 @@
           add-apt-repository ppa:masterminds/glide -y
           apt-get update -y
           apt-get install glide -y
-          TESTARGS='-v' make test
+          TESTARGS='-v' make test 2>&1 | tee $TEST_RESULTS_TXT
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env }}'
