@@ -16,12 +16,16 @@
           export OS_TENANT_NAME="`echo {{ telekom_credentials.project_name }}`"
           export OS_USERNAME="`echo {{ telekom_credentials.user_name }}`"
           export OS_ACCESS_KEY="`echo {{ telekom_credentials.access_key }}`"
+          export OS_SECRET_KEY="`echo {{ telekom_credentials.secret_key }}`"
 
+          set -o pipefail
+          set -x
           export OS_SHARE_NETWORK_ID="foobar"
           export OS_FLAVOR_ID_RESIZE=2
           export OS_FLAVOR_ID=1
           export OS_POOL_NAME="admin_external_net"
-          export OS_EXTGW_ID="$(openstack network show $OS_POOL_NAME -f value -c id)"
+          # export OS_EXTGW_ID="$(openstack network show $OS_POOL_NAME -f value -c id)"
+          export OS_EXTGW_ID=`openstack network list -f value |grep admin_external_net | awk -F ' ' '{print $1}'`
           export OS_IMAGE_NAME="cirros-0.3.5-x86_64-disk"
           export OS_IMAGE_ID="$(openstack image show $OS_IMAGE_NAME -f value -c id)"
           if [ -z "$OS_IMAGE_ID" ]; then
@@ -38,11 +42,6 @@
           fi
 
           export OS_SWIFT_ENVIRONMENT=1
-
-          # set -e
-          ret=0
-          set -o pipefail
-          set -x
 
           cd $GOPATH/src/github.com/gator1/terraform-provider-opentelekomcloud/
 
