@@ -183,8 +183,8 @@
       - telekom_credentials
 
 - job:
-    name: k8s-devstack-test
+    name: openstack-cloud-controller-manager-unit-test
     parent: init-test
     description: |
-      Run gophercloud unit test
-    run: playbooks/k8s-devstack-test/run.yaml
+      Run K8S openstack-cloud-controller-manager unit test
+    run: playbooks/openstack-cloud-controller-manager-unit-test/run.yaml
