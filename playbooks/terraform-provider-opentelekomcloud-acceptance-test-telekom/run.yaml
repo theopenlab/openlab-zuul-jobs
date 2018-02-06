@@ -16,6 +16,7 @@
           export OS_TENANT_NAME="`echo {{ telekom_credentials.project_name }}`"
           export OS_USERNAME="`echo {{ telekom_credentials.user_name }}`"
           export OS_ACCESS_KEY="`echo {{ telekom_credentials.access_key }}`"
+          export OS_SECRET_KEY="`echo {{ telekom_credentials.secret_key }}`"
 
           export OS_SHARE_NETWORK_ID="foobar"
           export OS_FLAVOR_ID_RESIZE=2
