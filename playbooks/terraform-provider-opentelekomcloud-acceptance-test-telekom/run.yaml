@@ -18,6 +18,8 @@
           export OS_ACCESS_KEY="`echo {{ telekom_credentials.access_key }}`"
           export OS_SECRET_KEY="`echo {{ telekom_credentials.secret_key }}`"
 
+          set -o pipefail
+          set -x
           export OS_SHARE_NETWORK_ID="foobar"
           export OS_FLAVOR_ID_RESIZE=2
           export OS_FLAVOR_ID=1
@@ -39,11 +41,6 @@
           fi
 
           export OS_SWIFT_ENVIRONMENT=1
-
-          # set -e
-          ret=0
-          set -o pipefail
-          set -x
 
           # if [[ ! -d $GOPATH/src/github.com/gator1/terraform-provider-opentelekomcloud/ && -d $GOPATH/src/github.com/liu-sheng/terraform-provider-opentelekomcloud ]]; then
           #     echo "Warning: this is a temporary workaround because this job is not triggered from official git repo."
