@@ -14,8 +14,8 @@
           source /opt/stack/new/devstack/openrc admin admin
           apt-get install glide
           go get ./... || true
-          TESTARGS='-v' make test
           sleep 7200
+          TESTARGS='-v' make test
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env }}'
