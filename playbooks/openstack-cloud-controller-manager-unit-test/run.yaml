@@ -1,0 +1,23 @@
+- hosts: all
+  become: yes
+  roles:
+    - clone-devstack-gate-to-workspace
+    - create-devstack-local-conf
+    - install-devstack
+
+  tasks:
+    - shell:
+        cmd: |
+          set -e
+          set -x
+          source /opt/stack/new/devstack/openrc admin admin
+          openstack server create --flavor 1 --image cirros-0.3.5-x86_64-disk --network private test
+          sleep 5
+          openstack server show test
+          add-apt-repository ppa:masterminds/glide -y
+          apt-get update -y
+          apt-get install glide -y
+          TESTARGS='-v' make test 2>&1 | tee $TEST_RESULTS_TXT
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ golang_env }}'
