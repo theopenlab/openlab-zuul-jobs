@@ -190,3 +190,13 @@
     run: playbooks/terraform-provider-flexibleengine-acceptance-test-orange/run.yaml
     secrets:
       - orange_credentials
+
+# terraform-provider-opentelekomcloud acceptance tests with Open Telekom cloud
+- job:
+    name: terraform-provider-opentelekomcloud-acceptance-test-opentelekomcloud
+    parent: golang-test
+    description: |
+      Run acceptance tests of terraform-provider-opentelekomcloud repo against open telekom cloud
+    run: playbooks/terraform-provider-opentelekomcloud-acceptance-test-opentelekomcloud/run.yaml
+    secrets:
+      - opentelekomcloud_credentials
