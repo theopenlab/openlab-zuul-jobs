@@ -15,6 +15,9 @@
           export OS_REGION_NAME="`echo {{ orange_credentials.region_name}}`"
           export OS_TENANT_NAME="`echo {{ orange_credentials.project_name }}`"
           export OS_USERNAME="`echo {{ orange_credentials.user_name }}`"
+          export OS_ACCESS_KEY="`echo {{ orange_credentials.access_key }}`"
+          export OS_SECRET_KEY="`echo {{ orange_credentials.secret_key }}`"
+          export OS_AVAILABILITY_ZONE="`echo {{ orange_credentials.availability_zone }}`"
 
           export OS_SHARE_NETWORK_ID="foobar"
           export OS_FLAVOR_ID_RESIZE="t2.small"
@@ -28,20 +31,23 @@
               export OS_IMAGE_ID="$(openstack image create --file ./cirros-0.3.5-x86_64-disk.img --min-disk 1 --container-format bare --disk-format raw cirros-0.3.5-x86_64-disk -f value -c id)"
               rm cirros-0.3.5-x86_64-disk.img
           fi
-          _NET_PREFIX="terraform-provider-openstack"
+
+          _NET_PREFIX="terraform-provider-flexibleengine-orange"
           export OS_NETWORK_NAME="$_NET_PREFIX-net"
           export OS_NETWORK_ID="$(openstack network show $OS_NETWORK_NAME -f value -c id)"
           if [ -z "$OS_NETWORK_ID" ]; then
               export OS_NETWORK_ID="$(openstack network create $OS_NETWORK_NAME -f value -c id)"
-              openstack subnet create --network $OS_NETWORK_ID --subnet-range 10.0.20.0/24 $_NET_PREFIX-subnet
+              openstack subnet create --network $OS_NETWORK_ID --subnet-range 172.16.10.0/24 $_NET_PREFIX-subnet
           fi
-          export OS_SECRET_KEY="foobar"
-          export OS_ACCESS_KEY="foobar"
 
-          export OS_SWIFT_ENVIRONMENT=1
+          export OS_VPC_ID="$(openstack router show $_NET_PREFIX-vpc -f value -c id)"
+          if [ -z "$OS_VPC_ID" ]; then
+              export OS_VPC_ID="$(openstack router create $_NET_PREFIX-vpc -f value -c id)"
+              openstack router add subnet $_NET_PREFIX-vpc $_NET_PREFIX-subnet
+          fi
 
-          # set -e
-          # set -o pipefail
+          set -e
+          set -o pipefail
           set -x
 
           # Run acc test
