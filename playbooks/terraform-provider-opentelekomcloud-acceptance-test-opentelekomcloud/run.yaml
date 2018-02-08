@@ -6,17 +6,17 @@
           apt-get install python-pip -y
           pip install -U python-openstackclient
           # NOTE: the following commands may include sensitive information please do not print in job logs
-          export OS_PASSWORD="`echo {{ telekom_credentials.password }}`"
-          export OS_AUTH_TYPE="`echo {{ telekom_credentials.auth_type }}`"
-          export OS_AUTH_URL="`echo {{ telekom_credentials.auth_url }}`"
-          export OS_IDENTITY_API_VERSION="`echo {{ telekom_credentials.identity_api_version }}`"
-          export OS_DOMAIN_NAME="`echo {{ telekom_credentials.domain_name }}`"
-          export OS_PROJECT_NAME="`echo {{ telekom_credentials.project_name}}`"
-          export OS_REGION_NAME="`echo {{ telekom_credentials.region_name}}`"
-          export OS_TENANT_NAME="`echo {{ telekom_credentials.project_name }}`"
-          export OS_USERNAME="`echo {{ telekom_credentials.user_name }}`"
-          export OS_ACCESS_KEY="`echo {{ telekom_credentials.access_key }}`"
-          export OS_SECRET_KEY="`echo {{ telekom_credentials.secret_key }}`"
+          export OS_PASSWORD="`echo {{ opentelekomcloud_credentials.password }}`"
+          export OS_AUTH_TYPE="`echo {{ opentelekomcloud_credentials.auth_type }}`"
+          export OS_AUTH_URL="`echo {{ opentelekomcloud_credentials.auth_url }}`"
+          export OS_IDENTITY_API_VERSION="`echo {{ opentelekomcloud_credentials.identity_api_version }}`"
+          export OS_DOMAIN_NAME="`echo {{ opentelekomcloud_credentials.domain_name }}`"
+          export OS_PROJECT_NAME="`echo {{ opentelekomcloud_credentials.project_name}}`"
+          export OS_REGION_NAME="`echo {{ opentelekomcloud_credentials.region_name}}`"
+          export OS_TENANT_NAME="`echo {{ opentelekomcloud_credentials.project_name }}`"
+          export OS_USERNAME="`echo {{ opentelekomcloud_credentials.user_name }}`"
+          export OS_ACCESS_KEY="`echo {{ opentelekomcloud_credentials.access_key }}`"
+          export OS_SECRET_KEY="`echo {{ opentelekomcloud_credentials.secret_key }}`"
 
           set -o pipefail
           set -x
@@ -42,9 +42,6 @@
           fi
 
           export OS_SWIFT_ENVIRONMENT=1
-
-          cd $GOPATH/src/github.com/gator1/terraform-provider-opentelekomcloud/
-
           # Run except the DNS/FW/LB test 100 testcases at a time
           testcases=`go test github.com/gator1/terraform-provider-opentelekomcloud/opentelekomcloud/ -v -list 'Acc'`
           testcases=`echo "$testcases" | sed '$d' | grep -v -e FW -e LB`
