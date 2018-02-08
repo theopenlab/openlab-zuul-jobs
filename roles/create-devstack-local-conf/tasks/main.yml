@@ -87,7 +87,8 @@
       set -e
       set -x
       cat << EOF >> /tmp/dg-local.conf
-      enable_service octavia,o-cw,o-hm,o-hk,o-api
+      enable_service q-lbaasv2,octavia,o-cw,o-hm,o-hk,o-api
+      enable_plugin neutron-lbaas https://git.openstack.org/openstack/neutron-lbaas
       enable_plugin octavia https://git.openstack.org/openstack/octavia
       enable_plugin barbican https://git.openstack.org/openstack/barbican
       EOF
