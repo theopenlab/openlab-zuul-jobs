@@ -11,9 +11,6 @@
           set -e
           set -x
           source /opt/stack/new/devstack/openrc admin admin
-          openstack server create --flavor 1 --image cirros-0.3.5-x86_64-disk --network private test
-          sleep 5
-          openstack server show test
           add-apt-repository ppa:masterminds/glide -y
           apt-get update -y
           apt-get install glide -y
