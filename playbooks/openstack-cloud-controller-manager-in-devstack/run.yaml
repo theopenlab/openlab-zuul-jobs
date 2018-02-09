@@ -76,7 +76,7 @@
           export -p > exported-envs
           for rsync_dir in /home/zuul/src /usr/local/go
           do
-              rsync -az -e 'ssh -i privatekey_1' --rsync-path "sudo mkdir -p $rsync_dir/ && sudo rsync" $rsync_dir ubuntu@$FLOATING_IP:$rsync_dir
+              rsync -az -e 'ssh -i privatekey_1' --rsync-path "sudo mkdir -p $rsync_dir && sudo rsync" $rsync_dir/ ubuntu@$FLOATING_IP:$rsync_dir
           done
 
           sleep 7200
