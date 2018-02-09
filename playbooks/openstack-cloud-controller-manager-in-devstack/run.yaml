@@ -56,7 +56,7 @@
           chmod 600 privatekey_1
 
           # Create install and wait for ACTIVE
-          INSTANCE_ID=$(openstack server create --image $IMAGE_ID --flavor m1.small --network private --key-name keypair_1 instance_1 -f value -c id)
+          INSTANCE_ID=$(openstack server create --image $IMAGE_ID --flavor m1.large --network private --key-name keypair_1 instance_1 -f value -c id)
           if ! is_instance_active $INSTANCE_ID; then
               echo "Instance(id=$INSTANCE_ID) is still not ACTIVE, exit"
               exit 1
