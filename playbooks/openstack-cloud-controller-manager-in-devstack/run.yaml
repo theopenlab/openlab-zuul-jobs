@@ -75,7 +75,7 @@
 
           # Remove env contains 'short_source' which is a function defined by devstack for formating PS4
           export -p | grep -v short_source > exported-envs
-          for rsync_dir in /home/zuul/src /home/zuul/bin /usr/local/go
+          for rsync_dir in /home/zuul/src /home/zuul/bin /home/zuul/pkg /usr/local/go
           do
               rsync -az -e 'ssh -i privatekey_1' --rsync-path "sudo mkdir -p $rsync_dir && sudo rsync" $rsync_dir/ ubuntu@$FLOATING_IP:$rsync_dir
           done
