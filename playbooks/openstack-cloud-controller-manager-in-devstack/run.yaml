@@ -10,7 +10,6 @@
           set -e
           set -x
           go get github.com/Masterminds/glide
-          go get ./... || true
           source /opt/stack/new/devstack/openrc admin admin
           TESTARGS='-v' make test || true
 
@@ -39,8 +38,6 @@
 
               return 1
           }
-
-          source /opt/stack/new/devstack/openrc admin admin
 
           # Update subnet dns to allow access to internet
           SUBNET_ID=$(openstack subnet list --network private --ip-version 4 -f value -c ID)
