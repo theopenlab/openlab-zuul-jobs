@@ -52,12 +52,12 @@
           IMAGE_ID=$(openstack image create --file "$IMAGE_NAME" --min-disk 1 --container-format bare --disk-format qcow2 "$IMAGE_NAME" -f value -c id)
           rm "$IMAGE_NAME"
 
+          openstack flavor create --vcpus 6 --ram 10240 --disk 20 flavor_1
           openstack keypair create keypair_1 > privatekey_1
           chmod 600 privatekey_1
 
           # Create install and wait for ACTIVE
-          sleep 7200
-          INSTANCE_ID=$(openstack server create --image $IMAGE_ID --flavor m1.large --network private --key-name keypair_1 instance_1 -f value -c id)
+          INSTANCE_ID=$(openstack server create --image $IMAGE_ID --flavor flavor_1 --network private --key-name keypair_1 instance_1 -f value -c id)
           if ! is_instance_active $INSTANCE_ID; then
               echo "Instance(id=$INSTANCE_ID) is still not ACTIVE, exit"
               exit 1
@@ -80,6 +80,14 @@
           do
               rsync -az -e 'ssh -i privatekey_1' --rsync-path "sudo mkdir -p $rsync_dir && sudo rsync" $rsync_dir/ ubuntu@$FLOATING_IP:$rsync_dir
           done
+
+          ssh -i privatekey_1 ubuntu@$FLOATING_IP "
+              set -x
+              cd $PWD
+              source exported-envs
+              sudo apt install make -y
+              TESTARGS='-v' make test 2>&1
+          " | tee $TEST_RESULTS_TXT
 
           sleep 7200
         executable: /bin/bash
