@@ -10,6 +10,7 @@
         cmd: |
           set -e
           set -x
+          set -o pipefail
           source /opt/stack/new/devstack/openrc admin admin
           add-apt-repository ppa:masterminds/glide -y
           apt-get update -y
