@@ -22,6 +22,7 @@
     - role: install-devstack
       environment:
         ENABLED_SERVICES: 'octavia,o-cw,o-hm,o-hk,o-api'
+        DISABLED_SERVICES: 'swift'
         PROJECTS: "openstack/barbican openstack/python-barbicanclient liu-sheng/openstack-cloud-controller-manager"
   tasks:
     - shell:
