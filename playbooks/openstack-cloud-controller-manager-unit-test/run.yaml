@@ -21,8 +21,7 @@
     - clone-devstack-gate-to-workspace
     - role: install-devstack
       environment:
-        ENABLED_SERVICES: 'octavia,o-cw,o-hm,o-hk,o-api'
-        DISABLED_SERVICES: 'swift'
+        OVERRIDE_ENABLED_SERVICES: 'c-api,c-bak,c-sch,c-vol,cinder,dstat,etcd3,g-api,g-reg,key,mysql,n-api,n-api-meta,n-cauth,n-cond,n-cpu,n-novnc,n-obj,n-sch,peakmem_tracker,placement-api,q-agt,q-dhcp,q-l3,q-meta,q-metering,q-svc,rabbit,octavia,o-cw,o-hm,o-hk,o-api'
         PROJECTS: "openstack/barbican openstack/python-barbicanclient liu-sheng/openstack-cloud-controller-manager"
   tasks:
     - shell:
