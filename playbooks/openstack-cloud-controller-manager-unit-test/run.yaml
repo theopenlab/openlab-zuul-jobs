@@ -18,7 +18,7 @@
         chdir: '{{ ansible_user_dir }}/workspace'
   roles:
     - clone-devstack-gate-to-workspace
-    - install-devstack
+    - role: install-devstack
       environment:
         ENABLED_SERVICES: 'octavia,o-cw,o-hm,o-hk,o-api'
         PROJECTS: 'openstack/barbican openstack/python-barbicanclient $PROJECTS'
