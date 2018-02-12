@@ -9,9 +9,10 @@
         cmd: |
           set -e
           set -x
-          go get github.com/Masterminds/glide
+
           source /opt/stack/new/devstack/openrc admin admin
-          TESTARGS='-v' make test || true
+          go get github.com/Masterminds/glide
+          make depend
 
           is_instance_active() {
               local instance_id=$1
