@@ -20,8 +20,8 @@
     - clone-devstack-gate-to-workspace
     - install-devstack
       environment:
-        ENABLED_SERVICES: "octavia,o-cw,o-hm,o-hk,o-api"
-        PROJECTS: "openstack/barbican openstack/python-barbicanclient $PROJECTS"
+        ENABLED_SERVICES: 'octavia,o-cw,o-hm,o-hk,o-api'
+        PROJECTS: 'openstack/barbican openstack/python-barbicanclient $PROJECTS'
   tasks:
     - shell:
         cmd: |
