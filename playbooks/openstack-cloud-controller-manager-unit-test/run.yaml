@@ -7,8 +7,6 @@
           set -x
           cat << EOF >> /tmp/dg-local.conf
           [[local|localrc]]
-          ETCD_VERSION=v3.3.0
-
           NETWORK_GATEWAY=10.0.0.1
           enable_plugin octavia https://git.openstack.org/openstack/octavia
           enable_plugin barbican https://git.openstack.org/openstack/barbican
