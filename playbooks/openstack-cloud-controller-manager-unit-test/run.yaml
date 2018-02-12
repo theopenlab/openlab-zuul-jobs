@@ -1,10 +1,27 @@
 - hosts: all
   become: yes
+  pre_tasks:
+    - shell:
+        cmd: |
+          set -e
+          set -x
+          cat << EOF >> /tmp/dg-local.conf
+          [[local|localrc]]
+          ETCD_VERSION=v3.3.0
+
+          NETWORK_GATEWAY=10.0.0.1
+          enable_plugin octavia https://git.openstack.org/openstack/octavia
+          enable_plugin barbican https://git.openstack.org/openstack/barbican
+          enable_plugin openstack-cloud-controller-manager https://github.com/dims/openstack-cloud-controller-manager
+          EOF
+        executable: /bin/bash
+        chdir: '{{ ansible_user_dir }}/workspace'
   roles:
     - clone-devstack-gate-to-workspace
-    - create-devstack-local-conf
     - install-devstack
-
+      environment:
+        ENABLED_SERVICES: "octavia,o-cw,o-hm,o-hk,o-api"
+        PROJECTS: "openstack/barbican openstack/python-barbicanclient $PROJECTS"
   tasks:
     - shell:
         cmd: |
@@ -15,6 +32,7 @@
           add-apt-repository ppa:masterminds/glide -y
           apt-get update -y
           apt-get install glide -y
+          sleep 7200
           TESTARGS='-v' make test 2>&1 | tee $TEST_RESULTS_TXT
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
