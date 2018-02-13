@@ -195,3 +195,4 @@
     description: |
       Run K8S openstack-cloud-controller-manager unit test in devstack instance
     run: playbooks/openstack-cloud-controller-manager-in-devstack/run.yaml
+    nodeset: ubuntu-xenial-large

@@ -50,7 +50,7 @@
           IMAGE_ID=$(openstack image create --file "$IMAGE_NAME" --min-disk 1 --container-format bare --disk-format qcow2 "$IMAGE_NAME" -f value -c id)
           rm "$IMAGE_NAME"
 
-          openstack flavor create --vcpus 4 --ram 8192 --disk 10 flavor_1
+          openstack flavor create --vcpus 8 --ram 16384 --disk 10 flavor_1
           openstack keypair create keypair_1 > privatekey_1
           chmod 600 privatekey_1
 
