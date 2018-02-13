@@ -57,8 +57,8 @@
           # Run except the DNS/FW/LB test 100 testcases at a time
           testcases=`go test github.com/liu-sheng/terraform-provider-opentelekomcloud/opentelekomcloud/ -v -list 'Acc'`
           testcases=`echo "$testcases" | sed '$d' | grep -v -e FW -e LB`
-          # echo "$testcases" | xargs -t -n100 sh -c 'TF_ACC=1 go test github.com/liu-sheng/terraform-provider-opentelekomcloud/opentelekomcloud/ -v -timeout 120m -run $(echo "$@" | tr " " "|")' argv0 2>&1 | tee $TEST_RESULTS_TXT
-          TF_ACC=1 go test github.com/liu-sheng/terraform-provider-opentelekomcloud/opentelekomcloud/ -v -run TestAccNetworkingV2Subnet_basic 2>&1 | tee $TEST_RESULTS_TXT
+          echo "$testcases" | xargs -t -n100 sh -c 'TF_ACC=1 go test github.com/liu-sheng/terraform-provider-opentelekomcloud/opentelekomcloud/ -v -timeout 120m -run $(echo "$@" | tr " " "|")' argv0 2>&1 | tee $TEST_RESULTS_TXT
+          # TF_ACC=1 go test github.com/liu-sheng/terraform-provider-opentelekomcloud/opentelekomcloud/ -v -run TestAccNetworkingV2Subnet_basic 2>&1 | tee $TEST_RESULTS_TXT
 
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
