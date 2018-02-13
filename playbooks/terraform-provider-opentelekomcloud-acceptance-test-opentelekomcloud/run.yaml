@@ -21,10 +21,9 @@
           set -o pipefail
           set -x
           export OS_SHARE_NETWORK_ID="foobar"
-          export OS_FLAVOR_ID_RESIZE=2
-          export OS_FLAVOR_ID=1
+          export OS_FLAVOR_ID_RESIZE='computev2-1'
+          export OS_FLAVOR_ID='computev1-1'
           export OS_POOL_NAME="admin_external_net"
-          # export OS_EXTGW_ID="$(openstack network show $OS_POOL_NAME -f value -c id)"
           export OS_EXTGW_ID=`openstack network list -f value |grep admin_external_net | awk -F ' ' '{print $1}'`
           export OS_IMAGE_NAME="cirros-0.3.5-x86_64-disk"
           export OS_IMAGE_ID="$(openstack image show $OS_IMAGE_NAME -f value -c id)"
@@ -40,12 +39,19 @@
               export OS_NETWORK_ID="$(openstack network create $OS_NETWORK_NAME -f value -c id)"
               openstack subnet create --network $OS_NETWORK_ID --subnet-range 10.0.20.0/24 $_NET_PREFIX-subnet
           fi
-
+          export OS_VPC_ID="$(openstack router show $_NET_PREFIX-vpc -f value -c id)"
+          if [ -z "$OS_VPC_ID" ]; then
+              export OS_VPC_ID="$(openstack router create $_NET_PREFIX-vpc -f value -c id)"
+              openstack router add subnet $_NET_PREFIX-vpc $_NET_PREFIX-subnet
+          fi
           export OS_SWIFT_ENVIRONMENT=1
+
           # Run except the DNS/FW/LB test 100 testcases at a time
-          testcases=`go test github.com/gator1/terraform-provider-opentelekomcloud/opentelekomcloud/ -v -list 'Acc'`
+          testcases=`go test ./opentelekomcloud/ -v -list 'Acc'`
           testcases=`echo "$testcases" | sed '$d' | grep -v -e FW -e LB`
-          # echo "$testcases" | xargs -t -n100 sh -c 'TF_ACC=1 go test github.com/gator1/terraform-provider-opentelekomcloud/opentelekomcloud/ -v -timeout 120m -run $(echo "$@" | tr " " "|")' argv0 2>&1 | tee $TEST_RESULTS_TXT
+          echo "$testcases" | xargs -t -n100 sh -c 'TF_ACC=1 go test ./opentelekomcloud/ -v -timeout 120m -run $(echo "$@" | tr " " "|")' argv0 2>&1 | tee $TEST_RESULTS_TXT
+          # TF_ACC=1 go test ./opentelekomcloud/ -v -run TestAccNetworkingV2Subnet_basic 2>&1 | tee $TEST_RESULTS_TXT
+
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env }}'
