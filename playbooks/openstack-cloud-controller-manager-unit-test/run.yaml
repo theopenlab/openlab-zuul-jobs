@@ -15,8 +15,13 @@
           enable_plugin barbican https://git.openstack.org/openstack/barbican
           enable_plugin openstack-cloud-controller-manager https://github.com/dims/openstack-cloud-controller-manager
           EOF
+
+          add-apt-repository ppa:masterminds/glide -y
+          apt-get update -y
+          apt-get install glide -y
+          make build
         executable: /bin/bash
-        chdir: '{{ ansible_user_dir }}/workspace'
+        chdir: '{{ zuul.project.src_dir }}'
   roles:
     - clone-devstack-gate-to-workspace
     - role: install-devstack
@@ -30,9 +35,6 @@
           set -x
           set -o pipefail
           source /opt/stack/new/devstack/openrc admin admin
-          add-apt-repository ppa:masterminds/glide -y
-          apt-get update -y
-          apt-get install glide -y
           sleep 7200
           TESTARGS='-v' make test 2>&1 | tee $TEST_RESULTS_TXT
         executable: /bin/bash
