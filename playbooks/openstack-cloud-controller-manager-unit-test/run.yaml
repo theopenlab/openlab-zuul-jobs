@@ -22,6 +22,7 @@
           make build
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ golang_env }}'
   roles:
     - clone-devstack-gate-to-workspace
     - role: install-devstack
