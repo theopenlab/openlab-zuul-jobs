@@ -200,3 +200,12 @@
     run: playbooks/terraform-provider-opentelekomcloud-acceptance-test-opentelekomcloud/run.yaml
     secrets:
       - opentelekomcloud_credentials
+
+# Kubernetes jobs
+- job:
+    name: openstack-cloud-controller-manager-unittest
+    parent: golang-test
+    description: |
+      Run Kubernetes openstack-cloud-controller-manager unit test in devstack instance
+    run: playbooks/openstack-cloud-controller-manager-unittest/run.yaml
+    nodeset: ubuntu-xenial-large

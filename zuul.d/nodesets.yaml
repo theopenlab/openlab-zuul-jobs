@@ -17,3 +17,9 @@
     nodes:
       - name: ubuntu-xenial-ut
         label: ubuntu-xenial-ut
+
+- nodeset:
+    name: ubuntu-xenial-large
+    nodes:
+      - name: ubuntu-xenial-large
+        label: ubuntu-xenial-large
