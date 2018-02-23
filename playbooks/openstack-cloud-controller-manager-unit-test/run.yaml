@@ -14,14 +14,7 @@
           enable_plugin octavia https://git.openstack.org/openstack/octavia
           enable_plugin barbican https://git.openstack.org/openstack/barbican
           enable_plugin openstack-cloud-controller-manager https://github.com/dims/openstack-cloud-controller-manager
-
-          EXTERNAL_CLOUD_PROVIDER_BINARY='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/openstack-cloud-controller-manager'
           EOF
-
-          add-apt-repository ppa:masterminds/glide -y
-          apt-get update -y
-          apt-get install glide -y
-          make build
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env }}'
@@ -38,7 +31,6 @@
           set -x
           set -o pipefail
           source /opt/stack/new/devstack/openrc admin admin
-          sleep 7200
           TESTARGS='-v' make test 2>&1 | tee $TEST_RESULTS_TXT
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
