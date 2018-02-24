@@ -35,6 +35,7 @@
           set -x
           set -o pipefail
           source /opt/stack/new/devstack/openrc admin admin
+          sleep 7200
           TESTARGS='-v' make test 2>&1 | tee $TEST_RESULTS_TXT
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
