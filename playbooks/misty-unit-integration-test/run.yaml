@@ -1,0 +1,12 @@
+- hosts: all
+  tasks:
+    - shell:
+        cmd: |
+          set -e
+          set -o pipefail
+          set -x
+
+          apt-get install ruby ruby-dev -y
+          sleep 7200
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'

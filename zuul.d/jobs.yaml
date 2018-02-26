@@ -196,3 +196,10 @@
       Run K8S openstack-cloud-controller-manager unit test in devstack instance
     run: playbooks/openstack-cloud-controller-manager-in-devstack/run.yaml
     nodeset: ubuntu-xenial-large
+
+- job:
+    name: misty-unit-integration-test
+    parent: init-test
+    description: |
+      Run unit tests and integration tests of Misty
+    run: playbooks/misty-unit-integration-test/run.yaml
