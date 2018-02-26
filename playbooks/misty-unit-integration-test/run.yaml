@@ -8,6 +8,8 @@
           set -x
 
           apt-get install ruby ruby-dev -y
-          sleep 7200
+          gem install bundler
+          bundle install
+          rake test TESTOPTS='-v'
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
