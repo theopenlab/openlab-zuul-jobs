@@ -12,4 +12,4 @@
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment:
-        ANSIBLE_ROLES_PATH: '{{ zuul.project.src_dir }}/roles:{{ ansible_user_dir }}/src/github.com/liu-sheng/zuul-jobs/roles:{{ ansible_user_dir }}/src/github.com/liu-sheng/project-config/roles'
+        ANSIBLE_ROLES_PATH: '{{ ansible_user_dir }}/src/github.com/liu-sheng/openlab-zuul-jobs/roles:{{ ansible_user_dir }}/src/github.com/liu-sheng/zuul-jobs/roles:{{ ansible_user_dir }}/src/github.com/liu-sheng/project-config/roles'
