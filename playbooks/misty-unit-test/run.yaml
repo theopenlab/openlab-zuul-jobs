@@ -1,0 +1,15 @@
+- hosts: all
+  become: yes
+  tasks:
+    - shell:
+        cmd: |
+          set -e
+          set -o pipefail
+          set -x
+
+          apt-get install ruby ruby-dev -y
+          gem install bundler
+          bundle install
+          rake unit TESTOPTS='-v'
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'

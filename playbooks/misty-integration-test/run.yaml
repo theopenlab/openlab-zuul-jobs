@@ -1,5 +1,10 @@
 - hosts: all
   become: yes
+# TODO: the misty will run integration tests against a devstack in next step
+#  roles:
+#    - clone-devstack-gate-to-workspace
+#    - create-devstack-local-conf
+#    - install-devstack
   tasks:
     - shell:
         cmd: |
@@ -10,6 +15,6 @@
           apt-get install ruby ruby-dev -y
           gem install bundler
           bundle install
-          rake test TESTOPTS='-v'
+          rake integration TESTOPTS='-v'
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'

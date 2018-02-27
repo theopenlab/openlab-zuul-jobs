@@ -198,8 +198,15 @@
     nodeset: ubuntu-xenial-large
 
 - job:
-    name: misty-unit-integration-test
+    name: misty-unit-test
     parent: init-test
     description: |
-      Run unit tests and integration tests of Misty
-    run: playbooks/misty-unit-integration-test/run.yaml
+      Run unit tests of Misty
+    run: playbooks/misty-unit-test/run.yaml
+
+- job:
+    name: misty-integration-test
+    parent: init-test
+    description: |
+      Run integration tests of Misty
+    run: playbooks/misty-integration-test/run.yaml
