@@ -1,4 +1,4 @@
 - project:
     check:
       jobs:
-        - openlab-zuul-jobs-linters
+        - openlab-zuul-jobs-check
