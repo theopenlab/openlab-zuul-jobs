@@ -1,0 +1,15 @@
+- hosts: all
+  become: yes
+  tasks:
+    - shell:
+        cmd: |
+          set -e
+          set -o pipefail
+          set -x
+          pip install ansible-lint
+          find playbooks -type f -regex '.*.y[a]ml' -print0 | xargs -t -n1 -0 ansible-lint -xANSIBLE0012 || true
+          find playbooks -type f -regex '.*.y[a]?ml' -exec ansible-playbook --syntax-check -i ./playbooks/openlab-zuul-jobs-check/inventory \{\} + > /dev/null
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment:
+        ANSIBLE_ROLES_PATH: '{{ ansible_user_dir }}/src/github.com/theopenlab/openlab-zuul-jobs/roles:{{ ansible_user_dir }}/src/github.com/theopenlab/zuul-jobs/roles:{{ ansible_user_dir }}/src/github.com/theopenlab/project-config/roles'

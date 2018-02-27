@@ -209,3 +209,15 @@
       Run Kubernetes openstack-cloud-controller-manager unit test in devstack instance
     run: playbooks/openstack-cloud-controller-manager-unittest/run.yaml
     nodeset: ubuntu-xenial-large
+
+- job:
+    name: openlab-zuul-jobs-check
+    parent: init-test
+    description: |
+      This job runs against project-config, openlab-zuul-jobs and zuul-jobs
+      so we can properly lint our ansible playbooks / roles
+    required-projects:
+      - theopenlab/openlab-zuul-jobs
+      - theopenlab/project-config
+      - theopenlab/zuul-jobs
+    run: playbooks/openlab-zuul-jobs-check/run.yaml
