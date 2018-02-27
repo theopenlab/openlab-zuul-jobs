@@ -7,7 +7,7 @@
           set -o pipefail
           set -x
           pip install ansible-lint
-          find playbooks -type f -regex '.*.y[a]ml' -print0 | xargs -t -n1 -0 ansible-lint -xANSIBLE0012
+          # find playbooks -type f -regex '.*.y[a]ml' -print0 | xargs -t -n1 -0 ansible-lint -xANSIBLE0012
           find playbooks -type f -regex '.*.y[a]?ml' -exec ansible-playbook --syntax-check -i {{ zuul.project.src_dir }}/playbooks/openlab-zuul-jobs-linters/inventory \{\} + > /dev/null
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
