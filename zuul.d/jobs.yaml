@@ -198,27 +198,13 @@
     nodeset: ubuntu-xenial-large
 
 - job:
-    name: misty-unit-test
+    name: openlab-zuul-jobs-check
     parent: init-test
     description: |
-      Run unit tests of Misty
-    run: playbooks/misty-unit-test/run.yaml
-
-#- job:
-#    name: misty-integration-test
-#    parent: init-test
-#    description: |
-#      Run integration tests of Misty
-#    run: playbooks/misty-integration-test/run.yaml
-
-#- job:
-#    name: openlab-zuul-jobs-check
-#    parent: init-test
-#    description: |
-#      This job runs against project-config, openlab-zuul-jobs and zuul-jobs
-#      so we can properly lint our ansible playbooks / roles
-#    required-projects:
-#      - liu-sheng/openlab-zuul-jobs
-#      - liu-sheng/project-config
-#      - liu-sheng/zuul-jobs
-#    run: playbooks/openlab-zuul-jobs-check/run.yaml
+      This job runs against project-config, openlab-zuul-jobs and zuul-jobs
+      so we can properly lint our ansible playbooks / roles
+    required-projects:
+      - liu-sheng/openlab-zuul-jobs
+      - liu-sheng/project-config
+      - liu-sheng/zuul-jobs
+    run: playbooks/openlab-zuul-jobs-check/run.yaml
