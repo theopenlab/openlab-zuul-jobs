@@ -25,13 +25,15 @@
           export OS_FLAVOR_ID='computev1-1'
           export OS_POOL_NAME="admin_external_net"
           export OS_EXTGW_ID=`openstack network list -f value |grep admin_external_net | awk -F ' ' '{print $1}'`
-          export OS_IMAGE_NAME="cirros-0.3.5-x86_64-disk"
-          export OS_IMAGE_ID="$(openstack image show $OS_IMAGE_NAME -f value -c id)"
-          if [ -z "$OS_IMAGE_ID" ]; then
-              curl -O http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img
-              export OS_IMAGE_ID="$(openstack image create --file ./cirros-0.3.5-x86_64-disk.img --min-disk 1 --container-format bare --disk-format raw cirros-0.3.5-x86_64-disk -f value -c id)"
-              rm cirros-0.3.5-x86_64-disk.img
-          fi
+          export OS_IMAGE_NAME=Community_Ubuntu_16.04_TSI_latest
+          export OS_IMAGE_ID=d6944a41-5ec7-44a4-970e-ce330da390d2
+          # export OS_IMAGE_NAME="cirros-0.3.5-x86_64-disk"
+          # export OS_IMAGE_ID="$(openstack image show $OS_IMAGE_NAME -f value -c id)"
+          # if [ -z "$OS_IMAGE_ID" ]; then
+          #     curl -O http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img
+          #     export OS_IMAGE_ID="$(openstack image create --file ./cirros-0.3.5-x86_64-disk.img --min-disk 1 --container-format bare --disk-format raw cirros-0.3.5-x86_64-disk -f value -c id)"
+          #     rm cirros-0.3.5-x86_64-disk.img
+          # fi
           _NET_PREFIX="terraform-provider-opentelekomcloud"
           export OS_NETWORK_NAME="$_NET_PREFIX-net"
           export OS_NETWORK_ID="$(openstack network show $OS_NETWORK_NAME -f value -c id)"
@@ -46,18 +48,10 @@
           fi
           export OS_SWIFT_ENVIRONMENT=1
 
-          # if [[ ! -d $GOPATH/src/github.com/gator1/terraform-provider-opentelekomcloud/ && -d $GOPATH/src/github.com/liu-sheng/terraform-provider-opentelekomcloud ]]; then
-          #     echo "Warning: this is a temporary workaround because this job is not triggered from official git repo."
-          #     mkdir -p $GOPATH/src/github.com/gator1/
-          #     cp -r $GOPATH/src/github.com/liu-sheng/terraform-provider-opentelekomcloud  $GOPATH/src/github.com/gator1/
-          #     cd $GOPATH/src/github.com/gator1/terraform-provider-opentelekomcloud/
-          # fi
-          cd $GOPATH/src/github.com/liu-sheng/terraform-provider-opentelekomcloud
-
           # Run except the DNS/FW/LB test 100 testcases at a time
-          testcases=`go test github.com/liu-sheng/terraform-provider-opentelekomcloud/opentelekomcloud/ -v -list 'Acc'`
+          testcases=`go test ./opentelekomcloud/ -v -list 'Acc'`
           testcases=`echo "$testcases" | sed '$d' | grep -v -e FW -e LB`
-          echo "$testcases" | xargs -t -n100 sh -c 'TF_ACC=1 go test github.com/liu-sheng/terraform-provider-opentelekomcloud/opentelekomcloud/ -v -timeout 150m -run $(echo "$@" | tr " " "|")' argv0 2>&1 | tee $TEST_RESULTS_TXT
+          echo "$testcases" | xargs -t -n100 sh -c 'TF_ACC=1 go test ./opentelekomcloud/ -v -timeout 150m -run $(echo "$@" | tr " " "|")' argv0 2>&1 | tee $TEST_RESULTS_TXT
 
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
