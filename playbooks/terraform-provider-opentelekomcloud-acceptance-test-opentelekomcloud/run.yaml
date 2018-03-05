@@ -17,6 +17,7 @@
           export OS_USERNAME="`echo {{ opentelekomcloud_credentials.user_name }}`"
           export OS_ACCESS_KEY="`echo {{ opentelekomcloud_credentials.access_key }}`"
           export OS_SECRET_KEY="`echo {{ opentelekomcloud_credentials.secret_key }}`"
+          export OS_AVAILABILITY_ZONE="`echo {{ opentelekomcloud_credentials.availability_zone }}`"
 
           set -o pipefail
           set -x
