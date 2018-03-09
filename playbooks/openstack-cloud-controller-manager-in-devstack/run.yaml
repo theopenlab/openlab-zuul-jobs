@@ -9,6 +9,7 @@
         cmd: |
           set -e
           set -x
+          set -o pipefail
 
           source /opt/stack/new/devstack/openrc admin admin
           go get github.com/Masterminds/glide
