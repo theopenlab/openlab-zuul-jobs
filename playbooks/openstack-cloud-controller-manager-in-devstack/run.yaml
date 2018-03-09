@@ -65,7 +65,7 @@
           SECURITY_GROUP_ID=$(openstack port show $PORT_ID -f value -c security_group_ids)
           openstack security group rule create --ingress --protocol tcp --dst-port 22 $SECURITY_GROUP_ID
           FLOATING_IP=$(openstack floating ip create public -f value -c floating_ip_address)
-          openstack server add floating ip $INSTANCE_ID $FLOATING_IP
+          neutron floatingip-associate $FLOATING_IP $PORT_ID
 
           if ! is_instance_ssh_accessible ubuntu $FLOATING_IP privatekey_1; then
               echo "Instance(id=$INSTANCE_ID) is still not ssh accessible, exit"
