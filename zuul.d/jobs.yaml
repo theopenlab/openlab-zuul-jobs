@@ -205,6 +205,14 @@
     nodeset: ubuntu-xenial-large
 
 - job:
+    name: openstack-cloud-controller-manager-in-devstack-lbaas
+    parent: golang-test
+    description: |
+      Run K8S openstack-cloud-controller-manager unit test in devstack instance against lbaas
+    run: playbooks/openstack-cloud-controller-manager-in-devstack-lbaas/run.yaml
+    nodeset: ubuntu-xenial-large
+
+- job:
     name: openlab-zuul-jobs-check
     parent: init-test
     description: |
