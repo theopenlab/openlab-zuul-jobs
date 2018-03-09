@@ -10,6 +10,7 @@
           set -e
           set -x
 
+          sleep 3600
           source /opt/stack/new/devstack/openrc admin admin
           go get github.com/Masterminds/glide
           make depend
