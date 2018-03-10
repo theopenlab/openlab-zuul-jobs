@@ -9,6 +9,7 @@
         cmd: |
           set -e
           set -x
+          set -o pipefail
 
           # Prepare env on executing node
           source /opt/stack/new/devstack/openrc admin admin
