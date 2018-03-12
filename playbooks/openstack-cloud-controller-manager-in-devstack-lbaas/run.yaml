@@ -9,7 +9,9 @@
         cmd: |
           set -e
           set -x
+          set -o pipefail
 
+          # Prepare env on executing node
           source /opt/stack/new/devstack/openrc admin admin
           go get github.com/Masterminds/glide
           make depend
@@ -65,7 +67,8 @@
           SECURITY_GROUP_ID=$(openstack port show $PORT_ID -f value -c security_group_ids)
           openstack security group rule create --ingress --protocol tcp --dst-port 22 $SECURITY_GROUP_ID
           FLOATING_IP=$(openstack floating ip create public -f value -c floating_ip_address)
-          neutron floatingip-associate $FLOATING_IP $PORT_ID
+          FLOATING_IP_ID=$(openstack floating ip show $FLOATING_IP -f value -c id)
+          neutron floatingip-associate $FLOATING_IP_ID $PORT_ID
 
           if ! is_instance_ssh_accessible ubuntu $FLOATING_IP privatekey_1; then
               echo "Instance(id=$INSTANCE_ID) is still not ssh accessible, exit"
@@ -80,6 +83,7 @@
           done
 
           sleep 7200
+          # Run test inside devstack instance
           ssh -i privatekey_1 ubuntu@$FLOATING_IP "
               set -x
               cd $PWD
