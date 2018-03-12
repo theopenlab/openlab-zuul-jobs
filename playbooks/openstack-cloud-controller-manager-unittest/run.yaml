@@ -4,12 +4,7 @@
     - clone-devstack-gate-to-workspace
     - role: create-devstack-local-conf
       enable_services:
-        - 'neutron-api'
-        - 'neutron-agent'
-        - 'neutron-l3'
-        - 'neutron-dhcp'
-        - 'neutron-metadata-agent'
-        - 'neutron-metering'
+        - 'neutron'
     - install-devstack
   tasks:
     - shell:
