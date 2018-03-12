@@ -51,8 +51,8 @@
           '
 
       echo "{
-          \"private_key\": $PRIVATE_KEY,
-          \"floating_ip\": $FLOATING_IP
+          \"private_key\": \"$PRIVATE_KEY\",
+          \"floating_ip\": \"$FLOATING_IP\"
       }"
     executable: /bin/bash
     chdir: '{{ zuul.project.src_dir }}'
