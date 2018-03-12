@@ -205,11 +205,11 @@
     nodeset: ubuntu-xenial-large
 
 - job:
-    name: openstack-cloud-controller-manager-in-devstack-lbaas
+    name: openstack-cloud-controller-manager-acceptance-test-lb-octavia
     parent: golang-test
     description: |
       Run K8S openstack-cloud-controller-manager unit test in devstack instance against lbaas
-    run: playbooks/openstack-cloud-controller-manager-in-devstack-lbaas/run.yaml
+    run: playbooks/openstack-cloud-controller-manager-acceptance-test-lb-octavia/run.yaml
     nodeset: ubuntu-xenial-large
 
 - job:
