@@ -19,15 +19,16 @@
 
       # Create flavor and keypair
       openstack flavor create --vcpus 8 --ram 16384 --disk 10 flavor_1
-      openstack keypair create keypair_1 > privatekey_1
-      chmod 600 privatekey_1
+      PRIVATE_KEY=privatekey_1
+      openstack keypair create keypair_1 > "$PRIVATE_KEY"
+      chmod 600 "$PRIVATE_KEY"
 
       # Create instance and wait for ACTIVE
       INSTANCE_ID=$(openstack server create --image "$IMAGE_ID" --flavor flavor_1 --network private --key-name keypair_1 instance_1 -f value -c id)
-      instance_id=$INSTANCE_ID timeout 300 bash -c '
+      INSTANCE_ID=$INSTANCE_ID timeout 300 bash -c '
           while :
           do
-              [[ $(openstack server show "$instance_id" -f value -c status) == ACTIVE ]] && break
+              [[ $(openstack server show "$INSTANCE_ID" -f value -c status) == ACTIVE ]] && break
               sleep 1
           done
           '
@@ -41,12 +42,22 @@
       neutron floatingip-associate "$FLOATING_IP_ID" "$PORT_ID"
 
       # Wait for instance ssh-able
-      user=ubuntu host=$FLOATING_IP private_key=privatekey_1 timeout 300 bash -c '
+      USER=ubuntu HOST=$FLOATING_IP PRIVATE_KEY=$PRIVATE_KEY timeout 300 bash -c '
           while :
           do
-              ssh -i "$private_key" -o StrictHostKeyChecking=no "$user@$host" : && break
+              ssh -i "$PRIVATE_KEY" -o StrictHostKeyChecking=no "$USER@$HOST" : && break
               sleep 1
           done
           '
+
+      echo "{
+          \"private_key\": $PRIVATE_KEY,
+          \"floating_ip\": $FLOATING_IP
+      }"
     executable: /bin/bash
     chdir: '{{ zuul.project.src_dir }}'
+  register: output
+
+- name: Set fact for instance attributes used by ssh
+  set_fact:
+    instance_attr: '{{ output.stdout | from_json }}'

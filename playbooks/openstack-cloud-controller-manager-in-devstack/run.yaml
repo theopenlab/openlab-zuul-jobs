@@ -12,6 +12,10 @@
           set -x
           set -o pipefail
 
+          # Instance attributes from role create-virtual-machines
+          PRIVATE_KEY='{{ instance_attr.private_key }}'
+          FLOATING_IP='{{ instance_attr.floating_ip }}'
+
           # Prepare env on executing node
           go get github.com/Masterminds/glide
           make depend
@@ -22,11 +26,11 @@
           # Sync into instance
           for rsync_dir in "$GOPATH"/{src,bin,pkg} /usr/local/go
           do
-              rsync -az -e 'ssh -i privatekey_1' --rsync-path "sudo mkdir -p $rsync_dir && sudo rsync" "$rsync_dir"/ "ubuntu@$FLOATING_IP:$rsync_dir"
+              rsync -az -e "ssh -i $PRIVATE_KEY" --rsync-path "sudo mkdir -p $rsync_dir && sudo rsync" "$rsync_dir"/ "ubuntu@$FLOATING_IP:$rsync_dir"
           done
 
           # Run test inside instance
-          ssh -i privatekey_1 "ubuntu@$FLOATING_IP" "
+          ssh -i "$PRIVATE_KEY" "ubuntu@$FLOATING_IP" "
               set -x
               cd $PWD
               source exported-envs
