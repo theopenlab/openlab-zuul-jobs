@@ -1,0 +1,52 @@
+- name: Create virtual machines
+  shell:
+    cmd: |
+      set -e
+      set -x
+
+      source /opt/stack/new/devstack/openrc admin admin
+
+      # Update subnet dns to allow access to internet
+      SUBNET_ID=$(openstack subnet list --network private --ip-version 4 -f value -c ID)
+      openstack subnet set --dns-nameserver 8.8.8.8 "$SUBNET_ID"
+
+      # Download image and register in glance
+      IMAGE_SOURCE='http://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-disk1.img'
+      IMAGE_NAME=${IMAGE_SOURCE##*/}
+      wget -q -t 2 -c "$IMAGE_SOURCE" -O "$IMAGE_NAME"
+      IMAGE_ID=$(openstack image create --file "$IMAGE_NAME" --min-disk 1 --container-format bare --disk-format qcow2 "$IMAGE_NAME" -f value -c id)
+      rm "$IMAGE_NAME"
+
+      # Create flavor and keypair
+      openstack flavor create --vcpus 8 --ram 16384 --disk 10 flavor_1
+      openstack keypair create keypair_1 > privatekey_1
+      chmod 600 privatekey_1
+
+      # Create instance and wait for ACTIVE
+      INSTANCE_ID=$(openstack server create --image "$IMAGE_ID" --flavor flavor_1 --network private --key-name keypair_1 instance_1 -f value -c id)
+      instance_id=$INSTANCE_ID timeout 300 bash -c '
+          while :
+          do
+              [[ $(openstack server show "$instance_id" -f value -c status) == ACTIVE ]] && break
+              sleep 1
+          done
+          '
+
+      # Add floating ip to instance
+      PORT_ID=$(openstack port list --device-id "$INSTANCE_ID" -f value -c id)
+      SECURITY_GROUP_ID=$(openstack port show "$PORT_ID" -f value -c security_group_ids)
+      openstack security group rule create --ingress --protocol tcp --dst-port 22 "$SECURITY_GROUP_ID"
+      FLOATING_IP=$(openstack floating ip create public -f value -c floating_ip_address)
+      FLOATING_IP_ID=$(openstack floating ip show "$FLOATING_IP" -f value -c id)
+      neutron floatingip-associate "$FLOATING_IP_ID" "$PORT_ID"
+
+      # Wait for instance ssh-able
+      user=ubuntu host=$FLOATING_IP private_key=privatekey_1 timeout 300 bash -c '
+          while :
+          do
+              ssh -i "$private_key" -o StrictHostKeyChecking=no "$user@$host" : && break
+              sleep 1
+          done
+          '
+    executable: /bin/bash
+    chdir: '{{ zuul.project.src_dir }}'
