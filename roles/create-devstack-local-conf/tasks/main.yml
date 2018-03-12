@@ -128,3 +128,17 @@
   environment: '{{ zuul | zuul_legacy_vars }}'
   when:
     - '"fwaas-v2" in enable_services'
+
+- name: create devstack local conf with neutron enabled instead of neutron-legacy
+  shell:
+    cmd: |
+      set -e
+      set -x
+      cat << EOF >> /tmp/dg-local.conf
+      enable_service neutron-agent neutron-api neutron-dhcp neutron-l3 neutron-metadata-agent neutron-metering
+      EOF
+    executable: /bin/bash
+    chdir: '{{ ansible_user_dir }}/workspace'
+  environment: '{{ zuul | zuul_legacy_vars }}'
+  when:
+    - '"neutron" in enable_services'
