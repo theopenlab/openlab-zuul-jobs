@@ -1,9 +1,9 @@
 - hosts: all
   become: yes
-  pre-tasks:
+  pre_tasks:
     - set_fact:
-      instance_name: instance_1
-      private_key: private_key_1
+        instance_name: instance_1
+        private_key: private_key_1
   roles:
     - clone-devstack-gate-to-workspace
     - create-devstack-local-conf
