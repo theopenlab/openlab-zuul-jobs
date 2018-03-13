@@ -2,9 +2,7 @@
   become: yes
   roles:
     - clone-devstack-gate-to-workspace
-    - role: create-devstack-local-conf
-      enable_services:
-        - 'neutron'
+    - create-devstack-local-conf
     - install-devstack
   tasks:
     - shell:
