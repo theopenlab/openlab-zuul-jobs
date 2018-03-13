@@ -7,8 +7,6 @@
       cat << EOF >> /tmp/dg-local.conf
       [[local|localrc]]
       NETWORK_GATEWAY=10.0.0.1
-      disable_service q-agt,q-svc,q-dhcp,q-l3,q-meta,q-metering
-      enable_service neutron-agent,neutron-api,neutron-dhcp,neutron-l3,neutron-metadata-agent,neutron-metering
       EOF
     executable: /bin/bash
     chdir: '{{ ansible_user_dir }}/workspace'
@@ -89,7 +87,7 @@
       set -e
       set -x
       cat << EOF >> /tmp/dg-local.conf
-      enable_service octavia,o-cw,o-hm,o-hk,o-api
+      enable_service q-lbaasv2,octavia,o-cw,o-hm,o-hk,o-api
       enable_plugin neutron-lbaas https://git.openstack.org/openstack/neutron-lbaas
       enable_plugin octavia https://git.openstack.org/openstack/octavia
       enable_plugin barbican https://git.openstack.org/openstack/barbican
@@ -107,7 +105,7 @@
       set -e
       set -x
       cat << EOF >> /tmp/dg-local.conf
-      enable_service neutron-fwaas-v1
+      enable_service q-fwaas-v1
       enable_plugin neutron-fwaas https://git.openstack.org/openstack/neutron-fwaas
       EOF
     executable: /bin/bash
@@ -122,7 +120,7 @@
       set -e
       set -x
       cat << EOF >> /tmp/dg-local.conf
-      enable_service neutron-fwaas-v2
+      enable_service q-fwaas-v2
       enable_plugin neutron-fwaas https://git.openstack.org/openstack/neutron-fwaas
       EOF
     executable: /bin/bash
@@ -130,3 +128,18 @@
   environment: '{{ zuul | zuul_legacy_vars }}'
   when:
     - '"fwaas-v2" in enable_services'
+
+- name: create devstack local conf with neutron enabled instead of neutron-legacy
+  shell:
+    cmd: |
+      set -e
+      set -x
+      cat << EOF >> /tmp/dg-local.conf
+      disable_service q-agt q-svc q-dhcp q-l3 q-meta q-metering
+      enable_service neutron-agent neutron-api neutron-dhcp neutron-l3 neutron-metadata-agent neutron-metering
+      EOF
+    executable: /bin/bash
+    chdir: '{{ ansible_user_dir }}/workspace'
+  environment: '{{ zuul | zuul_legacy_vars }}'
+  when:
+    - '"neutron" in enable_services'
