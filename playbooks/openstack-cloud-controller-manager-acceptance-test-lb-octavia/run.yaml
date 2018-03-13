@@ -82,15 +82,15 @@
               rsync -az -e 'ssh -i privatekey_1' --rsync-path "sudo mkdir -p $rsync_dir && sudo rsync" $rsync_dir/ ubuntu@$FLOATING_IP:$rsync_dir
           done
 
+          # =========================================================
+          pip install -U ansible
+          eval `ssh-agent -s`
           sleep 7200
-          # Run test inside devstack instance
-          ssh -i privatekey_1 ubuntu@$FLOATING_IP "
-              set -x
-              cd $PWD
-              source exported-envs
-              sudo apt install make -y
-              TESTARGS='-v' make test 2>&1
-          " | tee $TEST_RESULTS_TXT
+          ansible-playbook {{ ansible_user_dir }}/src/github.com/liu-sheng/openlab-zuul-jobs/openstack-cloud-controller-manager-acceptance-test-lb-octavia/playbook-in-vm/run.yaml \
+              -e server_name=instance_1 -e server_ip=$FLOATING_IP -e key_file=$(realpath privatekey_1)
+
+
+
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env }}'

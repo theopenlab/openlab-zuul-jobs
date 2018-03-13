@@ -207,6 +207,8 @@
 - job:
     name: openstack-cloud-controller-manager-acceptance-test-lb-octavia
     parent: golang-test
+    required-projects:
+      - liu-sheng/openlab-zuul-jobs
     description: |
       Run K8S openstack-cloud-controller-manager unit test in devstack instance against lbaas
     run: playbooks/openstack-cloud-controller-manager-acceptance-test-lb-octavia/run.yaml
