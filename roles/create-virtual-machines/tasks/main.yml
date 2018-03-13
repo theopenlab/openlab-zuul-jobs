@@ -53,14 +53,11 @@
       echo "{
           \"private_key\": \"$PRIVATE_KEY\",
           \"floating_ip\": \"$FLOATING_IP\"
-      }"
+      }" >&2
     executable: /bin/bash
     chdir: '{{ zuul.project.src_dir }}'
   register: output
 
-- debug:
-    var: output
-
 - name: Set fact for instance attributes used by ssh
   set_fact:
-    instance_attr: '{{ output.stdout | from_json }}'
+    instance_attr: '{{ output.stderr | from_json }}'
