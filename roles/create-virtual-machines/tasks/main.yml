@@ -58,6 +58,9 @@
     chdir: '{{ zuul.project.src_dir }}'
   register: output
 
+- debug:
+    var: output
+
 - name: Set fact for instance attributes used by ssh
   set_fact:
     instance_attr: '{{ output.stdout | from_json }}'
