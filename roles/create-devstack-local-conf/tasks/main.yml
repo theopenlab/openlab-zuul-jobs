@@ -135,7 +135,7 @@
       set -e
       set -x
       cat << EOF >> /tmp/dg-local.conf
-      enable_service neutron-agent neutron-api neutron-dhcp neutron-l3 neutron-metadata-agent neutron-metering
+      enable_service neutron-agent,neutron-api,neutron-dhcp,neutron-l3,neutron-metadata-agent,neutron-metering
       EOF
     executable: /bin/bash
     chdir: '{{ ansible_user_dir }}/workspace'
