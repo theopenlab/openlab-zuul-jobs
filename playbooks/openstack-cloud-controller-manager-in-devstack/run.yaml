@@ -1,10 +1,15 @@
 - hosts: all
   become: yes
+  vars:
+    instance_name: instance_1
+    private_key: private_key_1
   roles:
     - clone-devstack-gate-to-workspace
     - create-devstack-local-conf
     - install-devstack
-    - create-virtual-machines
+    - role: create-virtual-machines
+      instance_name: '{{ instance_name }}'
+      private_key: '{{ private_key }}'
   tasks:
     - shell:
         cmd: |
@@ -12,9 +17,13 @@
           set -x
           set -o pipefail
 
-          # Instance attributes from role create-virtual-machines
-          PRIVATE_KEY='{{ instance_attr.private_key }}'
-          FLOATING_IP='{{ instance_attr.floating_ip }}'
+          INSTANCE_NAME='{{ instance_name }}'
+          PRIVATE_KEY='{{ private_key }}'
+
+          # Get floating ip by instance name
+          INSTANCE_ID=$(openstack server show "$INSTANCE_NAME" -f value -c id)
+          PORT_ID=$(openstack port list --device-id "$INSTANCE_ID" -f value -c id)
+          FLOATING_IP=$(openstack floating ip list --port "$PORT_ID" -f value -c 'Floating IP Address')
 
           # Prepare env on executing node
           go get github.com/Masterminds/glide
