@@ -17,6 +17,8 @@
           INSTANCE_NAME=instance_1
           PRIVATE_KEY=private_key_1
 
+          source /opt/stack/new/devstack/openrc admin admin
+
           # Get floating ip by instance name
           INSTANCE_ID=$(openstack server show "$INSTANCE_NAME" -f value -c id)
           PORT_ID=$(openstack port list --device-id "$INSTANCE_ID" -f value -c id)
