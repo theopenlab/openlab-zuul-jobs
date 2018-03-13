@@ -87,6 +87,7 @@
               set -x
               cd $PWD
               source exported-envs
+              sudo apt update -y
               sudo apt install make -y
               TESTARGS='-v' make test 2>&1
           " | tee $TEST_RESULTS_TXT
