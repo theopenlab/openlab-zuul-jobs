@@ -2,6 +2,9 @@
   hosts: localhost
   become: yes
   tasks:
+    - name: Start ssh-agent
+      shell: eval $(ssh-agent)
+
     - name: Add server ssh key
       command: "ssh-add {{ key_file }}"
 
@@ -23,4 +26,44 @@
         cmd: |
           set -e
           set -x
-          echo 'testing...'
+          export OS_PROJECT_DOMAIN_ID=default
+          export OS_REGION_NAME=RegionOne
+          export OS_USER_DOMAIN_ID=default
+          export OS_PROJECT_NAME=admin
+          export OS_IDENTITY_API_VERSION=3
+          export OS_PASSWORD=secretadmin
+          export OS_AUTH_TYPE=password
+          export OS_AUTH_URL=http://192.168.0.167/identity
+          export OS_USERNAME=admin
+          export OS_TENANT_NAME=admin
+          export OS_VOLUME_API_VERSION=2
+
+          cd '{{ ansible_user_dir }}/src/github.com/liu-sheng/openstack-cloud-controller-manager'
+          make depend
+          make openstack-cloud-controller-manager
+          if [[ ! -d "/etc/kubernetes/" ]]; then
+              sudo mkdir -p /etc/kubernetes/
+          fi
+          chown ubuntu /etc/kubernetes/
+          cat << EOF >> /etc/kubernetes/cloud-config
+          [Global]
+          domain-id = default
+          tenant-id = 8c3b0c6b7a6c49bd8c2e5d903244b5aa
+          auth-url = http://localhost/identity
+          password = secretadmin
+          username = admin
+          region = RegionOne
+
+          [LoadBalancer]
+          floating-network-id = 3060a59d-cc70-458e-9d27-bf9b0976ecf3
+          subnet-id = 3bd36c69-0495-4aae-82f8-425a135bd0e3
+
+          [BlockStorage]
+          bs-version = v2
+          EOF
+
+        executable: /bin/bash
+  environment:
+    GOPATH: '{{ ansible_user_dir }}'
+    PATH: '{{ ansible_env.PATH }}:/usr/local/go/bin:{{ ansible_user_dir }}/bin'
+    ANSIBLE_ROLES_PATH: '{{ ansible_user_dir }}/src/github.com/liu-sheng/openlab-zuul-jobs/roles'
