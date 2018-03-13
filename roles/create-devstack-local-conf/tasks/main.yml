@@ -135,6 +135,7 @@
       set -e
       set -x
       cat << EOF >> /tmp/dg-local.conf
+      disable_service q-agt,q-svc,q-dhcp,q-l3,q-meta,q-metering
       enable_service neutron-agent,neutron-api,neutron-dhcp,neutron-l3,neutron-metadata-agent,neutron-metering
       EOF
     executable: /bin/bash
