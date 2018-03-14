@@ -36,7 +36,7 @@
           fi
           chown ubuntu /etc/kubernetes/
 
-cat << EOF >> /etc/kubernetes/cloud-config
+          cat << EOF >> /etc/kubernetes/cloud-config
           [Global]
           domain-id = default
           tenant-id = "{{ project_id }}"
