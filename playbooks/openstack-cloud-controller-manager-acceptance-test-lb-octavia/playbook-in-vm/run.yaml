@@ -19,8 +19,6 @@
         cmd: |
           set -e
           set -x
-          apt-get install python-openstackclient -y
-
           export OS_PROJECT_DOMAIN_ID=default
           export OS_REGION_NAME=RegionOne
           export OS_USER_DOMAIN_ID=default
@@ -45,15 +43,15 @@
           cat << EOF >> /etc/kubernetes/cloud-config
           [Global]
           domain-id = default
-          tenant-id = ${PROJECT_ID}
+          tenant-id = "{{ project_id }}"
           auth-url = ${OS_AUTH_URL}
           password = secretadmin
           username = admin
           region = RegionOne
 
           [LoadBalancer]
-          floating-network-id = ${FLOATING_NET_ID}
-          subnet-id = ${SUBNET_ID}
+          floating-network-id = "{{ floating_network_id }}"
+          subnet-id = "{{ subnet_id }}"
 
           [BlockStorage]
           bs-version = v2

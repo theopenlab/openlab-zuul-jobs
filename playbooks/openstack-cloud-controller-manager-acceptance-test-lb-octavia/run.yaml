@@ -1,9 +1,26 @@
 - hosts: all
   become: yes
+  pre_tasks:
+    - shell:
+        cmd: |
+          set -e
+          set -x
+          cat << EOF >> /tmp/dg-local.conf
+          [[local|localrc]]
+          enable_plugin octavia https://git.openstack.org/openstack/octavia
+          enable_plugin barbican https://git.openstack.org/openstack/barbican
+          enable_plugin openstack-cloud-controller-manager https://github.com/dims/openstack-cloud-controller-manager
+          EOF
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+
   roles:
     - clone-devstack-gate-to-workspace
     - create-devstack-local-conf
     - install-devstack
+    - role: create-virtual-machines
+      instance_name: instance_1
+      private_key: private_key_1
   tasks:
     - shell:
         cmd: |
@@ -11,85 +28,41 @@
           set -x
           set -o pipefail
 
-          # Prepare env on executing node
+          INSTANCE_NAME=instance_1
+          PRIVATE_KEY=private_key_1
+
           source /opt/stack/new/devstack/openrc admin admin
+
+          # Get floating ip by instance name
+          INSTANCE_ID=$(openstack server show "$INSTANCE_NAME" -f value -c id)
+          PORT_ID=$(openstack port list --device-id "$INSTANCE_ID" -f value -c id)
+          FLOATING_IP=$(openstack floating ip list --port "$PORT_ID" -f value -c 'Floating IP Address')
+
+          # Prepare env on executing node
           go get github.com/Masterminds/glide
           make depend
 
-          is_instance_active() {
-              local instance_id=$1
-              for i in {1..50}
-              do
-                  [[ $(openstack server show $instance_id -f value -c status) == ACTIVE ]] && return
-                  echo "Waiting instance(id=$instance_id) for ACTIVE... $i"
-                  sleep 1
-              done
-
-              return 1
-          }
-
-          is_instance_ssh_accessible() {
-              local user=$1
-              local host=$2
-              local private_key=$3
-              for i in {1..50}
-              do
-                  ssh -i $private_key -o ConnectTimeout=5 -o StrictHostKeyChecking=no $user@$host : && return
-                  echo "Waiting host($host) for ssh accessible... $i"
-                  sleep 10
-              done
-
-              return 1
-          }
-
-          # Update subnet dns to allow access to internet
-          SUBNET_ID=$(openstack subnet list --network private --ip-version 4 -f value -c ID)
-          openstack subnet set --dns-nameserver 8.8.8.8 $SUBNET_ID
-
-          IMAGE_SOURCE='http://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-disk1.img'
-          IMAGE_NAME=${IMAGE_SOURCE##*/}
-          wget -q -t 2 -c "$IMAGE_SOURCE" -O "$IMAGE_NAME"
-          IMAGE_ID=$(openstack image create --file "$IMAGE_NAME" --min-disk 1 --container-format bare --disk-format qcow2 "$IMAGE_NAME" -f value -c id)
-          rm "$IMAGE_NAME"
-
-          openstack flavor create --vcpus 8 --ram 16384 --disk 10 flavor_1
-          openstack keypair create keypair_1 > privatekey_1
-          chmod 600 privatekey_1
-
-          # Create install and wait for ACTIVE
-          INSTANCE_ID=$(openstack server create --image $IMAGE_ID --flavor flavor_1 --network private --key-name keypair_1 instance_1 -f value -c id)
-          if ! is_instance_active $INSTANCE_ID; then
-              echo "Instance(id=$INSTANCE_ID) is still not ACTIVE, exit"
-              exit 1
-          fi
-
-          PORT_ID=$(openstack port list --device-id $INSTANCE_ID -f value -c id)
-          SECURITY_GROUP_ID=$(openstack port show $PORT_ID -f value -c security_group_ids)
-          openstack security group rule create --ingress --protocol tcp --dst-port 22 $SECURITY_GROUP_ID
-          FLOATING_IP=$(openstack floating ip create public -f value -c floating_ip_address)
-          FLOATING_IP_ID=$(openstack floating ip show $FLOATING_IP -f value -c id)
-          neutron floatingip-associate $FLOATING_IP_ID $PORT_ID
-
-          if ! is_instance_ssh_accessible ubuntu $FLOATING_IP privatekey_1; then
-              echo "Instance(id=$INSTANCE_ID) is still not ssh accessible, exit"
-              exit 1
-          fi
-
           # Remove env contains 'short_source' which is a function defined by devstack for formating PS4
           export -p | grep -v short_source > exported-envs
-          for rsync_dir in /home/zuul/src /home/zuul/bin /home/zuul/pkg /usr/local/go
+
+          # Sync into instance
+          for rsync_dir in "$GOPATH"/{src,bin,pkg} /usr/local/go
           do
-              rsync -az -e 'ssh -i privatekey_1' --rsync-path "sudo mkdir -p $rsync_dir && sudo rsync" $rsync_dir/ ubuntu@$FLOATING_IP:$rsync_dir
+              rsync -az -e "ssh -i $PRIVATE_KEY" --rsync-path "sudo mkdir -p $rsync_dir && sudo rsync" "$rsync_dir"/ "ubuntu@$FLOATING_IP:$rsync_dir"
           done
 
-          # =========================================================
-          sleep 7200
           pip install -U ansible
+
+          PROJECT_ID=$(openstack project show admin -f value -c id)
+          SUBNET_ID=$(openstack subnet show lb-mgmt-subnet -f value -c id)
+          FLOATING_NET_ID=$(openstack network show public -f value -c id)
           DEVSTACK_IP=$(ifconfig br-ex | grep "inet addr:" | awk '{print $2}' | cut -c 6-)
+
           ANSIBLE_ROLES_PATH={{ ansible_user_dir }}/src/github.com/liu-sheng/openlab-zuul-jobs/roles ansible-playbook -v \
               {{ ansible_user_dir }}/src/github.com/liu-sheng/openlab-zuul-jobs/playbooks/openstack-cloud-controller-manager-acceptance-test-lb-octavia/playbook-in-vm/run.yaml \
               -e server_name=instance_1 -e server_ip=$FLOATING_IP -e key_file=$(realpath privatekey_1) -e devstack_ip=$DEVSTACK_IP \
-              -e ansible_user_dir="{{ ansible_user_dir }}"
+              -e ansible_user_dir="{{ ansible_user_dir }}" -e floating_network_id=$FLOATING_NET_ID -e project_id=$PROJECT_ID \
+              -e subnet_id=$SUBNET_ID
 
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
