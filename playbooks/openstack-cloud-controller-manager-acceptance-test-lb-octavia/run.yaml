@@ -48,6 +48,7 @@
           done
 
           pip install -U ansible
+          sleep 7200
           PROJECT_ID=$(openstack project show admin -f value -c id)
           SUBNET_ID=$(openstack subnet show lb-mgmt-subnet -f value -c id)
           FLOATING_NET_ID=$(openstack network show public -f value -c id)
@@ -55,7 +56,7 @@
 
           ANSIBLE_ROLES_PATH={{ ansible_user_dir }}/src/github.com/liu-sheng/openlab-zuul-jobs/roles ansible-playbook -vvv \
               {{ ansible_user_dir }}/src/github.com/liu-sheng/openlab-zuul-jobs/playbooks/openstack-cloud-controller-manager-acceptance-test-lb-octavia/playbook-in-vm/run.yaml \
-              -e server_name=instance_1 -e server_ip=$FLOATING_IP -e key_file=$(realpath privatekey_1) -e devstack_ip=$DEVSTACK_IP \
+              -e server_name=instance_1 -e server_ip=$FLOATING_IP -e key_file=$(realpath ${PRIVATE_KEY}) -e devstack_ip=$DEVSTACK_IP \
               -e ansible_user_dir="{{ ansible_user_dir }}" -e floating_network_id=$FLOATING_NET_ID -e project_id=$PROJECT_ID \
               -e subnet_id=$SUBNET_ID
 
