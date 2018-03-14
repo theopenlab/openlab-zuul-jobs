@@ -19,6 +19,7 @@
       cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
       ./safe-devstack-vm-gate-wrap.sh
 
+      FLOATING_RANGE=172.24.5.0/24
       iptables -t nat -A POSTROUTING -s "$FLOATING_RANGE" -o $(ip -4 route | grep ^default | awk '{print $5}') -j MASQUERADE
     executable: /bin/bash
     chdir: '{{ ansible_user_dir }}/workspace'
