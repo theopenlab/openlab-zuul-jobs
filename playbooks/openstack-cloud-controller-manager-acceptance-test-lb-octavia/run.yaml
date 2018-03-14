@@ -18,7 +18,7 @@
 
   roles:
     - clone-devstack-gate-to-workspace
-    - install-devstack
+    - role: install-devstack
       environment:
         PROJECTS: "openstack/barbican openstack/python-barbicanclient"
     - role: create-virtual-machines
