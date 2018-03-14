@@ -55,7 +55,7 @@
           cd '{{ ansible_user_dir }}/src/github.com/liu-sheng/openstack-cloud-controller-manager'
           apt-get install make -y
           make depend
-          make openstack-cloud-controller-manager
+          make build
         executable: /bin/bash
       environment:
         GOPATH: '{{ ansible_user_dir }}'
