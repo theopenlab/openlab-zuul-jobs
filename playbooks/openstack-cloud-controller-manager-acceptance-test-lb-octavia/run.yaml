@@ -12,10 +12,11 @@
           EOF
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
-
   roles:
     - clone-devstack-gate-to-workspace
     - install-devstack
+      environment:
+        PROJECTS: "openstack/barbican openstack/python-barbicanclient"
     - role: create-virtual-machines
       instance_name: instance_1
       private_key: private_key_1
