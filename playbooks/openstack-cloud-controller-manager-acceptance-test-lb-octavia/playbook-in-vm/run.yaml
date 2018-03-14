@@ -36,11 +36,7 @@
           fi
           chown ubuntu /etc/kubernetes/
 
-          PROJECT_ID=$(openstack project show admin -f value -c id)
-          SUBNET_ID=$(openstack subnet show lb-mgmt-subnet -f value -c id)
-          FLOATING_NET_ID=$(openstack network show public -f value -c id)
-
-          cat << EOF >> /etc/kubernetes/cloud-config
+cat << EOF >> /etc/kubernetes/cloud-config
           [Global]
           domain-id = default
           tenant-id = "{{ project_id }}"
