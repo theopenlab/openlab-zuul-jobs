@@ -1,0 +1,8 @@
+---
+flavor_name: flavor_1
+vcpus: 8
+ram: 16384
+disk: 10
+keypair_name: keypair_1
+private_key: private_key_1
+instance_name: instance_1
