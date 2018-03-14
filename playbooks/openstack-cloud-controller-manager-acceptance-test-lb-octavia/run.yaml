@@ -9,7 +9,7 @@
           [[local|localrc]]
           NETWORK_GATEWAY=10.0.0.1
           disable_service q-agt q-svc q-dhcp q-l3 q-meta q-metering
-          enable_service neutron-agent neutron-api neutron-dhcp neutron-l3 neutron-metadata-agent neutron-metering
+          enable_service neutron-agent neutron-api neutron-dhcp neutron-l3 neutron-metadata-agent neutron-metering octavia o-cw o-hm o-hk o-api
           enable_plugin octavia https://git.openstack.org/openstack/octavia
           enable_plugin barbican https://git.openstack.org/openstack/barbican
           EOF
@@ -55,7 +55,6 @@
           done
 
           pip install -U ansible
-          sleep 7200
           PROJECT_ID=$(openstack project show admin -f value -c id)
           SUBNET_ID=$(openstack subnet show lb-mgmt-subnet -f value -c id)
           FLOATING_NET_ID=$(openstack network show public -f value -c id)
