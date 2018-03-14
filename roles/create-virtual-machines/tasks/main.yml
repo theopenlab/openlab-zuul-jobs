@@ -58,4 +58,30 @@
           '
     executable: /bin/bash
     chdir: '{{ zuul.project.src_dir }}'
+
+- name: Register instance attributes
+  shell:
+    cmd: |
+      set -e
+
+      PRIVATE_KEY='{{ private_key }}'
+      INSTANCE_NAME='{{ instance_name }}'
+
+      source /opt/stack/new/devstack/openrc admin admin > /dev/null
+
+      # Get floating ip by instance name
+      INSTANCE_ID=$(openstack server show "$INSTANCE_NAME" -f value -c id)
+      PORT_ID=$(openstack port list --device-id "$INSTANCE_ID" -f value -c id)
+      FLOATING_IP=$(openstack floating ip list --port "$PORT_ID" -f value -c 'Floating IP Address')
+
+      echo "{
+          \"private_key\": \"$PRIVATE_KEY\",
+          \"floating_ip\": \"$FLOATING_IP\"
+      }"
+    executable: /bin/bash
+    chdir: '{{ zuul.project.src_dir }}'
   register: output
+
+- name: Set fact for instance attributes
+  set_fact:
+    instance_attr: '{{ output.stdout | from_json }}'
