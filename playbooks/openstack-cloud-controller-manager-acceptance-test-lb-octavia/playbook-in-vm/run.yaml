@@ -52,6 +52,7 @@
           [BlockStorage]
           bs-version = v2
           EOF
+          export PATH="/usr/local/go/bin:{{ ansible_user_dir }}/bin:${PATH}"
           apt-get install make -y
           pushd '{{ ansible_user_dir }}/src/github.com/liu-sheng/openstack-cloud-controller-manager'
           make depend
