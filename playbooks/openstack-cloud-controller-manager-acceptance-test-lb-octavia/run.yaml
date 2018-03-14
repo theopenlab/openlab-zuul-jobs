@@ -48,6 +48,7 @@
           done
 
           pip install -U ansible
+          source /opt/stack/new/devstack/openrc admin admin
           PROJECT_ID=$(openstack project show admin -f value -c id)
           SUBNET_ID=$(openstack subnet show lb-mgmt-subnet -f value -c id)
           FLOATING_NET_ID=$(openstack network show public -f value -c id)
