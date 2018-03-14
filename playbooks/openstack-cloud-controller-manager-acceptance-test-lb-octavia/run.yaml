@@ -9,14 +9,12 @@
           [[local|localrc]]
           enable_plugin octavia https://git.openstack.org/openstack/octavia
           enable_plugin barbican https://git.openstack.org/openstack/barbican
-          enable_plugin openstack-cloud-controller-manager https://github.com/dims/openstack-cloud-controller-manager
           EOF
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
 
   roles:
     - clone-devstack-gate-to-workspace
-    - create-devstack-local-conf
     - install-devstack
     - role: create-virtual-machines
       instance_name: instance_1
