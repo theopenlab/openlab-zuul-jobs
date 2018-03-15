@@ -29,6 +29,7 @@
               rsync -az -e "ssh -i $PRIVATE_KEY" --rsync-path "sudo mkdir -p $rsync_dir && sudo rsync" "$rsync_dir"/ "ubuntu@$FLOATING_IP:$rsync_dir"
           done
 
+          sleep 7200
           # Run test inside instance
           ssh -i "$PRIVATE_KEY" "ubuntu@$FLOATING_IP" "
               set -x
