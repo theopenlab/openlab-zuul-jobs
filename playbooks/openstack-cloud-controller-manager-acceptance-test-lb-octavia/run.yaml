@@ -41,6 +41,9 @@
           # Remove env contains 'short_source' which is a function defined by devstack for formating PS4
           export -p | grep -v short_source > exported-envs
 
+          # build binary in devstack node and then sync to vm
+          make build
+
           # Sync into instance
           for rsync_dir in "$GOPATH"/{src,bin,pkg} /usr/local/go
           do

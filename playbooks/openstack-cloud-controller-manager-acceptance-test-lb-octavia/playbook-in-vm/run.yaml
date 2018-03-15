@@ -52,13 +52,13 @@
           [BlockStorage]
           bs-version = v2
           EOF
-          export PATH="/usr/local/go/bin:{{ ansible_user_dir }}/bin:${PATH}"
-          export GOPATH="{{ ansible_user_dir }}"
           apt-get install make -y
-          pushd '{{ ansible_user_dir }}/src/github.com/liu-sheng/openstack-cloud-controller-manager'
-          make depend
-          make build
-          popd
+          # export PATH="/usr/local/go/bin:{{ ansible_user_dir }}/bin:${PATH}"
+          # export GOPATH="{{ ansible_user_dir }}"
+          # pushd '{{ ansible_user_dir }}/src/github.com/liu-sheng/openstack-cloud-controller-manager'
+          # make depend
+          # make build
+          # popd
         executable: /bin/bash
       environment:
         GOPATH: '{{ ansible_user_dir }}'
@@ -73,6 +73,9 @@
         cmd: |
           set -e
           set -x
+          export PATH="/usr/local/go/bin:{{ ansible_user_dir }}/bin:${PATH}"
+          export GOPATH="{{ ansible_user_dir }}"
+
           # go where we cloned kubernetes repository
           cd $GOPATH/src/k8s.io/kubernetes/
 
@@ -82,6 +85,8 @@
           export EXTERNAL_CLOUD_PROVIDER=true
           # DO NOT change the location of the cloud-config file. It's important for the old cinder provider to work
           export CLOUD_CONFIG=/etc/kubernetes/cloud-config
+          # specify the OCCM binary
+          export EXTERNAL_CLOUD_PROVIDER_BINARY="{{ ansible_user_dir }}/src/github.com/liu-sheng/openstack-cloud-controller-manager/openstack-cloud-controller-manager"
 
           # Kill existing processes
           ps -ef | grep -i -e etcd -e hyperkube | grep -v grep | awk '{print $2}' | xargs sudo kill -9
