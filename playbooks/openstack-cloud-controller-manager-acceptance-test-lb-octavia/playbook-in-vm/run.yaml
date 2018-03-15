@@ -65,7 +65,7 @@
         executable: /bin/bash
       environment:
         GOPATH: '{{ ansible_user_dir }}'
-        PATH: '{{ ansible_env.PATH }}:/usr/local/go/bin:{{ ansible_user_dir }}/bin'
+        PATH: '/usr/local/go/bin:{{ ansible_user_dir }}/bin:{{ ansible_env.PATH }}'
 
 - name: Set up local cluster
   hosts: "{{ server_name }}"
@@ -133,4 +133,4 @@
         executable: /bin/bash
       environment:
         GOPATH: '{{ ansible_user_dir }}'
-        PATH: '{{ ansible_env.PATH }}:/usr/local/go/bin:{{ ansible_user_dir }}/bin'
+        PATH: '/usr/local/go/bin:{{ ansible_user_dir }}/bin:{{ ansible_env.PATH }}'
