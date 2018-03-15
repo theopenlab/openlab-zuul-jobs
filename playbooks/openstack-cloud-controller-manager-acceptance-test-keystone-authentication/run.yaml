@@ -9,9 +9,7 @@
           [[local|localrc]]
           NETWORK_GATEWAY=10.0.0.1
           disable_service q-agt q-svc q-dhcp q-l3 q-meta q-metering c-api c-bak c-sch c-vol ceilometer-acentral ceilometer-acompute ceilometer-alarm-evaluator ceilometer-alarm-notifier ceilometer-anotification ceilometer-api ceilometer-collector cinder s-account s-container s-object s-proxy
-          enable_service neutron-agent neutron-api neutron-dhcp neutron-l3 neutron-metadata-agent neutron-metering octavia o-cw o-hm o-hk o-api
-          enable_plugin octavia https://git.openstack.org/openstack/octavia
-          enable_plugin barbican https://git.openstack.org/openstack/barbican
+          enable_service neutron-agent neutron-api neutron-dhcp neutron-l3 neutron-metadata-agent neutron-metering
           EOF
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
@@ -42,19 +40,6 @@
           export -p | grep -v short_source > exported-envs
 
           # build binary in devstack node and then sync to vm
-          go env
-          go version
-          go get -u github.com/jteeuwen/go-bindata/go-bindata || true
-          go get -u github.com/cloudflare/cfssl/cmd/... || true
-          # Get Kubernetes from source
-          mkdir -p ${GOPATH}/src/k8s.io/
-          if [ ! -d "${kubnetes}" ]; then
-              git clone https://github.com/kubernetes/kubernetes ${GOPATH}/src/k8s.io/kubernetes
-              pushd ${GOPATH}/src/k8s.io/kubernetes >/dev/null
-              git remote update
-              git fetch --all --tags --prune
-              popd >/dev/null
-          fi
           make build
 
           # Sync into instance
