@@ -30,7 +30,7 @@
               popd >/dev/null
           fi
           make build
-          make -C ${GOPATH}/src/k8s.io/kubernetes/kubernetes WHAT="cmd/kubectl cmd/hyperkube"
+          make -C ${GOPATH}/src/k8s.io/kubernetes WHAT="cmd/kubectl cmd/hyperkube"
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env }}'
