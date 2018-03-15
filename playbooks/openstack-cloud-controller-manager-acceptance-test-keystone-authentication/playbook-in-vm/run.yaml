@@ -81,6 +81,11 @@
           echo "Checking docker service"
           sudo docker ps
 
+          wget -c https://github.com/coreos/etcd/releases/download/v3.3.0/etcd-v3.3.0-linux-amd64.tar.gz
+          tar xzvf etcd-v3.3.0-linux-amd64.tar.gz
+          cp etcd-v3.3.0-linux-amd64/etcd /usr/local/bin/
+          cp etcd-v3.3.0-linux-amd64/etcdctl /usr/local/bin/
+
           cat << EOF >> /etc/kubernetes/webhook.kubeconfig
           apiVersion: v1
           clusters:
