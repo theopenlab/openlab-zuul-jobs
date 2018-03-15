@@ -40,6 +40,20 @@
           export -p | grep -v short_source > exported-envs
 
           # build binary in devstack node and then sync to vm
+          # build binary in devstack node and then sync to vm
+          go env
+          go version
+          go get -u github.com/jteeuwen/go-bindata/go-bindata || true
+          go get -u github.com/cloudflare/cfssl/cmd/... || true
+          # Get Kubernetes from source
+          mkdir -p ${GOPATH}/src/k8s.io/
+          if [ ! -d "${kubnetes}" ]; then
+              git clone https://github.com/kubernetes/kubernetes ${GOPATH}/src/k8s.io/kubernetes
+              pushd ${GOPATH}/src/k8s.io/kubernetes >/dev/null
+              git remote update
+              git fetch --all --tags --prune
+              popd >/dev/null
+          fi
           make build
 
           # Sync into instance
