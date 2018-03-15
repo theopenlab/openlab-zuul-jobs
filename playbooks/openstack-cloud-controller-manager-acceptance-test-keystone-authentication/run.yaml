@@ -20,6 +20,8 @@
     - role: create-virtual-machine
       instance_name: instance_1
       private_key: private_key_1
+      vcpus: 12
+      ram: 24576
   tasks:
     - shell:
         cmd: |
