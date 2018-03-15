@@ -140,7 +140,8 @@
           sudo rm -rf /var/lib/kubelet/*
 
           # location of where the kubernetes processes log their output
-          # export LOG_DIR=/opt/stack/logs/
+          mkdir -p /opt/stack/logs/
+          export LOG_DIR=/opt/stack/logs/
           # We need this for one of the conformance tests
           export ALLOW_PRIVILEGED=true
           # Just kick off all the processes and drop down to the command line
@@ -149,8 +150,7 @@
           export HOSTNAME_OVERRIDE=$(hostname)
 
           # Add other paths we usually keep stuff in
-          # export PATH=$GOPATH/bin:${PATH}:/opt/stack/bin:
-          export PATH=$GOPATH/bin:${PATH}:
+          export PATH=$GOPATH/bin:${PATH}:/opt/stack/bin:
 
           # -E preserves the current env vars, but we need to special case PATH
           sudo -E PATH=$PATH ./hack/local-up-cluster.sh -O
