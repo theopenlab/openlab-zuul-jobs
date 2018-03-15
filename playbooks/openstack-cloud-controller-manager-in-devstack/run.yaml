@@ -4,7 +4,7 @@
     - clone-devstack-gate-to-workspace
     - create-devstack-local-conf
     - install-devstack
-    - create-virtual-machines
+    - create-virtual-machine
   tasks:
     - shell:
         cmd: |
