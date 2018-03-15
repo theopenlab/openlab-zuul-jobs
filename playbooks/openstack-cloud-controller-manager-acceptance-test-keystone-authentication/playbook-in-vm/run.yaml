@@ -48,20 +48,10 @@
           username = admin
           region = RegionOne
 
-          [LoadBalancer]
-          floating-network-id = "{{ floating_network_id }}"
-          subnet-id = "{{ subnet_id }}"
-
           [BlockStorage]
           bs-version = v2
           EOF
           apt-get install make -y
-          # export PATH="/usr/local/go/bin:{{ ansible_user_dir }}/bin:${PATH}"
-          # export GOPATH="{{ ansible_user_dir }}"
-          # pushd '{{ ansible_user_dir }}/src/github.com/liu-sheng/openstack-cloud-controller-manager'
-          # make depend
-          # make build
-          # popd
 
           cat << EOF >> /etc/kubernetes/webhook.kubeconfig
           apiVersion: v1
@@ -131,6 +121,9 @@
 
           # -E preserves the current env vars, but we need to special case PATH
           sudo -E PATH=$PATH ./hack/local-up-cluster.sh
+
+          # Sleep for debuging
+          sleep 7200
 
           # sudo of local-up-cluster mucks with permissions
           sudo chmod -R 777 /home/ubuntu/.kube

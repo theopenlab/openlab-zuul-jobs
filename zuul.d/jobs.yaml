@@ -215,6 +215,17 @@
     nodeset: ubuntu-xenial-large
 
 - job:
+    name: openstack-cloud-controller-manager-acceptance-test-keystone-authentication
+    parent: golang-test
+    required-projects:
+      - liu-sheng/openlab-zuul-jobs
+    description: |
+      Run K8S openstack-cloud-controller-manager unit test in devstack instance with K8S+keystone authentication
+    run: playbooks/openstack-cloud-controller-manager-acceptance-test-keystone-authentication/run.yaml
+    nodeset: ubuntu-xenial-large
+
+
+- job:
     name: openlab-zuul-jobs-check
     parent: init-test
     description: |
