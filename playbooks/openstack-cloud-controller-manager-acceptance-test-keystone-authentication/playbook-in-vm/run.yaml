@@ -51,7 +51,35 @@
           [BlockStorage]
           bs-version = v2
           EOF
+
           apt-get install make -y
+          # Install docker
+          if ! dpkg -s "docker-engine" > /dev/null 2> /dev/null; then
+              sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D || true
+              sudo apt-key adv --keyserver hkp://pgp.mit.edu:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D || true
+              sudo apt-add-repository 'deb http://apt.dockerproject.org/repo ubuntu-xenial main'
+              sudo apt-get update -y
+              sudo apt-cache policy docker-engine
+              sudo apt-get install -y docker-engine=1.12.6-0~ubuntu-xenial
+              sudo cat /lib/systemd/system/docker.service
+              sudo sed -r -i "s|(ExecStart)=(.+)|\1=\2 --iptables=false|" /lib/systemd/system/docker.service
+              sudo cat /lib/systemd/system/docker.service
+              sudo systemctl daemon-reload
+              sudo systemctl restart docker
+              sudo systemctl status docker
+              sudo ifconfig -a
+          fi
+          docker --version
+
+          # Get the latest stable version of kubernetes
+          export K8S_VERSION=$(curl -sS https://storage.googleapis.com/kubernetes-release/release/stable.txt)
+          echo "K8S_VERSION : ${K8S_VERSION}"
+
+          echo "Starting docker service"
+          sudo systemctl enable docker.service
+          sudo systemctl start docker.service --ignore-dependencies
+          echo "Checking docker service"
+          sudo docker ps
 
           cat << EOF >> /etc/kubernetes/webhook.kubeconfig
           apiVersion: v1
