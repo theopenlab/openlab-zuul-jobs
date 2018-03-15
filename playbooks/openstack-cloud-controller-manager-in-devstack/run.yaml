@@ -26,9 +26,12 @@
           # Sync into instance
           for rsync_dir in "$GOPATH"/{src,bin,pkg} /usr/local/go
           do
-              rsync -az -e "ssh -i $PRIVATE_KEY" --rsync-path "sudo mkdir -p $rsync_dir && sudo rsync" "$rsync_dir"/ "ubuntu@$FLOATING_IP:$rsync_dir"
+              if [[ -d "$rsync_dir" ]]; then
+                  rsync -az -e "ssh -i $PRIVATE_KEY" --rsync-path "sudo mkdir -p $rsync_dir && sudo rsync" "$rsync_dir"/ "ubuntu@$FLOATING_IP:$rsync_dir"
+              fi
           done
 
+          sleep 7200
           # Run test inside instance
           ssh -i "$PRIVATE_KEY" "ubuntu@$FLOATING_IP" "
               set -x
