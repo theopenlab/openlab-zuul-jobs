@@ -11,8 +11,29 @@
           disable_service q-agt q-svc q-dhcp q-l3 q-meta q-metering c-api c-bak c-sch c-vol ceilometer-acentral ceilometer-acompute ceilometer-alarm-evaluator ceilometer-alarm-notifier ceilometer-anotification ceilometer-api ceilometer-collector cinder s-account s-container s-object s-proxy
           enable_service neutron-agent neutron-api neutron-dhcp neutron-l3 neutron-metadata-agent neutron-metering
           EOF
+
+          # Prepare env on executing node
+          go get github.com/Masterminds/glide
+          make depend
+          # build binary in devstack node and then sync to vm
+          go env
+          go version
+          go get -u github.com/jteeuwen/go-bindata/go-bindata || true
+          go get -u github.com/cloudflare/cfssl/cmd/... || true
+          # Get Kubernetes from source
+          mkdir -p ${GOPATH}/src/k8s.io/
+          if [ ! -d "${kubnetes}" ]; then
+              git clone https://github.com/kubernetes/kubernetes ${GOPATH}/src/k8s.io/kubernetes
+              pushd ${GOPATH}/src/k8s.io/kubernetes >/dev/null
+              git remote update
+              git fetch --all --tags --prune
+              popd >/dev/null
+          fi
+          make build
+          make -C ${GOPATH}/src/github.com/kubernetes/kubernetes WHAT="cmd/kubectl cmd/hyperkube"
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ golang_env }}'
 
   roles:
     - clone-devstack-gate-to-workspace
@@ -32,28 +53,9 @@
           PRIVATE_KEY='{{ hostvars[inventory_hostname]["instance_attr"]["private_key"] }}'
           FLOATING_IP='{{ hostvars[inventory_hostname]["instance_attr"]["floating_ip"] }}'
 
-          # Prepare env on executing node
-          go get github.com/Masterminds/glide
-          make depend
           source /opt/stack/new/devstack/openrc admin admin
           # Remove env contains 'short_source' which is a function defined by devstack for formating PS4
           export -p | grep -v short_source > exported-envs
-
-          # build binary in devstack node and then sync to vm
-          go env
-          go version
-          go get -u github.com/jteeuwen/go-bindata/go-bindata || true
-          go get -u github.com/cloudflare/cfssl/cmd/... || true
-          # Get Kubernetes from source
-          mkdir -p ${GOPATH}/src/k8s.io/
-          if [ ! -d "${kubnetes}" ]; then
-              git clone https://github.com/kubernetes/kubernetes ${GOPATH}/src/k8s.io/kubernetes
-              pushd ${GOPATH}/src/k8s.io/kubernetes >/dev/null
-              git remote update
-              git fetch --all --tags --prune
-              popd >/dev/null
-          fi
-          make build
 
           # Sync into instance
           mkdir -p "$GOPATH"/{src,bin,pkg}

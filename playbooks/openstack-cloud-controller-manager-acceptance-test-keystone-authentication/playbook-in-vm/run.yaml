@@ -120,7 +120,7 @@
           export PATH=$GOPATH/bin:${PATH}:
 
           # -E preserves the current env vars, but we need to special case PATH
-          sudo -E PATH=$PATH ./hack/local-up-cluster.sh
+          sudo -E PATH=$PATH ./hack/local-up-cluster.sh -O
 
           # Sleep for debuging
           sleep 7200
