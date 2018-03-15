@@ -35,11 +35,10 @@
           # Prepare env on executing node
           go get github.com/Masterminds/glide
           make depend
-
+          source /opt/stack/new/devstack/openrc admin admin
           # Remove env contains 'short_source' which is a function defined by devstack for formating PS4
           export -p | grep -v short_source > exported-envs
 
-          # build binary in devstack node and then sync to vm
           # build binary in devstack node and then sync to vm
           go env
           go version
@@ -63,7 +62,6 @@
           done
 
           pip install -U ansible
-          source /opt/stack/new/devstack/openrc admin admin
           PROJECT_ID=$(openstack project show admin -f value -c id)
           SUBNET_ID=$(openstack subnet show lb-mgmt-subnet -f value -c id)
           FLOATING_NET_ID=$(openstack network show public -f value -c id)
