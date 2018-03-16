@@ -140,7 +140,7 @@
 
           # location of where the kubernetes processes log their output
           mkdir -p /opt/stack/logs/
-          export LOG_DIR=/opt/stack/logs/
+          export LOG_DIR=/opt/stack/logs
           # We need this for one of the conformance tests
           export ALLOW_PRIVILEGED=true
           # Just kick off all the processes and drop down to the command line
