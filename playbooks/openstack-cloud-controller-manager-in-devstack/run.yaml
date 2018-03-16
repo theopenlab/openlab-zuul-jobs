@@ -31,7 +31,6 @@
               fi
           done
 
-          sleep 7200
           # Run test inside instance
           ssh -i "$PRIVATE_KEY" "ubuntu@$FLOATING_IP" "
               set -x
