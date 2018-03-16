@@ -121,6 +121,13 @@
           export PATH="/usr/local/go/bin:{{ ansible_user_dir }}/bin:${PATH}"
           export GOPATH="{{ ansible_user_dir }}"
           source openrc
+          export ALLOW_SECURITY_CONTEXT=true
+          export ENABLE_CRI=false
+          export ENABLE_HOSTPATH_PROVISIONER=true
+          export ENABLE_SINGLE_CA_SIGNER=true
+          export KUBE_ENABLE_CLUSTER_DASHBOARD=true
+          export KUBE_ENABLE_CLUSTER_DNS=true
+          export LOG_LEVEL=10
 
           # go where we cloned kubernetes repository
           cd $GOPATH/src/k8s.io/kubernetes/

@@ -121,6 +121,14 @@
           iptables -P FORWARD ACCEPT
           iptables -P OUTPUT ACCEPT
 
+          export ALLOW_SECURITY_CONTEXT=true
+          export ENABLE_CRI=false
+          export ENABLE_HOSTPATH_PROVISIONER=true
+          export ENABLE_SINGLE_CA_SIGNER=true
+          export KUBE_ENABLE_CLUSTER_DASHBOARD=true
+          export KUBE_ENABLE_CLUSTER_DNS=true
+          export LOG_LEVEL=10
+
           # go where we cloned kubernetes repository
           cd $GOPATH/src/k8s.io/kubernetes/
 
@@ -176,3 +184,12 @@
       environment:
         GOPATH: '{{ ansible_user_dir }}'
         PATH: '/usr/local/go/bin:{{ ansible_user_dir }}/bin:{{ ansible_env.PATH }}'
+  post_tasks:
+    - name: Upload kubernetes logs to node
+      shell:
+        cmd: |
+          set -e
+          set -x
+          rsync -az -e "ssh -i {{ key_file }}" "ubuntu@{{ server_ip }}:/opt/stack/logs" "{{ ansible_user_dir }}/workspace/logs/"
+        executable: /bin/bash
+      delegate_to: localhost
