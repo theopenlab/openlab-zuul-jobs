@@ -80,8 +80,6 @@
               -e server_name=instance_1 -e server_ip=$FLOATING_IP -e key_file=$(realpath ${PRIVATE_KEY}) -e devstack_ip=$DEVSTACK_IP \
               -e ansible_user_dir="{{ ansible_user_dir }}" -e floating_network_id=$FLOATING_NET_ID -e project_id=$PROJECT_ID \
               -e subnet_id=$SUBNET_ID
-          # sleep for testing
-          sleep 7200
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env }}'
