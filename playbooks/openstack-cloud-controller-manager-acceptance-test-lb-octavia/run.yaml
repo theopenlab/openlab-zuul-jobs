@@ -63,7 +63,7 @@
 
           # Sync into instance
           mkdir -p "$GOPATH"/{src,bin,pkg}
-          for rsync_dir in "$GOPATH"/{src,bin,pkg} /usr/local/go "
+          for rsync_dir in "$GOPATH"/{src,bin,pkg} /usr/local/go
           do
               rsync -az -e "ssh -i $PRIVATE_KEY" --rsync-path "sudo mkdir -p $rsync_dir && sudo rsync" "$rsync_dir"/ "ubuntu@$FLOATING_IP:$rsync_dir"
           done
