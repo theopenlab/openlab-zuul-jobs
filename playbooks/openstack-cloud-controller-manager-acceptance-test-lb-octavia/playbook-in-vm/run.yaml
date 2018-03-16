@@ -165,8 +165,3 @@
       environment:
         GOPATH: '{{ ansible_user_dir }}'
         PATH: '/usr/local/go/bin:{{ ansible_user_dir }}/bin:{{ ansible_env.PATH }}'
-#  post_tasks:
-#    - name: Upload kubernetes logs to node
-#      synchronize:
-#        src: "{{ zuul.executor.log_root }}/"
-#        dest: "{{ devstack_ip }}"
