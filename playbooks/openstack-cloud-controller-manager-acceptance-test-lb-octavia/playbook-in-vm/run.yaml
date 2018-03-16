@@ -142,8 +142,6 @@
 
           # -E preserves the current env vars, but we need to special case PATH
           sudo -E PATH=$PATH ./hack/local-up-cluster.sh -O
-          # sleep for testing
-          sleep 7200
 
           # sudo of local-up-cluster mucks with permissions
           sudo chmod -R 777 /home/ubuntu/.kube
@@ -167,3 +165,8 @@
       environment:
         GOPATH: '{{ ansible_user_dir }}'
         PATH: '/usr/local/go/bin:{{ ansible_user_dir }}/bin:{{ ansible_env.PATH }}'
+#  post_tasks:
+#    - name: Upload kubernetes logs to node
+#      synchronize:
+#        src: "{{ zuul.executor.log_root }}/"
+#        dest: "{{ devstack_ip }}"
