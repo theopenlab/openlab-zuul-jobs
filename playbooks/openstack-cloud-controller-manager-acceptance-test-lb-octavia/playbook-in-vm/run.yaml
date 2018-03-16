@@ -142,6 +142,8 @@
 
           # -E preserves the current env vars, but we need to special case PATH
           sudo -E PATH=$PATH ./hack/local-up-cluster.sh -O
+          # sleep for testing
+          sleep 7200
 
           # sudo of local-up-cluster mucks with permissions
           sudo chmod -R 777 /home/ubuntu/.kube
