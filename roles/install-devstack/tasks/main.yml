@@ -25,7 +25,7 @@
       iptables -t nat -A POSTROUTING -s "$FLOATING_RANGE" -o $(ip -4 route | grep ^default | awk '{print $5}') -j MASQUERADE
 
       # Delete all rules in chain openstack-INPUT to allow unlimited access from nested vm
-      iptables -F openstack-INPUT
+      iptables -F openstack-INPUT || true
     executable: /bin/bash
     chdir: '{{ ansible_user_dir }}/workspace'
   environment: '{{ zuul | zuul_legacy_vars }}'
