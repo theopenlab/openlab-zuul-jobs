@@ -112,6 +112,10 @@
              export GOPATH="{{ ansible_user_dir }}"
              source openrc
 
+             # Debuging ...
+             export AUTHORIZATION_MODE=RBAC
+             export ENABLE_RBAC=True
+
              echo "Stopping firewall and allow all traffic..."
              iptables -F
              iptables -X
