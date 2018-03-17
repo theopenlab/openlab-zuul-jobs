@@ -188,7 +188,8 @@
              set -e
              set -x
              echo "Collecting Kubernetes logs ..."
-             rsync -az -e "ssh -i {{ key_file }}" "ubuntu@{{ server_ip }}:/opt/stack/logs" "{{ ansible_user_dir }}/workspace/logs/"
+             mkdir -p "{{ ansible_user_dir }}/workspace/logs/kubernetes"
+             rsync -az -e "ssh -i {{ key_file }}" "ubuntu@{{ server_ip }}:/opt/stack/logs" "{{ ansible_user_dir }}/workspace/logs/kubernetes"
            executable: /bin/bash
          delegate_to: localhost
      environment:
