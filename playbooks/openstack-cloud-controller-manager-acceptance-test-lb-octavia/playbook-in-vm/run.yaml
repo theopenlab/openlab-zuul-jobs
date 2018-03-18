@@ -169,7 +169,8 @@
              export PATH=$GOPATH/bin:${PATH}:/opt/stack/bin:
 
              # sed '582 a \    sleep 7200'  -i ./hack/local-up-cluster.sh
-             sed '582,589d' -i ./hack/local-up-cluster.sh
+             # sed '582,589d' -i ./hack/local-up-cluster.sh
+             sed 's/curl --max-time 1/curl --max-time 5/g' -i ./hack/lib/util.sh
              # -E preserves the current env vars, but we need to special case PATH
              sudo -E PATH=$PATH ./hack/local-up-cluster.sh -O
 
