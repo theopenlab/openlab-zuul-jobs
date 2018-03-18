@@ -160,8 +160,8 @@
              # Just kick off all the processes and drop down to the command line
              export ENABLE_DAEMON=true
              # We need the hostname to match the name of the vm started by openstack
-             # export HOSTNAME_OVERRIDE=$(hostname)
-             export HOSTNAME_OVERRIDE=$(ip route get 1.1.1.1 | awk '{print $7}')
+             export HOSTNAME_OVERRIDE=$(hostname)
+             # export HOSTNAME_OVERRIDE=$(ip route get 1.1.1.1 | awk '{print $7}')
 
              # Add other paths we usually keep stuff in
              export PATH=$GOPATH/bin:${PATH}:/opt/stack/bin:
@@ -194,7 +194,8 @@
              set -x
              echo "Collecting Kubernetes logs ..."
              mkdir -p "{{ ansible_user_dir }}/workspace/logs/kubernetes"
-             rsync -az -e "ssh -i {{ key_file }}" "ubuntu@{{ server_ip }}:/opt/stack/logs" "{{ ansible_user_dir }}/workspace/logs/kubernetes"
+             rsync -az -e "ssh -i {{ key_file }}" "ubuntu@{{ server_ip }}:/opt/stack/logs/*" "{{ ansible_user_dir }}/workspace/logs/kubernetes/"
+             rsync -az -e "ssh -i {{ key_file }}" "ubuntu@{{ server_ip }}:/etc/kubernetes/*" "{{ ansible_user_dir }}/workspace/logs/kubernetes/"
            executable: /bin/bash
          delegate_to: localhost
      environment:
