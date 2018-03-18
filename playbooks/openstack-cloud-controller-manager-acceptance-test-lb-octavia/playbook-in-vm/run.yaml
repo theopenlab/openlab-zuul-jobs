@@ -115,6 +115,9 @@
              # Debuging ...
              export AUTHORIZATION_MODE=RBAC
              export ENABLE_RBAC=True
+             export API_HOST_IP="172.17.0.1"
+             export KUBELET_HOST="0.0.0.0"
+
 
              echo "Stopping firewall and allow all traffic..."
              iptables -F
