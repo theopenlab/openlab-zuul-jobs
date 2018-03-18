@@ -211,6 +211,13 @@
     nodeset: ubuntu-xenial-large
 
 - job:
+    name: openstack-cloud-controller-manager-acceptance-test-lb-octavia
+    parent: golang-test
+    description: |
+      Run K8S openstack-cloud-controller-manager acceptance tests with LBaaS enabled scenario
+    run: playbooks/openstack-cloud-controller-manager-acceptance-test-lb-octavia/run.yaml
+
+- job:
     name: openlab-zuul-jobs-check
     parent: init-test
     description: |
