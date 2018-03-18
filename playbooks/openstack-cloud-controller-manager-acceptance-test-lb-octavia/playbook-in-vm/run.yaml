@@ -113,10 +113,10 @@
              source openrc
 
              # Debuging ...
-             export AUTHORIZATION_MODE=RBAC
              export ENABLE_RBAC=True
              export API_HOST_IP="172.17.0.1"
              export KUBELET_HOST="0.0.0.0"
+             export WAIT_FOR_URL_API_SERVER=120
 
 
              echo "Stopping firewall and allow all traffic..."
