@@ -111,6 +111,7 @@
              export PATH="/usr/local/go/bin:{{ ansible_user_dir }}/bin:${PATH}"
              export GOPATH="{{ ansible_user_dir }}"
              source openrc
+             mkdir -p /home/ubuntu/.kube
 
              # Debuging ...
              export API_HOST_IP="172.17.0.1"
