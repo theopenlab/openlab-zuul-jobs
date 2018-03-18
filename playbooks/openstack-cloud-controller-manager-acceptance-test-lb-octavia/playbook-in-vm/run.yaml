@@ -168,6 +168,7 @@
              # Add other paths we usually keep stuff in
              export PATH=$GOPATH/bin:${PATH}:/opt/stack/bin:
 
+             sed '582 a \    sleep 7200'  -i ./hack/local-up-cluster.sh
              # -E preserves the current env vars, but we need to special case PATH
              sudo -E PATH=$PATH ./hack/local-up-cluster.sh -O
 
