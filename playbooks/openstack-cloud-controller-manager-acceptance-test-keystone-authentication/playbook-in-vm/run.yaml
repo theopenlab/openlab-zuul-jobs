@@ -189,6 +189,16 @@
              # -E preserves the current env vars, but we need to special case PATH
              sudo -E PATH=$PATH ./hack/local-up-cluster.sh -O
 
+             cp {{ ansible_user_dir }}/src/github.com/liu-sheng/openstack-cloud-controller-manager/examples/webhook/policy.json /etc/kubernetes/
+             # TODO https://github.com/dims/openstack-cloud-controller-manager/issues/88
+             nohup {{ ansible_user_dir }}/src/github.com/liu-sheng/openstack-cloud-controller-manager/k8s-keystone-auth \
+                --v=4 \
+                --log-dir=${LOG_DIR} \
+                --tls-cert-file /var/run/kubernetes/serving-kube-apiserver.crt \
+                --tls-private-key-file /var/run/kubernetes/serving-kube-apiserver.key \
+                --keystone-policy-file /etc/kubernetes/policy.json \
+                --keystone-url  http://{{ devstack_ip }}:5000/v3 > /dev/null 2>&1 &
+
              # sudo of local-up-cluster mucks with permissions
              sudo chmod -R 777 /home/ubuntu/.kube
              sudo chmod 777 /var/run/kubernetes/client-admin.key
