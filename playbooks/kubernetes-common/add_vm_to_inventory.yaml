@@ -1,0 +1,11 @@
+- name: Add server to inventory
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Add server to inventory
+      add_host:
+        name: "{{ server_name }}"
+        ansible_host: "{{ server_ip }}"
+        ansible_user: "ubuntu"
+        ansible_ssh_private_key_file: "{{ key_file }}"
+        ansible_python_interpreter: /usr/bin/python3

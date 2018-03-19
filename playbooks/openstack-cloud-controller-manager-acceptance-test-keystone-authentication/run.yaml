@@ -69,7 +69,7 @@
           DEVSTACK_IP=$(ifconfig br-ex | grep "inet addr:" | awk '{print $2}' | cut -c 6-)
 
           ANSIBLE_ROLES_PATH={{ ansible_user_dir }}/src/github.com/liu-sheng/openlab-zuul-jobs/roles ansible-playbook -vvv \
-              {{ ansible_user_dir }}/src/github.com/liu-sheng/openlab-zuul-jobs/playbooks/openstack-cloud-controller-manager-acceptance-test-lb-octavia/playbook-in-vm/run.yaml \
+              {{ ansible_user_dir }}/src/github.com/liu-sheng/openlab-zuul-jobs/playbooks/openstack-cloud-controller-manager-acceptance-test-keystone-authentication/playbook-in-vm/run.yaml \
               -e server_name=instance_1 -e server_ip=$FLOATING_IP -e key_file=$(realpath ${PRIVATE_KEY}) -e devstack_ip=$DEVSTACK_IP \
               -e ansible_user_dir="{{ ansible_user_dir }}" -e project_id=$PROJECT_ID
 
