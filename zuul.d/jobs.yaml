@@ -236,10 +236,3 @@
       - liu-sheng/project-config
       - liu-sheng/zuul-jobs
     run: playbooks/openlab-zuul-jobs-check/run.yaml
-
-- job:
-    name: openstack-cloud-controller-manager-lb-out-vm
-    parent: golang-test
-    description: |
-      Run K8S openstack-cloud-controller-manager tests with LBaaS enabled scenario [out of vm]
-    run: playbooks/openstack-cloud-controller-manager-lb-out-vm/run.yaml
