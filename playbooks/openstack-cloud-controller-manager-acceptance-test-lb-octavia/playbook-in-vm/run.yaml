@@ -135,8 +135,8 @@
              export ENABLE_HOSTPATH_PROVISIONER=true
              export ENABLE_SINGLE_CA_SIGNER=true
              # export KUBE_ENABLE_CLUSTER_DASHBOARD=true
-             # export KUBE_ENABLE_CLUSTER_DNS=true
-             export LOG_LEVEL=10
+             export KUBE_ENABLE_CLUSTER_DNS=false
+             export LOG_LEVEL=4
 
              # go where we cloned kubernetes repository
              cd $GOPATH/src/k8s.io/kubernetes/
