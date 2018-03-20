@@ -173,7 +173,7 @@
              # sed '582,589d' -i ./hack/local-up-cluster.sh
              sed 's/curl --max-time 1/curl --max-time 5/g' -i ./hack/lib/util.sh
              # -E preserves the current env vars, but we need to special case PATH
-             sudo -E PATH=$PATH ./hack/local-up-cluster.sh -O
+             sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
 
              # sudo of local-up-cluster mucks with permissions
              sudo chmod -R 777 /home/ubuntu/.kube
