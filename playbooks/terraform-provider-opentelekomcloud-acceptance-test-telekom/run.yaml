@@ -1,30 +1,16 @@
 - hosts: all
   become: yes
+  roles:
+    - find-nodepool-provider
   tasks:
     - shell:
         cmd: |
-          set -x
-          echo '{{ zuul.executor.log_root }}/zuul-info/inventory.yaml'
-        executable: /bin/bash
-
-    - name: Copy files from node
-      synchronize:
-        src: '{{ zuul.executor.log_root }}/zuul-info/inventory.yaml'
-        dest: '{{ ansible_user_dir }}/workspace'
-        mode: push
-        copy_links: true
-        verify_host: true
-
-    - shell:
-        cmd: |
-          set -x
-          grep -m 1 provider: inventory.yaml | awk '{print $2}'
-        executable: /bin/bash
-        chdir: '{{ ansible_user_dir }}/workspace'
-
-    - shell:
-        cmd: |
+          echo '{{ nodepool_provider}}'
           sleep 3600
+        executable: /bin/bash
+
+    - shell:
+        cmd: |
           apt-get install python-pip -y
           pip install -U python-openstackclient
           # NOTE: the following commands may include sensitive information please do not print in job logs

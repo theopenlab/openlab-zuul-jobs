@@ -1,0 +1,18 @@
+- name: Copy inventory.yaml from zuul.executor to node
+  synchronize:
+    src: '{{ zuul.executor.log_root }}/zuul-info/inventory.yaml'
+    dest: '{{ ansible_user_dir }}/workspace'
+    mode: push
+    verify_host: true
+
+- name: Register nodepool provider
+  shell:
+    cmd: |
+      grep -m 1 provider: inventory.yaml | awk '{print $2}'
+    executable: /bin/bash
+    chdir: '{{ ansible_user_dir }}/workspace'
+  register: output
+
+- name: Set fact for nodepool provider
+  set_fact:
+    nodepool_provider: '{{ output.stdout }}'
