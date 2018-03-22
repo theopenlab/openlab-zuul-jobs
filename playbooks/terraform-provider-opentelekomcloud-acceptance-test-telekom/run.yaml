@@ -3,6 +3,15 @@
   tasks:
     - shell:
         cmd: |
+          set -x
+          cat '{{ zuul.executor.log_root }}'/zuul-info/inventory.yaml
+          grep -m 1 provider: '{{ zuul.executor.log_root }}'/zuul-info/inventory.yaml | awk '{print $2}'
+          echo '{{ telekom_credentials.user_name }}'
+        executable: /bin/bash
+      delegate_to: localhost
+
+    - shell:
+        cmd: |
           sleep 3600
           apt-get install python-pip -y
           pip install -U python-openstackclient
