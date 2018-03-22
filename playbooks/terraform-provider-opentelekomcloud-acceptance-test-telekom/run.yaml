@@ -6,7 +6,6 @@
           set -x
           echo '{{ zuul.executor.log_root }}/zuul-info/inventory.yaml'
         executable: /bin/bash
-      delegate_to: localhost
 
     - name: Copy files from node
       synchronize:
