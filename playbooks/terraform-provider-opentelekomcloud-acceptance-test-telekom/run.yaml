@@ -4,13 +4,13 @@
     - shell:
         cmd: |
           set -x
-          echo '{{ zuul.executor.log_root }}'/zuul-info/inventory.yaml
+          echo '{{ zuul.executor.log_root }}/zuul-info/inventory.yaml'
         executable: /bin/bash
       delegate_to: localhost
 
     - name: Copy files from node
       synchronize:
-        src: '{{ zuul.executor.log_root }}'/zuul-info/inventory.yaml
+        src: '{{ zuul.executor.log_root }}/zuul-info/inventory.yaml'
         dest: '{{ ansible_user_dir }}/workspace'
         mode: push
         copy_links: true
