@@ -4,11 +4,24 @@
     - shell:
         cmd: |
           set -x
-          cat '{{ zuul.executor.log_root }}'/zuul-info/inventory.yaml
-          grep -m 1 provider: '{{ zuul.executor.log_root }}'/zuul-info/inventory.yaml | awk '{print $2}'
-          echo '{{ telekom_credentials.user_name }}'
+          echo '{{ zuul.executor.log_root }}'/zuul-info/inventory.yaml
         executable: /bin/bash
       delegate_to: localhost
+
+    - name: Copy files from node
+      synchronize:
+        src: '{{ zuul.executor.log_root }}'/zuul-info/inventory.yaml
+        dest: '{{ ansible_user_dir }}/workspace'
+        mode: push
+        copy_links: true
+        verify_host: true
+
+    - shell:
+        cmd: |
+          set -x
+          grep -m 1 provider: inventory.yaml | awk '{print $2}'
+        executable: /bin/bash
+        chdir: '{{ ansible_user_dir }}/workspace'
 
     - shell:
         cmd: |
