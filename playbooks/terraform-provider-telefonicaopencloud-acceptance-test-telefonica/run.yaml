@@ -3,7 +3,6 @@
   tasks:
     - shell:
         cmd: |
-          sleep 3600
           apt-get install python-pip -y
           pip install -U python-openstackclient
           # NOTE: the following commands may include sensitive information please do not print in job logs
