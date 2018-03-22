@@ -2,7 +2,9 @@
   become: yes
   roles:
     - clone-devstack-gate-to-workspace
-    - create-devstack-local-conf
+    - role: create-devstack-local-conf
+      enable_services:
+        - 'lbaas'
     - install-devstack
     - create-virtual-machine
   tasks:

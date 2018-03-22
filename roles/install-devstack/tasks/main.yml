@@ -15,6 +15,7 @@
       export DEVSTACK_GATE_FIXED_RANGE=10.0.0.0/20
       export PROJECTS="openstack/designate $PROJECTS"
       export PROJECTS="openstack/python-manilaclient $PROJECTS"
+      export PROJECTS="openstack/barbican openstack/python-barbicanclient $PROJECTS"
 
       cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
       ./safe-devstack-vm-gate-wrap.sh
