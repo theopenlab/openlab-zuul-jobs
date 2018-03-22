@@ -221,3 +221,5 @@
       - theopenlab/project-config
       - theopenlab/zuul-jobs
     run: playbooks/openlab-zuul-jobs-check/run.yaml
+    vars:
+      excluded_path: ""
