@@ -1,14 +1,5 @@
 - hosts: all
   become: yes
-  roles:
-    - find-nodepool-provider
-  tasks:
-    - shell:
-        cmd: |
-          echo '{{ nodepool_provider}}'
-          sleep 3600
-        executable: /bin/bash
-
     - shell:
         cmd: |
           apt-get install python-pip -y
