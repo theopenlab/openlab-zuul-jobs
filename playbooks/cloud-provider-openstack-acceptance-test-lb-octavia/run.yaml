@@ -47,74 +47,48 @@
           export KUBELET_HOST="0.0.0.0"
           export WAIT_FOR_URL_API_SERVER=120
 
-          # echo "Stopping firewall and allow all traffic..."
-          # iptables -F
-          # iptables -X
-          # iptables -t nat -F
-          # iptables -t nat -X
-          # iptables -t mangle -F
-          # iptables -t mangle -X
-          # iptables -P INPUT ACCEPT
-          # iptables -P FORWARD ACCEPT
-          # iptables -P OUTPUT ACCEPT
+          echo "Stopping firewall and allow all traffic..."
+          iptables -F
+          iptables -X
+          iptables -t nat -F
+          iptables -t nat -X
+          iptables -t mangle -F
+          iptables -t mangle -X
+          iptables -P INPUT ACCEPT
+          iptables -P FORWARD ACCEPT
+          iptables -P OUTPUT ACCEPT
 
-          # export ALLOW_SECURITY_CONTEXT=true
-          # export ENABLE_CRI=false
-          # export ENABLE_HOSTPATH_PROVISIONER=true
-          # export ENABLE_SINGLE_CA_SIGNER=true
-          # # export KUBE_ENABLE_CLUSTER_DASHBOARD=true
-          # export KUBE_ENABLE_CLUSTER_DNS=false
-          # export LOG_LEVEL=10
+          export ALLOW_SECURITY_CONTEXT=true
+          export ENABLE_CRI=false
+          export ENABLE_HOSTPATH_PROVISIONER=true
+          export ENABLE_SINGLE_CA_SIGNER=true
+          # export KUBE_ENABLE_CLUSTER_DASHBOARD=true
+          export KUBE_ENABLE_CLUSTER_DNS=false
+          export LOG_LEVEL=10
 
-          # # we want to use the openstack cloud provider
-          # export CLOUD_PROVIDER=openstack
-          # # we want to run a separate cloud-controller-manager for openstack
-          # export EXTERNAL_CLOUD_PROVIDER=true
-          # # DO NOT change the location of the cloud-config file. It's important for the old cinder provider to work
-          # export CLOUD_CONFIG=/etc/kubernetes/cloud-config
-          # # specify the OCCM binary
-          # # export EXTERNAL_CLOUD_PROVIDER_BINARY="{{ zuul.project.src_dir }}/openstack-cloud-controller-manager"
-#
-          # # Kill existing processes
-          # ps -ef | grep -i -e etcd -e hyperkube | grep -v grep | awk '{print $2}' | xargs sudo kill -9
-          # # Cleanup some directories just in case
-          # sudo rm -rf /var/lib/kubelet/*
-#
-          # # location of where the kubernetes processes log their output
-          # mkdir -p /opt/stack/logs/
-          # export LOG_DIR=/opt/stack/logs
-          # # We need this for one of the conformance tests
-          # export ALLOW_PRIVILEGED=true
-          # # Just kick off all the processes and drop down to the command line
-          # export ENABLE_DAEMON=true
-          # # We need the hostname to match the name of the vm started by openstack
-          # export HOSTNAME_OVERRIDE=$(hostname)
-#
-          # # pushd ${GOPATH}/src/k8s.io/kubernetes
-#
-          # sed 's/curl --max-time 1/curl --max-time 5/g' -i ./hack/lib/util.sh
-          # # -E preserves the current env vars, but we need to special case PATH
-          # sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
-#
-          # # sudo of local-up-cluster mucks with permissions
-          # sudo chmod -R 777 "{{ ansible_user_dir }}/.kube"
-          # sudo chmod 777 /var/run/kubernetes/client-admin.key
-#
-          # # set up the config we need for kubectl to work
-          # cluster/kubectl.sh config set-cluster local --server=https://localhost:6443 --certificate-authority=/var/run/kubernetes/server-ca.crt
-          # cluster/kubectl.sh config set-credentials myself --client-key=/var/run/kubernetes/client-admin.key --client-certificate=/var/run/kubernetes/client-admin.crt
-          # cluster/kubectl.sh config set-context local --cluster=local --user=myself
-          # cluster/kubectl.sh config use-context local
-#
-          # # Hack for RBAC for all for the new cloud-controller process, we need to do better than this
-          # cluster/kubectl.sh create clusterrolebinding --user system:serviceaccount:kube-system:default kube-system-cluster-admin-1 --clusterrole cluster-admin
-          # cluster/kubectl.sh create clusterrolebinding --user system:serviceaccount:kube-system:pvl-controller kube-system-cluster-admin-2 --clusterrole cluster-admin
-          # cluster/kubectl.sh create clusterrolebinding --user system:serviceaccount:kube-system:cloud-node-controller kube-system-cluster-admin-3 --clusterrole cluster-admin
-          # cluster/kubectl.sh create clusterrolebinding --user system:serviceaccount:kube-system:cloud-controller-manager kube-system-cluster-admin-4 --clusterrole cluster-admin
-          # cluster/kubectl.sh create clusterrolebinding --user system:serviceaccount:kube-system:shared-informers kube-system-cluster-admin-5 --clusterrole cluster-admin
-          # cluster/kubectl.sh create clusterrolebinding --user system:kube-controller-manager  kube-system-cluster-admin-6 --clusterrole cluster-admin
-          # popd
-          # TESTARGS='-v' make test 2>&1
+          # we want to use the openstack cloud provider
+          export CLOUD_PROVIDER=openstack
+          # we want to run a separate cloud-controller-manager for openstack
+          export EXTERNAL_CLOUD_PROVIDER=true
+          # DO NOT change the location of the cloud-config file. It's important for the old cinder provider to work
+          export CLOUD_CONFIG=/etc/kubernetes/cloud-config
+          # specify the OCCM binary
+          # export EXTERNAL_CLOUD_PROVIDER_BINARY="{{ zuul.project.src_dir }}/openstack-cloud-controller-manager"
+          # Kill existing processes
+          ps -ef | grep -i -e etcd -e hyperkube | grep -v grep | awk '{print $2}' | xargs sudo kill -9
+          # Cleanup some directories just in case
+          sudo rm -rf /var/lib/kubelet/*
+
+          # location of where the kubernetes processes log their output
+          mkdir -p /opt/stack/logs/
+          export LOG_DIR=/opt/stack/logs
+          # We need this for one of the conformance tests
+          export ALLOW_PRIVILEGED=true
+          # Just kick off all the processes and drop down to the command line
+          export ENABLE_DAEMON=true
+          # We need the hostname to match the name of the vm started by openstack
+          export HOSTNAME_OVERRIDE=$(hostname)
+
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env }}'
