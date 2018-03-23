@@ -235,4 +235,6 @@
     description: |
       Run acceptance tests of cloud-provider-openstack repo against telekom cloud
     run: playbooks/cloud-provider-openstack-acceptance-test-lb-octavia/run.yaml
-    nodeset: ubuntu-xenial-large
+    secrets:
+      - telekom_credentials
+
