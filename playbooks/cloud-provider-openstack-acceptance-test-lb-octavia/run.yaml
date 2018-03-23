@@ -57,9 +57,6 @@
           password = ${OS_PASSWORD}
           username = ${OS_USERNAME}
           region = ${OS_REGION_NAME}
-          # [LoadBalancer]
-          # floating-network-id = "{{ floating_network_id }}"
-          # subnet-id = "{{ subnet_id }}"
           [BlockStorage]
           bs-version = v2
           EOF
