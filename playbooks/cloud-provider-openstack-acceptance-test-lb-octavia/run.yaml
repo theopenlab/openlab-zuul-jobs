@@ -47,16 +47,16 @@
           export KUBELET_HOST="0.0.0.0"
           export WAIT_FOR_URL_API_SERVER=120
 
-          echo "Stopping firewall and allow all traffic..."
-          iptables -F
-          iptables -X
-          iptables -t nat -F
-          iptables -t nat -X
-          iptables -t mangle -F
-          iptables -t mangle -X
-          iptables -P INPUT ACCEPT
-          iptables -P FORWARD ACCEPT
-          iptables -P OUTPUT ACCEPT
+          # echo "Stopping firewall and allow all traffic..."
+          # iptables -F
+          # iptables -X
+          # iptables -t nat -F
+          # iptables -t nat -X
+          # iptables -t mangle -F
+          # iptables -t mangle -X
+          # iptables -P INPUT ACCEPT
+          # iptables -P FORWARD ACCEPT
+          # iptables -P OUTPUT ACCEPT
 
           export ALLOW_SECURITY_CONTEXT=true
           export ENABLE_CRI=false
