@@ -10,6 +10,7 @@
           set -x
           apt-get install python-pip -y
           pip install -U python-openstackclient
+
           # NOTE: the following commands may include sensitive information please do not print in job logs
           export OS_PASSWORD="`echo {{ telekom_credentials.password }}`"
           export OS_AUTH_TYPE="`echo {{ telekom_credentials.auth_type }}`"
@@ -23,21 +24,42 @@
           export OS_ACCESS_KEY="`echo {{ telekom_credentials.access_key }}`"
           export OS_SECRET_KEY="`echo {{ telekom_credentials.secret_key }}`"
 
+          # Build cloud-provider-openstack binaries
+          go get github.com/Masterminds/glide
+          make depend
+          make build
+
+          # Build K8S
+          go env
+          go version
+          go get -u github.com/jteeuwen/go-bindata/go-bindata || true
+          go get -u github.com/cloudflare/cfssl/cmd/... || true
+          # Get Kubernetes from source
+          mkdir -p ${GOPATH}/src/k8s.io/
+          if [ ! -d "${GOPATH}/src/k8s.io/kubernetes" ]; then
+              git clone https://github.com/kubernetes/kubernetes ${GOPATH}/src/k8s.io/kubernetes
+              pushd ${GOPATH}/src/k8s.io/kubernetes >/dev/null
+              git remote update
+              git fetch --all --tags --prune
+              popd >/dev/null
+          fi
+          make -C ${GOPATH}/src/k8s.io/kubernetes WHAT="cmd/kubectl cmd/hyperkube"
+
           if [[ ! -d "/etc/kubernetes/" ]]; then
               sudo mkdir -p /etc/kubernetes/
           fi
           chown ubuntu /etc/kubernetes/
           cat << EOF >> /etc/kubernetes/cloud-config
           [Global]
-          domain-id = default
-          tenant-id = "{{ project_id }}"
+          domain-name= ${OS_DOMAIN_NAME}
+          tenant-name = ${OS_TENANT_NAME}
           auth-url = ${OS_AUTH_URL}
-          password = secretadmin
-          username = admin
-          region = RegionOne
-          [LoadBalancer]
-          floating-network-id = "{{ floating_network_id }}"
-          subnet-id = "{{ subnet_id }}"
+          password = ${OS_PASSWORD}
+          username = ${OS_USERNAME}
+          region = ${OS_REGION_NAME}
+          # [LoadBalancer]
+          # floating-network-id = "{{ floating_network_id }}"
+          # subnet-id = "{{ subnet_id }}"
           [BlockStorage]
           bs-version = v2
           EOF
@@ -72,15 +94,7 @@
           tar xzvf etcd-v3.3.0-linux-amd64.tar.gz
           cp etcd-v3.3.0-linux-amd64/etcd /usr/local/bin/
           cp etcd-v3.3.0-linux-amd64/etcdctl /usr/local/bin/
-        executable: /bin/bash
-        chdir: '{{ zuul.project.src_dir }}'
-      environment: '{{ golang_env }}'
 
-    - name: Set up Kubernetes local cluster
-      shell:
-        cmd: |
-          set -e
-          set -x
           source openrc
           mkdir -p "{{ ansible_user_dir }}/.kube"
           # Debuging ...
