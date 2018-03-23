@@ -73,24 +73,24 @@
           # DO NOT change the location of the cloud-config file. It's important for the old cinder provider to work
           export CLOUD_CONFIG=/etc/kubernetes/cloud-config
           # specify the OCCM binary
-          export EXTERNAL_CLOUD_PROVIDER_BINARY="{{ zuul.project.src_dir }}/openstack-cloud-controller-manager"
-
-          # Kill existing processes
-          ps -ef | grep -i -e etcd -e hyperkube | grep -v grep | awk '{print $2}' | xargs sudo kill -9
-          # Cleanup some directories just in case
-          sudo rm -rf /var/lib/kubelet/*
-
-          # location of where the kubernetes processes log their output
-          mkdir -p /opt/stack/logs/
-          export LOG_DIR=/opt/stack/logs
-          # We need this for one of the conformance tests
-          export ALLOW_PRIVILEGED=true
-          # Just kick off all the processes and drop down to the command line
-          export ENABLE_DAEMON=true
-          # We need the hostname to match the name of the vm started by openstack
-          export HOSTNAME_OVERRIDE=$(hostname)
-
-          # pushd ${GOPATH}/src/k8s.io/kubernetes
+          # export EXTERNAL_CLOUD_PROVIDER_BINARY="{{ zuul.project.src_dir }}/openstack-cloud-controller-manager"
+#
+          # # Kill existing processes
+          # ps -ef | grep -i -e etcd -e hyperkube | grep -v grep | awk '{print $2}' | xargs sudo kill -9
+          # # Cleanup some directories just in case
+          # sudo rm -rf /var/lib/kubelet/*
+#
+          # # location of where the kubernetes processes log their output
+          # mkdir -p /opt/stack/logs/
+          # export LOG_DIR=/opt/stack/logs
+          # # We need this for one of the conformance tests
+          # export ALLOW_PRIVILEGED=true
+          # # Just kick off all the processes and drop down to the command line
+          # export ENABLE_DAEMON=true
+          # # We need the hostname to match the name of the vm started by openstack
+          # export HOSTNAME_OVERRIDE=$(hostname)
+#
+          # # pushd ${GOPATH}/src/k8s.io/kubernetes
 #
           # sed 's/curl --max-time 1/curl --max-time 5/g' -i ./hack/lib/util.sh
           # # -E preserves the current env vars, but we need to special case PATH
