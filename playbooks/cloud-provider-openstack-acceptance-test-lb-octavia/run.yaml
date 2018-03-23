@@ -1,13 +1,10 @@
 - name: Set up Kubernetes local cluster
   hosts: all
   become: yes
-  gather_facts: no
   tasks:
-    - name: Set up Kubernetes local cluster
-      shell:
+    - shell:
         cmd: |
           set -e
-          set -x
           apt-get install python-pip -y
           pip install -U python-openstackclient
 
@@ -24,6 +21,7 @@
           export OS_ACCESS_KEY="`echo {{ telekom_credentials.access_key }}`"
           export OS_SECRET_KEY="`echo {{ telekom_credentials.secret_key }}`"
 
+          set -x
           # Build cloud-provider-openstack binaries
           go get github.com/Masterminds/glide
           make depend
@@ -57,9 +55,6 @@
           password = ${OS_PASSWORD}
           username = ${OS_USERNAME}
           region = ${OS_REGION_NAME}
-          # [LoadBalancer]
-          # floating-network-id = "{{ floating_network_id }}"
-          # subnet-id = "{{ subnet_id }}"
           [BlockStorage]
           bs-version = v2
           EOF
