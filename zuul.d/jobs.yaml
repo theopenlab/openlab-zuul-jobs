@@ -230,10 +230,10 @@
     run: playbooks/openlab-zuul-jobs-check/run.yaml
 
 - job:
-    name: cloud-provider-openstack-acceptance-test-lib-octavia
+    name: cloud-provider-openstack-acceptance-test-lb-octavia
     parent: golang-test
     description: |
       Run acceptance tests of cloud-provider-openstack repo against telekom cloud
-    run: playbooks/cloud-provider-openstack-acceptance-test-lib-octavia/run.yaml
+    run: playbooks/cloud-provider-openstack-acceptance-test-lb-octavia/run.yaml
     secrets:
       - telekom_credentials
