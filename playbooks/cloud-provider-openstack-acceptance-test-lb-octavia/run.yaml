@@ -1,5 +1,7 @@
 - name: Set up Kubernetes local cluster
   hosts: all
+  roles:
+    - install-k8s-jobs-dependences
   become: yes
   tasks:
     - name: Set up Kubernetes local cluster
@@ -38,58 +40,8 @@
           EOF
 
           set -x
-          # Install Make
-          apt-get install make -y
-          # Build cloud-provider-openstack binaries
-          go get github.com/Masterminds/glide
           make depend
           make build
-          # Build K8S
-          go env
-          go version
-          go get -u github.com/jteeuwen/go-bindata/go-bindata || true
-          go get -u github.com/cloudflare/cfssl/cmd/... || true
-          # Get Kubernetes from source
-          mkdir -p ${GOPATH}/src/k8s.io/
-          if [ ! -d "${GOPATH}/src/k8s.io/kubernetes" ]; then
-              git clone https://github.com/kubernetes/kubernetes ${GOPATH}/src/k8s.io/kubernetes
-              pushd ${GOPATH}/src/k8s.io/kubernetes >/dev/null
-              git remote update
-              git fetch --all --tags --prune
-              popd >/dev/null
-          fi
-          make -C ${GOPATH}/src/k8s.io/kubernetes WHAT="cmd/kubectl cmd/hyperkube"
-
-          # Install docker
-          if ! dpkg -s "docker-engine" > /dev/null 2> /dev/null; then
-              sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609
-              sudo apt-key adv --keyserver hkp://pgp.mit.edu:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D || true
-              sudo apt-add-repository 'deb http://apt.dockerproject.org/repo ubuntu-xenial main'
-              sudo apt-get update -y
-              sudo apt-cache policy docker-engine
-              sudo apt-get install -y docker-engine=1.12.6-0~ubuntu-xenial
-              sudo cat /lib/systemd/system/docker.service
-              sudo sed -r -i "s|(ExecStart)=(.+)|\1=\2 --iptables=false|" /lib/systemd/system/docker.service
-              sudo cat /lib/systemd/system/docker.service
-              sudo systemctl daemon-reload
-              sudo systemctl restart docker
-              sudo systemctl status docker
-              sudo ifconfig -a
-          fi
-          docker --version
-          # Get the latest stable version of kubernetes
-          export K8S_VERSION=$(curl -sS https://storage.googleapis.com/kubernetes-release/release/stable.txt)
-          echo "K8S_VERSION : ${K8S_VERSION}"
-          echo "Starting docker service"
-          sudo systemctl enable docker.service
-          sudo systemctl start docker.service --ignore-dependencies
-          echo "Checking docker service"
-          sudo docker ps
-          wget -c https://github.com/coreos/etcd/releases/download/v3.3.0/etcd-v3.3.0-linux-amd64.tar.gz
-          tar xzvf etcd-v3.3.0-linux-amd64.tar.gz
-          cp etcd-v3.3.0-linux-amd64/etcd /usr/local/bin/
-          cp etcd-v3.3.0-linux-amd64/etcdctl /usr/local/bin/
-
           mkdir -p "{{ ansible_user_dir }}/.kube"
           # Debuging ...
           export API_HOST_IP="172.17.0.1"
@@ -113,8 +65,6 @@
           export KUBE_ENABLE_CLUSTER_DNS=false
           export LOG_LEVEL=10
 
-          # go where we cloned kubernetes repository
-          pushd $GOPATH/src/k8s.io/kubernetes
           # we want to use the openstack cloud provider
           export CLOUD_PROVIDER=openstack
           # we want to run a separate cloud-controller-manager for openstack
@@ -122,7 +72,7 @@
           # DO NOT change the location of the cloud-config file. It's important for the old cinder provider to work
           export CLOUD_CONFIG=/etc/kubernetes/cloud-config
           # specify the OCCM binary
-          export EXTERNAL_CLOUD_PROVIDER_BINARY="{{ ansible_user_dir }}/src/github.com/liu-sheng/openstack-cloud-controller-manager/openstack-cloud-controller-manager
+          export EXTERNAL_CLOUD_PROVIDER_BINARY="{{ zuul.project.src_dir }}/openstack-cloud-controller-manager"
           # Kill existing processes
           ps -ef | grep -i -e etcd -e hyperkube | grep -v grep | awk '{print $2}' | xargs sudo kill -9
           # Cleanup some directories just in case
@@ -139,6 +89,7 @@
           # export HOSTNAME_OVERRIDE=$(ip route get 1.1.1.1 | awk '{print $7}'
           # Add other paths we usually keep stuff in
 
+          pushd $GOPATH/src/k8s.io/kubernetes
           sed 's/curl --max-time 1/curl --max-time 5/g' -i ./hack/lib/util.sh
           # -E preserves the current env vars, but we need to special case PATH
           sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
@@ -157,6 +108,7 @@
           cluster/kubectl.sh create clusterrolebinding --user system:serviceaccount:kube-system:cloud-controller-manager kube-system-cluster-admin-4 --clusterrole cluster-admin
           cluster/kubectl.sh create clusterrolebinding --user system:serviceaccount:kube-system:shared-informers kube-system-cluster-admin-5 --clusterrole cluster-admin
           cluster/kubectl.sh create clusterrolebinding --user system:kube-controller-manager  kube-system-cluster-admin-6 --clusterrole cluster-admin
+          popd
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env }}'

@@ -1,0 +1,58 @@
+- name: Install K8S jobs dependences
+  shell:
+    cmd: |
+      set -e
+      set -x
+      # Install Make
+      apt-get install make -y
+
+      # Install docker
+      if ! dpkg -s "docker-engine" > /dev/null 2> /dev/null; then
+          sudo apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D || true
+          sudo apt-key adv --keyserver hkp://pgp.mit.edu:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D || true
+          sudo apt-add-repository 'deb http://apt.dockerproject.org/repo ubuntu-xenial main'
+          sudo apt-get update -y
+          sudo apt-cache policy docker-engine
+          sudo apt-get install -y docker-engine=1.12.6-0~ubuntu-xenial
+          sudo cat /lib/systemd/system/docker.service
+          sudo sed -r -i "s|(ExecStart)=(.+)|\1=\2 --iptables=false|" /lib/systemd/system/docker.service
+          sudo cat /lib/systemd/system/docker.service
+          sudo systemctl daemon-reload
+          sudo systemctl restart docker
+          sudo systemctl status docker
+          sudo ifconfig -a
+      fi
+      docker --version
+      # Get the latest stable version of kubernetes
+      export K8S_VERSION=$(curl -sS https://storage.googleapis.com/kubernetes-release/release/stable.txt)
+      echo "K8S_VERSION : ${K8S_VERSION}"
+      echo "Starting docker service"
+      sudo systemctl enable docker.service
+      sudo systemctl start docker.service --ignore-dependencies
+      echo "Checking docker service"
+      sudo docker ps
+
+      # Install Etcd-3.3.0
+      wget -c https://github.com/coreos/etcd/releases/download/v3.3.0/etcd-v3.3.0-linux-amd64.tar.gz
+      tar xzvf etcd-v3.3.0-linux-amd64.tar.gz
+      cp etcd-v3.3.0-linux-amd64/etcd /usr/local/bin/
+      cp etcd-v3.3.0-linux-amd64/etcdctl /usr/local/bin/
+
+      # Install glide
+      go get github.com/Masterminds/glide
+
+      # Get and build K8S
+      go get -u github.com/jteeuwen/go-bindata/go-bindata || true
+      go get -u github.com/cloudflare/cfssl/cmd/... || true
+      mkdir -p ${GOPATH}/src/k8s.io/
+      if [ ! -d "${GOPATH}/src/k8s.io/kubernetes" ]; then
+          git clone https://github.com/kubernetes/kubernetes ${GOPATH}/src/k8s.io/kubernetes
+          pushd ${GOPATH}/src/k8s.io/kubernetes >/dev/null
+          git remote update
+          git fetch --all --tags --prune
+          popd >/dev/null
+      fi
+      make -C ${GOPATH}/src/k8s.io/kubernetes WHAT="cmd/kubectl cmd/hyperkube"
+
+    executable: /bin/bash
+  environment: '{{ golang_env }}'
