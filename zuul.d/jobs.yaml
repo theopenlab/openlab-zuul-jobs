@@ -237,4 +237,3 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-lb-octavia/run.yaml
     secrets:
       - telekom_credentials
-
