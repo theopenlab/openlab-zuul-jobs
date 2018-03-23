@@ -179,6 +179,8 @@
              # -E preserves the current env vars, but we need to special case PATH
              sudo -E PATH=$PATH ./hack/local-up-cluster.sh -O
 
+             popd
+
              cp {{ ansible_user_dir }}/src/github.com/liu-sheng/openstack-cloud-controller-manager/examples/webhook/policy.json /etc/kubernetes/
              # TODO https://github.com/dims/openstack-cloud-controller-manager/issues/88
              nohup {{ ansible_user_dir }}/src/github.com/liu-sheng/openstack-cloud-controller-manager/k8s-keystone-auth \

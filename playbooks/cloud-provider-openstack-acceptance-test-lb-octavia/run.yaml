@@ -24,7 +24,7 @@
           if [[ ! -d "/etc/kubernetes/" ]]; then
               sudo mkdir -p /etc/kubernetes/
           fi
-          chown ubuntu /etc/kubernetes/
+          chown zuul /etc/kubernetes/
           cat << EOF >> /etc/kubernetes/cloud-config
           [Global]
           domain-name= ${OS_DOMAIN_NAME}
@@ -112,8 +112,9 @@
           # export KUBE_ENABLE_CLUSTER_DASHBOARD=true
           export KUBE_ENABLE_CLUSTER_DNS=false
           export LOG_LEVEL=10
+
           # go where we cloned kubernetes repository
-          cd $GOPATH/src/k8s.io/kubernetes
+          pushd $GOPATH/src/k8s.io/kubernetes
           # we want to use the openstack cloud provider
           export CLOUD_PROVIDER=openstack
           # we want to run a separate cloud-controller-manager for openstack
@@ -137,12 +138,12 @@
           export HOSTNAME_OVERRIDE=$(hostname)
           # export HOSTNAME_OVERRIDE=$(ip route get 1.1.1.1 | awk '{print $7}'
           # Add other paths we usually keep stuff in
-          export PATH=$GOPATH/bin:${PATH}:/opt/stack/bin
+
           sed 's/curl --max-time 1/curl --max-time 5/g' -i ./hack/lib/util.sh
           # -E preserves the current env vars, but we need to special case PATH
-          sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -
+          sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
           # sudo of local-up-cluster mucks with permissions
-          sudo chmod -R 777 /home/ubuntu/.kube
+          sudo chmod -R 777 "{{ ansible_user_dir }}/.kube"
           sudo chmod 777 /var/run/kubernetes/client-admin.ke
           # set up the config we need for kubectl to work
           cluster/kubectl.sh config set-cluster local --server=https://localhost:6443 --certificate-authority=/var/run/kubernetes/server-ca.crt
