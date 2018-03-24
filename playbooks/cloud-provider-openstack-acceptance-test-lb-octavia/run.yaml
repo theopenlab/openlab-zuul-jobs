@@ -64,6 +64,16 @@
           # export KUBE_ENABLE_CLUSTER_DASHBOARD=true
           export KUBE_ENABLE_CLUSTER_DNS=false
           export LOG_LEVEL=10
+          # we want to use the openstack cloud provider
+          export CLOUD_PROVIDER=openstack
+          # we want to run a separate cloud-controller-manager for openstack
+          export EXTERNAL_CLOUD_PROVIDER=true
+          # DO NOT change the location of the cloud-config file. It is important for the old cinder provider to work
+          export CLOUD_CONFIG=/etc/kubernetes/cloud-config
+          # specify the OCCM binary
+          export EXTERNAL_CLOUD_PROVIDER_BINARY="{{ zuul.project.src_dir }}/openstack-cloud-controller-manager"
+          # Cleanup some directories just in case
+          sudo rm -rf /var/lib/kubelet/*
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env }}'
