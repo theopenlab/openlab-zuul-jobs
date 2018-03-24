@@ -57,7 +57,6 @@
           iptables -P INPUT ACCEPT
           iptables -P FORWARD ACCEPT
           iptables -P OUTPUT ACCEPT
-
           export ALLOW_SECURITY_CONTEXT=true
           export ENABLE_CRI=false
           export ENABLE_HOSTPATH_PROVISIONER=true
@@ -65,15 +64,6 @@
           # export KUBE_ENABLE_CLUSTER_DASHBOARD=true
           export KUBE_ENABLE_CLUSTER_DNS=false
           export LOG_LEVEL=10
-
-          # we want to use the openstack cloud provider
-          export CLOUD_PROVIDER=openstack
-          # we want to run a separate cloud-controller-manager for openstack
-          export EXTERNAL_CLOUD_PROVIDER=true
-          # DO NOT change the location of the cloud-config file. It's important for the old cinder provider to work
-          export CLOUD_CONFIG=/etc/kubernetes/cloud-config
-          # specify the OCCM binary
-          export EXTERNAL_CLOUD_PROVIDER_BINARY="{{ zuul.project.src_dir }}/openstack-cloud-controller-manager"
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env }}'
