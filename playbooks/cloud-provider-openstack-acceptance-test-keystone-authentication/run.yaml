@@ -45,7 +45,6 @@
           mkdir -p "{{ ansible_user_dir }}/.kube"
           export API_HOST_IP="172.17.0.1"
           export KUBELET_HOST="0.0.0.0"
-          export WAIT_FOR_URL_API_SERVER=120
 
           echo "Stopping firewall and allow all traffic..."
           iptables -F
@@ -86,7 +85,7 @@
           export HOSTNAME_OVERRIDE=$(hostname)
 
           pushd ${GOPATH}/src/k8s.io/kubernetes
-
+          sed 's/curl --max-time 1/curl --max-time 5/g' -i ./hack/lib/util.sh
           sed '555 a \      --authentication-token-webhook-config-file=/etc/kubernetes/webhook.kubeconfig'  -i ./hack/local-up-cluster.sh
           # -E preserves the current env vars, but we need to special case PATH
           sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
