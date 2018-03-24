@@ -35,6 +35,9 @@
           password = ${OS_PASSWORD}
           username = ${OS_USERNAME}
           region = ${OS_REGION_NAME}
+          [LoadBalancer]
+          floating-network-id = "TODO"
+          subnet-id = "TODO"
           [BlockStorage]
           bs-version = v2
           EOF
