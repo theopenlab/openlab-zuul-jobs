@@ -82,7 +82,7 @@
           # Just kick off all the processes and drop down to the command line
           export ENABLE_DAEMON=true
           # We need the hostname to match the name of the vm started by openstack
-          export HOSTNAME_OVERRIDE=$(hostname)
+          export HOSTNAME_OVERRIDE=$(curl http://169.254.169.254/openstack/latest/meta_data.json | python -c "import sys, json; print json.load(sys.stdin)['name']")
 
           pushd ${GOPATH}/src/k8s.io/kubernetes
           sed 's/curl --max-time 1/curl --max-time 5/g' -i ./hack/lib/util.sh
