@@ -1,0 +1,10 @@
+- hosts: all
+  become: yes
+  tasks:
+    - shell:
+        cmd: |
+          set -e
+          set -x
+          mkdir -p "{{ ansible_user_dir }}/workspace/logs/kubernetes"
+          cp -r /opt/stack/logs/*  "{{ ansible_user_dir }}/workspace/logs/kubernetes"
+        executable: /bin/bash
