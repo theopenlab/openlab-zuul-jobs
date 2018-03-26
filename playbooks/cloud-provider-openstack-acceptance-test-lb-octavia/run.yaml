@@ -115,6 +115,7 @@
           cluster/kubectl.sh create -f "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/loadbalancers/internal-http-nginx.yaml"
           ./cluster/kubectl.sh describe services external-http-nginx-service
           ./cluster/kubectl.sh describe services internal-http-nginx-service
+          sleep 7200
 
           external_lb_ip=$(./cluster/kubectl.sh describe services external-http-nginx-service |grep "LoadBalancer Ingress" | awk -F ' ' '{print $3}')
           if curl --retry 5 --retry-max-time 30 http://${external_lb_ip} |grep "Welcome to nginx"
