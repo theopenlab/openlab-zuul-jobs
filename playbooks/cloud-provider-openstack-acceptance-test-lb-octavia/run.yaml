@@ -36,8 +36,8 @@
           username = ${OS_USERNAME}
           region = ${OS_REGION_NAME}
           [LoadBalancer]
-          floating-network-id = "TODO"
-          subnet-id = "TODO"
+          floating-network-id = "0a2228f2-7f8a-45f1-8e09-9039e1d09975"
+          subnet-id = "3d6e9157-655f-42ec-9778-94d455730e5c"
           [BlockStorage]
           bs-version = v2
           EOF
@@ -112,6 +112,8 @@
           cluster/kubectl.sh create clusterrolebinding --user system:kube-controller-manager  kube-system-cluster-admin-6 --clusterrole cluster-admin
           popd
           sleep 7200
+          kubectl create -f examples/loadbalancers/external-http-nginx.yaml
+          kubectl create -f examples/loadbalancers/internal-http-nginx.yaml
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env }}'

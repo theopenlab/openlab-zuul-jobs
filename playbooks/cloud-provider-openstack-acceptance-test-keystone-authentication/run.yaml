@@ -115,7 +115,7 @@
           cluster/kubectl.sh create clusterrolebinding --user system:serviceaccount:kube-system:shared-informers kube-system-cluster-admin-5 --clusterrole cluster-admin
           cluster/kubectl.sh create clusterrolebinding --user system:kube-controller-manager  kube-system-cluster-admin-6 --clusterrole cluster-admin
           popd
-          TESTARGS='-v' make test 2>&1
+
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env }}'
