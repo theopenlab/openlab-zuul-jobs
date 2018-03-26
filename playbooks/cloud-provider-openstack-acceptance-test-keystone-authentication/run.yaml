@@ -70,7 +70,7 @@
           # DO NOT change the location of the cloud-config file. It is important for the old cinder provider to work
           export CLOUD_CONFIG=/etc/kubernetes/cloud-config
           # specify the OCCM binary
-          export EXTERNAL_CLOUD_PROVIDER_BINARY="{{ zuul.project.src_dir }}/openstack-cloud-controller-manager"
+          export EXTERNAL_CLOUD_PROVIDER_BINARY="{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/openstack-cloud-controller-manager"
           # Cleanup some directories just in case
           sudo rm -rf /var/lib/kubelet/*
 
