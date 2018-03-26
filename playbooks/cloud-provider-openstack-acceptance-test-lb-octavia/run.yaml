@@ -132,6 +132,8 @@
               echo "Internal LB services launched failed :("
               exit 1
           fi
+          ./cluster/kubectl.sh delete services internal-http-nginx-service
+          ./cluster/kubectl.sh delete services external-http-nginx-service
           popd
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
