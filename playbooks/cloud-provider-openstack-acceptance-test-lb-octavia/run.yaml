@@ -113,28 +113,40 @@
 
           cluster/kubectl.sh create -f "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/loadbalancers/external-http-nginx.yaml"
           cluster/kubectl.sh create -f "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/loadbalancers/internal-http-nginx.yaml"
-          ./cluster/kubectl.sh describe services external-http-nginx-service
-          ./cluster/kubectl.sh describe services internal-http-nginx-service
-          sleep 7200
+          ./cluster/kubectl.sh get pods
+          ./cluster/kubectl.sh get services
 
-          external_lb_ip=$(./cluster/kubectl.sh describe services external-http-nginx-service |grep "LoadBalancer Ingress" | awk -F ' ' '{print $3}')
+          for i in $(seq 1 10); do
+              external_lb_ip=$(./cluster/kubectl.sh describe services external-http-nginx-service |grep "LoadBalancer Ingress" | awk -F ' ' '{print $3}')
+              internal_lb_ip=$(./cluster/kubectl.sh describe services internal-http-nginx-service |grep "LoadBalancer Ingress" | awk -F ' ' '{print $3}')
+              if [ -n "${external_lb_ip}" -a -n "${internal_lb_ip}" ]; then
+                  break
+              fi
+              echo "Waiting for deploying external-http-nginx-service service on try ${i} ..."
+              sleep 2
+          done
+          if [ -z "${external_lb_ip}" -o -z "${internal_lb_ip}" ]; then
+              echo "Timed out to wait for external-http-nginx-service and internal-http-nginx-service services deployment!"
+              ./cluster/kubectl.sh describe services internal-http-nginx-service
+              ./cluster/kubectl.sh describe services external-http-nginx-service
+              exit 1
+          fi
+
           if curl --retry 5 --retry-max-time 30 http://${external_lb_ip} |grep "Welcome to nginx"
           then
-              echo "External LB services launched sucessfully :)"
+              echo "External LB services launched sucessfully!"
           else
-              echo "External LB services launched failed :("
+              echo "External LB services launched failed!"
               exit 1
           fi
-          internal_lb_ip=$(./cluster/kubectl.sh describe services internal-http-nginx-service |grep "LoadBalancer Ingress" | awk -F ' ' '{print $3}')
+
           if curl --retry 5 --retry-max-time 30 http://${internal_lb_ip} |grep "Welcome to nginx"
           then
-              echo "Internal LB services launched sucessfully :)"
+              echo "Internal LB services launched sucessfully!"
           else
-              echo "Internal LB services launched failed :("
+              echo "Internal LB services launched failed!"
               exit 1
           fi
-          ./cluster/kubectl.sh delete services internal-http-nginx-service
-          ./cluster/kubectl.sh delete services external-http-nginx-service
           popd
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
