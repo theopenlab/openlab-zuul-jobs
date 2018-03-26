@@ -39,6 +39,25 @@
           bs-version = v2
           EOF
 
+          cat << EOF >> /etc/kubernetes/webhook.kubeconfig
+          apiVersion: v1
+          clusters:
+          - cluster:
+              insecure-skip-tls-verify: true
+              server: https://localhost:8443/webhook
+            name: webhook
+          contexts:
+          - context:
+              cluster: webhook
+              user: webhook
+            name: webhook
+          current-context: webhook
+          kind: Config
+          preferences: {}
+          users:
+          - name: webhook
+          EOF
+
           set -x
           make depend
           make build
