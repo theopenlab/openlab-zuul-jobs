@@ -106,15 +106,6 @@
 
           pushd ${GOPATH}/src/k8s.io/kubernetes
           export AUTHORIZATION_MODE="Webhook,Node"
-          nohup "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/k8s-keystone-auth" \
-                --log-dir=${LOG_DIR} \
-                --tls-cert-file /var/run/kubernetes/serving-kube-apiserver.crt \
-                --tls-private-key-file /var/run/kubernetes/serving-kube-apiserver.key \
-                --keystone-policy-file /etc/kubernetes/policy.json \
-                --log-dir=${LOG_DIR} \
-                --v=10 \
-                --keystone-url  ${OS_AUTH_URL} >"${LOG_DIR}/keystone-auth.log" 2>&1 &
-
           sed 's/curl --max-time 1/curl --max-time 5/g' -i ./hack/lib/util.sh
           sed '583,587 d' -i ./hack/local-up-cluster.sh
           sed '555 a \      --authentication-token-webhook-config-file=/etc/kubernetes/webhook.kubeconfig \\'  -i ./hack/local-up-cluster.sh
@@ -123,6 +114,15 @@
 
           # -E preserves the current env vars, but we need to special case PATH
           sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
+
+          nohup "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/k8s-keystone-auth" \
+                --log-dir=${LOG_DIR} \
+                --tls-cert-file /var/run/kubernetes/serving-kube-apiserver.crt \
+                --tls-private-key-file /var/run/kubernetes/serving-kube-apiserver.key \
+                --keystone-policy-file /etc/kubernetes/policy.json \
+                --log-dir=${LOG_DIR} \
+                --v=10 \
+                --keystone-url  ${OS_AUTH_URL} >"${LOG_DIR}/keystone-auth.log" 2>&1 &
 
           # sudo of local-up-cluster mucks with permissions
           sudo chmod -R 777 "{{ ansible_user_dir }}/.kube"
@@ -141,7 +141,7 @@
           cluster/kubectl.sh create clusterrolebinding --user system:serviceaccount:kube-system:cloud-controller-manager kube-system-cluster-admin-4 --clusterrole cluster-admin
           cluster/kubectl.sh create clusterrolebinding --user system:serviceaccount:kube-system:shared-informers kube-system-cluster-admin-5 --clusterrole cluster-admin
           cluster/kubectl.sh create clusterrolebinding --user system:kube-controller-manager  kube-system-cluster-admin-6 --clusterrole cluster-admin
-          sleep 7200
+          # sleep 7200
           cluster/kubectl.sh config set-credentials openstackuser --auth-provider=openstack
           cluster/kubectl.sh config set-context --cluster=kubernetes --user=openstackuser openstackuser@kubernetes
           cluster/kubectl.sh config use-context openstackuser@kubernetes
