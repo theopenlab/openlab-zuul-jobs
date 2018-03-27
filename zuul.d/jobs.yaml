@@ -250,3 +250,14 @@
     secrets:
       - telekom_credentials
     nodeset: ubuntu-xenial-large
+
+- job:
+    name: cloud-provider-openstack-acceptance-test-keystone-authenrization
+    parent: golang-test
+    description: |
+      Run acceptance tests of cloud-provider-openstack repo against telekom cloud
+    run: playbooks/cloud-provider-openstack-acceptance-test-keystone-authenrization/run.yaml
+    post-run: playbooks/cloud-provider-openstack-acceptance-test-keystone-authenrization/post.yaml
+    secrets:
+      - telekom_credentials
+    nodeset: ubuntu-xenial-large
