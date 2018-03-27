@@ -23,3 +23,9 @@
     nodes:
       - name: ubuntu-xenial-large
         label: ubuntu-xenial-large
+
+- nodeset:
+    name: ubuntu-xenial-vexxhost
+    nodes:
+      - name: ubuntu-xenial-vexxhost
+        label: ubuntu-xenial-vexxhost
