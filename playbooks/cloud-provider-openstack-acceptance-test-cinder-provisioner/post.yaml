@@ -1,0 +1,4 @@
+- hosts: all
+  become: yes
+  roles:
+    - collect-k8s-logs
