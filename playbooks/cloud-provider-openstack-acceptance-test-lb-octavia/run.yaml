@@ -123,7 +123,7 @@
                   break
               fi
               echo "Waiting for deploying external-http-nginx-service service on try ${i} ..."
-              sleep 2
+              sleep 5
           done
           if [ -z "${external_lb_ip}" -o -z "${internal_lb_ip}" ]; then
               echo "Timed out to wait for external-http-nginx-service and internal-http-nginx-service services deployment!"
