@@ -106,7 +106,6 @@
           pushd ${GOPATH}/src/k8s.io/kubernetes
           export AUTHORIZATION_MODE="Webhook,Node"
           nohup "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/k8s-keystone-auth" \
-                --v=4 \
                 --log-dir=${LOG_DIR} \
                 --tls-cert-file /var/run/kubernetes/serving-kube-apiserver.crt \
                 --tls-private-key-file /var/run/kubernetes/serving-kube-apiserver.key \
