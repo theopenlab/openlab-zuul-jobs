@@ -102,6 +102,7 @@
           export ENABLE_DAEMON=true
           # We need the hostname to match the name of the vm started by openstack
           export HOSTNAME_OVERRIDE=$(curl http://169.254.169.254/openstack/latest/meta_data.json | python -c "import sys, json; print json.load(sys.stdin)['name']")
+          cp ./examples/webhook/policy.json /etc/kubernetes/
 
           pushd ${GOPATH}/src/k8s.io/kubernetes
           export AUTHORIZATION_MODE="Webhook,Node"
@@ -146,8 +147,6 @@
           cluster/kubectl.sh config use-context openstackuser@kubernetes
           cluster/kubectl.sh create rolebinding username-view --clusterrole view --user username --namespace default
           cluster/kubectl.sh get pods
-          TOKEN=$(openstack token issue -f value -c id)
-          cluster/kubectl.sh --token $TOKEN get po or curl -k -v -XGET -H "Accept: application/json" -H "Authorization: Bearer $TOKEN" https://localhost:6443/api/v1/namespaces/default/pods
           cat << EOF | curl -kvs -XPOST -d @- https://localhost:8443/webhook | python -mjson.tool
           {
             "apiVersion": "authentication.k8s.io/v1beta1",
