@@ -257,7 +257,6 @@
     description: |
       Run unit test of cloud-provider-openstack repo against vexxhost cloud
     run: playbooks/cloud-provider-openstack-unittest/run.yaml
-    post-run: playbooks/cloud-provider-openstack-unittest/post.yaml
     secrets:
       - vexxhost_credentials
     nodeset: ubuntu-xenial-vexxhost
