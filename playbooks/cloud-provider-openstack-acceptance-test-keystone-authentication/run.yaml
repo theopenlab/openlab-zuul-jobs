@@ -146,34 +146,34 @@
           cluster/kubectl.sh --token $TOKEN get po or curl -k -v -XGET -H "Accept: application/json" -H "Authorization: Bearer $TOKEN" https://localhost:6443/api/v1/namespaces/default/pods
           cat << EOF | curl -kvs -XPOST -d @- https://localhost:8443/webhook | python -mjson.tool
           {
-          	"apiVersion": "authentication.k8s.io/v1beta1",
-          	"kind": "TokenReview",
-          	"metadata": {
-          		"creationTimestamp": null
-          	},
-          	"spec": {
-          		"token": "$TOKEN"
-          	}
+            "apiVersion": "authentication.k8s.io/v1beta1",
+            "kind": "TokenReview",
+            "metadata": {
+                "creationTimestamp": null
+            },
+            "spec": {
+                "token": "$TOKEN"
+            }
           }
           EOF
 
           cat << EOF | curl -kvs -XPOST -d @- https://localhost:8443/webhook | python -mjson.tool
           {
-          	"apiVersion": "authorization.k8s.io/v1beta1",
-          	"kind": "SubjectAccessReview",
-          	"spec": {
-          		"resourceAttributes": {
-          			"namespace": "kittensandponies",
-          			"verb": "get",
-          			"group": "unicorn.example.org",
-          			"resource": "pods"
-          		},
-          		"user": "jane",
-          		"group": [
-          			"group1",
-          			"group2"
-          		]
-          	}
+            "apiVersion": "authorization.k8s.io/v1beta1",
+            "kind": "SubjectAccessReview",
+            "spec": {
+                "resourceAttributes": {
+                    "namespace": "kittensandponies",
+                    "verb": "get",
+                    "group": "unicorn.example.org",
+                    "resource": "pods"
+                },
+                "user": "jane",
+                "group": [
+                    "group1",
+                    "group2"
+                ]
+            }
           }
           EOF
           popd
