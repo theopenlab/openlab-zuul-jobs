@@ -113,12 +113,13 @@
                 --keystone-policy-file /etc/kubernetes/policy.json \
                 --log-dir=${LOG_DIR} \
                 --v=10 \
-                --keystone-url  ${OS_AUTH_URL} > /dev/null 2>&1 &
+                --keystone-url  ${OS_AUTH_URL} >"${LOG_DIR}/keystone-auth.log" 2>&1 &
 
           sed 's/curl --max-time 1/curl --max-time 5/g' -i ./hack/lib/util.sh
+          sed '583,587 d' -i ./hack/local-up-cluster.sh
           sed '555 a \      --authentication-token-webhook-config-file=/etc/kubernetes/webhook.kubeconfig \\'  -i ./hack/local-up-cluster.sh
           sed '555 a \      --authorization-webhook-config-file=/etc/kubernetes/webhook.kubeconfig \\'  -i ./hack/local-up-cluster.sh
-          sed '583 a \    sleep 7200'  -i ./hack/local-up-cluster.sh
+          # sed '583 a \    sleep 7200'  -i ./hack/local-up-cluster.sh
 
           # -E preserves the current env vars, but we need to special case PATH
           sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
