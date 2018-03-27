@@ -105,8 +105,8 @@
 
           pushd ${GOPATH}/src/k8s.io/kubernetes
           sed 's/curl --max-time 1/curl --max-time 5/g' -i ./hack/lib/util.sh
-          sed '555 a \      --authentication-token-webhook-config-file=/etc/kubernetes/webhook.kubeconfig'  -i ./hack/local-up-cluster.sh
-          sed '540 a \    sleep 7200'  -i ./hack/local-up-cluster.sh
+          sed '555 a \      --authentication-token-webhook-config-file=/etc/kubernetes/webhook.kubeconfig \\'  -i ./hack/local-up-cluster.sh
+          # sed '540 a \    sleep 7200'  -i ./hack/local-up-cluster.sh
           # -E preserves the current env vars, but we need to special case PATH
           sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
 
