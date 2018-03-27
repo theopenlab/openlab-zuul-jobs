@@ -104,9 +104,10 @@
           export HOSTNAME_OVERRIDE=$(curl http://169.254.169.254/openstack/latest/meta_data.json | python -c "import sys, json; print json.load(sys.stdin)['name']")
 
           pushd ${GOPATH}/src/k8s.io/kubernetes
+          export AUTHORIZATION_MODE="Webhook,Node"
           sed 's/curl --max-time 1/curl --max-time 5/g' -i ./hack/lib/util.sh
           sed '555 a \      --authentication-token-webhook-config-file=/etc/kubernetes/webhook.kubeconfig \\'  -i ./hack/local-up-cluster.sh
-          sed '555 a \      --authorization-token-webhook-config-file=/etc/kubernetes/webhook.kubeconfig \\'  -i ./hack/local-up-cluster.sh
+          sed '555 a \      -authorization-webhook-config-file=/etc/kubernetes/webhook.kubeconfig \\'  -i ./hack/local-up-cluster.sh
           # sed '540 a \    sleep 7200'  -i ./hack/local-up-cluster.sh
           # -E preserves the current env vars, but we need to special case PATH
           sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
@@ -141,6 +142,40 @@
           cluster/kubectl.sh config use-context openstackuser@kubernetes
           cluster/kubectl.sh create rolebinding username-view --clusterrole view --user username --namespace default
           cluster/kubectl.sh get pods
+          TOKEN=$(openstack token issue -f value -c id)
+          cluster/kubectl.sh --token $TOKEN get po or curl -k -v -XGET -H "Accept: application/json" -H "Authorization: Bearer $TOKEN" https://localhost:6443/api/v1/namespaces/default/pods
+          cat << EOF | curl -kvs -XPOST -d @- https://localhost:8443/webhook | python -mjson.tool
+          {
+          	"apiVersion": "authentication.k8s.io/v1beta1",
+          	"kind": "TokenReview",
+          	"metadata": {
+          		"creationTimestamp": null
+          	},
+          	"spec": {
+          		"token": "$TOKEN"
+          	}
+          }
+          EOF
+
+          cat << EOF | curl -kvs -XPOST -d @- https://localhost:8443/webhook | python -mjson.tool
+          {
+          	"apiVersion": "authorization.k8s.io/v1beta1",
+          	"kind": "SubjectAccessReview",
+          	"spec": {
+          		"resourceAttributes": {
+          			"namespace": "kittensandponies",
+          			"verb": "get",
+          			"group": "unicorn.example.org",
+          			"resource": "pods"
+          		},
+          		"user": "jane",
+          		"group": [
+          			"group1",
+          			"group2"
+          		]
+          	}
+          }
+          EOF
           popd
 
         executable: /bin/bash
