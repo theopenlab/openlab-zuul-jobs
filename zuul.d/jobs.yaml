@@ -248,8 +248,8 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-keystone-authentication/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-keystone-authentication/post.yaml
     secrets:
-      - telekom_credentials
-    nodeset: ubuntu-xenial-large
+      - vexxhost_credentials
+    nodeset: ubuntu-xenial-vexxhost
 
 - job:
     name: cloud-provider-openstack-unittest

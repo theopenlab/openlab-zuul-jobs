@@ -12,32 +12,35 @@
           pip install -U python-openstackclient
 
           # NOTE: the following commands may include sensitive information please do not print in job logs
-          export OS_PASSWORD="`echo {{ telekom_credentials.password }}`"
-          export OS_AUTH_TYPE="`echo {{ telekom_credentials.auth_type }}`"
-          export OS_AUTH_URL="`echo {{ telekom_credentials.auth_url }}`"
-          export OS_IDENTITY_API_VERSION="`echo {{ telekom_credentials.identity_api_version }}`"
-          export OS_DOMAIN_NAME="`echo {{ telekom_credentials.domain_name }}`"
-          export OS_PROJECT_NAME="`echo {{ telekom_credentials.project_name}}`"
-          export OS_REGION_NAME="`echo {{ telekom_credentials.region_name}}`"
-          export OS_TENANT_NAME="`echo {{ telekom_credentials.project_name }}`"
-          export OS_USERNAME="`echo {{ telekom_credentials.user_name }}`"
-          export OS_ACCESS_KEY="`echo {{ telekom_credentials.access_key }}`"
-          export OS_SECRET_KEY="`echo {{ telekom_credentials.secret_key }}`"
+          # Use echo to delete extra spaces
+          export OS_AUTH_TYPE=$(echo '{{ vexxhost_credentials.auth_type }}')
+          export OS_IDENTITY_API_VERSION=$(echo '{{ vexxhost_credentials.identity_api_version }}')
+          export OS_VOLUME_API_VERSION=$(echo '{{ vexxhost_credentials.volume_api_version }}')
+          export OS_INTERFACE=$(echo '{{ vexxhost_credentials.interface }}')
+          export OS_AUTH_URL=$(echo '{{ vexxhost_credentials.auth_url }}')
+          export OS_PROJECT_ID=$(echo '{{ vexxhost_credentials.project_id }}')
+          export OS_PROJECT_NAME=$(echo '{{ vexxhost_credentials.project_name }}')
+          export OS_USER_DOMAIN_NAME=$(echo '{{ vexxhost_credentials.user_domain_name }}')
+          export OS_PROJECT_DOMAIN_ID=$(echo '{{ vexxhost_credentials.project_domain_id }}')
+          export OS_USERNAME=$(echo '{{ vexxhost_credentials.username }}')
+          export OS_PASSWORD=$(echo '{{ vexxhost_credentials.password }}')
+          export OS_REGION_NAME=$(echo '{{ vexxhost_credentials.region_name }}')
+
           if [[ ! -d "/etc/kubernetes/" ]]; then
               sudo mkdir -p /etc/kubernetes/
           fi
           chown zuul /etc/kubernetes/
           cat << EOF >> /etc/kubernetes/cloud-config
           [Global]
-          domain-name= ${OS_DOMAIN_NAME}
-          tenant-name = ${OS_TENANT_NAME}
-          auth-url = ${OS_AUTH_URL}
-          password = ${OS_PASSWORD}
-          username = ${OS_USERNAME}
-          region = ${OS_REGION_NAME}
+          domain-name = ${OS_PROJECT_DOMAIN_NAME-$OS_PROJECT_DOMAIN_ID}
+          tenant-id = $OS_PROJECT_ID
+          auth-url = $OS_AUTH_URL
+          password = $OS_PASSWORD
+          username = $OS_USERNAME
+          region = $OS_REGION_NAME
           [LoadBalancer]
-          floating-network-id = "0a2228f2-7f8a-45f1-8e09-9039e1d09975"
-          subnet-id = "3d6e9157-655f-42ec-9778-94d455730e5c"
+          floating-network-id = "6d6357ac-0f70-4afa-8bd7-c274cc4ea235"
+          subnet-id = "ac8cadce-db65-4581-962d-0beb27586eb2"
           [BlockStorage]
           bs-version = v2
           EOF
