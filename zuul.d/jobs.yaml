@@ -223,3 +223,13 @@
     run: playbooks/openlab-zuul-jobs-check/run.yaml
     vars:
       excluded_path: ""
+
+- job:
+    name: cloud-provider-openstack-unittest
+    parent: golang-test
+    description: |
+      Run unit test of cloud-provider-openstack repo against vexxhost cloud
+    run: playbooks/cloud-provider-openstack-unittest/run.yaml
+    secrets:
+      - vexxhost_credentials
+    nodeset: ubuntu-xenial-vexxhost
