@@ -150,6 +150,7 @@
           cluster/kubectl.sh config use-context openstackuser@kubernetes
           cluster/kubectl.sh create rolebinding username-view --clusterrole view --user username --namespace default
           cluster/kubectl.sh get pods
+          TOKEN=$(openstack token issue -f value -c id) > /dev/null
           cat << EOF | curl -kvs -XPOST -d @- https://localhost:8443/webhook | python -mjson.tool
           {
             "apiVersion": "authentication.k8s.io/v1beta1",
@@ -161,7 +162,7 @@
                 "token": "$TOKEN"
             }
           }
-          EOF
+          EOF  > /dev/null
 
           cat << EOF | curl -kvs -XPOST -d @- https://localhost:8443/webhook | python -mjson.tool
           {
@@ -174,10 +175,9 @@
                     "group": "unicorn.example.org",
                     "resource": "pods"
                 },
-                "user": "jane",
+                "user": "b5c39289-a625-468f-b5f9-7d20e09def57",
                 "group": [
-                    "group1",
-                    "group2"
+                    "69b5f56c11e84927abebfdca8039b48b"
                 ]
             }
           }
