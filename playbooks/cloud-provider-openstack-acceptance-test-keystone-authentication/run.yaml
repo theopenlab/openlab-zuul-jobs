@@ -146,12 +146,13 @@
           cluster/kubectl.sh create clusterrolebinding --user system:kube-controller-manager  kube-system-cluster-admin-6 --clusterrole cluster-admin
           sleep 7200
           cluster/kubectl.sh config set-credentials openstackuser --auth-provider=openstack
-          cluster/kubectl.sh config set-context --cluster=kubernetes --user=openstackuser openstackuser@kubernetes
-          cluster/kubectl.sh config use-context openstackuser@kubernetes
+          cluster/kubectl.sh config set-context --cluster=local --user=openstackuser openstackuser@local
+          cluster/kubectl.sh config use-context openstackuser@local
           cluster/kubectl.sh create rolebinding username-view --clusterrole view --user username --namespace default
           cluster/kubectl.sh get pods
-          TOKEN=$(openstack token issue -f value -c id) > /dev/null
-          cat << EOF | curl -kvs -XPOST -d @- https://localhost:8443/webhook | python -mjson.tool
+          {
+            TOKEN=$(openstack token issue -f value -c id)
+            cat << EOF | curl -kvs -XPOST -d @- https://localhost:8443/webhook
           {
             "apiVersion": "authentication.k8s.io/v1beta1",
             "kind": "TokenReview",
@@ -162,7 +163,8 @@
                 "token": "$TOKEN"
             }
           }
-          EOF  > /dev/null
+          EOF
+          } 1> /dev/null 2>&1
 
           cat << EOF | curl -kvs -XPOST -d @- https://localhost:8443/webhook | python -mjson.tool
           {
