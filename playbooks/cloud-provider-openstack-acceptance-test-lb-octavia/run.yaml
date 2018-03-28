@@ -1,0 +1,158 @@
+- name: Set up Kubernetes local cluster
+  hosts: all
+  roles:
+    - install-k8s-jobs-dependences
+  become: yes
+  tasks:
+    - name: Set up Kubernetes local cluster
+      shell:
+        cmd: |
+          set -e
+          apt-get install python-pip -y
+          pip install -U python-openstackclient
+
+          # NOTE: the following commands may include sensitive information please do not print in job logs
+          # Use echo to delete extra spaces
+          export OS_AUTH_TYPE=$(echo '{{ vexxhost_credentials.auth_type }}')
+          export OS_IDENTITY_API_VERSION=$(echo '{{ vexxhost_credentials.identity_api_version }}')
+          export OS_VOLUME_API_VERSION=$(echo '{{ vexxhost_credentials.volume_api_version }}')
+          export OS_INTERFACE=$(echo '{{ vexxhost_credentials.interface }}')
+          export OS_AUTH_URL=$(echo '{{ vexxhost_credentials.auth_url }}')
+          export OS_PROJECT_ID=$(echo '{{ vexxhost_credentials.project_id }}')
+          export OS_PROJECT_NAME=$(echo '{{ vexxhost_credentials.project_name }}')
+          export OS_USER_DOMAIN_NAME=$(echo '{{ vexxhost_credentials.user_domain_name }}')
+          export OS_PROJECT_DOMAIN_ID=$(echo '{{ vexxhost_credentials.project_domain_id }}')
+          export OS_USERNAME=$(echo '{{ vexxhost_credentials.username }}')
+          export OS_PASSWORD=$(echo '{{ vexxhost_credentials.password }}')
+          export OS_REGION_NAME=$(echo '{{ vexxhost_credentials.region_name }}')
+
+          if [[ ! -d "/etc/kubernetes/" ]]; then
+              sudo mkdir -p /etc/kubernetes/
+          fi
+          chown zuul /etc/kubernetes/
+          cat << EOF >> /etc/kubernetes/cloud-config
+          [Global]
+          domain-name = ${OS_PROJECT_DOMAIN_NAME-$OS_PROJECT_DOMAIN_ID}
+          tenant-id = $OS_PROJECT_ID
+          auth-url = $OS_AUTH_URL
+          password = $OS_PASSWORD
+          username = $OS_USERNAME
+          region = $OS_REGION_NAME
+          [LoadBalancer]
+          floating-network-id = "6d6357ac-0f70-4afa-8bd7-c274cc4ea235"
+          subnet-id = "ac8cadce-db65-4581-962d-0beb27586eb2"
+          [BlockStorage]
+          bs-version = v2
+          EOF
+
+          set -x
+          make depend
+          make build
+          mkdir -p "{{ ansible_user_dir }}/.kube"
+          export API_HOST_IP="172.17.0.1"
+          export KUBELET_HOST="0.0.0.0"
+
+          echo "Stopping firewall and allow all traffic..."
+          iptables -F
+          iptables -X
+          iptables -t nat -F
+          iptables -t nat -X
+          iptables -t mangle -F
+          iptables -t mangle -X
+          iptables -P INPUT ACCEPT
+          iptables -P FORWARD ACCEPT
+          iptables -P OUTPUT ACCEPT
+          export ALLOW_SECURITY_CONTEXT=true
+          export ENABLE_CRI=false
+          export ENABLE_HOSTPATH_PROVISIONER=true
+          export ENABLE_SINGLE_CA_SIGNER=true
+          # export KUBE_ENABLE_CLUSTER_DASHBOARD=true
+          export KUBE_ENABLE_CLUSTER_DNS=false
+          export LOG_LEVEL=10
+          # we want to use the openstack cloud provider
+          export CLOUD_PROVIDER=openstack
+          # we want to run a separate cloud-controller-manager for openstack
+          export EXTERNAL_CLOUD_PROVIDER=true
+          # DO NOT change the location of the cloud-config file. It is important for the old cinder provider to work
+          export CLOUD_CONFIG=/etc/kubernetes/cloud-config
+          # specify the OCCM binary
+          export EXTERNAL_CLOUD_PROVIDER_BINARY="{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/openstack-cloud-controller-manager"
+          # Cleanup some directories just in case
+          sudo rm -rf /var/lib/kubelet/*
+
+          # location of where the kubernetes processes log their output
+          mkdir -p /opt/stack/logs/
+          export LOG_DIR=/opt/stack/logs
+          # We need this for one of the conformance tests
+          export ALLOW_PRIVILEGED=true
+          # Just kick off all the processes and drop down to the command line
+          export ENABLE_DAEMON=true
+          # We need the hostname to match the name of the vm started by openstack
+          export HOSTNAME_OVERRIDE=$(curl http://169.254.169.254/openstack/latest/meta_data.json | python -c "import sys, json; print json.load(sys.stdin)['name']")
+
+          pushd ${GOPATH}/src/k8s.io/kubernetes
+
+          sed 's/curl --max-time 1/curl --max-time 5/g' -i ./hack/lib/util.sh
+          # -E preserves the current env vars, but we need to special case PATH
+          sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
+
+          # sudo of local-up-cluster mucks with permissions
+          sudo chmod -R 777 "{{ ansible_user_dir }}/.kube"
+          sudo chmod 777 /var/run/kubernetes/client-admin.key
+
+          # set up the config we need for kubectl to work
+          cluster/kubectl.sh config set-cluster local --server=https://localhost:6443 --certificate-authority=/var/run/kubernetes/server-ca.crt
+          cluster/kubectl.sh config set-credentials myself --client-key=/var/run/kubernetes/client-admin.key --client-certificate=/var/run/kubernetes/client-admin.crt
+          cluster/kubectl.sh config set-context local --cluster=local --user=myself
+          cluster/kubectl.sh config use-context local
+
+          # Hack for RBAC for all for the new cloud-controller process, we need to do better than this
+          cluster/kubectl.sh create clusterrolebinding --user system:serviceaccount:kube-system:default kube-system-cluster-admin-1 --clusterrole cluster-admin
+          cluster/kubectl.sh create clusterrolebinding --user system:serviceaccount:kube-system:pvl-controller kube-system-cluster-admin-2 --clusterrole cluster-admin
+          cluster/kubectl.sh create clusterrolebinding --user system:serviceaccount:kube-system:cloud-node-controller kube-system-cluster-admin-3 --clusterrole cluster-admin
+          cluster/kubectl.sh create clusterrolebinding --user system:serviceaccount:kube-system:cloud-controller-manager kube-system-cluster-admin-4 --clusterrole cluster-admin
+          cluster/kubectl.sh create clusterrolebinding --user system:serviceaccount:kube-system:shared-informers kube-system-cluster-admin-5 --clusterrole cluster-admin
+          cluster/kubectl.sh create clusterrolebinding --user system:kube-controller-manager  kube-system-cluster-admin-6 --clusterrole cluster-admin
+
+          cluster/kubectl.sh create -f "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/loadbalancers/external-http-nginx.yaml"
+          cluster/kubectl.sh create -f "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/loadbalancers/internal-http-nginx.yaml"
+          cluster/kubectl.sh get pods
+          cluster/kubectl.sh get services
+
+          for i in $(seq 1 60); do
+              external_lb_ip=$(./cluster/kubectl.sh describe services external-http-nginx-service |grep "LoadBalancer Ingress" | awk -F ' ' '{print $3}')
+              internal_lb_ip=$(./cluster/kubectl.sh describe services internal-http-nginx-service |grep "LoadBalancer Ingress" | awk -F ' ' '{print $3}')
+              if [ -n "${external_lb_ip}" -a -n "${internal_lb_ip}" ]; then
+                  break
+              fi
+              echo "Waiting for deploying external-http-nginx-service service on try ${i} ..."
+              sleep 5
+          done
+          if [ -z "${external_lb_ip}" -o -z "${internal_lb_ip}" ]; then
+              echo "Timed out to wait for external-http-nginx-service and internal-http-nginx-service services deployment!"
+              cluster/kubectl.sh describe services internal-http-nginx-service
+              cluster/kubectl.sh describe services external-http-nginx-service
+              cluster/kubectl.sh get pods
+              cluster/kubectl.sh get services
+              exit 1
+          fi
+
+          if curl --retry 5 --retry-max-time 30 http://${external_lb_ip} |grep "Welcome to nginx"
+          then
+              echo "External LB services launched sucessfully!"
+          else
+              echo "External LB services launched failed!"
+              exit 1
+          fi
+
+          if curl --retry 5 --retry-max-time 30 http://${internal_lb_ip} |grep "Welcome to nginx"
+          then
+              echo "Internal LB services launched sucessfully!"
+          else
+              echo "Internal LB services launched failed!"
+              exit 1
+          fi
+          popd
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ golang_env }}'
