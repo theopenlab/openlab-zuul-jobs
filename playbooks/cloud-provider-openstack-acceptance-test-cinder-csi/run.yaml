@@ -36,9 +36,6 @@
           password = $OS_PASSWORD
           username = $OS_USERNAME
           region = $OS_REGION_NAME
-          [LoadBalancer]
-          floating-network-id = "6d6357ac-0f70-4afa-8bd7-c274cc4ea235"
-          subnet-id = "ac8cadce-db65-4581-962d-0beb27586eb2"
           [BlockStorage]
           bs-version = v2
           EOF
@@ -87,12 +84,20 @@
           export ENABLE_DAEMON=true
           # We need the hostname to match the name of the vm started by openstack
           export HOSTNAME_OVERRIDE=$(curl http://169.254.169.254/openstack/latest/meta_data.json | python -c "import sys, json; print json.load(sys.stdin)['name']")
+          # For Cinder CSI driver
+          export FEATURE_GATES=CSIPersistentVolume=true,MountPropagation=true
+          export RUNTIME_CONFIG="storage.k8s.io/v1alpha1=true"
 
           pushd ${GOPATH}/src/k8s.io/kubernetes
 
           sed 's/curl --max-time 1/curl --max-time 5/g' -i ./hack/lib/util.sh
           # -E preserves the current env vars, but we need to special case PATH
           sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
+
+          # nohup "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/cinder-csi-plugin" \
+          #       --log-dir=${LOG_DIR} \
+          #       --v=10 \
+          #       --cloud-config  ${CLOUD_CONFIG} >"${LOG_DIR}/cinder-csi-plugin.log" 2>&1 &
 
           # sudo of local-up-cluster mucks with permissions
           sudo chmod -R 777 "{{ ansible_user_dir }}/.kube"
@@ -111,7 +116,18 @@
           cluster/kubectl.sh create clusterrolebinding --user system:serviceaccount:kube-system:cloud-controller-manager kube-system-cluster-admin-4 --clusterrole cluster-admin
           cluster/kubectl.sh create clusterrolebinding --user system:serviceaccount:kube-system:shared-informers kube-system-cluster-admin-5 --clusterrole cluster-admin
           cluster/kubectl.sh create clusterrolebinding --user system:kube-controller-manager  kube-system-cluster-admin-6 --clusterrole cluster-admin
+
+          go get github.com/rexray/gocsi
+          pushd ${GOPATH}/src/github.com/rexray/gocsi
+          make build
+          popd
+          {
+            cloud_cfg=$(base64 -w 0 ${CLOUD_CONFIG})
+            sed "s/cloud.conf.*$/cloud.conf: ${cloud_cfg}/g" -i "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/manifests/cinder-csi-plugin/csi-secret-cinderplugin.yaml"
+          } 1> /dev/null 2>&1
+          cluster/kubectl.sh create -f "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/manifests/cinder-csi-plugin"
           sleep 7200
+          cluster/kubectl.sh create -f  "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/cinder-csi-plugin/nginx.yaml"
 
           popd
         executable: /bin/bash

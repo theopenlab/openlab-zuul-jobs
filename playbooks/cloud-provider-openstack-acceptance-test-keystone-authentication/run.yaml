@@ -118,7 +118,6 @@
           sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
 
           nohup "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/k8s-keystone-auth" \
-                --log-dir=${LOG_DIR} \
                 --tls-cert-file /var/run/kubernetes/serving-kube-apiserver.crt \
                 --tls-private-key-file /var/run/kubernetes/serving-kube-apiserver.key \
                 --keystone-policy-file /etc/kubernetes/policy.json \
