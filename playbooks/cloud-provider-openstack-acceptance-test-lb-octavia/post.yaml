@@ -10,8 +10,8 @@
           set -x
           pushd ${GOPATH}/src/k8s.io/kubernetes
           cluster/kubectl.sh config use-context local
-          cluster/kubectl.sh delete services internal-http-nginx-service || true
-          cluster/kubectl.sh delete services external-http-nginx-service || true
+          cluster/kubectl.sh delete -f "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/loadbalancers/external-http-nginx.yaml" || true
+          cluster/kubectl.sh delete -f "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/loadbalancers/internal-http-nginx.yaml" || true
           popd
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
