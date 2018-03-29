@@ -108,17 +108,17 @@
 
           pushd ${GOPATH}/src/k8s.io/kubernetes
           export AUTHORIZATION_MODE="Webhook,Node"
+
+          # TODO: Following is workaround for supporting keystone webhook in local-up-cluster.sh tool, it should be landed in the official kubernetes repo
           sed 's/curl --max-time 1/curl --max-time 5/g' -i ./hack/lib/util.sh
           sed '583,587 d' -i ./hack/local-up-cluster.sh
           sed '555 a \      --authentication-token-webhook-config-file=/etc/kubernetes/webhook.kubeconfig \\'  -i ./hack/local-up-cluster.sh
           sed '555 a \      --authorization-webhook-config-file=/etc/kubernetes/webhook.kubeconfig \\'  -i ./hack/local-up-cluster.sh
-          # sed '583 a \    sleep 7200'  -i ./hack/local-up-cluster.sh
 
           # -E preserves the current env vars, but we need to special case PATH
           sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
 
           nohup "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/k8s-keystone-auth" \
-                --log-dir=${LOG_DIR} \
                 --tls-cert-file /var/run/kubernetes/serving-kube-apiserver.crt \
                 --tls-private-key-file /var/run/kubernetes/serving-kube-apiserver.key \
                 --keystone-policy-file /etc/kubernetes/policy.json \
