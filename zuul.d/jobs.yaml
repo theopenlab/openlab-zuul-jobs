@@ -271,3 +271,14 @@
     secrets:
       - vexxhost_credentials
     nodeset: ubuntu-xenial-vexxhost
+
+- job:
+    name: cloud-provider-openstack-acceptance-test-cinder-csi
+    parent: golang-test
+    description: |
+      Run cinder csi acceptance tests of cloud-provider-openstack repo against vexxhost cloud
+    run: playbooks/cloud-provider-openstack-acceptance-test-cinder-csi/run.yaml
+    post-run: playbooks/cloud-provider-openstack-acceptance-test-cinder-csi/post.yaml
+    secrets:
+      - vexxhost_credentials
+    nodeset: ubuntu-xenial-vexxhost
