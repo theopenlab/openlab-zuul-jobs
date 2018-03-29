@@ -11,8 +11,7 @@
           apt-get install python-pip -y
           pip install -U python-openstackclient
 
-          # NOTE: the following commands may include sensitive information please do not print in job logs
-          # Use echo to delete extra spaces
+          export OS_DOMAIN_NAME=$(echo '{{ vexxhost_credentials.user_domain_name }}')
           export OS_AUTH_TYPE=$(echo '{{ vexxhost_credentials.auth_type }}')
           export OS_IDENTITY_API_VERSION=$(echo '{{ vexxhost_credentials.identity_api_version }}')
           export OS_VOLUME_API_VERSION=$(echo '{{ vexxhost_credentials.volume_api_version }}')
@@ -180,11 +179,11 @@
             allowed=$(echo $authorization_body | curl -kvs -XPOST -d @- https://localhost:8443/webhook | python -mjson.tool)
           } 1> /dev/null 2>&1
           echo ${allowed}
+          [[ "${allowed}" =~ '"allowed": true' ]] && echo "Testing k8s-keystone-auth sucessfully!"
 
           cluster/kubectl.sh config set-credentials openstackuser --auth-provider=openstack
           cluster/kubectl.sh config set-context --cluster=local --user=openstackuser openstackuser@local
           cluster/kubectl.sh config use-context openstackuser@local
-          sleep 7200
           if ! cluster/kubectl.sh get pods; then
               echo "Testing kubernetes+keystone authentication and authorizatio failed!"
               exit 1
