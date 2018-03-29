@@ -37,8 +37,8 @@
           username = $OS_USERNAME
           region = $OS_REGION_NAME
           [LoadBalancer]
-          floating-network-id = $(openstack network show public -f value -c id)
-          subnet-id = $(openstack subnet show int-subnet -f value -c id)
+          floating-network-id = $(openstack network list --external -f value -c ID | head -n 1)
+          subnet-id = $(openstack network list --internal -f value -c Subnets | head -n 1)
           [BlockStorage]
           bs-version = v2
           EOF
