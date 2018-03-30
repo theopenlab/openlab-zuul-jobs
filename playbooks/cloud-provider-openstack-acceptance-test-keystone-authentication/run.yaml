@@ -108,7 +108,7 @@
 
           pushd ${GOPATH}/src/k8s.io/kubernetes
           export AUTHORIZATION_MODE="Webhook,Node"
-          sed 's/curl --max-time 1/curl --max-time 5/g' -i ./hack/lib/util.sh
+          export MAX_TIME_FOR_URL_API_SERVER=5
           sed '583,587 d' -i ./hack/local-up-cluster.sh
           sed '555 a \      --authentication-token-webhook-config-file=/etc/kubernetes/webhook.kubeconfig \\'  -i ./hack/local-up-cluster.sh
           sed '555 a \      --authorization-webhook-config-file=/etc/kubernetes/webhook.kubeconfig \\'  -i ./hack/local-up-cluster.sh

@@ -92,7 +92,7 @@
 
           pushd ${GOPATH}/src/k8s.io/kubernetes
 
-          sed 's/curl --max-time 1/curl --max-time 5/g' -i ./hack/lib/util.sh
+          export MAX_TIME_FOR_URL_API_SERVER=5
           # -E preserves the current env vars, but we need to special case PATH
           sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
 
