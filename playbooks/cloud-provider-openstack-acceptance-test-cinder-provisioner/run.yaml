@@ -98,6 +98,8 @@
           # Just kick off all the processes and drop down to the command line
           export ENABLE_DAEMON=true
           export HOSTNAME_OVERRIDE=127.0.0.1
+          # Disable ServiceAccount to avoid pod creation failure
+          export DISABLE_ADMISSION_PLUGINS=ServiceAccount
 
           # -E preserves the current env vars, but we need to special case PATH
           sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
@@ -123,7 +125,6 @@
           # Delete default storageclass
           cluster/kubectl.sh delete storageclass standard
           # Cinder test
-          sleep 7200
           cluster/kubectl.sh apply -f '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/persistent-volume-provisioning/cinder/cinder-full.yaml'
 
           # If test passed
