@@ -225,6 +225,7 @@
       excluded_path: "*playbook-in-vm*/*"
 
 - job:
+<<<<<<< HEAD
     name: cloud-provider-openstack-unittest
     parent: golang-test
     description: |
@@ -258,6 +259,8 @@
     nodeset: ubuntu-xenial-vexxhost
 
 - job:
+=======
+>>>>>>> be34bdf8888eceab1a736bb7eee7191ad37557ba
     name: openstack-cloud-controller-manager-acceptance-test-lb-octavia-nested
     parent: golang-test
     required-projects:
