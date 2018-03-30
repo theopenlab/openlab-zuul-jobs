@@ -90,8 +90,7 @@
           export EXTERNAL_CLOUD_PROVIDER_BINARY='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/openstack-cloud-controller-manager'
 
           # location of where the kubernetes processes log their output
-          mkdir -p /opt/stack/logs/
-          export LOG_DIR=/opt/stack/logs
+          export LOG_DIR='{{ ansible_user_dir }}/workspace/logs'
           # We need this for one of the conformance tests
           export ALLOW_PRIVILEGED=true
           # Just kick off all the processes and drop down to the command line
