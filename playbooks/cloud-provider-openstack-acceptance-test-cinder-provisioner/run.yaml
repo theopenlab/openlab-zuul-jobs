@@ -39,7 +39,6 @@
 
           # Build k8s cmd
           git clone https://github.com/kubernetes/kubernetes ${GOPATH}/src/k8s.io/kubernetes
-          sed -i 's/curl --max-time 1/curl --max-time 5/' ${GOPATH}/src/k8s.io/kubernetes/hack/lib/util.sh
           make -C ${GOPATH}/src/k8s.io/kubernetes WHAT="cmd/kubectl cmd/hyperkube"
 
           # Create cloud-config
@@ -100,6 +99,7 @@
           export HOSTNAME_OVERRIDE=127.0.0.1
           # Disable ServiceAccount to avoid pod creation failure
           export DISABLE_ADMISSION_PLUGINS=ServiceAccount
+          export MAX_TIME_FOR_URL_API_SERVER=5
 
           # -E preserves the current env vars, but we need to special case PATH
           sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
