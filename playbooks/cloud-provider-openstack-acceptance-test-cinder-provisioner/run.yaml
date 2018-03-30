@@ -123,9 +123,9 @@
           # Delete default storageclass
           cluster/kubectl.sh delete storageclass standard
           # Cinder test
+          sleep 7200
           cluster/kubectl.sh apply -f '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/persistent-volume-provisioning/cinder/cinder-full.yaml'
 
-          sleep 7200
           # If test passed
           timeout 100 bash -c '
               while :
