@@ -1,5 +1,9 @@
 - hosts: all
   become: yes
+  roles:
+    - clone-devstack-gate-to-workspace
+    - create-devstack-local-conf
+    - install-devstack
   tasks:
     - shell:
         cmd: |
@@ -66,6 +70,7 @@
 
           [BlockStorage]
           bs-version = v2
+          ignore-volume-az = yes
           EOF
 
           # Stopping firewall and allow all traffic
@@ -97,7 +102,7 @@
           # DO NOT change the location of the cloud-config file. It is important for the old cinder provider to work
           export CLOUD_CONFIG=/etc/kubernetes/cloud-config
           # Specify the OCCM binary
-          export EXTERNAL_CLOUD_PROVIDER_BINARY='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/cinder-provisioner'
+          export EXTERNAL_CLOUD_PROVIDER_BINARY='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/openstack-cloud-controller-manager'
 
           # location of where the kubernetes processes log their output
           mkdir -p /opt/stack/logs/
@@ -112,6 +117,8 @@
           # -E preserves the current env vars, but we need to special case PATH
           sleep 7200
           sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
+          nohup '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/cinder-provisioner' --cloud-config "$CLOUD_CONFIG" --kubeconfig /var/run/kubernetes/controller.kubeconfig --id cinder > "$LOG_DIR/cinder-provisioner.log" 2>&1 &
+
 
           # set up the config we need for kubectl to work
           cluster/kubectl.sh config set-cluster local --server=https://localhost:6443 --certificate-authority=/var/run/kubernetes/server-ca.crt
@@ -128,7 +135,19 @@
           cluster/kubectl.sh create clusterrolebinding --user system:kube-controller-manager  kube-system-cluster-admin-6 --clusterrole cluster-admin
 
           # Remove node taint
-          cluster/kubectl.sh taint nodes "$HOSTNAME_OVERRIDE" node.cloudprovider.kubernetes.io/uninitialized-
+          cluster/kubectl.sh delete storageclass standard
+          # cluster/kubectl.sh label nodes "$HOSTNAME_OVERRIDE" failure-domain.beta.kubernetes.io/zone=ca-ymq-2
+
+          # Create secret used by pv
+          cluster/kubectl.sh create -f - << EOF
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: standard-cephx-secret
+            namespace: default
+          data:
+            token: c2VjcmV0Cg==
+          EOF
 
           # Cinder test
           cluster/kubectl.sh apply -f '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/persistent-volume-provisioning/cinder/cinder-full.yaml'
