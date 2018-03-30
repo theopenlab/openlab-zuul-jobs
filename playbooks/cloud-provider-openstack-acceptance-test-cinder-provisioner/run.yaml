@@ -9,21 +9,6 @@
   tasks:
     - shell:
         cmd: |
-          # NOTE: the following commands may include sensitive information please do not print in job logs
-          # Use echo to delete extra spaces
-          export OS_AUTH_TYPE=$(echo '{{ vexxhost_credentials.auth_type }}')
-          export OS_IDENTITY_API_VERSION=$(echo '{{ vexxhost_credentials.identity_api_version }}')
-          export OS_VOLUME_API_VERSION=$(echo '{{ vexxhost_credentials.volume_api_version }}')
-          export OS_INTERFACE=$(echo '{{ vexxhost_credentials.interface }}')
-          export OS_AUTH_URL=$(echo '{{ vexxhost_credentials.auth_url }}')
-          export OS_PROJECT_ID=$(echo '{{ vexxhost_credentials.project_id }}')
-          export OS_PROJECT_NAME=$(echo '{{ vexxhost_credentials.project_name }}')
-          export OS_USER_DOMAIN_NAME=$(echo '{{ vexxhost_credentials.user_domain_name }}')
-          export OS_PROJECT_DOMAIN_ID=$(echo '{{ vexxhost_credentials.project_domain_id }}')
-          export OS_USERNAME=$(echo '{{ vexxhost_credentials.username }}')
-          export OS_PASSWORD=$(echo '{{ vexxhost_credentials.password }}')
-          export OS_REGION_NAME=$(echo '{{ vexxhost_credentials.region_name }}')
-
           set -x
           set -e
           set -o pipefail
@@ -54,17 +39,16 @@
 
           # Build k8s cmd
           git clone https://github.com/kubernetes/kubernetes ${GOPATH}/src/k8s.io/kubernetes
-          # Hack to be compatible with all clouds
-          sed -i 's/2016-06-30/latest/' ${GOPATH}/src/k8s.io/kubernetes/pkg/cloudprovider/providers/openstack/openstack_volumes.go
           sed -i 's/curl --max-time 1/curl --max-time 5/' ${GOPATH}/src/k8s.io/kubernetes/hack/lib/util.sh
           make -C ${GOPATH}/src/k8s.io/kubernetes WHAT="cmd/kubectl cmd/hyperkube"
 
           # Create cloud-config
+          source /opt/stack/new/devstack/openrc admin admin
           mkdir -p /etc/kubernetes/
           cat << EOF >> /etc/kubernetes/cloud-config
           [Global]
-          domain-name = ${OS_PROJECT_DOMAIN_NAME-$OS_PROJECT_DOMAIN_ID}
-          tenant-id = $OS_PROJECT_ID
+          domain-id = $OS_PROJECT_DOMAIN_ID
+          tenant-name = $OS_TENANT_NAME
           auth-url = $OS_AUTH_URL
           password = $OS_PASSWORD
           username = $OS_USERNAME
@@ -113,14 +97,12 @@
           export ALLOW_PRIVILEGED=true
           # Just kick off all the processes and drop down to the command line
           export ENABLE_DAEMON=true
-          # We need the hostname to match the name of the vm started by openstack
-          export HOSTNAME_OVERRIDE=$(curl http://169.254.169.254/openstack/latest/meta_data.json | python -c "import sys, json; print json.load(sys.stdin)['name']")
+          export HOSTNAME_OVERRIDE=127.0.0.1
 
           # -E preserves the current env vars, but we need to special case PATH
           sleep 7200
           sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
           nohup '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/cinder-provisioner' --cloud-config "$CLOUD_CONFIG" --kubeconfig /var/run/kubernetes/controller.kubeconfig --id cinder > "$LOG_DIR/cinder-provisioner.log" 2>&1 &
-
 
           # set up the config we need for kubectl to work
           cluster/kubectl.sh config set-cluster local --server=https://localhost:6443 --certificate-authority=/var/run/kubernetes/server-ca.crt
@@ -137,20 +119,10 @@
           cluster/kubectl.sh create clusterrolebinding --user system:kube-controller-manager  kube-system-cluster-admin-6 --clusterrole cluster-admin
 
           # Remove node taint
+          cluster/kubectl.sh taint nodes "$HOSTNAME_OVERRIDE" node.cloudprovider.kubernetes.io/uninitialized-
+
+          # Delete default storageclass
           cluster/kubectl.sh delete storageclass standard
-          # cluster/kubectl.sh label nodes "$HOSTNAME_OVERRIDE" failure-domain.beta.kubernetes.io/zone=ca-ymq-2
-
-          # Create secret used by pv
-          cluster/kubectl.sh create -f - << EOF
-          apiVersion: v1
-          kind: Secret
-          metadata:
-            name: standard-cephx-secret
-            namespace: default
-          data:
-            token: c2VjcmV0Cg==
-          EOF
-
           # Cinder test
           cluster/kubectl.sh apply -f '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/persistent-volume-provisioning/cinder/cinder-full.yaml'
 
