@@ -3,7 +3,9 @@
   roles:
     - clone-devstack-gate-to-workspace
     - create-devstack-local-conf
-    - install-devstack
+    - role: install-devstack
+      environment:
+        ENABLED_SERVICES: 'key,c-sch,c-api,c-vol,rabbit,mysql'
   tasks:
     - shell:
         cmd: |
