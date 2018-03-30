@@ -122,6 +122,7 @@
           go get -u github.com/golang/dep/cmd/dep
           make cinder
           cp ./_output/cinderplugin ./pkg/cinder/dockerfile/
+          sleep 7200
           docker build -t k8scsi/cinderplugin ./pkg/cinder/dockerfile/
           docker images
           popd
