@@ -1,0 +1,85 @@
+- hosts: all
+  become: yes
+  pre_tasks:
+    - shell:
+        cmd: |
+          set -e
+          set -x
+          cat << EOF >> /tmp/dg-local.conf
+          [[local|localrc]]
+          NETWORK_GATEWAY=10.0.0.1
+          disable_service q-agt q-svc q-dhcp q-l3 q-meta q-metering c-api c-bak c-sch c-vol ceilometer-acentral ceilometer-acompute ceilometer-alarm-evaluator ceilometer-alarm-notifier ceilometer-anotification ceilometer-api ceilometer-collector cinder s-account s-container s-object s-proxy
+          enable_service neutron-agent neutron-api neutron-dhcp neutron-l3 neutron-metadata-agent neutron-metering octavia o-cw o-hm o-hk o-api
+          enable_plugin octavia https://git.openstack.org/openstack/octavia
+          enable_plugin barbican https://git.openstack.org/openstack/barbican
+          EOF
+
+          # Prepare env on executing node
+          go get github.com/Masterminds/glide
+          make depend
+          # build binary in devstack node and then sync to vm
+          go env
+          go version
+          go get -u github.com/jteeuwen/go-bindata/go-bindata || true
+          go get -u github.com/cloudflare/cfssl/cmd/... || true
+          # Get Kubernetes from source
+          mkdir -p ${GOPATH}/src/k8s.io/
+          if [ ! -d "${kubnetes}" ]; then
+              git clone https://github.com/kubernetes/kubernetes ${GOPATH}/src/k8s.io/kubernetes
+              pushd ${GOPATH}/src/k8s.io/kubernetes >/dev/null
+              git remote update
+              git fetch --all --tags --prune
+              popd >/dev/null
+          fi
+          make build
+          make -C ${GOPATH}/src/k8s.io/kubernetes WHAT="cmd/kubectl cmd/hyperkube"
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ golang_env }}'
+
+  roles:
+    - clone-devstack-gate-to-workspace
+    - role: install-devstack
+      environment:
+        PROJECTS: "openstack/barbican openstack/python-barbicanclient"
+    - role: create-virtual-machine
+      instance_name: instance_1
+      private_key: private_key_1
+      vcpus: 12
+      ram: 24576
+  tasks:
+    - shell:
+        cmd: |
+          set -e
+          set -x
+          set -o pipefail
+
+          PRIVATE_KEY='{{ hostvars[inventory_hostname]["instance_attr"]["private_key"] }}'
+          FLOATING_IP='{{ hostvars[inventory_hostname]["instance_attr"]["floating_ip"] }}'
+
+          source /opt/stack/new/devstack/openrc admin admin
+          # Remove env contains 'short_source' which is a function defined by devstack for formating PS4
+          export -p | grep -v short_source > exported-envs
+
+          # Sync into instance
+          mkdir -p "$GOPATH"/{src,bin,pkg}
+          for rsync_dir in "$GOPATH"/{src,bin,pkg} /usr/local/go
+          do
+              rsync -az -e "ssh -i $PRIVATE_KEY" --rsync-path "sudo mkdir -p $rsync_dir && sudo rsync" "$rsync_dir"/ "ubuntu@$FLOATING_IP:$rsync_dir"
+          done
+
+          pip install -U ansible
+          source /opt/stack/new/devstack/openrc admin admin
+          PROJECT_ID=$(openstack project show admin -f value -c id)
+          SUBNET_ID=$(openstack subnet show lb-mgmt-subnet -f value -c id)
+          FLOATING_NET_ID=$(openstack network show public -f value -c id)
+          DEVSTACK_IP=$(ifconfig br-ex | grep "inet addr:" | awk '{print $2}' | cut -c 6-)
+
+          ANSIBLE_ROLES_PATH={{ ansible_user_dir }}/src/github.com/theopenlab/openlab-zuul-jobs/roles ansible-playbook -vvv \
+              {{ ansible_user_dir }}/src/github.com/theopenlab/openlab-zuul-jobs/playbooks/cloud-provider-openstack-acceptance-test-lb-octavia-nested/playbook-in-vm/run.yaml \
+              -e server_name=instance_1 -e server_ip=$FLOATING_IP -e key_file=$(realpath ${PRIVATE_KEY}) -e devstack_ip=$DEVSTACK_IP \
+              -e ansible_user_dir="{{ ansible_user_dir }}" -e floating_network_id=$FLOATING_NET_ID -e project_id=$PROJECT_ID \
+              -e subnet_id=$SUBNET_ID
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ golang_env }}'
