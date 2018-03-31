@@ -19,10 +19,11 @@
           export OS_REGION_NAME=$(echo '{{ vexxhost_credentials.region_name }}')
 
           set -x
-          set -e
-          set -o pipefail
+          # set -e
+          # set -o pipefail
           go get -u github.com/Masterminds/glide
           TESTARGS='-v' make test 2>&1 | tee $TEST_RESULTS_TXT
+          sleep 7200
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env }}'
