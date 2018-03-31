@@ -102,7 +102,6 @@
           # # Disable ServiceAccount to avoid pod creation failure
           # sed -i 's/,ServiceAccount//' ./hack/local-up-cluster.sh
           # -E preserves the current env vars, but we need to special case PATH
-          sleep 7200
           sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
           nohup '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/cinder-provisioner' --cloud-config "$CLOUD_CONFIG" --kubeconfig /var/run/kubernetes/controller.kubeconfig --id cinder > "$LOG_DIR/cinder-provisioner.log" 2>&1 &
 
