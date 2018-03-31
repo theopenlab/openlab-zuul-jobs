@@ -19,10 +19,10 @@
         label: ubuntu-xenial-ut
 
 - nodeset:
-    name: ubuntu-xenial-large
+    name: ubuntu-xenial-otc
     nodes:
-      - name: ubuntu-xenial-large
-        label: ubuntu-xenial-large
+      - name: ubuntu-xenial-otc
+        label: ubuntu-xenial-otc
 
 - nodeset:
     name: ubuntu-xenial-vexxhost

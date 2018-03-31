@@ -201,15 +201,7 @@
     secrets:
       - opentelekomcloud_credentials
 
-# Kubernetes jobs
-- job:
-    name: openstack-cloud-controller-manager-unittest
-    parent: golang-test
-    description: |
-      Run Kubernetes openstack-cloud-controller-manager unit test in devstack instance
-    run: playbooks/openstack-cloud-controller-manager-unittest/run.yaml
-    nodeset: ubuntu-xenial-large
-
+# OpenLab job self-check jobs
 - job:
     name: openlab-zuul-jobs-check
     parent: init-test
@@ -224,6 +216,16 @@
     vars:
       excluded_path: ""
 
+# Deprecated (Kubernetes nested scenario)
+- job:
+    name: openstack-cloud-controller-manager-unittest
+    parent: golang-test
+    description: |
+      Run Kubernetes openstack-cloud-controller-manager unit test in devstack instance
+    run: playbooks/openstack-cloud-controller-manager-unittest/run.yaml
+    nodeset: ubuntu-xenial-otc
+
+# Kubernetes cloud-provider-openstack jobs
 - job:
     name: cloud-provider-openstack-unittest
     parent: golang-test
