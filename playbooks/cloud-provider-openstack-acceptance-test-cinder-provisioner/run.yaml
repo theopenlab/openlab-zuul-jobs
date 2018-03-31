@@ -39,7 +39,6 @@
 
           # Build k8s cmd
           git clone https://github.com/kubernetes/kubernetes ${GOPATH}/src/k8s.io/kubernetes
-          sed -i 's/curl --max-time 1/curl --max-time 5/' ${GOPATH}/src/k8s.io/kubernetes/hack/lib/util.sh
           make -C ${GOPATH}/src/k8s.io/kubernetes WHAT="cmd/kubectl cmd/hyperkube"
 
           # Create cloud-config
@@ -91,16 +90,16 @@
           export EXTERNAL_CLOUD_PROVIDER_BINARY='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/openstack-cloud-controller-manager'
 
           # location of where the kubernetes processes log their output
-          mkdir -p /opt/stack/logs/
-          export LOG_DIR=/opt/stack/logs
+          export LOG_DIR='{{ ansible_user_dir }}/workspace/logs'
           # We need this for one of the conformance tests
           export ALLOW_PRIVILEGED=true
           # Just kick off all the processes and drop down to the command line
           export ENABLE_DAEMON=true
           export HOSTNAME_OVERRIDE=127.0.0.1
-          # Disable ServiceAccount to avoid pod creation failure
-          export DISABLE_ADMISSION_PLUGINS=ServiceAccount
+          export MAX_TIME_FOR_URL_API_SERVER=5
 
+          # Disable ServiceAccount to avoid pod creation failure
+          sed -i 's/,ServiceAccount//' ./hack/local-up-cluster.sh
           # -E preserves the current env vars, but we need to special case PATH
           sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
           nohup '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/cinder-provisioner' --cloud-config "$CLOUD_CONFIG" --kubeconfig /var/run/kubernetes/controller.kubeconfig --id cinder > "$LOG_DIR/cinder-provisioner.log" 2>&1 &
