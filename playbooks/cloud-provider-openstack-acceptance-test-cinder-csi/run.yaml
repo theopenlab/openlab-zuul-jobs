@@ -117,15 +117,16 @@
           cluster/kubectl.sh create clusterrolebinding --user system:serviceaccount:kube-system:shared-informers kube-system-cluster-admin-5 --clusterrole cluster-admin
           cluster/kubectl.sh create clusterrolebinding --user system:kube-controller-manager  kube-system-cluster-admin-6 --clusterrole cluster-admin
 
-          go get -u github.com/kubernetes-csi/drivers || true
-          pushd  ${GOPATH}/src/github.com/kubernetes-csi/drivers
-          go get -u github.com/golang/dep/cmd/dep
-          make cinder
-          cp ./_output/cinderplugin ./pkg/cinder/dockerfile/
-          sleep 7200
-          docker build -t k8scsi/cinderplugin ./pkg/cinder/dockerfile/
-          docker images
-          popd
+          # go get -u github.com/kubernetes-csi/drivers || true
+          # pushd  ${GOPATH}/src/github.com/kubernetes-csi/drivers
+          # go get -u github.com/golang/dep/cmd/dep
+          # make cinder
+          # cp ./_output/cinderplugin ./pkg/cinder/dockerfile/
+          # docker build -t k8scsi/cinderplugin ./pkg/cinder/dockerfile/
+          # docker images
+          # popd
+          docker pull xiangxinyong/cinderplugin
+          docker tag xiangxinyong/cinderplugin k8scsi/cinderplugin
 
           go get github.com/rexray/gocsi
           pushd ${GOPATH}/src/github.com/rexray/gocsi
