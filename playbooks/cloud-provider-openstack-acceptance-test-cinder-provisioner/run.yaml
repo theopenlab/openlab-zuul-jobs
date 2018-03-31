@@ -10,8 +10,8 @@
     - shell:
         cmd: |
           set -x
-          set -e
-          set -o pipefail
+          # set -e
+          # set -o pipefail
 
           # Install docker
           apt update -y
@@ -83,7 +83,7 @@
           # We want to use the openstack cloud provider
           export CLOUD_PROVIDER=openstack
           # We want to run a separate cloud-controller-manager for openstack
-          export EXTERNAL_CLOUD_PROVIDER=false
+          export EXTERNAL_CLOUD_PROVIDER=true
           # DO NOT change the location of the cloud-config file. It is important for the old cinder provider to work
           export CLOUD_CONFIG=/etc/kubernetes/cloud-config
           # Specify the OCCM binary
@@ -96,6 +96,7 @@
           # Just kick off all the processes and drop down to the command line
           export ENABLE_DAEMON=true
           # export HOSTNAME_OVERRIDE=$(ifconfig | awk '/^ens3/ {getline; print $2}' | awk -F ':' '{print $2}')
+          # export HOSTNAME_OVERRIDE=$(curl http://169.254.169.254/openstack/latest/meta_data.json | python -c "import sys, json; print json.load(sys.stdin)['name']")
           export HOSTNAME_OVERRIDE=127.0.0.1
           export MAX_TIME_FOR_URL_API_SERVER=5
 
@@ -126,6 +127,8 @@
           cluster/kubectl.sh delete storageclass standard
           # Cinder test
           cluster/kubectl.sh apply -f '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/persistent-volume-provisioning/cinder/cinder-full.yaml'
+
+          sleep 7200
 
           # If test passed
           timeout 100 bash -c '
