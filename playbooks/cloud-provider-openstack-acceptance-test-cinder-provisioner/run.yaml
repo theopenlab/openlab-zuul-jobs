@@ -104,7 +104,7 @@
           # sed -i 's/,ServiceAccount//' ./hack/local-up-cluster.sh
           # -E preserves the current env vars, but we need to special case PATH
           sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
-          nohup '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/cinder-provisioner' --cloud-config "$CLOUD_CONFIG" --kubeconfig /var/run/kubernetes/controller.kubeconfig --id cinder > "$LOG_DIR/cinder-provisioner.log" 2>&1 &
+          nohup '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/cinder-provisioner' --cloud-config "$CLOUD_CONFIG" --kubeconfig /var/run/kubernetes/admin.kubeconfig --id cinder > "$LOG_DIR/cinder-provisioner.log" 2>&1 &
 
           # set up the config we need for kubectl to work
           cluster/kubectl.sh config set-cluster local --server=https://localhost:6443 --certificate-authority=/var/run/kubernetes/server-ca.crt
@@ -126,6 +126,9 @@
           # Delete default storageclass
           cluster/kubectl.sh delete storageclass standard
           # Cinder test
+          echo '--------------------'
+          env
+          echo '--------------------'
           cluster/kubectl.sh apply -f '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/persistent-volume-provisioning/cinder/cinder-full.yaml'
 
           sleep 7200
