@@ -85,13 +85,13 @@
           # We want to run a separate cloud-controller-manager for openstack
           # export EXTERNAL_CLOUD_PROVIDER=true
           # DO NOT change the location of the cloud-config file. It is important for the old cinder provider to work
-          # export CLOUD_CONFIG=/etc/kubernetes/cloud-config
+          export CLOUD_CONFIG=/etc/kubernetes/cloud-config
           # Specify the OCCM binary
           # export EXTERNAL_CLOUD_PROVIDER_BINARY='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/openstack-cloud-controller-manager'
 
           # location of where the kubernetes processes log their output
-          mkdir -p '{{ ansible_user_dir }}/workspace/logs/kubernetes'
-          export LOG_DIR='{{ ansible_user_dir }}/workspace/logs/kubernetes'
+          mkdir -p /opt/stack/logs/kubernetes
+          export LOG_DIR=/opt/stack/logs/kubernetes
           # We need this for one of the conformance tests
           export ALLOW_PRIVILEGED=true
           # Just kick off all the processes and drop down to the command line
@@ -104,7 +104,6 @@
           # # Disable ServiceAccount to avoid pod creation failure
           # sed -i 's/,ServiceAccount//' ./hack/local-up-cluster.sh
           # -E preserves the current env vars, but we need to special case PATH
-          sleep 7200
           sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
           nohup '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/cinder-provisioner' --cloud-config "$CLOUD_CONFIG" --kubeconfig /var/run/kubernetes/admin.kubeconfig --id cinder > "$LOG_DIR/cinder-provisioner.log" 2>&1 &
 
@@ -123,17 +122,11 @@
           cluster/kubectl.sh create clusterrolebinding --user system:kube-controller-manager  kube-system-cluster-admin-6 --clusterrole cluster-admin
 
           # Remove node taint
-          cluster/kubectl.sh taint nodes "$HOSTNAME_OVERRIDE" node.cloudprovider.kubernetes.io/uninitialized-
-
+          # cluster/kubectl.sh taint nodes "$HOSTNAME_OVERRIDE" node.cloudprovider.kubernetes.io/uninitialized-
           # Delete default storageclass
           cluster/kubectl.sh delete storageclass standard
           # Cinder test
-          echo '--------------------'
-          env
-          echo '--------------------'
           cluster/kubectl.sh apply -f '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/persistent-volume-provisioning/cinder/cinder-full.yaml'
-
-          sleep 7200
 
           # If test passed
           timeout 100 bash -c '
