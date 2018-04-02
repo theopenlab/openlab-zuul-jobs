@@ -128,9 +128,9 @@
 
           cluster/kubectl.sh create -f "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/loadbalancers/internal-http-nginx.yaml"
           for i in $(seq 1 80); do
-               if [ -z "${external_lb_ip}" ]; then
+               if [ -z "${internal_lb_ip}" ]; then
                    echo "Waiting for deploying internal-http-nginx-service service on try ${i} ..."
-                   external_lb_ip=$(./cluster/kubectl.sh describe services internal-http-nginx-service |grep "LoadBalancer Ingress" | awk -F ' ' '{print $3}')
+                   internal_lb_ip=$(./cluster/kubectl.sh describe services internal-http-nginx-service |grep "LoadBalancer Ingress" | awk -F ' ' '{print $3}')
                else
                    echo "The internal-http-nginx-service deployed sucessfully!"
                    break
