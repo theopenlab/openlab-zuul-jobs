@@ -96,8 +96,8 @@
           sudo rm -rf /var/lib/kubelet/*
 
           # location of where the kubernetes processes log their output
-          mkdir -p /opt/stack/logs/
-          export LOG_DIR=/opt/stack/logs
+          mkdir -p "{{ ansible_user_dir }}/workspace/logs/kubernetes"
+          export LOG_DIR="{{ ansible_user_dir }}/workspace/logs/kubernetes"
           # We need this for one of the conformance tests
           export ALLOW_PRIVILEGED=true
           # Just kick off all the processes and drop down to the command line
@@ -109,11 +109,9 @@
           pushd ${GOPATH}/src/k8s.io/kubernetes
           export AUTHORIZATION_MODE="Webhook,Node"
 
-          # TODO: Following is workaround for supporting keystone webhook in local-up-cluster.sh tool, it should be landed in the official kubernetes repo
-          sed 's/curl --max-time 1/curl --max-time 5/g' -i ./hack/lib/util.sh
-          sed '583,587 d' -i ./hack/local-up-cluster.sh
-          sed '555 a \      --authentication-token-webhook-config-file=/etc/kubernetes/webhook.kubeconfig \\'  -i ./hack/local-up-cluster.sh
-          sed '555 a \      --authorization-webhook-config-file=/etc/kubernetes/webhook.kubeconfig \\'  -i ./hack/local-up-cluster.sh
+          sed -i -e "/kube::util::wait_for_url.*$/,+1d" hack/local-up-cluster.sh
+          sed -i -e '/hyperkube\" apiserver.*$/a \      --authentication-token-webhook-config-file=/etc/kubernetes/webhook.kubeconfig \\' hack/local-up-cluster.sh
+          sed -i -e '/hyperkube\" apiserver.*$/a \      --authorization-webhook-config-file=/etc/kubernetes/webhook.kubeconfig \\' hack/local-up-cluster.sh
 
           # -E preserves the current env vars, but we need to special case PATH
           sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
