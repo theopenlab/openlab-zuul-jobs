@@ -8,14 +8,24 @@
           set -x
           pushd ${GOPATH}/src/k8s.io/kubernetes
           cluster/kubectl.sh config use-context local
-          # cluster/kubectl.sh delete -f "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/loadbalancers/external-http-nginx.yaml" || true
-          # cluster/kubectl.sh delete -f "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/loadbalancers/internal-http-nginx.yaml" || true
-          popd
           { source "{{ ansible_user_dir }}/openrc";}  1> /dev/null 2>&1
-          openstack loadbalancer list
-          openstack loadbalancer listener list
-          openstack loadbalancer pool list
-          sleep 7200
+          ext_lb_svc_uid=$(cluster/kubectl.sh get services external-http-nginx-service -o=jsonpath='{.metadata.uid}') || true
+          int_lb_svc_uid=$(cluster/kubectl.sh get services internal-http-nginx-service -o=jsonpath='{.metadata.uid}') || true
+
+          cluster/kubectl.sh delete -f "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/loadbalancers/external-http-nginx.yaml" || true
+          cluster/kubectl.sh delete -f "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/loadbalancers/external-http-nginx.yaml" || true
+          popd
+
+          for lb_svc_uid in $ext_lb_svc_uid $int_lb_svc_uid; do
+              lb_name=$(echo $lb_svc_uid | tr -d '-' | sed 's/^/a/' | cut -c -32)
+              {
+                  pool_id=$(openstack loadbalancer show $lb_name -f value -c pools)
+                  listener_id=$(openstack loadbalancer show $lb_name -f value -c listeners)
+                  openstack loadbalancer listener delete $listener_id
+                  openstack loadbalancer pool delete $pool_id
+                  openstack loadbalancer delete $lb_name
+              } || true
+          done
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env }}'
