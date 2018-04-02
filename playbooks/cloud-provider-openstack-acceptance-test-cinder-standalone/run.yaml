@@ -10,36 +10,11 @@
     - shell:
         cmd: |
           set -x
-          # set -e
-          # set -o pipefail
-
-          # Install docker
-          apt update -y
-          apt install -y docker.io
-
-          # Custom Docker daemon options via drop-in file then restart
-          mkdir /etc/systemd/system/docker.service.d
-          cat << EOF > /etc/systemd/system/docker.service.d/local-up-cluster.conf
-          [Service]
-          Environment="DOCKER_OPTS=--iptables=false"
-          EOF
-          systemctl daemon-reload
-          systemctl restart docker
-
-          # Install etcd
-          wget https://github.com/coreos/etcd/releases/download/v3.3.0/etcd-v3.3.0-linux-amd64.tar.gz
-          tar -zxf etcd-v3.3.0-linux-amd64.tar.gz
-          cp etcd-v3.3.0-linux-amd64/etcd{,ctl} /usr/local/bin/
-
-          # Install dependencies
-          go get -u github.com/Masterminds/glide
+          set -e
+          set -o pipefail
 
           # Build binaries
           make build
-
-          # Build k8s cmd
-          git clone https://github.com/kubernetes/kubernetes ${GOPATH}/src/k8s.io/kubernetes
-          make -C ${GOPATH}/src/k8s.io/kubernetes WHAT="cmd/kubectl cmd/hyperkube"
 
           # Create cloud-config
           source /opt/stack/new/devstack/openrc admin admin
@@ -58,20 +33,8 @@
           ignore-volume-az = yes
           EOF
 
-          # Stopping firewall and allow all traffic
-          iptables -F
-          iptables -X
-          iptables -t nat -F
-          iptables -t nat -X
-          iptables -t mangle -F
-          iptables -t mangle -X
-          iptables -P INPUT ACCEPT
-          iptables -P FORWARD ACCEPT
-          iptables -P OUTPUT ACCEPT
-
           # Go where we cloned kubernetes repository
           cd $GOPATH/src/k8s.io/kubernetes/
-
           export API_HOST_IP=$(ifconfig | awk '/^docker0/ {getline; print $2}' | awk -F ':' '{print $2}')
           export KUBELET_HOST="0.0.0.0"
           export ALLOW_SECURITY_CONTEXT=true
@@ -93,6 +56,7 @@
           export HOSTNAME_OVERRIDE=127.0.0.1
           export MAX_TIME_FOR_URL_API_SERVER=5
 
+          # Start k8s services
           sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
           nohup '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/cinder-provisioner' --cloud-config "$CLOUD_CONFIG" --kubeconfig /var/run/kubernetes/admin.kubeconfig --id cinder > "$LOG_DIR/cinder-provisioner.log" 2>&1 &
 
@@ -118,13 +82,19 @@
           cluster/kubectl.sh apply -f '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/persistent-volume-provisioning/cinder/cinder-full.yaml'
 
           # If test passed
-          timeout 100 bash -c '
+          if timeout 100 bash -c '
               while :
               do
                   [[ $(cluster/kubectl.sh describe pods web | awk "/^Status:/ {print \$2}") == Running ]] && break
                   sleep 1
               done
               '
+          then
+              echo 'Run test successful'
+          else
+              echo 'Run test failed'
+              exit 1
+          fi
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env }}'
