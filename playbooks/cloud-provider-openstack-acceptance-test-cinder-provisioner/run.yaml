@@ -80,14 +80,8 @@
           export ENABLE_SINGLE_CA_SIGNER=true
           export KUBE_ENABLE_CLUSTER_DNS=false
           export LOG_LEVEL=4
-          # We want to use the openstack cloud provider
-          # export CLOUD_PROVIDER=openstack
-          # We want to run a separate cloud-controller-manager for openstack
-          # export EXTERNAL_CLOUD_PROVIDER=true
           # DO NOT change the location of the cloud-config file. It is important for the old cinder provider to work
           export CLOUD_CONFIG=/etc/kubernetes/cloud-config
-          # Specify the OCCM binary
-          # export EXTERNAL_CLOUD_PROVIDER_BINARY='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/openstack-cloud-controller-manager'
 
           # location of where the kubernetes processes log their output
           mkdir -p /opt/stack/logs/kubernetes
@@ -96,17 +90,9 @@
           export ALLOW_PRIVILEGED=true
           # Just kick off all the processes and drop down to the command line
           export ENABLE_DAEMON=true
-          # export HOSTNAME_OVERRIDE=$(ifconfig | awk '/^ens3/ {getline; print $2}' | awk -F ':' '{print $2}')
-          # export HOSTNAME_OVERRIDE=$(curl http://169.254.169.254/openstack/latest/meta_data.json | python -c "import sys, json; print json.load(sys.stdin)['name']")
           export HOSTNAME_OVERRIDE=127.0.0.1
           export MAX_TIME_FOR_URL_API_SERVER=5
 
-          # # Disable ServiceAccount to avoid pod creation failure
-          # sed -i 's/,ServiceAccount//' ./hack/local-up-cluster.sh
-          # sed -i '/    ENABLE_ADMISSION_PLUGINS=/ c \
-          #     ENABLE_ADMISSION_PLUGINS=' ./hack/local-up-cluster.sh
-          # sed -i '/--enable-admission-plugins/ d' ./hack/local-up-cluster.sh
-          # -E preserves the current env vars, but we need to special case PATH
           sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
           nohup '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/cinder-provisioner' --cloud-config "$CLOUD_CONFIG" --kubeconfig /var/run/kubernetes/admin.kubeconfig --id cinder > "$LOG_DIR/cinder-provisioner.log" 2>&1 &
 
@@ -124,26 +110,19 @@
           cluster/kubectl.sh create clusterrolebinding --user system:serviceaccount:kube-system:shared-informers kube-system-cluster-admin-5 --clusterrole cluster-admin
           cluster/kubectl.sh create clusterrolebinding --user system:kube-controller-manager  kube-system-cluster-admin-6 --clusterrole cluster-admin
 
-          # Remove node taint
-          # cluster/kubectl.sh taint nodes "$HOSTNAME_OVERRIDE" node.cloudprovider.kubernetes.io/uninitialized-
+          # Sleep to wait for creating serviceaccount default/default complete
+          sleep 5
           # Delete default storageclass
           cluster/kubectl.sh delete storageclass standard
-          # Sleep 10s to wait for creating serviceaccount default/default complete
-          sleep 10
           # Cinder test
           cluster/kubectl.sh apply -f '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/persistent-volume-provisioning/cinder/cinder-full.yaml'
-
-          echo '--------------------'
-          env
-          echo '--------------------'
-          sleep 7200
 
           # If test passed
           timeout 100 bash -c '
               while :
               do
                   [[ $(cluster/kubectl.sh describe pods web | awk "/^Status:/ {print \$2}") == Running ]] && break
-                  sleep 3
+                  sleep 1
               done
               '
         executable: /bin/bash
