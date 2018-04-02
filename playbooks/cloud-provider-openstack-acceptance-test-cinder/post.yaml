@@ -1,0 +1,15 @@
+- hosts: all
+  become: yes
+  tasks:
+    - name: Clean up resources
+      shell:
+        cmd: |
+          set -e
+          set -x
+          cd ${GOPATH}/src/k8s.io/kubernetes
+          cluster/kubectl.sh config use-context local
+          cluster/kubectl.sh delete pods --all
+          cluster/kubectl.sh delete pvc --all
+          cluster/kubectl.sh delete pv --all
+        executable: /bin/bash
+      environment: '{{ golang_env }}'
