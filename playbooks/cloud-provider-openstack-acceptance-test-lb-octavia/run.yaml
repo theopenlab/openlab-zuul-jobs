@@ -120,12 +120,21 @@
           cluster/kubectl.sh get services
 
           for i in $(seq 1 80); do
-              external_lb_ip=$(./cluster/kubectl.sh describe services external-http-nginx-service |grep "LoadBalancer Ingress" | awk -F ' ' '{print $3}')
-              internal_lb_ip=$(./cluster/kubectl.sh describe services internal-http-nginx-service |grep "LoadBalancer Ingress" | awk -F ' ' '{print $3}')
+              if [ -z "${external_lb_ip}" ]; then
+                  echo "Waiting for deploying external-http-nginx-service service on try ${i} ..."
+                  external_lb_ip=$(./cluster/kubectl.sh describe services external-http-nginx-service |grep "LoadBalancer Ingress" | awk -F ' ' '{print $3}')
+              else
+                  echo "The external-http-nginx-service deployed sucessfully!"
+              fi
+              if [ -z "${internal_lb_ip}" ]; then
+                  echo "Waiting for deploying internal-http-nginx-service service on try ${i} ..."
+                  external_lb_ip=$(./cluster/kubectl.sh describe services internal-http-nginx-service |grep "LoadBalancer Ingress" | awk -F ' ' '{print $3}')
+              else
+                  echo "The internal-http-nginx-service deployed sucessfully!"
+              fi
               if [ -n "${external_lb_ip}" -a -n "${internal_lb_ip}" ]; then
                   break
               fi
-              echo "Waiting for deploying external-http-nginx-service service on try ${i} ..."
               sleep 5
           done
           if [ -z "${external_lb_ip}" -o -z "${internal_lb_ip}" ]; then
