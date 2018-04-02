@@ -267,23 +267,15 @@
     description: |
       Run acceptance test of cloud-provider-openstack repo
     pre-run: playbooks/cloud-provider-openstack-acceptance-test/pre.yaml
-
-- job:
-    name: cloud-provider-openstack-acceptance-test-cinder-standalone
-    parent: cloud-provider-openstack-acceptance-test
-    description: |
-      Run cinder standalone acceptance tests of cloud-provider-openstack repo against vexxhost cloud
-    run: playbooks/cloud-provider-openstack-acceptance-test-cinder-standalone/run.yaml
-    post-run: playbooks/cloud-provider-openstack-acceptance-test-cinder-standalone/post.yaml
     nodeset: ubuntu-xenial-vexxhost
 
 - job:
-    name: cloud-provider-openstack-acceptance-test-cinder-standalone
+    name: cloud-provider-openstack-acceptance-test-standalone-cinder
     parent: cloud-provider-openstack-acceptance-test
     description: |
-      Run cinder standalone acceptance tests of cloud-provider-openstack repo against vexxhost cloud
-    run: playbooks/cloud-provider-openstack-acceptance-test-cinder-standalone/run.yaml
-    post-run: playbooks/cloud-provider-openstack-acceptance-test-cinder-standalone/post.yaml
+      Run cinder standalone acceptance tests of cloud-provider-openstack
+    run: playbooks/cloud-provider-openstack-acceptance-test-standalone-cinder/run.yaml
+    post-run: playbooks/cloud-provider-openstack-acceptance-test-standalone-cinder/post.yaml
 
 - job:
     name: cloud-provider-openstack-acceptance-test-cinder-csi
