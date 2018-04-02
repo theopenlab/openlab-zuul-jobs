@@ -109,10 +109,9 @@
           pushd ${GOPATH}/src/k8s.io/kubernetes
           export AUTHORIZATION_MODE="Webhook,Node"
           export MAX_TIME_FOR_URL_API_SERVER=5
-          sed '583,587 d' -i ./hack/local-up-cluster.sh
-          sed '555 a \      --authentication-token-webhook-config-file=/etc/kubernetes/webhook.kubeconfig \\'  -i ./hack/local-up-cluster.sh
-          sed '555 a \      --authorization-webhook-config-file=/etc/kubernetes/webhook.kubeconfig \\'  -i ./hack/local-up-cluster.sh
-          # sed '583 a \    sleep 7200'  -i ./hack/local-up-cluster.sh
+          sed -i -e "/kube::util::wait_for_url.*$/,+1d" hack/local-up-cluster.sh
+          sed -i -e '/hyperkube\" apiserver.*$/a \      --authentication-token-webhook-config-file=/etc/kubernetes/webhook.kubeconfig \\' hack/local-up-cluster.sh
+          sed -i -e '/hyperkube\" apiserver.*$/a \      --authorization-webhook-config-file=/etc/kubernetes/webhook.kubeconfig \\' hack/local-up-cluster.sh
 
           # -E preserves the current env vars, but we need to special case PATH
           sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
