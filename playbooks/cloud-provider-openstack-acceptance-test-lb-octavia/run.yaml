@@ -26,7 +26,7 @@
           export OS_PASSWORD=$(echo '{{ vexxhost_credentials.password }}')
           export OS_REGION_NAME=$(echo '{{ vexxhost_credentials.region_name }}')
           EOF
-          { source "{{ ansible_user_dir }}/openrc";}  1> /dev/null 2>&1
+          source "{{ ansible_user_dir }}/openrc"
 
           if [[ ! -d "/etc/kubernetes/" ]]; then
               sudo mkdir -p /etc/kubernetes/
