@@ -270,12 +270,12 @@
     nodeset: ubuntu-xenial-vexxhost
 
 - job:
-    name: cloud-provider-openstack-acceptance-test-cinder
+    name: cloud-provider-openstack-acceptance-test-k8s-cinder
     parent: cloud-provider-openstack-acceptance-test
     description: |
       Run cinder in-tree acceptance tests of cloud-provider-openstack
-    run: playbooks/cloud-provider-openstack-acceptance-test-cinder/run.yaml
-    post-run: playbooks/cloud-provider-openstack-acceptance-test-cinder/post.yaml
+    run: playbooks/cloud-provider-openstack-acceptance-test-k8s-cinder/run.yaml
+    post-run: playbooks/cloud-provider-openstack-acceptance-test-k8s-cinder/post.yaml
     secrets:
       - vexxhost_credentials
 
