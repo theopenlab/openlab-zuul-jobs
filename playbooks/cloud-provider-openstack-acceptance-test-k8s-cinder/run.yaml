@@ -88,7 +88,7 @@
           cluster/kubectl.sh create clusterrolebinding --user system:kube-controller-manager  kube-system-cluster-admin-6 --clusterrole cluster-admin
 
           # Sleep to wait for creating serviceaccount default/default complete
-          sleep 7200
+          sleep 5
           # Remove node taint
           cluster/kubectl.sh taint nodes "$HOSTNAME_OVERRIDE" node.cloudprovider.kubernetes.io/uninitialized-
           # Cinder test
