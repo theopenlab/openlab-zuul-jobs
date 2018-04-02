@@ -28,8 +28,8 @@
           mkdir -p /etc/kubernetes/
           cat << EOF >> /etc/kubernetes/cloud-config
           [Global]
-          domain-id = $OS_PROJECT_DOMAIN_ID
-          tenant-name = $OS_PROJECT_NAME
+          domain-name = $OS_USER_DOMAIN_NAME
+          tenant-id = $OS_PROJECT_ID
           auth-url = $OS_AUTH_URL
           password = $OS_PASSWORD
           username = $OS_USERNAME
