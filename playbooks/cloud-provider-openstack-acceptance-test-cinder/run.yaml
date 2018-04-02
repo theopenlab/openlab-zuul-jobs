@@ -1,7 +1,5 @@
 - hosts: all
   become: yes
-  roles:
-    - export-vexxhost-openrc
   tasks:
     - shell:
         cmd: |
@@ -20,8 +18,8 @@
           export OS_REGION_NAME=$(echo '{{ vexxhost_credentials.region_name }}')
 
           set -x
-          # set -e
-          # set -o pipefail
+          set -e
+          set -o pipefail
 
           # Build binaries
           make build
@@ -89,15 +87,12 @@
           cluster/kubectl.sh create clusterrolebinding --user system:serviceaccount:kube-system:shared-informers kube-system-cluster-admin-5 --clusterrole cluster-admin
           cluster/kubectl.sh create clusterrolebinding --user system:kube-controller-manager  kube-system-cluster-admin-6 --clusterrole cluster-admin
 
-          sleep 7200
-
+          # Sleep to wait for creating serviceaccount default/default complete
+          sleep 5
           # Remove node taint
           cluster/kubectl.sh taint nodes "$HOSTNAME_OVERRIDE" node.cloudprovider.kubernetes.io/uninitialized-
-
-          # Delete default storageclass
-          cluster/kubectl.sh delete storageclass standard
           # Cinder test
-          cluster/kubectl.sh apply -f '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/persistent-volume-provisioning/cinder/cinder-full.yaml'
+          cluster/kubectl.sh apply -f '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/persistent-volume-provisioning/cinder/cinder-in-tree-full.yaml'
 
           # If test passed
           if timeout 100 bash -c '
@@ -115,4 +110,4 @@
           fi
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
-      environment: '{{ golang_env | combine(vexxhost_openrc) }}'
+      environment: '{{ golang_env }}'
