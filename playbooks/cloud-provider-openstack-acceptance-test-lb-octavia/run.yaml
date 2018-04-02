@@ -9,8 +9,10 @@
         cmd: |
           set -e
           apt-get install python-pip -y
-          pip install -U python-openstackclient
+          pip install -U python-openstackclient python-octaviaclient python-neutronclient
 
+          cat << EOF >> "{{ ansible_user_dir }}/openrc"
+          export OS_DOMAIN_NAME=$(echo '{{ vexxhost_credentials.user_domain_name }}')
           export OS_AUTH_TYPE=$(echo '{{ vexxhost_credentials.auth_type }}')
           export OS_IDENTITY_API_VERSION=$(echo '{{ vexxhost_credentials.identity_api_version }}')
           export OS_VOLUME_API_VERSION=$(echo '{{ vexxhost_credentials.volume_api_version }}')
@@ -23,6 +25,8 @@
           export OS_USERNAME=$(echo '{{ vexxhost_credentials.username }}')
           export OS_PASSWORD=$(echo '{{ vexxhost_credentials.password }}')
           export OS_REGION_NAME=$(echo '{{ vexxhost_credentials.region_name }}')
+          EOF
+          { source "{{ ansible_user_dir }}/openrc";}  1> /dev/null 2>&1
 
           if [[ ! -d "/etc/kubernetes/" ]]; then
               sudo mkdir -p /etc/kubernetes/
@@ -79,8 +83,8 @@
           sudo rm -rf /var/lib/kubelet/*
 
           # location of where the kubernetes processes log their output
-          mkdir -p /opt/stack/logs/
-          export LOG_DIR=/opt/stack/logs
+          mkdir -p "{{ ansible_user_dir }}/workspace/logs/kubernetes"
+          export LOG_DIR="{{ ansible_user_dir }}/workspace/logs/kubernetes"
           # We need this for one of the conformance tests
           export ALLOW_PRIVILEGED=true
           # Just kick off all the processes and drop down to the command line
@@ -90,8 +94,7 @@
 
           pushd ${GOPATH}/src/k8s.io/kubernetes
 
-          # TODO: this is a workaround until https://github.com/kubernetes/kubernetes/pull/61401 landed.
-          sed 's/curl --max-time 1/curl --max-time 5/g' -i ./hack/lib/util.sh
+          export MAX_TIME_FOR_URL_API_SERVER=5
           # -E preserves the current env vars, but we need to special case PATH
           sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
 
@@ -115,24 +118,26 @@
 
           cluster/kubectl.sh create -f "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/loadbalancers/external-http-nginx.yaml"
           cluster/kubectl.sh create -f "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/loadbalancers/internal-http-nginx.yaml"
-          cluster/kubectl.sh get pods
-          cluster/kubectl.sh get services
 
-          for i in $(seq 1 60); do
-              external_lb_ip=$(./cluster/kubectl.sh describe services external-http-nginx-service |grep "LoadBalancer Ingress" | awk -F ' ' '{print $3}')
-              internal_lb_ip=$(./cluster/kubectl.sh describe services internal-http-nginx-service |grep "LoadBalancer Ingress" | awk -F ' ' '{print $3}')
+          for i in $(seq 1 120); do
+              if [ -z "${external_lb_ip}" ]; then
+                  external_lb_ip=$(./cluster/kubectl.sh describe services external-http-nginx-service |grep "LoadBalancer Ingress" | awk -F ' ' '{print $3}')
+              fi
+              if [ -z "${internal_lb_ip}" ]; then
+                  internal_lb_ip=$(./cluster/kubectl.sh describe services internal-http-nginx-service |grep "LoadBalancer Ingress" | awk -F ' ' '{print $3}')
+              fi
+
               if [ -n "${external_lb_ip}" -a -n "${internal_lb_ip}" ]; then
                   break
               fi
-              echo "Waiting for deploying external-http-nginx-service service on try ${i} ..."
+              echo "Waiting for deploying loadbalancer service on try ${i} ..."
               sleep 5
           done
+
           if [ -z "${external_lb_ip}" -o -z "${internal_lb_ip}" ]; then
-              echo "Timed out to wait for external-http-nginx-service and internal-http-nginx-service services deployment!"
-              cluster/kubectl.sh describe services internal-http-nginx-service
-              cluster/kubectl.sh describe services external-http-nginx-service
-              cluster/kubectl.sh get pods
-              cluster/kubectl.sh get services
+              echo "Timed out to wait for loadbalancer services deployment!"
+              cluster/kubectl.sh describe pods
+              cluster/kubectl.sh describe services
               exit 1
           fi
 

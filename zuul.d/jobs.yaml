@@ -254,7 +254,6 @@
       Run acceptance tests of cloud-provider-openstack repo of K8S+keystone authentication and
       authorization scenario against vexxhost cloud
     run: playbooks/cloud-provider-openstack-acceptance-test-keystone-authentication-authorization/run.yaml
-    post-run: playbooks/cloud-provider-openstack-acceptance-test-keystone-authentication-authorization/post.yaml
     secrets:
       - vexxhost_credentials
     nodeset: ubuntu-xenial-vexxhost
