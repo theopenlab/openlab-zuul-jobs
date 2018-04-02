@@ -84,8 +84,8 @@
           export CLOUD_CONFIG=/etc/kubernetes/cloud-config
 
           # location of where the kubernetes processes log their output
-          mkdir -p /opt/stack/logs/kubernetes
-          export LOG_DIR=/opt/stack/logs/kubernetes
+          mkdir -p "{{ ansible_user_dir }}/workspace/logs/kubernetes"
+          export LOG_DIR="{{ ansible_user_dir }}/workspace/logs/kubernetes"
           # We need this for one of the conformance tests
           export ALLOW_PRIVILEGED=true
           # Just kick off all the processes and drop down to the command line

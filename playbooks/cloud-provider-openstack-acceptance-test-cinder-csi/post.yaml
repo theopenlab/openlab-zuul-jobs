@@ -1,4 +1,10 @@
 - hosts: all
   become: yes
-  roles:
-    - collect-k8s-logs
+  tasks:
+    - name: Clean up resources
+      shell:
+        cmd: |
+          set -e
+          set -x
+        executable: /bin/bash
+      environment: '{{ golang_env }}'
