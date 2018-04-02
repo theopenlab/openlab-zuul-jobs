@@ -32,6 +32,8 @@
               sudo mkdir -p /etc/kubernetes/
           fi
           chown zuul /etc/kubernetes/
+          floating_net_id=$(openstack network list --external -f value -c ID | head -n 1)
+          subnet_id=$(openstack network list --internal -f value -c Subnets | head -n 1)
           cat << EOF >> /etc/kubernetes/cloud-config
           [Global]
           domain-name = ${OS_PROJECT_DOMAIN_NAME-$OS_PROJECT_DOMAIN_ID}
@@ -41,8 +43,8 @@
           username = $OS_USERNAME
           region = $OS_REGION_NAME
           [LoadBalancer]
-          floating-network-id = $(openstack network list --external -f value -c ID | head -n 1)
-          subnet-id = $(openstack network list --internal -f value -c Subnets | head -n 1)
+          floating-network-id = ${floating_net_id}
+          subnet-id = ${subnet_id}
           [BlockStorage]
           bs-version = v2
           EOF
