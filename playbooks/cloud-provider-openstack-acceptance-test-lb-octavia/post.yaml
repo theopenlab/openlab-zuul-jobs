@@ -13,7 +13,7 @@
           int_lb_svc_uid=$(cluster/kubectl.sh get services internal-http-nginx-service -o=jsonpath='{.metadata.uid}') || true
 
           cluster/kubectl.sh delete -f "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/loadbalancers/external-http-nginx.yaml" || true
-          cluster/kubectl.sh delete -f "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/loadbalancers/external-http-nginx.yaml" || true
+          cluster/kubectl.sh delete -f "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/loadbalancers/internal-http-nginx.yaml" || true
           popd
 
           for lb_svc_uid in $ext_lb_svc_uid $int_lb_svc_uid; do
