@@ -9,7 +9,7 @@
         cmd: |
           set -e
           apt-get install python-pip -y
-          pip install -U python-openstackclient python-octaviaclient
+          pip install -U python-openstackclient python-octaviaclient python-neutronclient
 
           cat << EOF >> "{{ ansible_user_dir }}/openrc"
           export OS_DOMAIN_NAME=$(echo '{{ vexxhost_credentials.user_domain_name }}')
