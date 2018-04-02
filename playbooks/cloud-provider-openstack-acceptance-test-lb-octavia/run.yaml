@@ -117,6 +117,7 @@
           cluster/kubectl.sh create clusterrolebinding --user system:kube-controller-manager  kube-system-cluster-admin-6 --clusterrole cluster-admin
 
           for k8s_svc in external-http-nginx internal-http-nginx; do
+              lb_ip=""
               cluster/kubectl.sh create -f "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/loadbalancers/${k8s_svc}.yaml"
               for i in $(seq 1 80); do
                   if [ -z "${lb_ip}" ]; then

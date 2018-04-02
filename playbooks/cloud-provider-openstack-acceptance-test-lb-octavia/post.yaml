@@ -21,8 +21,8 @@
               {
                   pool_id=$(openstack loadbalancer show $lb_name -f value -c pools)
                   listener_id=$(openstack loadbalancer show $lb_name -f value -c listeners)
-                  openstack loadbalancer listener delete $listener_id
                   openstack loadbalancer pool delete $pool_id
+                  openstack loadbalancer listener delete $listener_id
                   openstack loadbalancer delete $lb_name
               } || true
           done
