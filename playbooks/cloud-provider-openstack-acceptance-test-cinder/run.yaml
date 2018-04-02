@@ -1,28 +1,23 @@
 - hosts: all
   become: yes
   roles:
-    - clone-devstack-gate-to-workspace
-    - create-devstack-local-conf
-    - role: install-devstack
-      environment:
-        OVERRIDE_ENABLED_SERVICES: 'key,c-sch,c-api,c-vol,rabbit,mysql'
+    - export-vexxhost-openrc
   tasks:
     - shell:
         cmd: |
           set -x
-          set -e
-          set -o pipefail
+          # set -e
+          # set -o pipefail
 
           # Build binaries
           make build
 
           # Create cloud-config
-          source /opt/stack/new/devstack/openrc admin admin
           mkdir -p /etc/kubernetes/
           cat << EOF >> /etc/kubernetes/cloud-config
           [Global]
           domain-id = $OS_PROJECT_DOMAIN_ID
-          tenant-name = $OS_TENANT_NAME
+          tenant-name = $OS_PROJECT_NAME
           auth-url = $OS_AUTH_URL
           password = $OS_PASSWORD
           username = $OS_USERNAME
@@ -43,8 +38,14 @@
           export ENABLE_SINGLE_CA_SIGNER=true
           export KUBE_ENABLE_CLUSTER_DNS=false
           export LOG_LEVEL=4
+          # We want to use the openstack cloud provider
+          export CLOUD_PROVIDER=openstack
+          # We want to run a separate cloud-controller-manager for openstack
+          export EXTERNAL_CLOUD_PROVIDER=true
           # DO NOT change the location of the cloud-config file. It is important for the old cinder provider to work
           export CLOUD_CONFIG=/etc/kubernetes/cloud-config
+          # Specify the OCCM binary
+          export EXTERNAL_CLOUD_PROVIDER_BINARY='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/openstack-cloud-controller-manager'
 
           # location of where the kubernetes processes log their output
           mkdir -p '{{ ansible_user_dir }}/workspace/logs/kubernetes'
@@ -53,10 +54,10 @@
           export ALLOW_PRIVILEGED=true
           # Just kick off all the processes and drop down to the command line
           export ENABLE_DAEMON=true
-          export HOSTNAME_OVERRIDE=127.0.0.1
+          export HOSTNAME_OVERRIDE=$(curl http://169.254.169.254/openstack/latest/meta_data.json | python -c "import sys, json; print json.load(sys.stdin)['name']")
           export MAX_TIME_FOR_URL_API_SERVER=5
 
-          # Start k8s services
+          # -E preserves the current env vars, but we need to special case PATH
           sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
           nohup '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/cinder-provisioner' --cloud-config "$CLOUD_CONFIG" --kubeconfig /var/run/kubernetes/admin.kubeconfig --id cinder > "$LOG_DIR/cinder-provisioner.log" 2>&1 &
 
@@ -74,8 +75,11 @@
           cluster/kubectl.sh create clusterrolebinding --user system:serviceaccount:kube-system:shared-informers kube-system-cluster-admin-5 --clusterrole cluster-admin
           cluster/kubectl.sh create clusterrolebinding --user system:kube-controller-manager  kube-system-cluster-admin-6 --clusterrole cluster-admin
 
-          # Sleep to wait for creating serviceaccount default/default complete
-          sleep 5
+          sleep 7200
+
+          # Remove node taint
+          cluster/kubectl.sh taint nodes "$HOSTNAME_OVERRIDE" node.cloudprovider.kubernetes.io/uninitialized-
+
           # Delete default storageclass
           cluster/kubectl.sh delete storageclass standard
           # Cinder test
@@ -97,4 +101,4 @@
           fi
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
-      environment: '{{ golang_env }}'
+      environment: '{{ golang_env | combine(vexxhost_openrc) }}'

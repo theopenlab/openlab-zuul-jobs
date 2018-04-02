@@ -1,29 +1,17 @@
 - hosts: all
   become: yes
+  roles:
+    - export-vexxhost-openrc
   tasks:
     - shell:
         cmd: |
-          # NOTE: the following commands may include sensitive information please do not print in job logs
-          # Use echo to delete extra spaces
-          export OS_AUTH_TYPE=$(echo '{{ vexxhost_credentials.auth_type }}')
-          export OS_IDENTITY_API_VERSION=$(echo '{{ vexxhost_credentials.identity_api_version }}')
-          export OS_VOLUME_API_VERSION=$(echo '{{ vexxhost_credentials.volume_api_version }}')
-          export OS_INTERFACE=$(echo '{{ vexxhost_credentials.interface }}')
-          export OS_AUTH_URL=$(echo '{{ vexxhost_credentials.auth_url }}')
-          export OS_PROJECT_ID=$(echo '{{ vexxhost_credentials.project_id }}')
-          export OS_PROJECT_NAME=$(echo '{{ vexxhost_credentials.project_name }}')
-          export OS_USER_DOMAIN_NAME=$(echo '{{ vexxhost_credentials.user_domain_name }}')
-          export OS_PROJECT_DOMAIN_ID=$(echo '{{ vexxhost_credentials.project_domain_id }}')
-          export OS_USERNAME=$(echo '{{ vexxhost_credentials.username }}')
-          export OS_PASSWORD=$(echo '{{ vexxhost_credentials.password }}')
-          export OS_REGION_NAME=$(echo '{{ vexxhost_credentials.region_name }}')
+          echo $OS_AUTH_URL
 
-          set -x
+          # set -x
           # set -e
           # set -o pipefail
-          go get -u github.com/Masterminds/glide
-          TESTARGS='-v' make test 2>&1 | tee $TEST_RESULTS_TXT
-          sleep 7200
+          # go get -u github.com/Masterminds/glide
+          # TESTARGS='-v' make test 2>&1 | tee $TEST_RESULTS_TXT
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
-      environment: '{{ golang_env }}'
+      environment: '{{ golang_env | combine(vexxhost_openrc) }}'
