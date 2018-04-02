@@ -5,7 +5,7 @@
   tasks:
     - shell:
         cmd: |
-          echo $OS_AUTH_URL
+          echo "$OS_AUTH_URL"
 
           # set -x
           # set -e

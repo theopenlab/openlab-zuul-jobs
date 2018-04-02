@@ -30,13 +30,14 @@
       #     \"OS_REGION_NAME\": \"$OS_REGION_NAME\"
       # }"
 
-      echo "{
-          \"OS_AUTH_URL\": \"$OS_AUTH_URL\"
-      }"
+      # echo "{
+      #     \"OS_AUTH_URL\": \"$OS_AUTH_URL\"
+      # }"
     executable: /bin/bash
   register: output
   no_log: True
 
 - name: Set fact for vexxhost openrc
   set_fact:
-    vexxhost_openrc: '{{ output.stdout | from_json }}'
+    vexxhost_openrc:
+      OS_AUTH_URL: '{{ vexxhost_credentials.auth_url }}'
