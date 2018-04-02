@@ -8,9 +8,14 @@
           set -x
           pushd ${GOPATH}/src/k8s.io/kubernetes
           cluster/kubectl.sh config use-context local
-          cluster/kubectl.sh delete -f "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/loadbalancers/external-http-nginx.yaml" || true
-          cluster/kubectl.sh delete -f "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/loadbalancers/internal-http-nginx.yaml" || true
+          # cluster/kubectl.sh delete -f "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/loadbalancers/external-http-nginx.yaml" || true
+          # cluster/kubectl.sh delete -f "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/loadbalancers/internal-http-nginx.yaml" || true
           popd
+          { source "{{ ansible_user_dir }}/openrc";}  1> /dev/null 2>&1
+          openstack loadbalancer list
+          openstack loadbalancer listener list
+          openstack loadbalancer pool list
+          sleep 7200
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env }}'

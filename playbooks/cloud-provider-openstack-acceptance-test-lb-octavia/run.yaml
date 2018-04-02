@@ -9,10 +9,10 @@
         cmd: |
           set -e
           apt-get install python-pip -y
-          pip install -U python-openstackclient
+          pip install -U python-openstackclient python-octaviaclient
 
-          # NOTE: the following commands may include sensitive information please do not print in job logs
-          # Use echo to delete extra spaces
+          cat << EOF >> "{{ ansible_user_dir }}/openrc"
+          export OS_DOMAIN_NAME=$(echo '{{ vexxhost_credentials.user_domain_name }}')
           export OS_AUTH_TYPE=$(echo '{{ vexxhost_credentials.auth_type }}')
           export OS_IDENTITY_API_VERSION=$(echo '{{ vexxhost_credentials.identity_api_version }}')
           export OS_VOLUME_API_VERSION=$(echo '{{ vexxhost_credentials.volume_api_version }}')
@@ -25,6 +25,8 @@
           export OS_USERNAME=$(echo '{{ vexxhost_credentials.username }}')
           export OS_PASSWORD=$(echo '{{ vexxhost_credentials.password }}')
           export OS_REGION_NAME=$(echo '{{ vexxhost_credentials.region_name }}')
+          EOF
+          { source "{{ ansible_user_dir }}/openrc";}  1> /dev/null 2>&1
 
           if [[ ! -d "/etc/kubernetes/" ]]; then
               sudo mkdir -p /etc/kubernetes/
@@ -39,8 +41,8 @@
           username = $OS_USERNAME
           region = $OS_REGION_NAME
           [LoadBalancer]
-          floating-network-id = "6d6357ac-0f70-4afa-8bd7-c274cc4ea235"
-          subnet-id = "ac8cadce-db65-4581-962d-0beb27586eb2"
+          floating-network-id = $(openstack network list --external -f value -c ID | head -n 1)
+          subnet-id = $(openstack network list --internal -f value -c Subnets | head -n 1)
           [BlockStorage]
           bs-version = v2
           EOF
