@@ -255,6 +255,14 @@
       - vexxhost_credentials
 
 - job:
+    name: cloud-provider-openstack-acceptance-test-standalone-cinder
+    parent: cloud-provider-openstack-acceptance-test
+    description: |
+      Run cinder standalone acceptance tests of cloud-provider-openstack
+    run: playbooks/cloud-provider-openstack-acceptance-test-standalone-cinder/run.yaml
+    post-run: playbooks/cloud-provider-openstack-acceptance-test-standalone-cinder/post.yaml
+
+- job:
     name: cloud-provider-openstack-acceptance-test-lb-octavia
     parent: golang-test
     description: |
