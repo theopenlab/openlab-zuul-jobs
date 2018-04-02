@@ -35,6 +35,7 @@
       }"
     executable: /bin/bash
   register: output
+  no_log: True
 
 - name: Set fact for vexxhost openrc
   set_fact:
