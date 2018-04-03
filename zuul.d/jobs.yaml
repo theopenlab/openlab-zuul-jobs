@@ -43,6 +43,14 @@
     run: playbooks/gophercloud-acceptance-test/run.yaml
 
 - job:
+    name: gophercloud-acceptance-test-queens
+    parent: gophercloud-acceptance-test
+    description: |
+      Run gophercloud acceptance test on queens branch
+    vars:
+      os_branch: 'stable/queens'
+
+- job:
     name: gophercloud-acceptance-test-pike
     parent: gophercloud-acceptance-test
     description: |
@@ -98,6 +106,14 @@
     description: |
       Run terraform provider openstack acceptance test on master branch
     run: playbooks/terraform-provider-openstack-acceptance-test/run.yaml
+
+- job:
+    name: terraform-provider-openstack-acceptance-test-queens
+    parent: terraform-provider-openstack-acceptance-test
+    description: |
+      Run terraform provider openstack acceptance test on queens branch
+    vars:
+      os_branch: 'stable/queens'
 
 - job:
     name: terraform-provider-openstack-acceptance-test-pike
@@ -280,7 +296,6 @@
       Run acceptance tests of cloud-provider-openstack repo of K8S+keystone authentication and
       authorization scenario against vexxhost cloud
     run: playbooks/cloud-provider-openstack-acceptance-test-keystone-authentication-authorization/run.yaml
-    post-run: playbooks/cloud-provider-openstack-acceptance-test-keystone-authentication-authorization/post.yaml
     secrets:
       - vexxhost_credentials
     nodeset: ubuntu-xenial-vexxhost
