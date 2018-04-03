@@ -27,6 +27,8 @@
           # Install dependencies
           go get -u github.com/Masterminds/glide
 
+          # Build binaries
+          make build
           # Build k8s cmd
           git clone https://github.com/kubernetes/kubernetes ${GOPATH}/src/k8s.io/kubernetes
           make -C ${GOPATH}/src/k8s.io/kubernetes WHAT="cmd/kubectl cmd/hyperkube"
@@ -42,4 +44,5 @@
           iptables -P FORWARD ACCEPT
           iptables -P OUTPUT ACCEPT
         executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env }}'

@@ -8,8 +8,6 @@
           set -x
           cd ${GOPATH}/src/k8s.io/kubernetes
           cluster/kubectl.sh config use-context local
-          cluster/kubectl.sh delete pods --all
-          cluster/kubectl.sh delete pvc --all
-          cluster/kubectl.sh delete pv --all
+          cluster/kubectl.sh apply -f '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/persistent-volume-provisioning/cinder/cinder-in-tree-full.yaml'
         executable: /bin/bash
       environment: '{{ golang_env }}'

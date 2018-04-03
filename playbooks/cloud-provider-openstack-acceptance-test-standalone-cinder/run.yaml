@@ -13,9 +13,6 @@
           set -e
           set -o pipefail
 
-          # Build binaries
-          make build
-
           # Create cloud-config
           source /opt/stack/new/devstack/openrc admin admin
           mkdir -p /etc/kubernetes/
@@ -93,6 +90,7 @@
               echo 'Run test successful'
           else
               echo 'Run test failed'
+              cluster/kubectl.sh describe pods web
               exit 1
           fi
         executable: /bin/bash
