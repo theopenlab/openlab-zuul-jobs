@@ -280,14 +280,13 @@
 
 - job:
     name: cloud-provider-openstack-acceptance-test-lb-octavia
-    parent: golang-test
+    parent: cloud-provider-openstack-acceptance-test
     description: |
-      Run acceptance tests of cloud-provider-openstack repo with  LBaaS scenario against vexxhost cloud
+      Run lb acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-lb-octavia/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-lb-octavia/post.yaml
     secrets:
       - vexxhost_credentials
-    nodeset: ubuntu-xenial-vexxhost
 
 - job:
     name: cloud-provider-openstack-acceptance-test-keystone-authentication-authorization

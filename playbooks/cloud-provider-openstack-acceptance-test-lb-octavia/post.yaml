@@ -1,5 +1,7 @@
 - hosts: all
   become: yes
+  roles:
+    - export-vexxhost-openrc
   tasks:
     - name: Clean kubernetes deployments
       shell:
@@ -8,7 +10,6 @@
           set -x
           pushd ${GOPATH}/src/k8s.io/kubernetes
           cluster/kubectl.sh config use-context local
-          { source "{{ ansible_user_dir }}/openrc";}  1> /dev/null 2>&1
           ext_lb_svc_uid=$(cluster/kubectl.sh get services external-http-nginx-service -o=jsonpath='{.metadata.uid}') || true
           int_lb_svc_uid=$(cluster/kubectl.sh get services internal-http-nginx-service -o=jsonpath='{.metadata.uid}') || true
 
@@ -33,4 +34,4 @@
           done
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
-      environment: '{{ golang_env }}'
+      environment: '{{ golang_env | combine(vexxhost_openrc) }}'
