@@ -5,13 +5,12 @@
   tasks:
     - shell:
         cmd: |
-          echo "$OS_AUTH_URL"
+          set -x
+          set -e
+          set -o pipefail
 
-          # set -x
-          # set -e
-          # set -o pipefail
-          # go get -u github.com/Masterminds/glide
-          # TESTARGS='-v' make test 2>&1 | tee $TEST_RESULTS_TXT
+          go get -u github.com/Masterminds/glide
+          TESTARGS='-v' make test 2>&1 | tee $TEST_RESULTS_TXT
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env | combine(vexxhost_openrc) }}'
