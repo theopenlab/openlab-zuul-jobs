@@ -1,0 +1,15 @@
+- name: Set fact for vexxhost openrc
+  set_fact:
+    vexxhost_openrc:
+      OS_AUTH_TYPE: '{{ vexxhost_credentials.auth_type }}'
+      OS_IDENTITY_API_VERSION: '{{ vexxhost_credentials.identity_api_version }}'
+      OS_VOLUME_API_VERSION: '{{ vexxhost_credentials.volume_api_version }}'
+      OS_INTERFACE: '{{ vexxhost_credentials.interface }}'
+      OS_AUTH_URL: '{{ vexxhost_credentials.auth_url }}'
+      OS_PROJECT_ID: '{{ vexxhost_credentials.project_id }}'
+      OS_PROJECT_NAME: '{{ vexxhost_credentials.project_name }}'
+      OS_USER_DOMAIN_NAME: '{{ vexxhost_credentials.user_domain_name }}'
+      OS_PROJECT_DOMAIN_ID: '{{ vexxhost_credentials.project_domain_id }}'
+      OS_USERNAME: '{{ vexxhost_credentials.username }}'
+      OS_PASSWORD: '{{ vexxhost_credentials.password }}'
+      OS_REGION_NAME: '{{ vexxhost_credentials.region_name }}'
