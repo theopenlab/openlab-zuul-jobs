@@ -253,6 +253,24 @@
     nodeset: ubuntu-xenial-vexxhost
 
 - job:
+    name: cloud-provider-openstack-acceptance-test
+    parent: golang-test
+    description: |
+      Run acceptance test of cloud-provider-openstack
+    pre-run: playbooks/cloud-provider-openstack-acceptance-test/pre.yaml
+    nodeset: ubuntu-xenial-vexxhost
+
+- job:
+    name: cloud-provider-openstack-acceptance-test-k8s-cinder
+    parent: cloud-provider-openstack-acceptance-test
+    description: |
+      Run cinder in-tree acceptance tests of cloud-provider-openstack
+    run: playbooks/cloud-provider-openstack-acceptance-test-k8s-cinder/run.yaml
+    post-run: playbooks/cloud-provider-openstack-acceptance-test-k8s-cinder/post.yaml
+    secrets:
+      - vexxhost_credentials
+
+- job:
     name: cloud-provider-openstack-acceptance-test-lb-octavia
     parent: golang-test
     description: |
