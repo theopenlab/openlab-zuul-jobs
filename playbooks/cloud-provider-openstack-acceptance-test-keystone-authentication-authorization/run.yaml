@@ -152,6 +152,7 @@
           echo "$allowed"
           [[ "$allowed" =~ '"allowed": true' ]] && echo "Testing k8s-keystone-auth sucessfully!"
 
+          sleep 7200
           cluster/kubectl.sh config set-credentials openstackuser --auth-provider=openstack
           cluster/kubectl.sh config set-context --cluster=local --user=openstackuser openstackuser@local
           cluster/kubectl.sh config use-context openstackuser@local
@@ -159,7 +160,6 @@
               echo "Testing kubernetes+keystone authentication and authorizatio failed!"
               exit 1
           fi
-          popd
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env | combine(vexxhost_openrc) }}'
