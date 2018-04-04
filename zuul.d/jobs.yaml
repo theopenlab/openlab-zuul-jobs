@@ -230,17 +230,6 @@
     run: playbooks/openlab-zuul-jobs-check/run.yaml
 
 - job:
-    name: cloud-provider-openstack-acceptance-test-keystone-authentication-authorization
-    parent: golang-test
-    description: |
-      Run acceptance tests of cloud-provider-openstack repo of K8S+keystone authentication and
-      authorization scenario against vexxhost cloud
-    run: playbooks/cloud-provider-openstack-acceptance-test-keystone-authentication-authorization/run.yaml
-    secrets:
-      - vexxhost_credentials
-    nodeset: ubuntu-xenial-vexxhost
-
-- job:
     name: cloud-provider-openstack-unittest
     parent: golang-test
     description: |
@@ -257,6 +246,15 @@
       Run acceptance test of cloud-provider-openstack
     pre-run: playbooks/cloud-provider-openstack-acceptance-test/pre.yaml
     nodeset: ubuntu-xenial-vexxhost
+
+- job:
+    name: cloud-provider-openstack-acceptance-test-keystone-authentication-authorization
+    parent: cloud-provider-openstack-acceptance-test
+    description: |
+      Run keystone auth acceptance tests of cloud-provider-openstack
+    run: playbooks/cloud-provider-openstack-acceptance-test-keystone-authentication-authorization/run.yaml
+    secrets:
+      - vexxhost_credentials
 
 - job:
     name: cloud-provider-openstack-acceptance-test-lb-octavia
