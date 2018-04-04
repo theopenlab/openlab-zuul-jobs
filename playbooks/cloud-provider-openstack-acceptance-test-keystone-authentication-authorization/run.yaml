@@ -79,7 +79,7 @@
           export ENABLE_DAEMON=true
           export HOSTNAME_OVERRIDE=$(curl http://169.254.169.254/openstack/latest/meta_data.json | python -c "import sys, json; print json.load(sys.stdin)['name']")
           export MAX_TIME_FOR_URL_API_SERVER=5
-          export AUTHORIZATION_MODE="Webhook,Node"
+          export AUTHORIZATION_MODE="Node,Webhook,RBAC"
 
           sed -i -e "/kube::util::wait_for_url.*$/,+1d" hack/local-up-cluster.sh
           sed -i -e '/hyperkube\" apiserver.*$/a \      --authentication-token-webhook-config-file=/etc/kubernetes/webhook.kubeconfig \\' hack/local-up-cluster.sh
@@ -110,7 +110,7 @@
           cluster/kubectl.sh create clusterrolebinding --user system:kube-controller-manager  kube-system-cluster-admin-6 --clusterrole cluster-admin
 
           # Configure the RBAC with roles to be authorized
-          cluster/kubectl.sh create rolebinding system:anonymous-view --clusterrole=view --user=system:anonymous --namespace default
+          # cluster/kubectl.sh create rolebinding system:anonymous-view --clusterrole=view --user=system:anonymous --namespace default
 
           {
               authenticated_info=$(cat <<< '
@@ -158,7 +158,7 @@
           cluster/kubectl.sh config set-credentials openstackuser --auth-provider=openstack
           cluster/kubectl.sh config set-context --cluster=local --user=openstackuser openstackuser@local
           cluster/kubectl.sh config use-context openstackuser@local
-          sleep 7200
+          # sleep 7200
           if ! cluster/kubectl.sh get pods; then
               echo "Testing kubernetes+keystone authentication and authorizatio failed!"
               exit 1
