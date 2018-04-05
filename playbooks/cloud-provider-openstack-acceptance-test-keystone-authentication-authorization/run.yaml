@@ -159,8 +159,8 @@
           [[ "$allowed" =~ '"allowed": true' ]] && echo "Testing k8s-keystone-auth sucessfully!"
 
           cluster/kubectl.sh config set-credentials openstackuser --auth-provider=openstack
-          cluster/kubectl.sh config set-context --cluster=kubernetes --user=openstackuser openstackuser@kubernetes --namespace=default
-          cluster/kubectl.sh config use-context openstackuser@kubernetes
+          cluster/kubectl.sh config set-context --cluster=local --user=openstackuser openstackuser@local --namespace=default
+          cluster/kubectl.sh config use-context openstackuser@local
           if ! cluster/kubectl.sh get pods; then
               echo "Testing kubernetes+keystone authentication and authorizatio failed!"
               exit 1
