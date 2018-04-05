@@ -1,7 +1,5 @@
 - name: Set up Kubernetes local cluster
   hosts: all
-  roles:
-    - install-k8s-jobs-dependences
   become: yes
   tasks:
     - name: Set up Kubernetes local cluster
