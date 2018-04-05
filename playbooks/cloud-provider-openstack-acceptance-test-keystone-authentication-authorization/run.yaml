@@ -16,6 +16,7 @@
 
           mkdir -p /etc/kubernetes/
           cp ./examples/webhook/policy.json /etc/kubernetes/
+          sed -i "s/c1f7910086964990847dc6c8b128f63c/$OS_PROJECT_ID/" /etc/kubernetes/policy.json
 
           # Create cloud-config
           cat << EOF >> /etc/kubernetes/cloud-config
@@ -156,8 +157,8 @@
           [[ "$allowed" =~ '"allowed": true' ]] && echo "Testing k8s-keystone-auth sucessfully!"
 
           cluster/kubectl.sh config set-credentials openstackuser --auth-provider=openstack
-          cluster/kubectl.sh config set-context --cluster=local --user=openstackuser openstackuser@local
-          cluster/kubectl.sh config use-context openstackuser@local
+          cluster/kubectl.sh config set-context --cluster=kubernetes --user=openstackuser openstackuser@kubernetes --namespace=default
+          cluster/kubectl.sh config use-context openstackuser@kubernetes
           # sleep 7200
           if ! cluster/kubectl.sh get pods; then
               echo "Testing kubernetes+keystone authentication and authorizatio failed!"
