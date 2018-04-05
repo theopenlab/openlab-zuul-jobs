@@ -230,7 +230,7 @@
       - theopenlab/zuul-jobs
     run: playbooks/openlab-zuul-jobs-check/run.yaml
     vars:
-      excluded_path: ""
+      excluded_path: "*playbook-in-vm*/*"
 
 # Deprecated (Kubernetes nested scenario)
 - job:
@@ -298,3 +298,12 @@
     secrets:
       - vexxhost_credentials
     nodeset: ubuntu-xenial-vexxhost
+
+- job:
+    name: cloud-provider-openstack-acceptance-test-lb-octavia-nested
+    parent: golang-test
+    required-projects:
+      - theopenlab/openlab-zuul-jobs
+    description: |
+      Run K8S cloud-provider-openstack acceptance tests in devstack instance against lbaas
+    run: playbooks/cloud-provider-openstack-acceptance-test-lb-octavia-nested/run.yaml
