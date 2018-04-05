@@ -16,7 +16,8 @@
 
           mkdir -p /etc/kubernetes/
           cp ./examples/webhook/policy.json /etc/kubernetes/
-          sed -i "s/c1f7910086964990847dc6c8b128f63c/$OS_PROJECT_ID/" /etc/kubernetes/policy.json
+          sed -i "s/c1f7910086964990847dc6c8b128f63c/$OS_PROJECT_ID/g" /etc/kubernetes/policy.json
+          sed -i -e "s/k8s-admin/creator/g" /etc/kubernetes/policy.json
 
           # Create cloud-config
           cat << EOF >> /etc/kubernetes/cloud-config
@@ -85,8 +86,6 @@
           sed -i -e "/kube::util::wait_for_url.*$/,+1d" hack/local-up-cluster.sh
           sed -i -e '/hyperkube\" apiserver.*$/a \      --authentication-token-webhook-config-file=/etc/kubernetes/webhook.kubeconfig \\' hack/local-up-cluster.sh
           sed -i -e '/hyperkube\" apiserver.*$/a \      --authorization-webhook-config-file=/etc/kubernetes/webhook.kubeconfig \\' hack/local-up-cluster.sh
-
-          sleep 7200
 
           # -E preserves the current env vars, but we need to special case PATH
           sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
@@ -159,7 +158,7 @@
           [[ "$allowed" =~ '"allowed": true' ]] && echo "Testing k8s-keystone-auth sucessfully!"
 
           cluster/kubectl.sh config set-credentials openstackuser --auth-provider=openstack
-          cluster/kubectl.sh config set-context --cluster=local --user=openstackuser openstackuser@local --namespace=default
+          cluster/kubectl.sh config set-context --cluster=local --user=openstackuser openstackuser@local
           cluster/kubectl.sh config use-context openstackuser@local
           if ! cluster/kubectl.sh get pods; then
               echo "Testing kubernetes+keystone authentication and authorizatio failed!"
