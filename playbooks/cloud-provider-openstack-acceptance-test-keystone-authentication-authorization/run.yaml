@@ -98,6 +98,7 @@
                 --keystone-url ${OS_AUTH_URL} >"${LOG_DIR}/keystone-auth.log" 2>&1 &
 
           # sudo of local-up-cluster mucks with permissions
+          mkdir -p "{{ ansible_user_dir }}/.kube"
           sudo chmod -R 777 "{{ ansible_user_dir }}/.kube"
           sudo chmod 777 /var/run/kubernetes/client-admin.key
 
