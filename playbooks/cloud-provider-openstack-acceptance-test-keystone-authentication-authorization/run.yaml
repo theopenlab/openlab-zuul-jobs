@@ -18,6 +18,14 @@
               sudo mkdir -p /etc/kubernetes/
           fi
           chown zuul /etc/kubernetes/
+          # copy the same policy json and fix up the hard coded project id
+          cp ./examples/webhook/policy.json /etc/kubernetes/
+          sed -i -e "s|c1f7910086964990847dc6c8b128f63c|$OS_PROJECT_ID|g" /etc/kubernetes/policy.json
+          # pick an existing role of the user and replace the k8s-admin role in policy.json
+          sed -i -e "s|k8s-admin|creator|g" /etc/kubernetes/policy.json
+          # print the modified file
+          cat /etc/kubernetes/policy.json
+
           cat << EOF >> /etc/kubernetes/cloud-config
           [Global]
           domain-name = ${OS_PROJECT_DOMAIN_NAME-$OS_PROJECT_DOMAIN_ID}
@@ -83,14 +91,6 @@
           # We need the hostname to match the name of the vm started by openstack
           export HOSTNAME_OVERRIDE=$(curl http://169.254.169.254/openstack/latest/meta_data.json | python -c "import sys, json; print json.load(sys.stdin)['name']")
           export MAX_TIME_FOR_URL_API_SERVER=5
-
-          # copy the same policy json and fix up the hard coded project id
-          cp ./examples/webhook/policy.json /etc/kubernetes/
-          sed -i -e "s|c1f7910086964990847dc6c8b128f63c|$OS_PROJECT_ID|g" /etc/kubernetes/policy.json
-          # pick an existing role of the user and replace the k8s-admin role in policy.json
-          sed -i -e "s|k8s-admin|creator|g" /etc/kubernetes/policy.json
-          # print the modified file
-          cat /etc/kubernetes/policy.json
           export AUTHORIZATION_MODE="Node,Webhook,RBAC"
 
           sed -i -e "/kube::util::wait_for_url.*$/,+1d" hack/local-up-cluster.sh
