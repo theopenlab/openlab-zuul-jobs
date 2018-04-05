@@ -14,21 +14,15 @@
           apt-get install python-pip -y
           pip install -U python-openstackclient
 
-          if [[ ! -d "/etc/kubernetes/" ]]; then
-              sudo mkdir -p /etc/kubernetes/
-          fi
-          chown zuul /etc/kubernetes/
-          # copy the same policy json and fix up the hard coded project id
+          mkdir -p /etc/kubernetes/
           cp ./examples/webhook/policy.json /etc/kubernetes/
-          sed -i -e "s|c1f7910086964990847dc6c8b128f63c|$OS_PROJECT_ID|g" /etc/kubernetes/policy.json
-          # pick an existing role of the user and replace the k8s-admin role in policy.json
-          sed -i -e "s|k8s-admin|creator|g" /etc/kubernetes/policy.json
-          # print the modified file
-          cat /etc/kubernetes/policy.json
+          sed -i "s/c1f7910086964990847dc6c8b128f63c/$OS_PROJECT_ID/g" /etc/kubernetes/policy.json
+          sed -i -e "s/k8s-admin/creator/g" /etc/kubernetes/policy.json
 
+          # Create cloud-config
           cat << EOF >> /etc/kubernetes/cloud-config
           [Global]
-          domain-name = ${OS_PROJECT_DOMAIN_NAME-$OS_PROJECT_DOMAIN_ID}
+          domain-name = $OS_USER_DOMAIN_NAME
           tenant-id = $OS_PROJECT_ID
           auth-url = $OS_AUTH_URL
           password = $OS_PASSWORD
@@ -61,7 +55,6 @@
 
           # Go where we cloned kubernetes repository
           cd $GOPATH/src/k8s.io/kubernetes/
-          mkdir -p "{{ ansible_user_dir }}/.kube"
           export API_HOST_IP=$(ifconfig | awk '/^docker0/ {getline; print $2}' | awk -F ':' '{print $2}')
           export KUBELET_HOST="0.0.0.0"
           export ALLOW_SECURITY_CONTEXT=true
@@ -69,26 +62,23 @@
           export ENABLE_HOSTPATH_PROVISIONER=true
           export ENABLE_SINGLE_CA_SIGNER=true
           export KUBE_ENABLE_CLUSTER_DNS=false
-          export LOG_LEVEL=10
-          # we want to use the openstack cloud provider
+          export LOG_LEVEL=4
+          # We want to use the openstack cloud provider
           export CLOUD_PROVIDER=openstack
-          # we want to run a separate cloud-controller-manager for openstack
+          # We want to run a separate cloud-controller-manager for openstack
           export EXTERNAL_CLOUD_PROVIDER=true
           # DO NOT change the location of the cloud-config file. It is important for the old cinder provider to work
           export CLOUD_CONFIG=/etc/kubernetes/cloud-config
-          # specify the OCCM binary
-          export EXTERNAL_CLOUD_PROVIDER_BINARY="{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/openstack-cloud-controller-manager"
-          # Cleanup some directories just in case
-          sudo rm -rf /var/lib/kubelet/*
+          # Specify the OCCM binary
+          export EXTERNAL_CLOUD_PROVIDER_BINARY='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/openstack-cloud-controller-manager'
 
           # location of where the kubernetes processes log their output
-          mkdir -p "{{ ansible_user_dir }}/workspace/logs/kubernetes"
-          export LOG_DIR="{{ ansible_user_dir }}/workspace/logs/kubernetes"
+          mkdir -p '{{ ansible_user_dir }}/workspace/logs/kubernetes'
+          export LOG_DIR='{{ ansible_user_dir }}/workspace/logs/kubernetes'
           # We need this for one of the conformance tests
           export ALLOW_PRIVILEGED=true
           # Just kick off all the processes and drop down to the command line
           export ENABLE_DAEMON=true
-          # We need the hostname to match the name of the vm started by openstack
           export HOSTNAME_OVERRIDE=$(curl http://169.254.169.254/openstack/latest/meta_data.json | python -c "import sys, json; print json.load(sys.stdin)['name']")
           export MAX_TIME_FOR_URL_API_SERVER=5
           export AUTHORIZATION_MODE="Node,Webhook,RBAC"
@@ -106,11 +96,6 @@
                 --log-dir=${LOG_DIR} \
                 --v=10 \
                 --keystone-url ${OS_AUTH_URL} >"${LOG_DIR}/keystone-auth.log" 2>&1 &
-
-          # sudo of local-up-cluster mucks with permissions
-          mkdir -p "{{ ansible_user_dir }}/.kube"
-          sudo chmod -R 777 "{{ ansible_user_dir }}/.kube"
-          sudo chmod 777 /var/run/kubernetes/client-admin.key
 
           # set up the config we need for kubectl to work
           cluster/kubectl.sh config set-cluster local --server=https://localhost:6443 --certificate-authority=/var/run/kubernetes/server-ca.crt
