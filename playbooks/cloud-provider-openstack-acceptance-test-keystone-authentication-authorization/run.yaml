@@ -25,6 +25,11 @@
           export OS_PASSWORD=$(echo '{{ vexxhost_credentials.password }}')
           export OS_REGION_NAME=$(echo '{{ vexxhost_credentials.region_name }}')
 
+          # create administrator role for kubernetes
+          openstack role create k8s-admin
+          # add the k8s-admin role to the admin user
+          openstack role add --user $OS_USERNAME --project $OS_PROJECT_ID k8s-admin
+
           if [[ ! -d "/etc/kubernetes/" ]]; then
               sudo mkdir -p /etc/kubernetes/
           fi
@@ -104,10 +109,13 @@
           export ENABLE_DAEMON=true
           # We need the hostname to match the name of the vm started by openstack
           export HOSTNAME_OVERRIDE=$(curl http://169.254.169.254/openstack/latest/meta_data.json | python -c "import sys, json; print json.load(sys.stdin)['name']")
+
+          # copy the same policy json and fix up the project id
           cp ./examples/webhook/policy.json /etc/kubernetes/
+          sed -i -e "s|c1f7910086964990847dc6c8b128f63c|$OS_PROJECT_ID|g" /etc/kubernetes/policy.json
 
           pushd ${GOPATH}/src/k8s.io/kubernetes
-          export AUTHORIZATION_MODE="Webhook,Node"
+          export AUTHORIZATION_MODE="Node,Webhook,RBAC"
 
           sed -i -e "/kube::util::wait_for_url.*$/,+1d" hack/local-up-cluster.sh
           sed -i -e '/hyperkube\" apiserver.*$/a \      --authentication-token-webhook-config-file=/etc/kubernetes/webhook.kubeconfig \\' hack/local-up-cluster.sh
