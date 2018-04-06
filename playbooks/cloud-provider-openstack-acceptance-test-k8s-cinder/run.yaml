@@ -63,13 +63,8 @@
           export ALLOW_PRIVILEGED=true
           # Just kick off all the processes and drop down to the command line
           export ENABLE_DAEMON=true
-          export MAX_TIME_FOR_URL_API_SERVER=5
-
-          # setup all the host name and ip address(es)
           export HOSTNAME_OVERRIDE=$(curl http://169.254.169.254/openstack/latest/meta_data.json | python -c "import sys, json; print json.load(sys.stdin)['name']")
-          export API_HOST=$HOSTNAME_OVERRIDE
-          export EXTERNAL_HOSTNAME=$HOSTNAME_OVERRIDE
-          export API_HOST_IP=$(ip route get 1.1.1.1 | awk '{print $7}')
+          export MAX_TIME_FOR_URL_API_SERVER=5
 
           # -E preserves the current env vars, but we need to special case PATH
           sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
