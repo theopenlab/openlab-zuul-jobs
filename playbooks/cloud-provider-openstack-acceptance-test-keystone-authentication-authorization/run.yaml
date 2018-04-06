@@ -1,6 +1,8 @@
 - name: Set up Kubernetes local cluster
   hosts: all
   become: yes
+  roles:
+    - export-vexxhost-openrc
   tasks:
     - name: Set up Kubernetes local cluster
       shell:
@@ -8,20 +10,6 @@
           set -e
           apt-get install python-pip -y
           pip install -U python-openstackclient
-
-          export OS_DOMAIN_NAME=$(echo '{{ vexxhost_credentials.user_domain_name }}')
-          export OS_AUTH_TYPE=$(echo '{{ vexxhost_credentials.auth_type }}')
-          export OS_IDENTITY_API_VERSION=$(echo '{{ vexxhost_credentials.identity_api_version }}')
-          export OS_VOLUME_API_VERSION=$(echo '{{ vexxhost_credentials.volume_api_version }}')
-          export OS_INTERFACE=$(echo '{{ vexxhost_credentials.interface }}')
-          export OS_AUTH_URL=$(echo '{{ vexxhost_credentials.auth_url }}')
-          export OS_PROJECT_ID=$(echo '{{ vexxhost_credentials.project_id }}')
-          export OS_PROJECT_NAME=$(echo '{{ vexxhost_credentials.project_name }}')
-          export OS_USER_DOMAIN_NAME=$(echo '{{ vexxhost_credentials.user_domain_name }}')
-          export OS_PROJECT_DOMAIN_ID=$(echo '{{ vexxhost_credentials.project_domain_id }}')
-          export OS_USERNAME=$(echo '{{ vexxhost_credentials.username }}')
-          export OS_PASSWORD=$(echo '{{ vexxhost_credentials.password }}')
-          export OS_REGION_NAME=$(echo '{{ vexxhost_credentials.region_name }}')
 
           if [[ ! -d "/etc/kubernetes/" ]]; then
               sudo mkdir -p /etc/kubernetes/
