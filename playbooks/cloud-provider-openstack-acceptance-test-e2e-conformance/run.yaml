@@ -71,6 +71,15 @@
           export EXTERNAL_HOSTNAME=$HOSTNAME_OVERRIDE
           export API_HOST_IP=$(ip route get 1.1.1.1 | awk '{print $7}')
 
+          # diagnostics - print /etc/hosts and resolv.conf
+          sudo cat /etc/hosts
+          sudo cat /etc/resolv.conf
+
+          # fixup /etc/hosts
+          sudo sed -i -e 's|$HOSTNAME_OVERRIDE||g' /etc/hosts
+          sudo echo "$API_HOST_IP $HOSTNAME_OVERRIDE" | sudo tee -a /etc/hosts
+          sudo cat /etc/hosts
+
           # -E preserves the current env vars, but we need to special case PATH
           sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
 
