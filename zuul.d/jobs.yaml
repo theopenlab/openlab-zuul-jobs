@@ -271,6 +271,16 @@
       - vexxhost_credentials
 
 - job:
+    name: cloud-provider-openstack-acceptance-test-e2e-conformance
+    parent: cloud-provider-openstack-acceptance-test
+    description: |
+      Run Kubernetes Conformance tests
+    run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/run.yaml
+    post-run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/post.yaml
+    secrets:
+      - vexxhost_credentials
+
+- job:
     name: cloud-provider-openstack-acceptance-test-standalone-cinder
     parent: cloud-provider-openstack-acceptance-test
     description: |
