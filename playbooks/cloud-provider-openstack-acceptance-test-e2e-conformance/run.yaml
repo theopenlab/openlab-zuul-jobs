@@ -1,0 +1,100 @@
+- hosts: all
+  become: yes
+  tasks:
+    - shell:
+        cmd: |
+          # use echo to delete extra spaces
+          export OS_AUTH_TYPE=$(echo '{{ vexxhost_credentials.auth_type }}')
+          export OS_IDENTITY_API_VERSION=$(echo '{{ vexxhost_credentials.identity_api_version }}')
+          export OS_VOLUME_API_VERSION=$(echo '{{ vexxhost_credentials.volume_api_version }}')
+          export OS_INTERFACE=$(echo '{{ vexxhost_credentials.interface }}')
+          export OS_AUTH_URL=$(echo '{{ vexxhost_credentials.auth_url }}')
+          export OS_PROJECT_ID=$(echo '{{ vexxhost_credentials.project_id }}')
+          export OS_PROJECT_NAME=$(echo '{{ vexxhost_credentials.project_name }}')
+          export OS_USER_DOMAIN_NAME=$(echo '{{ vexxhost_credentials.user_domain_name }}')
+          export OS_PROJECT_DOMAIN_ID=$(echo '{{ vexxhost_credentials.project_domain_id }}')
+          export OS_USERNAME=$(echo '{{ vexxhost_credentials.username }}')
+          export OS_PASSWORD=$(echo '{{ vexxhost_credentials.password }}')
+          export OS_REGION_NAME=$(echo '{{ vexxhost_credentials.region_name }}')
+
+          set -x
+          set -e
+          set -o pipefail
+
+          # Create cloud-config
+          mkdir -p /etc/kubernetes/
+          cat << EOF >> /etc/kubernetes/cloud-config
+          [Global]
+          domain-name = $OS_USER_DOMAIN_NAME
+          tenant-id = $OS_PROJECT_ID
+          auth-url = $OS_AUTH_URL
+          password = $OS_PASSWORD
+          username = $OS_USERNAME
+          region = $OS_REGION_NAME
+
+          [BlockStorage]
+          bs-version = v2
+          ignore-volume-az = yes
+          EOF
+
+          # Go where we cloned kubernetes repository
+          cd $GOPATH/src/k8s.io/kubernetes/
+          export API_HOST_IP=$(ifconfig | awk '/^docker0/ {getline; print $2}' | awk -F ':' '{print $2}')
+          export KUBELET_HOST="0.0.0.0"
+          export ALLOW_SECURITY_CONTEXT=true
+          export ENABLE_CRI=false
+          export ENABLE_HOSTPATH_PROVISIONER=true
+          export ENABLE_SINGLE_CA_SIGNER=true
+          export KUBE_ENABLE_CLUSTER_DNS=false
+          export LOG_LEVEL=4
+          # We want to use the openstack cloud provider
+          export CLOUD_PROVIDER=openstack
+          # DO NOT change the location of the cloud-config file. It is important for the old cinder provider to work
+          export CLOUD_CONFIG=/etc/kubernetes/cloud-config
+
+          # location of where the kubernetes processes log their output
+          mkdir -p '{{ ansible_user_dir }}/workspace/logs/kubernetes'
+          export LOG_DIR='{{ ansible_user_dir }}/workspace/logs/kubernetes'
+          # We need this for one of the conformance tests
+          export ALLOW_PRIVILEGED=true
+          # Just kick off all the processes and drop down to the command line
+          export ENABLE_DAEMON=true
+          export HOSTNAME_OVERRIDE=$(curl http://169.254.169.254/openstack/latest/meta_data.json | python -c "import sys, json; print json.load(sys.stdin)['name']")
+          export MAX_TIME_FOR_URL_API_SERVER=5
+
+          # -E preserves the current env vars, but we need to special case PATH
+          sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
+
+          # set up the config we need for kubectl to work
+          cluster/kubectl.sh config set-cluster local --server=https://localhost:6443 --certificate-authority=/var/run/kubernetes/server-ca.crt
+          cluster/kubectl.sh config set-credentials myself --client-key=/var/run/kubernetes/client-admin.key --client-certificate=/var/run/kubernetes/client-admin.crt
+          cluster/kubectl.sh config set-context local --cluster=local --user=myself
+          cluster/kubectl.sh config use-context local
+
+          # Sleep to wait for creating serviceaccount default/default complete
+          sleep 5
+          # Remove node taint
+          cluster/kubectl.sh taint nodes "$HOSTNAME_OVERRIDE" node.cloudprovider.kubernetes.io/uninitialized-
+
+          # Set admin kubeconfig for running e2e tests
+          export KUBECONFIG=/var/run/kubernetes/admin.kubeconfig
+
+          # Build kubetest
+          go get -u k8s.io/test-infra/kubetest
+          # Build all binaries
+          export KUBE_FASTBUILD=true
+
+          set -e
+
+          # Run e2e test using local deployment/provider
+          kubetest --dump=$LOG_DIR \
+              --test \
+              --build=quick \
+              --deployment=local \
+              --provider=local \
+              --ginkgo-parallel=1 \
+              --test_args="--ginkgo.focus=[Conformance] -v=8" \
+              --timeout=120m
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ golang_env }}'
