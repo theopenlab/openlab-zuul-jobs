@@ -70,6 +70,7 @@
           export API_HOST=$HOSTNAME_OVERRIDE
           export EXTERNAL_HOSTNAME=$HOSTNAME_OVERRIDE
           export API_HOST_IP=$(ip route get 1.1.1.1 | awk '{print $7}')
+          export KUBELET_FLAGS="--node-ip $API_HOST_IP"
 
           # diagnostics - print /etc/hosts and resolv.conf
           sudo cat /etc/hosts
