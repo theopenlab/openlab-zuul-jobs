@@ -300,11 +300,9 @@
 
 - job:
     name: cloud-provider-openstack-acceptance-test-keystone-authentication-authorization
-    parent: golang-test
+    parent: cloud-provider-openstack-acceptance-test
     description: |
-      Run acceptance tests of cloud-provider-openstack repo of K8S+keystone authentication and
-      authorization scenario against vexxhost cloud
+      Run keystone auth acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-keystone-authentication-authorization/run.yaml
     secrets:
       - vexxhost_credentials
-    nodeset: ubuntu-xenial-vexxhost
