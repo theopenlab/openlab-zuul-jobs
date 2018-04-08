@@ -45,7 +45,7 @@
           export ENABLE_CRI=false
           export ENABLE_HOSTPATH_PROVISIONER=true
           export ENABLE_SINGLE_CA_SIGNER=true
-          export KUBE_ENABLE_CLUSTER_DNS=false
+          export KUBE_ENABLE_CLUSTER_DNS=true
           export LOG_LEVEL=4
           # We want to use the openstack cloud provider
           export CLOUD_PROVIDER=openstack
