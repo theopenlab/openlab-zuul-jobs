@@ -1,22 +1,11 @@
-- hosts: all
+- name: Run Kubernetes E2E conformance tests with cloud-provider-openstack
+  hosts: all
+  roles:
+    - export-vexxhost-openrc
   become: yes
   tasks:
     - shell:
         cmd: |
-          # use echo to delete extra spaces
-          export OS_AUTH_TYPE=$(echo '{{ vexxhost_credentials.auth_type }}')
-          export OS_IDENTITY_API_VERSION=$(echo '{{ vexxhost_credentials.identity_api_version }}')
-          export OS_VOLUME_API_VERSION=$(echo '{{ vexxhost_credentials.volume_api_version }}')
-          export OS_INTERFACE=$(echo '{{ vexxhost_credentials.interface }}')
-          export OS_AUTH_URL=$(echo '{{ vexxhost_credentials.auth_url }}')
-          export OS_PROJECT_ID=$(echo '{{ vexxhost_credentials.project_id }}')
-          export OS_PROJECT_NAME=$(echo '{{ vexxhost_credentials.project_name }}')
-          export OS_USER_DOMAIN_NAME=$(echo '{{ vexxhost_credentials.user_domain_name }}')
-          export OS_PROJECT_DOMAIN_ID=$(echo '{{ vexxhost_credentials.project_domain_id }}')
-          export OS_USERNAME=$(echo '{{ vexxhost_credentials.username }}')
-          export OS_PASSWORD=$(echo '{{ vexxhost_credentials.password }}')
-          export OS_REGION_NAME=$(echo '{{ vexxhost_credentials.region_name }}')
-
           set -x
           set -e
           set -o pipefail
@@ -45,7 +34,8 @@
           export ENABLE_CRI=false
           export ENABLE_HOSTPATH_PROVISIONER=true
           export ENABLE_SINGLE_CA_SIGNER=true
-          export KUBE_ENABLE_CLUSTER_DNS=false
+          # Cluster DNS should be enabled in E2E conformance test
+          export KUBE_ENABLE_CLUSTER_DNS=true
           export LOG_LEVEL=4
           # We want to use the openstack cloud provider
           export CLOUD_PROVIDER=openstack
@@ -120,4 +110,4 @@
               --timeout=120m
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
-      environment: '{{ golang_env }}'
+      environment: '{{ golang_env | combine(vexxhost_openrc) }}'
