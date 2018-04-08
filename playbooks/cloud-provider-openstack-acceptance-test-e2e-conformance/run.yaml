@@ -92,8 +92,6 @@
 
           # Sleep to wait for creating serviceaccount default/default complete
           sleep 5
-          # Remove node taint
-          cluster/kubectl.sh taint nodes "$HOSTNAME_OVERRIDE" node.cloudprovider.kubernetes.io/uninitialized-
 
           # Set admin kubeconfig for running e2e tests
           export KUBECONFIG=/var/run/kubernetes/admin.kubeconfig
