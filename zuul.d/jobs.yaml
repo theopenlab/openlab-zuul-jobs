@@ -290,6 +290,6 @@
     description: |
       Run cinder csi acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/run.yaml
-    post-run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinderpost.yaml
+    post-run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/post.yaml
     secrets:
       - vexxhost_credentials
