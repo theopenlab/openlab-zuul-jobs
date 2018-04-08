@@ -285,12 +285,11 @@
     post-run: playbooks/cloud-provider-openstack-acceptance-test-standalone-cinder/post.yaml
 
 - job:
-    name: cloud-provider-openstack-acceptance-test-cinder-csi
-    parent: golang-test
+    name: cloud-provider-openstack-acceptance-test-csi-cinder
+    parent: cloud-provider-openstack-acceptance-test
     description: |
-      Run cinder csi acceptance tests of cloud-provider-openstack repo against vexxhost cloud
-    run: playbooks/cloud-provider-openstack-acceptance-test-cinder-csi/run.yaml
-    post-run: playbooks/cloud-provider-openstack-acceptance-test-cinder-csi/post.yaml
+      Run cinder csi acceptance tests of cloud-provider-openstack
+    run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/run.yaml
+    post-run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinderpost.yaml
     secrets:
       - vexxhost_credentials
-    nodeset: ubuntu-xenial-vexxhost

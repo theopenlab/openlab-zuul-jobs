@@ -1,96 +1,68 @@
 - name: Set up Kubernetes local cluster
   hosts: all
   roles:
-    - install-k8s-jobs-dependences
+    - export-vexxhost-openrc
   become: yes
   tasks:
     - name: Set up Kubernetes local cluster
       shell:
         cmd: |
+          set -x
           set -e
+          set -o pipefail
+
           apt-get install python-pip -y
           pip install -U python-openstackclient
 
-          export OS_AUTH_TYPE=$(echo '{{ vexxhost_credentials.auth_type }}')
-          export OS_IDENTITY_API_VERSION=$(echo '{{ vexxhost_credentials.identity_api_version }}')
-          export OS_VOLUME_API_VERSION=$(echo '{{ vexxhost_credentials.volume_api_version }}')
-          export OS_INTERFACE=$(echo '{{ vexxhost_credentials.interface }}')
-          export OS_AUTH_URL=$(echo '{{ vexxhost_credentials.auth_url }}')
-          export OS_PROJECT_ID=$(echo '{{ vexxhost_credentials.project_id }}')
-          export OS_PROJECT_NAME=$(echo '{{ vexxhost_credentials.project_name }}')
-          export OS_USER_DOMAIN_NAME=$(echo '{{ vexxhost_credentials.user_domain_name }}')
-          export OS_PROJECT_DOMAIN_ID=$(echo '{{ vexxhost_credentials.project_domain_id }}')
-          export OS_USERNAME=$(echo '{{ vexxhost_credentials.username }}')
-          export OS_PASSWORD=$(echo '{{ vexxhost_credentials.password }}')
-          export OS_REGION_NAME=$(echo '{{ vexxhost_credentials.region_name }}')
-
-          if [[ ! -d "/etc/kubernetes/" ]]; then
-              sudo mkdir -p /etc/kubernetes/
-          fi
-          chown zuul /etc/kubernetes/
+          # Create cloud-config
+          mkdir -p /etc/kubernetes/
           cat << EOF >> /etc/kubernetes/cloud-config
           [Global]
-          domain-name = ${OS_PROJECT_DOMAIN_NAME-$OS_PROJECT_DOMAIN_ID}
+          domain-name = $OS_USER_DOMAIN_NAME
           tenant-id = $OS_PROJECT_ID
           auth-url = $OS_AUTH_URL
           password = $OS_PASSWORD
           username = $OS_USERNAME
           region = $OS_REGION_NAME
+
           [BlockStorage]
           bs-version = v2
+          ignore-volume-az = yes
           EOF
 
-          set -x
-          make depend
-          make build
-          mkdir -p "{{ ansible_user_dir }}/.kube"
-          export API_HOST_IP="172.17.0.1"
+          # Go where we cloned kubernetes repository
+          cd $GOPATH/src/k8s.io/kubernetes/
+          export API_HOST_IP=$(ifconfig | awk '/^docker0/ {getline; print $2}' | awk -F ':' '{print $2}')
           export KUBELET_HOST="0.0.0.0"
-
-          echo "Stopping firewall and allow all traffic..."
-          iptables -F
-          iptables -X
-          iptables -t nat -F
-          iptables -t nat -X
-          iptables -t mangle -F
-          iptables -t mangle -X
-          iptables -P INPUT ACCEPT
-          iptables -P FORWARD ACCEPT
-          iptables -P OUTPUT ACCEPT
           export ALLOW_SECURITY_CONTEXT=true
           export ENABLE_CRI=false
           export ENABLE_HOSTPATH_PROVISIONER=true
           export ENABLE_SINGLE_CA_SIGNER=true
-          # export KUBE_ENABLE_CLUSTER_DASHBOARD=true
           export KUBE_ENABLE_CLUSTER_DNS=false
-          export LOG_LEVEL=10
-          # we want to use the openstack cloud provider
+          export LOG_LEVEL=4
+          # We want to use the openstack cloud provider
           export CLOUD_PROVIDER=openstack
-          # we want to run a separate cloud-controller-manager for openstack
+          # We want to run a separate cloud-controller-manager for openstack
           export EXTERNAL_CLOUD_PROVIDER=true
           # DO NOT change the location of the cloud-config file. It is important for the old cinder provider to work
           export CLOUD_CONFIG=/etc/kubernetes/cloud-config
-          # specify the OCCM binary
-          export EXTERNAL_CLOUD_PROVIDER_BINARY="{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/openstack-cloud-controller-manager"
-          # Cleanup some directories just in case
-          sudo rm -rf /var/lib/kubelet/*
+          # Specify the OCCM binary
+          export EXTERNAL_CLOUD_PROVIDER_BINARY='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/openstack-cloud-controller-manager'
 
           # location of where the kubernetes processes log their output
-          mkdir -p "{{ ansible_user_dir }}/workspace/logs/kubernetes"
-          export LOG_DIR="{{ ansible_user_dir }}/workspace/logs/kubernetes"
+          mkdir -p '{{ ansible_user_dir }}/workspace/logs/kubernetes'
+          export LOG_DIR='{{ ansible_user_dir }}/workspace/logs/kubernetes'
           # We need this for one of the conformance tests
           export ALLOW_PRIVILEGED=true
           # Just kick off all the processes and drop down to the command line
           export ENABLE_DAEMON=true
-          # We need the hostname to match the name of the vm started by openstack
           export HOSTNAME_OVERRIDE=$(curl http://169.254.169.254/openstack/latest/meta_data.json | python -c "import sys, json; print json.load(sys.stdin)['name']")
-          # For Cinder CSI driver
+          export MAX_TIME_FOR_URL_API_SERVER=5
+
+          # Requirements to deploy the csi cinder driver
           export FEATURE_GATES=CSIPersistentVolume=true,MountPropagation=true
           export RUNTIME_CONFIG="storage.k8s.io/v1alpha1=true"
 
-          pushd ${GOPATH}/src/k8s.io/kubernetes
-
-          export MAX_TIME_FOR_URL_API_SERVER=5
           # -E preserves the current env vars, but we need to special case PATH
           sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
 
@@ -98,10 +70,6 @@
           #       --log-dir=${LOG_DIR} \
           #       --v=10 \
           #       --cloud-config  ${CLOUD_CONFIG} >"${LOG_DIR}/cinder-csi-plugin.log" 2>&1 &
-
-          # sudo of local-up-cluster mucks with permissions
-          sudo chmod -R 777 "{{ ansible_user_dir }}/.kube"
-          sudo chmod 777 /var/run/kubernetes/client-admin.key
 
           # set up the config we need for kubectl to work
           cluster/kubectl.sh config set-cluster local --server=https://localhost:6443 --certificate-authority=/var/run/kubernetes/server-ca.crt
@@ -125,6 +93,8 @@
           # docker build -t k8scsi/cinderplugin ./pkg/cinder/dockerfile/
           # docker images
           # popd
+
+          sleep 7200
           docker pull xiangxinyong/cinderplugin
           docker tag xiangxinyong/cinderplugin k8scsi/cinderplugin
 
@@ -136,12 +106,10 @@
             cloud_cfg=$(base64 -w 0 ${CLOUD_CONFIG})
             sed "s/cloud.conf.*$/cloud.conf: ${cloud_cfg}/g" -i "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/manifests/cinder-csi-plugin/csi-secret-cinderplugin.yaml"
           } 1> /dev/null 2>&1
-          sleep 7200
           cluster/kubectl.sh create -f "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/manifests/cinder-csi-plugin"
-          # sleep 7200
           cluster/kubectl.sh create -f  "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/cinder-csi-plugin/nginx.yaml"
 
           popd
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
-      environment: '{{ golang_env }}'
+      environment: '{{ golang_env | combine(vexxhost_openrc) }}'
