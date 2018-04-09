@@ -1,0 +1,14 @@
+- hosts: all
+  become: yes
+  tasks:
+    - name: Upload E2E conformance test result to kubernetes testgrid
+      shell:
+        cmd: |
+          set -e
+          set -x
+          export LOG_DIR='{{ ansible_user_dir }}/workspace/logs/kubernetes'
+          # TODO: Can not find upload_e2e.py in Github kubernetes org
+          # Refer to https://github.com/kubernetes/test-infra/tree/master/testgrid/conformance#using
+          # upload_e2e.py --junit=$LOG_DIR/junit_01.xml --log=$LOG_DIR/e2e.log --bucket=gs://your-bucket
+        executable: /bin/bash
+      environment: '{{ golang_env }}'

@@ -276,6 +276,7 @@
     description: |
       Run Kubernetes E2E Conformance tests against Kubernetes master
     run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/run.yaml
+    post-run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/post.yaml
     secrets:
       - vexxhost_credentials
 
