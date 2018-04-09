@@ -1,4 +1,4 @@
-- name: Install K8S jobs dependences
+- name: Install K8S jobs dependences (#Deprecated)
   shell:
     cmd: |
       set -e

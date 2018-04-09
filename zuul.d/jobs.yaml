@@ -274,10 +274,18 @@
     name: cloud-provider-openstack-acceptance-test-e2e-conformance
     parent: cloud-provider-openstack-acceptance-test
     description: |
-      Run Kubernetes Conformance tests
+      Run Kubernetes E2E Conformance tests against Kubernetes master
     run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/run.yaml
     secrets:
       - vexxhost_credentials
+
+- job:
+    name: cloud-provider-openstack-acceptance-test-e2e-conformance-latest-release
+    parent: cloud-provider-openstack-acceptance-test-e2e-conformance
+    description: |
+      Run Kubernetes E2E Conformance tests against Kubernetes latest release
+    vars:
+      k8s_version: 'v1.10.0'
 
 - job:
     name: cloud-provider-openstack-acceptance-test-standalone-cinder
