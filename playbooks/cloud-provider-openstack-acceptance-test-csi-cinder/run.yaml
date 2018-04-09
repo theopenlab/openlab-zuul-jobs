@@ -60,16 +60,16 @@
           export MAX_TIME_FOR_URL_API_SERVER=5
 
           # Requirements to deploy the csi cinder driver
-          export FEATURE_GATES=CSIPersistentVolume=true,MountPropagation=true
+          export FEATURE_GATES="CSIPersistentVolume=true,MountPropagation=true"
           export RUNTIME_CONFIG="storage.k8s.io/v1alpha1=true"
 
           # -E preserves the current env vars, but we need to special case PATH
           sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
 
           # nohup "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/cinder-csi-plugin" \
-          #       --log-dir=${LOG_DIR} \
+          #       --log_dir=${LOG_DIR} \
           #       --v=10 \
-          #       --cloud-config  ${CLOUD_CONFIG} >"${LOG_DIR}/cinder-csi-plugin.log" 2>&1 &
+          #       --cloud-config ${CLOUD_CONFIG} >"${LOG_DIR}/cinder-csi-plugin.log" 2>&1 &
 
           # set up the config we need for kubectl to work
           cluster/kubectl.sh config set-cluster local --server=https://localhost:6443 --certificate-authority=/var/run/kubernetes/server-ca.crt
@@ -94,7 +94,20 @@
           # docker images
           # popd
 
+          INSTANCE_UUID=$(curl http://169.254.169.254/openstack/latest/meta_data.json | python -c "import sys, json; print json.load(sys.stdin)['uuid']")
+          echo "$INSTANCE_UUID" > /var/lib/cloud/data/instance-id
+
+          git clone https://github.com/kubernetes-csi/external-provisioner ${GOPATH}/src/github.com/kubernetes-csi/external-provisioner
+          make -C ${GOPATH}/src/github.com/kubernetes-csi/external-provisioner csi-provisioner
+          git clone https://github.com/kubernetes-csi/external-attacher ${GOPATH}/src/github.com/kubernetes-csi/external-attacher
+          make -C ${GOPATH}/src/github.com/kubernetes-csi/external-attacher csi-attacher
+          git clone https://github.com/kubernetes-csi/driver-registrar ${GOPATH}/src/github.com/kubernetes-csi/driver-registrar
+          make -C ${GOPATH}/src/github.com/kubernetes-csi/driver-registrar driver-registrar
+          git clone https://github.com/kubernetes-csi/drivers ${GOPATH}/src/github.com/kubernetes-csi/drivers
+          make -C ${GOPATH}/src/github.com/kubernetes-csi/drivers cinder
+
           sleep 7200
+
           docker pull xiangxinyong/cinderplugin
           docker tag xiangxinyong/cinderplugin k8scsi/cinderplugin
 
@@ -107,7 +120,7 @@
             sed "s/cloud.conf.*$/cloud.conf: ${cloud_cfg}/g" -i "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/manifests/cinder-csi-plugin/csi-secret-cinderplugin.yaml"
           } 1> /dev/null 2>&1
           cluster/kubectl.sh create -f "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/manifests/cinder-csi-plugin"
-          cluster/kubectl.sh create -f  "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/cinder-csi-plugin/nginx.yaml"
+          cluster/kubectl.sh create -f "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/cinder-csi-plugin/nginx.yaml"
 
           popd
         executable: /bin/bash
