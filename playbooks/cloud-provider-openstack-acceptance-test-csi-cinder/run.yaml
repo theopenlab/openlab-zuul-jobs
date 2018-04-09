@@ -97,6 +97,9 @@
           INSTANCE_UUID=$(curl http://169.254.169.254/openstack/latest/meta_data.json | python -c "import sys, json; print json.load(sys.stdin)['uuid']")
           echo "$INSTANCE_UUID" > /var/lib/cloud/data/instance-id
 
+          sleep 7200
+
+          go get -u github.com/golang/dep/cmd/dep
           git clone https://github.com/kubernetes-csi/external-provisioner ${GOPATH}/src/github.com/kubernetes-csi/external-provisioner
           make -C ${GOPATH}/src/github.com/kubernetes-csi/external-provisioner csi-provisioner
           git clone https://github.com/kubernetes-csi/external-attacher ${GOPATH}/src/github.com/kubernetes-csi/external-attacher
@@ -105,8 +108,6 @@
           make -C ${GOPATH}/src/github.com/kubernetes-csi/driver-registrar driver-registrar
           git clone https://github.com/kubernetes-csi/drivers ${GOPATH}/src/github.com/kubernetes-csi/drivers
           make -C ${GOPATH}/src/github.com/kubernetes-csi/drivers cinder
-
-          sleep 7200
 
           docker pull xiangxinyong/cinderplugin
           docker tag xiangxinyong/cinderplugin k8scsi/cinderplugin
