@@ -8,8 +8,8 @@
       shell:
         cmd: |
           set -x
-          set -e
-          set -o pipefail
+          # set -e
+          # set -o pipefail
 
           apt-get install python-pip -y
           pip install -U python-openstackclient
@@ -97,33 +97,25 @@
           INSTANCE_UUID=$(curl http://169.254.169.254/openstack/latest/meta_data.json | python -c "import sys, json; print json.load(sys.stdin)['uuid']")
           echo "$INSTANCE_UUID" > /var/lib/cloud/data/instance-id
 
-          sleep 7200
-
-          go get -u github.com/golang/dep/cmd/dep
-          git clone https://github.com/kubernetes-csi/external-provisioner ${GOPATH}/src/github.com/kubernetes-csi/external-provisioner
-          make -C ${GOPATH}/src/github.com/kubernetes-csi/external-provisioner csi-provisioner
-          git clone https://github.com/kubernetes-csi/external-attacher ${GOPATH}/src/github.com/kubernetes-csi/external-attacher
-          make -C ${GOPATH}/src/github.com/kubernetes-csi/external-attacher csi-attacher
-          git clone https://github.com/kubernetes-csi/driver-registrar ${GOPATH}/src/github.com/kubernetes-csi/driver-registrar
-          make -C ${GOPATH}/src/github.com/kubernetes-csi/driver-registrar driver-registrar
-          git clone https://github.com/kubernetes-csi/drivers ${GOPATH}/src/github.com/kubernetes-csi/drivers
-          make -C ${GOPATH}/src/github.com/kubernetes-csi/drivers cinder
+          # go get github.com/rexray/gocsi
+          # pushd ${GOPATH}/src/github.com/rexray/gocsi
+          # make build
+          # popd
 
           docker pull xiangxinyong/cinderplugin
-          docker tag xiangxinyong/cinderplugin k8scsi/cinderplugin
-
-          go get github.com/rexray/gocsi
-          pushd ${GOPATH}/src/github.com/rexray/gocsi
-          make build
-          popd
+          docker tag xiangxinyong/cinderplugin docker.io/k8scsi/cinderplugin
+          sed -i 's|docker.io/k8scsi/csi-provisioner|quay.io/k8scsi/csi-provisioner:v0.2.0|g' '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/manifests/cinder-csi-plugin/csi-provisioner-cinderplugin.yaml'
+          sed -i 's|docker.io/k8scsi/csi-attacher|quay.io/k8scsi/csi-attacher:v0.2.0|g' '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/manifests/cinder-csi-plugin/csi-attacher-cinderplugin.yaml'
+          sed -i 's|docker.io/k8scsi/driver-registrar|quay.io/k8scsi/driver-registrar:v0.2.0|g' '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/manifests/cinder-csi-plugin/csi-nodeplugin-cinderplugin.yaml'
           {
-            cloud_cfg=$(base64 -w 0 ${CLOUD_CONFIG})
-            sed "s/cloud.conf.*$/cloud.conf: ${cloud_cfg}/g" -i "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/manifests/cinder-csi-plugin/csi-secret-cinderplugin.yaml"
-          } 1> /dev/null 2>&1
-          cluster/kubectl.sh create -f "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/manifests/cinder-csi-plugin"
-          cluster/kubectl.sh create -f "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/cinder-csi-plugin/nginx.yaml"
+              cloud_cfg=$(base64 -w 0 ${CLOUD_CONFIG})
+              sed "s/cloud.conf.*$/cloud.conf: $cloud_cfg/g" -i '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/manifests/cinder-csi-plugin/csi-secret-cinderplugin.yaml'
+          } > /dev/null 2>&1
 
-          popd
+          cluster/kubectl.sh create -f '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/manifests/cinder-csi-plugin'
+          cluster/kubectl.sh create -f '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/cinder-csi-plugin/nginx.yaml'
+
+          sleep 7200
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env | combine(vexxhost_openrc) }}'
