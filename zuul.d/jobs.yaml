@@ -281,10 +281,10 @@
       - vexxhost_credentials
 
 - job:
-    name: cloud-provider-openstack-acceptance-test-e2e-conformance-latest-release
+    name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.10.0
     parent: cloud-provider-openstack-acceptance-test-e2e-conformance
     description: |
-      Run Kubernetes E2E Conformance tests against Kubernetes latest release
+      Run Kubernetes E2E Conformance tests against Kubernetes v1.10.0
     vars:
       k8s_version: 'v1.10.0'
 
