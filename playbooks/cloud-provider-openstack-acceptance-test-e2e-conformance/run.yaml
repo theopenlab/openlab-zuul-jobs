@@ -100,6 +100,7 @@
           export KUBE_FASTBUILD=true
           export KUBERNETES_CONFORMANCE_TEST=y
 
+          set +x
           # Run e2e test using local deployment/provider
           kubetest --dump=$LOG_DIR \
               --test \
