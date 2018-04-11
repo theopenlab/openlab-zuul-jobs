@@ -118,9 +118,25 @@
 
           # Enable services
           "$kubectl" create -f manifests/cinder-csi-plugin
+          # If services up
+          if kubectl="$kubectl" timeout 10 bash -c '
+              while :
+              do
+                  "$kubectl" get pod | sed "1d" | awk '\''$2 != "2/2" || $3 != "Running" {err = 1} END {exit err}'\'' && break
+                  sleep 1
+              done
+              '
+          then
+              echo 'Run services successful'
+              "$kubectl" get pod
+          else
+              echo 'Run services failed'
+              "$kubectl" get pod
+              exit 1
+          fi
+
           # Make test
           "$kubectl" create -f examples/cinder-csi-plugin/nginx.yaml
-
           # If test passed
           if kubectl="$kubectl" timeout 100 bash -c '
               while :
