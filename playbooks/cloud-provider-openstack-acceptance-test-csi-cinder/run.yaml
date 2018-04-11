@@ -8,8 +8,8 @@
       shell:
         cmd: |
           set -x
-          # set -e
-          # set -o pipefail
+          set -e
+          set -o pipefail
 
           apt-get install python-pip -y
           pip install -U python-openstackclient
@@ -24,12 +24,10 @@
           password = $OS_PASSWORD
           username = $OS_USERNAME
           region = $OS_REGION_NAME
-
           [BlockStorage]
+          bs-version = v2
           ignore-volume-az = yes
           EOF
-
-          # bs-version = v2
 
           export API_HOST_IP=$(ifconfig | awk '/^docker0/ {getline; print $2}' | awk -F ':' '{print $2}')
           export KUBELET_HOST="0.0.0.0"
@@ -86,18 +84,6 @@
           echo "$INSTANCE_UUID" > /var/lib/cloud/data/instance-id
 
           # Build latest images from source
-          # cat << EOF > Dockerfile
-          # FROM alpine
-          # LABEL maintainers="Kubernetes Authors"
-          # LABEL description="Cinder CSI Plugin"
-          # # Copy cinderplugin from build directory
-          # COPY cinder-csi-plugin /cinderplugin
-          # # Install e2fsprogs for format
-          # RUN apk add --no-cache e2fsprogs
-          # # Define default command
-          # ENTRYPOINT ["/cinderplugin"]
-          # EOF
-
           cat << EOF > Dockerfile
           # Based on centos
           FROM centos:7.4.1708
@@ -112,37 +98,45 @@
           EOF
           docker build -t docker.io/k8scloudprovider/cinder-csi-plugin:latest .
 
-          docker pull quay.io/k8scsi/driver-registrar:v0.2.0
-          docker pull quay.io/k8scsi/csi-attacher:v0.2.0
-          docker pull quay.io/k8scsi/csi-provisioner:v0.2.0
-          docker tag quay.io/k8scsi/driver-registrar:v0.2.0 docker.io/k8scsi/driver-registrar:latest
-          docker tag quay.io/k8scsi/csi-attacher:v0.2.0 docker.io/k8scsi/csi-attacher:latest
-          docker tag quay.io/k8scsi/csi-provisioner:v0.2.0 docker.io/k8scsi/csi-provisioner:latest
+          git clone https://github.com/kubernetes-csi/external-provisioner ${GOPATH}/src/github.com/kubernetes-csi/external-provisioner
+          make -C ${GOPATH}/src/github.com/kubernetes-csi/external-provisioner container
+          docker tag quay.io/k8scsi/csi-provisioner:canary docker.io/k8scsi/csi-provisioner:latest
 
-          # git clone https://github.com/kubernetes-csi/external-provisioner ${GOPATH}/src/github.com/kubernetes-csi/external-provisioner
-          # make -C ${GOPATH}/src/github.com/kubernetes-csi/external-provisioner container
-          # docker tag quay.io/k8scsi/csi-provisioner:canary docker.io/k8scsi/csi-provisioner:latest
-          # git clone https://github.com/kubernetes-csi/external-attacher ${GOPATH}/src/github.com/kubernetes-csi/external-attacher
-          # make -C ${GOPATH}/src/github.com/kubernetes-csi/external-attacher container
-          # docker tag quay.io/k8scsi/csi-attacher:canary docker.io/k8scsi/csi-attacher:latest
-          # git clone https://github.com/kubernetes-csi/driver-registrar ${GOPATH}/src/github.com/kubernetes-csi/driver-registrar
-          # make -C ${GOPATH}/src/github.com/kubernetes-csi/driver-registrar container
-          # docker tag quay.io/k8scsi/driver-registrar:canary docker.io/k8scsi/driver-registrar:latest
+          git clone https://github.com/kubernetes-csi/external-attacher ${GOPATH}/src/github.com/kubernetes-csi/external-attacher
+          make -C ${GOPATH}/src/github.com/kubernetes-csi/external-attacher container
+          docker tag quay.io/k8scsi/csi-attacher:canary docker.io/k8scsi/csi-attacher:latest
 
-          # docker pull xiangxinyong/cinderplugin:v0.2.0
-          # docker tag xiangxinyong/cinderplugin:v0.2.0 quay.io/k8scsi/cinderplugin:v0.2.0
-          # sed -i 's|docker.io/k8scsi/cinderplugin|quay.io/k8scsi/cinderplugin:v0.2.0|g' '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}'/manifests/cinder-csi-plugin/*
-          # sed -i 's|docker.io/k8scsi/csi-provisioner|quay.io/k8scsi/csi-provisioner:v0.2.0|g' '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}'/manifests/cinder-csi-plugin/*
-          # sed -i 's|docker.io/k8scsi/csi-attacher|quay.io/k8scsi/csi-attacher:v0.2.0|g' '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}'/manifests/cinder-csi-plugin/*
-          # sed -i 's|docker.io/k8scsi/driver-registrar|quay.io/k8scsi/driver-registrar:v0.2.0|g' '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}'/manifests/cinder-csi-plugin/*
+          git clone https://github.com/kubernetes-csi/driver-registrar ${GOPATH}/src/github.com/kubernetes-csi/driver-registrar
+          make -C ${GOPATH}/src/github.com/kubernetes-csi/driver-registrar container
+          docker tag quay.io/k8scsi/driver-registrar:canary docker.io/k8scsi/driver-registrar:latest
+
+          # Replace custom cloud config
           {
               cloud_cfg=$(base64 -w 0 ${CLOUD_CONFIG})
               sed "s/cloud.conf.*$/cloud.conf: $cloud_cfg/g" -i manifests/cinder-csi-plugin/csi-secret-cinderplugin.yaml
           } > /dev/null 2>&1
 
-          sleep 7200
+          # Enable services
           "$kubectl" create -f manifests/cinder-csi-plugin
+          # Make test
           "$kubectl" create -f examples/cinder-csi-plugin/nginx.yaml
+
+          # If test passed
+          if kubectl="$kubectl" timeout 100 bash -c '
+              while :
+              do
+                  [[ $("$kubectl" describe pod nginx | awk "/^Status:/ {print \$2}") == Running ]] && break
+                  sleep 1
+              done
+              '
+          then
+              echo 'Run test successful'
+          else
+              echo 'Run test failed'
+              "$kubectl" describe pod nginx
+              "$kubectl" describe pvc csi-pvc-cinderplugin
+              exit 1
+          fi
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env | combine(vexxhost_openrc) }}'

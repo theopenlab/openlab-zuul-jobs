@@ -21,15 +21,6 @@
           apt update -y
           apt install -y docker.io
 
-          # Custom Docker daemon options via drop-in file then restart
-          # mkdir /etc/systemd/system/docker.service.d
-          # cat << EOF > /etc/systemd/system/docker.service.d/local-up-cluster.conf
-          # [Service]
-          # Environment="DOCKER_OPTS=--iptables=false"
-          # EOF
-          # systemctl daemon-reload
-          # systemctl restart docker
-
           # Install etcd
           wget https://github.com/coreos/etcd/releases/download/v3.3.0/etcd-v3.3.0-linux-amd64.tar.gz
           tar -zxf etcd-v3.3.0-linux-amd64.tar.gz
