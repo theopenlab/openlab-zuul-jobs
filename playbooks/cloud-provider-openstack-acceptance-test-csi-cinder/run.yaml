@@ -118,6 +118,7 @@
 
           # Enable services
           "$kubectl" create -f manifests/cinder-csi-plugin
+          sleep 5
           # If services up
           if kubectl="$kubectl" timeout 10 bash -c '
               while :
