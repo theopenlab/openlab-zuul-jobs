@@ -6,18 +6,29 @@
           set -x
           set -e
 
+          # Stopping firewall and allow all traffic
+          iptables -F
+          iptables -X
+          iptables -t nat -F
+          iptables -t nat -X
+          iptables -t mangle -F
+          iptables -t mangle -X
+          iptables -P INPUT ACCEPT
+          iptables -P FORWARD ACCEPT
+          iptables -P OUTPUT ACCEPT
+
           # Install docker
           apt update -y
           apt install -y docker.io
 
           # Custom Docker daemon options via drop-in file then restart
-          mkdir /etc/systemd/system/docker.service.d
-          cat << EOF > /etc/systemd/system/docker.service.d/local-up-cluster.conf
-          [Service]
-          Environment="DOCKER_OPTS=--iptables=false"
-          EOF
-          systemctl daemon-reload
-          systemctl restart docker
+          # mkdir /etc/systemd/system/docker.service.d
+          # cat << EOF > /etc/systemd/system/docker.service.d/local-up-cluster.conf
+          # [Service]
+          # Environment="DOCKER_OPTS=--iptables=false"
+          # EOF
+          # systemctl daemon-reload
+          # systemctl restart docker
 
           # Install etcd
           wget https://github.com/coreos/etcd/releases/download/v3.3.0/etcd-v3.3.0-linux-amd64.tar.gz
@@ -32,17 +43,6 @@
           # Build k8s cmd
           git clone https://github.com/kubernetes/kubernetes ${GOPATH}/src/k8s.io/kubernetes
           make -C ${GOPATH}/src/k8s.io/kubernetes WHAT="cmd/kubectl cmd/hyperkube"
-
-          # Stopping firewall and allow all traffic
-          iptables -F
-          iptables -X
-          iptables -t nat -F
-          iptables -t nat -X
-          iptables -t mangle -F
-          iptables -t mangle -X
-          iptables -P INPUT ACCEPT
-          iptables -P FORWARD ACCEPT
-          iptables -P OUTPUT ACCEPT
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env }}'

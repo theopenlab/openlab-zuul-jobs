@@ -26,9 +26,10 @@
           region = $OS_REGION_NAME
 
           [BlockStorage]
-          bs-version = v2
           ignore-volume-az = yes
           EOF
+
+          # bs-version = v2
 
           export API_HOST_IP=$(ifconfig | awk '/^docker0/ {getline; print $2}' | awk -F ':' '{print $2}')
           export KUBELET_HOST="0.0.0.0"
