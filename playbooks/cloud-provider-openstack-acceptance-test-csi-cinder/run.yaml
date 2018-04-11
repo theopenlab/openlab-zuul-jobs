@@ -85,14 +85,27 @@
           echo "$INSTANCE_UUID" > /var/lib/cloud/data/instance-id
 
           # Build latest images from source
+          # cat << EOF > Dockerfile
+          # FROM alpine
+          # LABEL maintainers="Kubernetes Authors"
+          # LABEL description="Cinder CSI Plugin"
+          # # Copy cinderplugin from build directory
+          # COPY cinder-csi-plugin /cinderplugin
+          # # Install e2fsprogs for format
+          # RUN apk add --no-cache e2fsprogs
+          # # Define default command
+          # ENTRYPOINT ["/cinderplugin"]
+          # EOF
+
           cat << EOF > Dockerfile
-          FROM alpine
+          # Based on centos
+          FROM centos:7.4.1708
           LABEL maintainers="Kubernetes Authors"
           LABEL description="Cinder CSI Plugin"
           # Copy cinderplugin from build directory
           COPY cinder-csi-plugin /cinderplugin
-          # Install e2fsprogs for format
-          RUN apk add --no-cache e2fsprogs
+          # Install e4fsprogs for format
+          RUN yum -y install e4fsprogs
           # Define default command
           ENTRYPOINT ["/cinderplugin"]
           EOF
