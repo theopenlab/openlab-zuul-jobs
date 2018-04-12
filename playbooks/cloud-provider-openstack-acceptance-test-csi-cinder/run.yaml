@@ -116,6 +116,8 @@
               sed "s/cloud.conf.*$/cloud.conf: $cloud_cfg/g" -i manifests/cinder-csi-plugin/csi-secret-cinderplugin.yaml
           } > /dev/null 2>&1
 
+          sleep 7200
+
           # Enable services
           "$kubectl" create -f manifests/cinder-csi-plugin
           sleep 5
