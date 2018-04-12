@@ -10,5 +10,6 @@
           cluster/kubectl.sh config use-context local
           cluster/kubectl.sh delete -f '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/cinder-csi-plugin/nginx.yaml'
           cluster/kubectl.sh delete -f '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/manifests/cinder-csi-plugin'
+          cluster/kubectl.sh delete pvc --all
         executable: /bin/bash
       environment: '{{ golang_env }}'
