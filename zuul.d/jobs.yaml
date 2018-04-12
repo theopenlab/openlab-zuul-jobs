@@ -297,6 +297,16 @@
     post-run: playbooks/cloud-provider-openstack-acceptance-test-standalone-cinder/post.yaml
 
 - job:
+    name: cloud-provider-openstack-acceptance-test-csi-cinder
+    parent: cloud-provider-openstack-acceptance-test
+    description: |
+      Run cinder csi acceptance tests of cloud-provider-openstack
+    run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/run.yaml
+    post-run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/post.yaml
+    secrets:
+      - vexxhost_credentials
+
+- job:
     name: cloud-provider-openstack-acceptance-test-lb-octavia
     parent: cloud-provider-openstack-acceptance-test
     description: |
