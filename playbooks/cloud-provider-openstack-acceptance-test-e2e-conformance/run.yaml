@@ -1,0 +1,114 @@
+- name: Run Kubernetes E2E conformance tests with cloud-provider-openstack
+  hosts: all
+  roles:
+    - export-vexxhost-openrc
+  become: yes
+  tasks:
+    - shell:
+        cmd: |
+          set -x
+          set -e
+          set -o pipefail
+
+          # Create cloud-config
+          mkdir -p /etc/kubernetes/
+          cat << EOF >> /etc/kubernetes/cloud-config
+          [Global]
+          domain-name = $OS_USER_DOMAIN_NAME
+          tenant-id = $OS_PROJECT_ID
+          auth-url = $OS_AUTH_URL
+          password = $OS_PASSWORD
+          username = $OS_USERNAME
+          region = $OS_REGION_NAME
+
+          [BlockStorage]
+          bs-version = v2
+          ignore-volume-az = yes
+          EOF
+
+          # Go where we cloned kubernetes repository
+          cd $GOPATH/src/k8s.io/kubernetes/
+          export API_HOST_IP=$(ifconfig | awk '/^docker0/ {getline; print $2}' | awk -F ':' '{print $2}')
+          export KUBELET_HOST="0.0.0.0"
+          export ALLOW_SECURITY_CONTEXT=true
+          export ENABLE_CRI=false
+          export ENABLE_HOSTPATH_PROVISIONER=true
+          export ENABLE_SINGLE_CA_SIGNER=true
+          # Cluster DNS should be enabled in E2E conformance test
+          export KUBE_ENABLE_CLUSTER_DNS=true
+          export LOG_LEVEL=4
+          # We want to use the openstack cloud provider
+          export CLOUD_PROVIDER=openstack
+          # We want to run a separate cloud-controller-manager for openstack
+          export EXTERNAL_CLOUD_PROVIDER=true
+          # DO NOT change the location of the cloud-config file. It is important for the old cinder provider to work
+          export CLOUD_CONFIG=/etc/kubernetes/cloud-config
+          # Specify the OCCM binary
+          export EXTERNAL_CLOUD_PROVIDER_BINARY='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/openstack-cloud-controller-manager'
+
+          # location of where the kubernetes processes log their output
+          mkdir -p '{{ ansible_user_dir }}/workspace/logs/kubernetes'
+          export LOG_DIR='{{ ansible_user_dir }}/workspace/logs/kubernetes'
+          # We need this for one of the conformance tests
+          export ALLOW_PRIVILEGED=true
+          # Just kick off all the processes and drop down to the command line
+          export ENABLE_DAEMON=true
+          export MAX_TIME_FOR_URL_API_SERVER=5
+
+          # setup all the host name and ip address(es)
+          export HOSTNAME_OVERRIDE=$(curl http://169.254.169.254/openstack/latest/meta_data.json | python -c "import sys, json; print json.load(sys.stdin)['name']")
+          export API_HOST=$HOSTNAME_OVERRIDE
+          export EXTERNAL_HOSTNAME=$HOSTNAME_OVERRIDE
+          export API_HOST_IP=$(ip route get 1.1.1.1 | awk '{print $7}')
+          export KUBELET_FLAGS="--node-ip $API_HOST_IP"
+
+          # diagnostics - print /etc/hosts and resolv.conf
+          sudo cat /etc/hosts
+          sudo cat /etc/resolv.conf
+
+          # fixup /etc/hosts
+          sudo sed -i -e 's|$HOSTNAME_OVERRIDE||g' /etc/hosts
+          sudo echo "$API_HOST_IP $HOSTNAME_OVERRIDE" | sudo tee -a /etc/hosts
+          sudo cat /etc/hosts
+
+          # -E preserves the current env vars, but we need to special case PATH
+          sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
+
+          # set up the config we need for kubectl to work
+          cluster/kubectl.sh config set-cluster local --server=https://localhost:6443 --certificate-authority=/var/run/kubernetes/server-ca.crt
+          cluster/kubectl.sh config set-credentials myself --client-key=/var/run/kubernetes/client-admin.key --client-certificate=/var/run/kubernetes/client-admin.crt
+          cluster/kubectl.sh config set-context local --cluster=local --user=myself
+          cluster/kubectl.sh config use-context local
+
+          # Hack for RBAC for all for the new cloud-controller process, we need to do better than this
+          cluster/kubectl.sh create clusterrolebinding --user system:serviceaccount:kube-system:default kube-system-cluster-admin-1 --clusterrole cluster-admin
+          cluster/kubectl.sh create clusterrolebinding --user system:serviceaccount:kube-system:pvl-controller kube-system-cluster-admin-2 --clusterrole cluster-admin
+          cluster/kubectl.sh create clusterrolebinding --user system:serviceaccount:kube-system:cloud-node-controller kube-system-cluster-admin-3 --clusterrole cluster-admin
+          cluster/kubectl.sh create clusterrolebinding --user system:serviceaccount:kube-system:cloud-controller-manager kube-system-cluster-admin-4 --clusterrole cluster-admin
+          cluster/kubectl.sh create clusterrolebinding --user system:serviceaccount:kube-system:shared-informers kube-system-cluster-admin-5 --clusterrole cluster-admin
+          cluster/kubectl.sh create clusterrolebinding --user system:kube-controller-manager  kube-system-cluster-admin-6 --clusterrole cluster-admin
+
+          # Sleep to wait for creating serviceaccount default/default complete
+          sleep 5
+
+          # Set admin kubeconfig for running e2e tests
+          export KUBECONFIG=/var/run/kubernetes/admin.kubeconfig
+
+          # Build kubetest
+          go get -u k8s.io/test-infra/kubetest
+          # Build all binaries
+          export KUBE_FASTBUILD=true
+          export KUBERNETES_CONFORMANCE_TEST=y
+
+          # Run e2e test using local deployment/provider
+          kubetest --dump=$LOG_DIR \
+              --test \
+              --build=quick \
+              --deployment=local \
+              --provider=local \
+              --ginkgo-parallel=1 \
+              --test_args="--ginkgo.focus=\\[Conformance\\]" \
+              --timeout=120m | tee $LOG_DIR/e2e.log
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ golang_env | combine(vexxhost_openrc) }}'

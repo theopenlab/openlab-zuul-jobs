@@ -1,39 +1,19 @@
-- hosts: all
+- name: build cloud-provider-openstack binary
+  hosts: all
   become: yes
+  roles:
+    - install-k8s
   tasks:
     - shell:
         cmd: |
           set -x
           set -e
 
-          # Stopping firewall and allow all traffic
-          iptables -F
-          iptables -X
-          iptables -t nat -F
-          iptables -t nat -X
-          iptables -t mangle -F
-          iptables -t mangle -X
-          iptables -P INPUT ACCEPT
-          iptables -P FORWARD ACCEPT
-          iptables -P OUTPUT ACCEPT
-
-          # Install docker
-          apt update -y
-          apt install -y docker.io
-
-          # Install etcd
-          wget https://github.com/coreos/etcd/releases/download/v3.3.0/etcd-v3.3.0-linux-amd64.tar.gz
-          tar -zxf etcd-v3.3.0-linux-amd64.tar.gz
-          cp etcd-v3.3.0-linux-amd64/etcd{,ctl} /usr/local/bin/
-
           # Install dependencies
           go get -u github.com/Masterminds/glide
 
-          # Build binaries
+          # Build cloud-provider-openstack binaries
           make build
-          # Build k8s cmd
-          git clone https://github.com/kubernetes/kubernetes ${GOPATH}/src/k8s.io/kubernetes
-          make -C ${GOPATH}/src/k8s.io/kubernetes WHAT="cmd/kubectl cmd/hyperkube"
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env }}'
