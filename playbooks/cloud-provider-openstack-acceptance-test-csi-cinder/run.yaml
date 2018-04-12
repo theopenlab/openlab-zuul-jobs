@@ -148,8 +148,10 @@
               '
           then
               echo 'Run test successful'
+              "$kubectl" get pod
           else
               echo 'Run test failed'
+              "$kubectl" get pod
               "$kubectl" describe pod nginx
               "$kubectl" describe pvc csi-pvc-cinderplugin
               exit 1
