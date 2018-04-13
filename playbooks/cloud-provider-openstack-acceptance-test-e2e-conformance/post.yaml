@@ -6,9 +6,23 @@
         cmd: |
           set -e
           set -x
+          # install gsutil, upload_e2e.py depends on it
+          export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)"
+          echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+          curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add
+          apt-get update && sudo apt-get install google-cloud-sdk --yes
+          apt-get install google-cloud-sdk-app-engine-java --yes
           export LOG_DIR='{{ ansible_user_dir }}/workspace/logs/kubernetes'
-          # TODO: Can not find upload_e2e.py in Github kubernetes org
-          # Refer to https://github.com/kubernetes/test-infra/tree/master/testgrid/conformance#using
-          # upload_e2e.py --junit=$LOG_DIR/junit_01.xml --log=$LOG_DIR/e2e.log --bucket=gs://your-bucket
+          # get upload_e2e.py
+          wget https://raw.githubusercontent.com/kubernetes/test-infra/master/testgrid/conformance/upload_e2e.py
+          # TODO(RuiChen): Add timestamp for e2e.log in order to workaround upload_e2e.py bug
+          date  +"%b %e %H:%M:%S.999: DONE" >> $LOG_DIR/e2e.log
+          PIPELINE_LOGS_DIR='periodic-logs'
+          if [ '{{ zuul.pipeline }}' != 'periodic' ]; then
+              PIPELINE_LOGS_DIR='pr-logs'
+          fi
+          # upload e2e log to google storage
+          python upload_e2e.py --junit=$LOG_DIR/junit_01.xml --log=$LOG_DIR/e2e.log \
+              --bucket=gs://kubernetes-openstack/$PIPELINE_LOGS_DIR/ci-'{{ zuul.job }}'
         executable: /bin/bash
       environment: '{{ golang_env }}'

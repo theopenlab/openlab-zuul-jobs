@@ -107,7 +107,7 @@
               --deployment=local \
               --provider=local \
               --ginkgo-parallel=1 \
-              --test_args="--ginkgo.focus=\\[Conformance\\]" \
+              --test_args="--ginkgo.focus=\\[Conformance\\] --ginkgo.noColor=true" \
               --timeout=120m | tee $LOG_DIR/e2e.log
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
