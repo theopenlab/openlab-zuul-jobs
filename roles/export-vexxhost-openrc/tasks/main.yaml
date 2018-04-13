@@ -14,3 +14,7 @@
       OS_PASSWORD: '{{ vexxhost_credentials.password }}'
       OS_REGION_NAME: '{{ vexxhost_credentials.region_name }}'
       OS_DOMAIN_NAME: '{{ vexxhost_credentials.user_domain_name }}'
+
+- name: Merge vexxhost openrc into golang env
+  set_fact:
+    golang_env: '{{ golang_env | combine(vexxhost_openrc) }}'

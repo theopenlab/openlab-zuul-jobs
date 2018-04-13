@@ -1,18 +1,15 @@
-- name: build cloud-provider-openstack binary
-  hosts: all
+- hosts: all
   become: yes
   roles:
     - install-k8s
   tasks:
-    - shell:
+    - name: Build cloud-provider-openstack binaries
+      shell:
         cmd: |
           set -x
           set -e
 
-          # Install dependencies
           go get -u github.com/Masterminds/glide
-
-          # Build cloud-provider-openstack binaries
           make build
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'

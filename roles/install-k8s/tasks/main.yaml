@@ -28,5 +28,13 @@
       git clone https://github.com/kubernetes/kubernetes ${GOPATH}/src/k8s.io/kubernetes -b '{{ k8s_version }}'
       make -C ${GOPATH}/src/k8s.io/kubernetes WHAT="cmd/kubectl cmd/hyperkube"
     executable: /bin/bash
-    chdir: '{{ zuul.project.src_dir }}'
   environment: '{{ golang_env }}'
+
+- name: Set fact for kubectl
+  set_fact:
+    kubectl:
+      kubectl: '{{ golang_env.GOPATH }}/src/k8s.io/kubernetes/cluster/kubectl.sh'
+
+- name: Merge kubectl into golang env
+  set_fact:
+    golang_env: '{{ golang_env | combine(kubectl) }}'
