@@ -16,9 +16,6 @@
       export PROJECTS="openstack/designate $PROJECTS"
       export PROJECTS="openstack/python-manilaclient openstack/manila-tempest-plugin $PROJECTS"
       export PROJECTS="openstack/barbican openstack/python-barbicanclient $PROJECTS"
-      export PROJECTS="openstack/devstack-plugin-container $PROJECTS"
-      export PROJECTS="openstack/kuryr-libnetwork $PROJECTS"
-      export PROJECTS="openstack/zun $PROJECTS"
 
       cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
       ./safe-devstack-vm-gate-wrap.sh
