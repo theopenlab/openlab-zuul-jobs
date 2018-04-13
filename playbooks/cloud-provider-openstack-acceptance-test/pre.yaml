@@ -6,6 +6,8 @@
     - name: Build cloud-provider-openstack binaries
       shell:
         cmd: |
+          echo '{{ golang_env }}'
+          exit 1
           set -x
           set -e
 
