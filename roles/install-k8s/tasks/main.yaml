@@ -4,28 +4,6 @@
       set -x
       set -e
 
-      # Install docker
-      apt update -y
-      apt install -y docker.io
-
-      # Custom Docker daemon options via drop-in file then restart
-      mkdir /etc/systemd/system/docker.service.d
-      cat << EOF > /etc/systemd/system/docker.service.d/local-up-cluster.conf
-      [Service]
-      Environment="DOCKER_OPTS=--iptables=false"
-      EOF
-      systemctl daemon-reload
-      systemctl restart docker
-
-      # Install etcd
-      wget https://github.com/coreos/etcd/releases/download/{{ etcd_version }}/etcd-{{ etcd_version }}-linux-amd64.tar.gz
-      tar -zxf etcd-{{ etcd_version }}-linux-amd64.tar.gz
-      cp etcd-{{ etcd_version }}-linux-amd64/etcd{,ctl} /usr/local/bin/
-
-      # Build k8s cmd
-      git clone https://github.com/kubernetes/kubernetes ${GOPATH}/src/k8s.io/kubernetes -b '{{ k8s_version }}'
-      make -C ${GOPATH}/src/k8s.io/kubernetes WHAT="cmd/kubectl cmd/hyperkube"
-
       # Stopping firewall and allow all traffic
       iptables -F
       iptables -X
@@ -37,6 +15,18 @@
       iptables -P FORWARD ACCEPT
       iptables -P OUTPUT ACCEPT
 
+      # Install docker
+      apt update -y
+      apt install -y docker.io
+
+      # Install etcd
+      wget https://github.com/coreos/etcd/releases/download/{{ etcd_version }}/etcd-{{ etcd_version }}-linux-amd64.tar.gz
+      tar -zxf etcd-{{ etcd_version }}-linux-amd64.tar.gz
+      cp etcd-{{ etcd_version }}-linux-amd64/etcd{,ctl} /usr/local/bin/
+
+      # Build k8s cmd
+      git clone https://github.com/kubernetes/kubernetes ${GOPATH}/src/k8s.io/kubernetes -b '{{ k8s_version }}'
+      make -C ${GOPATH}/src/k8s.io/kubernetes WHAT="cmd/kubectl cmd/hyperkube"
     executable: /bin/bash
     chdir: '{{ zuul.project.src_dir }}'
   environment: '{{ golang_env }}'
