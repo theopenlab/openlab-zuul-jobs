@@ -8,11 +8,9 @@
         cmd: |
           set -x
           set -e
-          echo '{{ golang_env }}'
-          echo $kubectl
 
-          # go get -u github.com/Masterminds/glide
-          # make build
+          go get -u github.com/Masterminds/glide
+          make build
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env }}'
