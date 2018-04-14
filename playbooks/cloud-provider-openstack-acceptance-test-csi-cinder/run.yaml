@@ -1,6 +1,7 @@
 - hosts: all
   become: yes
   roles:
+    - export-kubectl-env
     - export-vexxhost-openrc
   tasks:
     - name: Set up Kubernetes local cluster
