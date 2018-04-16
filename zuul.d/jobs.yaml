@@ -254,6 +254,7 @@
     parent: cloud-provider-openstack-acceptance-test
     description: |
       Run keystone auth acceptance tests of cloud-provider-openstack
+    pre-run: playbooks/cloud-provider-openstack-acceptance-test-keystone-authentication-authorization/pre.yaml
     run: playbooks/cloud-provider-openstack-acceptance-test-keystone-authentication-authorization/run.yaml
     secrets:
       - vexxhost_credentials
