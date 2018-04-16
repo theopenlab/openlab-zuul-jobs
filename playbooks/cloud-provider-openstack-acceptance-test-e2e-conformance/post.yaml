@@ -15,12 +15,14 @@
           export LOG_DIR='{{ ansible_user_dir }}/workspace/logs/kubernetes'
           # get upload_e2e.py
           wget https://raw.githubusercontent.com/kubernetes/test-infra/master/testgrid/conformance/upload_e2e.py
+          # TODO(RuiChen): Add timestamp for e2e.log in order to workaround upload_e2e.py bug
+          date  +"%b %e %H:%M:%S.999: DONE" >> $LOG_DIR/e2e.log
           PIPELINE_LOGS_DIR='periodic-logs'
           if [ '{{ zuul.pipeline }}' != 'periodic' ]; then
               PIPELINE_LOGS_DIR='pr-logs'
           fi
           # upload e2e log to google storage
           python upload_e2e.py --junit=$LOG_DIR/junit_01.xml --log=$LOG_DIR/e2e.log \
-              --bucket=gs://kubernetes-openstack/$PIPELINE_LOGS_DIR/'{{ zuul.job }}'
+              --bucket=gs://kubernetes-openstack/$PIPELINE_LOGS_DIR/ci-'{{ zuul.job }}'
         executable: /bin/bash
       environment: '{{ golang_env }}'
