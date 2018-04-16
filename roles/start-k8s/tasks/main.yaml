@@ -41,6 +41,10 @@
 - name: Start k8s plugin
   shell:
     cmd: |
+      set -x
+      set -e
+      set -o pipefail
+
       case '{{ zuul.job }}' in
           cloud-provider-openstack-acceptance-test-csi-cinder)
               ;;
@@ -50,6 +54,21 @@
                   --kubeconfig /var/run/kubernetes/admin.kubeconfig \
                   --id cinder \
                   > '{{ ansible_user_dir }}/workspace/logs/kubernetes/cinder-provisioner.log' 2>&1 &
+              ;;
+          cloud-provider-openstack-acceptance-test-keystone-authentication-authorization)
+              mkdir -p /etc/kubernetes/
+              cp ./examples/webhook/policy.json /etc/kubernetes/
+              sed -i "s/c1f7910086964990847dc6c8b128f63c/$OS_PROJECT_ID/g" /etc/kubernetes/policy.json
+              sed -i -e "s/k8s-admin/creator/g" /etc/kubernetes/policy.json
+              LOG_DIR='{{ ansible_user_dir }}/workspace/logs/kubernetes'
+              nohup ./k8s-keystone-auth \
+                    --tls-cert-file /var/run/kubernetes/serving-kube-apiserver.crt \
+                    --tls-private-key-file /var/run/kubernetes/serving-kube-apiserver.key \
+                    --keystone-policy-file /etc/kubernetes/policy.json \
+                    --log-dir="$LOG_DIR" \
+                    --v=10 \
+                    --keystone-url "$OS_AUTH_URL" \
+                    > "$LOG_DIR/keystone-auth.log" 2>&1 &
               ;;
           *)
               echo 'There is no plugin of this job "{{ zuul.job }}", exit 1'

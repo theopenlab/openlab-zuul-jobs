@@ -235,9 +235,9 @@
     description: |
       Run unit test of cloud-provider-openstack repo against vexxhost cloud
     run: playbooks/cloud-provider-openstack-unittest/run.yaml
+    nodeset: ubuntu-xenial-vexxhost
     secrets:
       - vexxhost_credentials
-    nodeset: ubuntu-xenial-vexxhost
 
 - job:
     name: cloud-provider-openstack-acceptance-test
@@ -275,6 +275,8 @@
       Run cinder in-tree acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-k8s-cinder/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-k8s-cinder/post.yaml
+    secrets:
+      - vexxhost_credentials
 
 - job:
     name: cloud-provider-openstack-acceptance-test-standalone-cinder
@@ -291,6 +293,8 @@
       Run cinder csi acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/post.yaml
+    secrets:
+      - vexxhost_credentials
 
 - job:
     name: cloud-provider-openstack-acceptance-test-e2e-conformance

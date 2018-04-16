@@ -1,0 +1,34 @@
+- hosts: all
+  become: yes
+  role:
+  tasks:
+    - name: Configuration before starting k8s services
+      shell:
+        cmd: |
+          # Create webhook.kubeconfig
+          mkdir -p /etc/kubernetes/
+          cat << EOF > /etc/kubernetes/webhook.kubeconfig
+          apiVersion: v1
+          clusters:
+          - cluster:
+              insecure-skip-tls-verify: true
+              server: https://localhost:8443/webhook
+            name: webhook
+          contexts:
+          - context:
+              cluster: webhook
+              user: webhook
+            name: webhook
+          current-context: webhook
+          kind: Config
+          preferences: {}
+          users:
+          - name: webhook
+          EOF
+
+          STARTUP_SCRIPT="$GOPATH/src/k8s.io/kubernetes/hack/local-up-cluster.sh"
+          sed -i -e "/kube::util::wait_for_url.*$/,+1d" "$STARTUP_SCRIPT"
+          sed -i -e '/hyperkube\" apiserver.*$/a \      --authentication-token-webhook-config-file=/etc/kubernetes/webhook.kubeconfig \\' "$STARTUP_SCRIPT"
+          sed -i -e '/hyperkube\" apiserver.*$/a \      --authorization-webhook-config-file=/etc/kubernetes/webhook.kubeconfig \\' "$STARTUP_SCRIPT"
+        executable: /bin/bash
+      environment: '{{ golang_env }}'

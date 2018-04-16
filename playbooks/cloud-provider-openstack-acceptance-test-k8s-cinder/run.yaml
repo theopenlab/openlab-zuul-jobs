@@ -2,6 +2,7 @@
   become: yes
   roles:
     - export-kubectl-env
+    - export-vexxhost-openrc
     - start-k8s
   tasks:
     - name: Start testing

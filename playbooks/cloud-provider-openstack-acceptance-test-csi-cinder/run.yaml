@@ -2,6 +2,7 @@
   become: yes
   roles:
     - export-kubectl-env
+    - export-vexxhost-openrc
     - role: start-k8s
       environment:
         FEATURE_GATES: 'CSIPersistentVolume=true,MountPropagation=true'
