@@ -3,7 +3,6 @@
   roles:
     - export-kubectl-env
     - start-k8s
-    - start-k8s-plugin
   tasks:
     - name: Start testing
       shell:

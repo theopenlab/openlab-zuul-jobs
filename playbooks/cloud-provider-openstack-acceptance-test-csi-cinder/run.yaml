@@ -6,7 +6,6 @@
       environment:
         FEATURE_GATES: 'CSIPersistentVolume=true,MountPropagation=true'
         RUNTIME_CONFIG: 'storage.k8s.io/v1alpha1=true'
-    - start-k8s-plugin
   tasks:
     - name: Start testing
       shell:

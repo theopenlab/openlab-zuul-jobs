@@ -9,7 +9,6 @@
         cmd: |
           set -x
           set -e
-
           go get -u github.com/Masterminds/glide
           make build
         executable: /bin/bash
