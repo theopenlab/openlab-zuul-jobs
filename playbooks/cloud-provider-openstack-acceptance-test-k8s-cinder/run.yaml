@@ -2,8 +2,8 @@
   become: yes
   roles:
     - export-kubectl-env
-    - export-vexxhost-openrc
-    - start-k8s-services
+    - start-k8s
+    - start-k8s-plugin
   tasks:
     - name: Start testing
       shell:
@@ -11,12 +11,6 @@
           set -x
           set -e
           set -o pipefail
-
-          nohup ./cinder-provisioner \
-              --cloud-config /etc/kubernetes/cloud-config \
-              --kubeconfig /var/run/kubernetes/admin.kubeconfig \
-              --id cinder \
-              > '{{ ansible_user_dir }}/workspace/logs/kubernetes/cinder-provisioner.log' 2>&1 &
 
           # Sleep to wait for creating serviceaccount default/default complete
           sleep 5

@@ -2,8 +2,9 @@
   become: yes
   roles:
     - install-k8s
+    - export-vexxhost-openrc
   tasks:
-    - name: Build cloud-provider-openstack binaries
+    - name: Install cloud-provider-openstack
       shell:
         cmd: |
           set -x
@@ -13,4 +14,22 @@
           make build
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ golang_env }}'
+    - name: Generate cloud config
+      shell:
+        cmd: |
+          mkdir -p /etc/kubernetes/
+          cat << EOF > /etc/kubernetes/cloud-config
+          [Global]
+          domain-name = $OS_USER_DOMAIN_NAME
+          tenant-id = $OS_PROJECT_ID
+          auth-url = $OS_AUTH_URL
+          password = $OS_PASSWORD
+          username = $OS_USERNAME
+          region = $OS_REGION_NAME
+          [BlockStorage]
+          bs-version = v2
+          ignore-volume-az = yes
+          EOF
+        executable: /bin/bash
       environment: '{{ golang_env }}'
