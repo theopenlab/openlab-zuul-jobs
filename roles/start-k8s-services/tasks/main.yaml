@@ -47,10 +47,6 @@
       export HOSTNAME_OVERRIDE=$(curl http://169.254.169.254/openstack/latest/meta_data.json | python -c "import sys, json; print json.load(sys.stdin)['name']")
       export MAX_TIME_FOR_URL_API_SERVER=5
 
-      # Requirements to deploy the csi cinder driver
-      export FEATURE_GATES="CSIPersistentVolume=true,MountPropagation=true"
-      export RUNTIME_CONFIG="storage.k8s.io/v1alpha1=true"
-
       # -E preserves the current env vars, but we need to special case PATH
       sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS "$GOPATH/src/k8s.io/kubernetes/hack/local-up-cluster.sh" -O
 

@@ -1,13 +1,15 @@
 - hosts: all
   become: yes
+  roles:
+    - export-kubectl-env
   tasks:
     - name: Clean up resources
       shell:
         cmd: |
           set -e
           set -x
-          cd ${GOPATH}/src/k8s.io/kubernetes
-          cluster/kubectl.sh config use-context local
-          cluster/kubectl.sh delete -f '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/persistent-volume-provisioning/cinder/cinder-in-tree-full.yaml'
+          "$kubectl" config use-context local
+          "$kubectl" delete -f examples/persistent-volume-provisioning/cinder/cinder-in-tree-full.yaml
         executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env }}'

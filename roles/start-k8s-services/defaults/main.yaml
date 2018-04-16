@@ -1,3 +1,1 @@
 ---
-k8s_version: 'master'
-etcd_version: 'v3.3.0'

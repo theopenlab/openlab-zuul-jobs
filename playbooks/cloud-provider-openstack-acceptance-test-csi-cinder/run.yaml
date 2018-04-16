@@ -3,7 +3,10 @@
   roles:
     - export-kubectl-env
     - export-vexxhost-openrc
-    - start-k8s-services
+    - role: start-k8s-services
+      environment:
+        FEATURE_GATES: 'CSIPersistentVolume=true,MountPropagation=true'
+        RUNTIME_CONFIG: 'storage.k8s.io/v1alpha1=true'
   tasks:
     - name: Start testing
       shell:
@@ -53,7 +56,7 @@
           "$kubectl" create -f manifests/cinder-csi-plugin
           sleep 5
           # If services up
-          if kubectl="$kubectl" timeout 10 bash -c '
+          if timeout 10 bash -c '
               while :
               do
                   "$kubectl" get pod | sed "1d" | awk '\''$2 != "2/2" || $3 != "Running" {err = 1} END {exit err}'\'' && break
@@ -66,13 +69,14 @@
           else
               echo 'Run services failed'
               "$kubectl" get pod
+              "$kubectl" describe pod
               exit 1
           fi
 
           # Make test
           "$kubectl" create -f examples/cinder-csi-plugin/nginx.yaml
           # If test passed
-          if kubectl="$kubectl" timeout 100 bash -c '
+          if timeout 100 bash -c '
               while :
               do
                   [[ $("$kubectl" describe pod nginx | awk "/^Status:/ {print \$2}") == Running ]] && break
@@ -85,8 +89,8 @@
           else
               echo 'Run test failed'
               "$kubectl" get pod
-              "$kubectl" describe pod nginx
-              "$kubectl" describe pvc csi-pvc-cinderplugin
+              "$kubectl" describe pod
+              "$kubectl" describe pvc
               exit 1
           fi
         executable: /bin/bash
