@@ -1,6 +1,5 @@
 - hosts: all
   become: yes
-  role:
   tasks:
     - name: Configuration before starting k8s services
       shell:
