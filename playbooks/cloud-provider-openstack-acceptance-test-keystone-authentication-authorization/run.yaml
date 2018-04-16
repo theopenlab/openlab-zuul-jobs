@@ -6,6 +6,7 @@
       shell:
         cmd: |
           # Create webhook.kubeconfig
+          mkdir -p /etc/kubernetes/
           cat << EOF >> /etc/kubernetes/webhook.kubeconfig
           apiVersion: v1
           clusters:
