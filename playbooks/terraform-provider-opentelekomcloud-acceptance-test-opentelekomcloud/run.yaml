@@ -1,23 +1,12 @@
 - hosts: all
   become: yes
+  roles:
+    - export-opentelekomcloud-openrc
   tasks:
     - shell:
         cmd: |
           apt-get install python-pip -y
           pip install -U python-openstackclient
-          # NOTE: the following commands may include sensitive information please do not print in job logs
-          export OS_PASSWORD="`echo {{ opentelekomcloud_credentials.password }}`"
-          export OS_AUTH_TYPE="`echo {{ opentelekomcloud_credentials.auth_type }}`"
-          export OS_AUTH_URL="`echo {{ opentelekomcloud_credentials.auth_url }}`"
-          export OS_IDENTITY_API_VERSION="`echo {{ opentelekomcloud_credentials.identity_api_version }}`"
-          export OS_DOMAIN_NAME="`echo {{ opentelekomcloud_credentials.domain_name }}`"
-          export OS_PROJECT_NAME="`echo {{ opentelekomcloud_credentials.project_name}}`"
-          export OS_REGION_NAME="`echo {{ opentelekomcloud_credentials.region_name}}`"
-          export OS_TENANT_NAME="`echo {{ opentelekomcloud_credentials.project_name }}`"
-          export OS_USERNAME="`echo {{ opentelekomcloud_credentials.user_name }}`"
-          export OS_ACCESS_KEY="`echo {{ opentelekomcloud_credentials.access_key }}`"
-          export OS_SECRET_KEY="`echo {{ opentelekomcloud_credentials.secret_key }}`"
-          export OS_AVAILABILITY_ZONE="`echo {{ opentelekomcloud_credentials.availability_zone }}`"
 
           set -o pipefail
           set -x
@@ -49,4 +38,4 @@
 
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
-      environment: '{{ golang_env }}'
+      environment: '{{ golang_env | combine(opentelekomcloud_openrc) }}'

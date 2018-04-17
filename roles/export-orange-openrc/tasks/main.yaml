@@ -1,0 +1,16 @@
+- name: Set fact for orange openrc
+  set_fact:
+    orange_openrc:
+      OS_PASSWORD: '{{ orange_credentials.password }}'
+      OS_AUTH_TYPE: '{{ orange_credentials.auth_type }}'
+      OS_AUTH_URL: '{{ orange_credentials.auth_url }}'
+      OS_IDENTITY_API_VERSION: '{{ orange_credentials.identity_api_version }}'
+      OS_DOMAIN_NAME: '{{ orange_credentials.domain_name }}'
+      OS_PROJECT_NAME: '{{ orange_credentials.project_name}}'
+      OS_REGION_NAME: '{{ orange_credentials.region_name}}'
+      OS_TENANT_NAME: '{{ orange_credentials.project_name }}'
+      OS_USERNAME: '{{ orange_credentials.user_name }}'
+      OS_ACCESS_KEY: '{{ orange_credentials.access_key }}'
+      OS_SECRET_KEY: '{{ orange_credentials.secret_key }}'
+      OS_AVAILABILITY_ZONE: '{{ orange_credentials.availability_zone }}'
+  no_log: yes

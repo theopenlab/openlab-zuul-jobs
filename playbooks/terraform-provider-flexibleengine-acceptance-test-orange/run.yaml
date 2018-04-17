@@ -1,23 +1,12 @@
 - hosts: all
   become: yes
+  roles:
+    - export-orange-openrc
   tasks:
     - shell:
         cmd: |
           apt-get install python-pip -y
           pip install -U python-openstackclient
-          # NOTE: the following commands may include sensitive information please do not print in job logs
-          export OS_PASSWORD="`echo {{ orange_credentials.password }}`"
-          export OS_AUTH_TYPE="`echo {{ orange_credentials.auth_type }}`"
-          export OS_AUTH_URL="`echo {{ orange_credentials.auth_url }}`"
-          export OS_IDENTITY_API_VERSION="`echo {{ orange_credentials.identity_api_version }}`"
-          export OS_DOMAIN_NAME="`echo {{ orange_credentials.domain_name }}`"
-          export OS_PROJECT_NAME="`echo {{ orange_credentials.project_name}}`"
-          export OS_REGION_NAME="`echo {{ orange_credentials.region_name}}`"
-          export OS_TENANT_NAME="`echo {{ orange_credentials.project_name }}`"
-          export OS_USERNAME="`echo {{ orange_credentials.user_name }}`"
-          export OS_ACCESS_KEY="`echo {{ orange_credentials.access_key }}`"
-          export OS_SECRET_KEY="`echo {{ orange_credentials.secret_key }}`"
-          export OS_AVAILABILITY_ZONE="`echo {{ orange_credentials.availability_zone }}`"
 
           export OS_SHARE_NETWORK_ID="foobar"
           export OS_FLAVOR_ID_RESIZE="t2.small"
@@ -61,4 +50,4 @@
           make testacc 2>&1 | tee $TEST_RESULTS_TXT
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
-      environment: '{{ golang_env }}'
+      environment: '{{ golang_env | combine(orange_openrc) }}'

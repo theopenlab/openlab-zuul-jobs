@@ -83,14 +83,6 @@
       os_branch: 'stable/mitaka'
     nodeset: ubuntu-trusty
 
-# Gophercloud acceptance tests with Telefonica cloud
-- job:
-    name: gophercloud-acceptance-test-telefonica
-    parent: golang-test
-    description: |
-      Run gophercloud acceptance test against telefonica cloud
-    run: playbooks/gophercloud-acceptance-test-telefonica/run.yaml
-
 # Terraform-provider-openstack jobs
 - job:
     name: terraform-provider-openstack-unittest
