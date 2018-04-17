@@ -2,7 +2,9 @@
   set_fact:
     kubectl:
       kubectl: '{{ golang_env.GOPATH }}/src/k8s.io/kubernetes/cluster/kubectl.sh'
+  no_log: yes
 
 - name: Merge kubectl into golang env
   set_fact:
     golang_env: '{{ golang_env | combine(kubectl) }}'
+  no_log: yes
