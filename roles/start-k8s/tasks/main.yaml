@@ -44,10 +44,9 @@
                   --cloud-config /etc/kubernetes/cloud-config \
                   --kubeconfig /var/run/kubernetes/admin.kubeconfig \
                   --id cinder \
-                  > '{{ ansible_user_dir }}/workspace/logs/kubernetes/cinder-provisioner.log' 2>&1 &
+                  > "$LOG_DIR/cinder-provisioner.log" 2>&1 &
               ;;
           cloud-provider-openstack-acceptance-test-keystone-authentication-authorization)
-              LOG_DIR='{{ ansible_user_dir }}/workspace/logs/kubernetes'
               nohup ./k8s-keystone-auth \
                     --tls-cert-file /var/run/kubernetes/serving-kube-apiserver.crt \
                     --tls-private-key-file /var/run/kubernetes/serving-kube-apiserver.key \
