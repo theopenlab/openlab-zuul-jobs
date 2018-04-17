@@ -1,10 +1,11 @@
 - hosts: all
   become: yes
+  roles:
+    - export-vexxhost-openrc
   tasks:
     - name: Configuration before starting k8s services
       shell:
         cmd: |
-          # Create webhook.kubeconfig
           mkdir -p /etc/kubernetes/
           cat << EOF > /etc/kubernetes/webhook.kubeconfig
           apiVersion: v1
@@ -25,9 +26,14 @@
           - name: webhook
           EOF
 
+          cp ./examples/webhook/policy.json /etc/kubernetes/
+          sed -i "s/c1f7910086964990847dc6c8b128f63c/$OS_PROJECT_ID/g" /etc/kubernetes/policy.json
+          sed -i -e "s/k8s-admin/creator/g" /etc/kubernetes/policy.json
+
           STARTUP_SCRIPT="$GOPATH/src/k8s.io/kubernetes/hack/local-up-cluster.sh"
           sed -i -e "/kube::util::wait_for_url.*$/,+1d" "$STARTUP_SCRIPT"
           sed -i -e '/hyperkube\" apiserver.*$/a \      --authentication-token-webhook-config-file=/etc/kubernetes/webhook.kubeconfig \\' "$STARTUP_SCRIPT"
           sed -i -e '/hyperkube\" apiserver.*$/a \      --authorization-webhook-config-file=/etc/kubernetes/webhook.kubeconfig \\' "$STARTUP_SCRIPT"
         executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env }}'
