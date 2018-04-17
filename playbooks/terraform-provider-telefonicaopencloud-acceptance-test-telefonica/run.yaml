@@ -1,20 +1,12 @@
 - hosts: all
   become: yes
+  roles:
+    - export-telefonica-openrc
   tasks:
     - shell:
         cmd: |
           apt-get install python-pip -y
           pip install -U python-openstackclient
-          # NOTE: the following commands may include sensitive information please do not print in job logs
-          export OS_PASSWORD="`echo {{ telefonica_credentials.password }}`"
-          export OS_AUTH_TYPE="`echo {{ telefonica_credentials.auth_type }}`"
-          export OS_AUTH_URL="`echo {{ telefonica_credentials.auth_url }}`"
-          export OS_IDENTITY_API_VERSION="`echo {{ telefonica_credentials.identity_api_version }}`"
-          export OS_DOMAIN_NAME="`echo {{ telefonica_credentials.domain_name }}`"
-          export OS_PROJECT_NAME="`echo {{ telefonica_credentials.project_name}}`"
-          export OS_REGION_NAME="`echo {{ telefonica_credentials.region_name}}`"
-          export OS_TENANT_NAME="`echo {{ telefonica_credentials.project_name }}`"
-          export OS_USERNAME="`echo {{ telefonica_credentials.user_name }}`"
 
           export OS_SHARE_NETWORK_ID="foobar"
           export OS_FLAVOR_ID_RESIZE='c2.medium'
@@ -59,4 +51,4 @@
 
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
-      environment: '{{ golang_env }}'
+      environment: '{{ golang_env | combine(telefonica_openrc) }}'
