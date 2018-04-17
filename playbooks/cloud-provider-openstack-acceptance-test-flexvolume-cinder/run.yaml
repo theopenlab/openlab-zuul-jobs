@@ -57,8 +57,8 @@
           export MAX_TIME_FOR_URL_API_SERVER=5
           export RUNTIME_CONFIG="settings.k8s.io/v1alpha1=true"
 
-          mkdir -p /usr/libexec/kubernetes/kubelet-plugins/volume/exec/cinder.io~cinder/
-          cp cinder-flex-volume-driver /usr/libexec/kubernetes/kubelet-plugins/volume/exec/cinder.io~cinder/cinder
+          mkdir -p /usr/libexec/kubernetes/kubelet-plugins/volume/exec/cinder.io~cinder-flex-volume-driver/
+          cp cinder-flex-volume-driver /usr/libexec/kubernetes/kubelet-plugins/volume/exec/cinder.io~cinder-flex-volume-driver/
 
           k8s_root="$GOPATH/src/k8s.io/kubernetes"
           kubectl="$k8s_root/cluster/kubectl.sh"
@@ -80,47 +80,6 @@
           "$kubectl" create clusterrolebinding --user system:kube-controller-manager  kube-system-cluster-admin-6 --clusterrole cluster-admin
 
           sleep 7200
-
-          # Enable services
-          "$kubectl" create -f manifests/cinder-csi-plugin
-          sleep 5
-          # If services up
-          if kubectl="$kubectl" timeout 10 bash -c '
-              while :
-              do
-                  "$kubectl" get pod | sed "1d" | awk '\''$2 != "2/2" || $3 != "Running" {err = 1} END {exit err}'\'' && break
-                  sleep 1
-              done
-              '
-          then
-              echo 'Run services successful'
-              "$kubectl" get pod
-          else
-              echo 'Run services failed'
-              "$kubectl" get pod
-              exit 1
-          fi
-
-          # Make test
-          "$kubectl" create -f examples/cinder-csi-plugin/nginx.yaml
-          # If test passed
-          if kubectl="$kubectl" timeout 100 bash -c '
-              while :
-              do
-                  [[ $("$kubectl" describe pod nginx | awk "/^Status:/ {print \$2}") == Running ]] && break
-                  sleep 1
-              done
-              '
-          then
-              echo 'Run test successful'
-              "$kubectl" get pod
-          else
-              echo 'Run test failed'
-              "$kubectl" get pod
-              "$kubectl" describe pod nginx
-              "$kubectl" describe pvc csi-pvc-cinderplugin
-              exit 1
-          fi
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env | combine(vexxhost_openrc) }}'
