@@ -235,9 +235,9 @@
     description: |
       Run unit test of cloud-provider-openstack repo against vexxhost cloud
     run: playbooks/cloud-provider-openstack-unittest/run.yaml
-    nodeset: ubuntu-xenial-vexxhost
     secrets:
       - vexxhost_credentials
+    nodeset: ubuntu-xenial-vexxhost
 
 - job:
     name: cloud-provider-openstack-acceptance-test
@@ -246,15 +246,12 @@
       Run acceptance test of cloud-provider-openstack
     pre-run: playbooks/cloud-provider-openstack-acceptance-test/pre.yaml
     nodeset: ubuntu-xenial-vexxhost
-    secrets:
-      - vexxhost_credentials
 
 - job:
     name: cloud-provider-openstack-acceptance-test-keystone-authentication-authorization
     parent: cloud-provider-openstack-acceptance-test
     description: |
       Run keystone auth acceptance tests of cloud-provider-openstack
-    pre-run: playbooks/cloud-provider-openstack-acceptance-test-keystone-authentication-authorization/pre.yaml
     run: playbooks/cloud-provider-openstack-acceptance-test-keystone-authentication-authorization/run.yaml
     secrets:
       - vexxhost_credentials
@@ -296,7 +293,6 @@
     post-run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/post.yaml
     secrets:
       - vexxhost_credentials
-
 - job:
     name: cloud-provider-openstack-acceptance-test-e2e-conformance
     parent: cloud-provider-openstack-acceptance-test

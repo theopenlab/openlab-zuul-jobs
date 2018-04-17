@@ -28,4 +28,5 @@
       git clone https://github.com/kubernetes/kubernetes ${GOPATH}/src/k8s.io/kubernetes -b '{{ k8s_version }}'
       make -C ${GOPATH}/src/k8s.io/kubernetes WHAT="cmd/kubectl cmd/hyperkube"
     executable: /bin/bash
+    chdir: '{{ zuul.project.src_dir }}'
   environment: '{{ golang_env }}'

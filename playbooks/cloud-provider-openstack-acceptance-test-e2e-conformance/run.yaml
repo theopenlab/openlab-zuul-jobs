@@ -100,6 +100,7 @@
           export KUBE_FASTBUILD=true
           export KUBERNETES_CONFORMANCE_TEST=y
 
+          set +x
           # Run e2e test using local deployment/provider
           kubetest --dump=$LOG_DIR \
               --test \
@@ -107,7 +108,7 @@
               --deployment=local \
               --provider=local \
               --ginkgo-parallel=1 \
-              --test_args="--ginkgo.focus=\\[Conformance\\] --ginkgo.noColor=true" \
+              --test_args="--ginkgo.focus=\\[Conformance\\]" \
               --timeout=120m | tee $LOG_DIR/e2e.log
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
