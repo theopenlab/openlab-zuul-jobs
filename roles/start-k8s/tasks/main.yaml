@@ -1,4 +1,4 @@
-- name: Start k8s core services
+- name: Start k8s
   shell:
     cmd: |
       set -x
@@ -34,17 +34,8 @@
 
       # -E preserves the current env vars, but we need to special case PATH
       sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS "$GOPATH/src/k8s.io/kubernetes/hack/local-up-cluster.sh" -O
-    executable: /bin/bash
-    chdir: '{{ zuul.project.src_dir }}'
-  environment: '{{ golang_env }}'
 
-- name: Start k8s plugin
-  shell:
-    cmd: |
-      set -x
-      set -e
-      set -o pipefail
-
+      # Start k8s plugin
       case '{{ zuul.job }}' in
           cloud-provider-openstack-acceptance-test-csi-cinder)
               ;;
