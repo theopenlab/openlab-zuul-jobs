@@ -226,11 +226,11 @@
 
 # Deprecated (Kubernetes nested scenario)
 - job:
-    name: openstack-cloud-controller-manager-unittest
+    name: cloud-provider-openstack-unittest-nested
     parent: golang-test
     description: |
       Run Kubernetes openstack-cloud-controller-manager unit test in devstack instance
-    run: playbooks/openstack-cloud-controller-manager-unittest/run.yaml
+    run: playbooks/cloud-provider-openstack-unittest-nested/run.yaml
     nodeset: ubuntu-xenial-otc
 
 # Kubernetes cloud-provider-openstack jobs
