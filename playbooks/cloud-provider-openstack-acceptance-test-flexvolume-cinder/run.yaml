@@ -1,29 +1,30 @@
-- name: Set up Kubernetes local cluster
-  hosts: all
-  roles:
-    - export-vexxhost-openrc
+- hosts: all
   become: yes
+  roles:
+    - clone-devstack-gate-to-workspace
+    - create-devstack-local-conf
+    - role: install-devstack
+      environment:
+        OVERRIDE_ENABLED_SERVICES: 'key,c-sch,c-api,c-vol,rabbit,mysql'
   tasks:
-    - name: Set up Kubernetes local cluster
-      shell:
+    - shell:
         cmd: |
           set -x
-          # set -e
-          # set -o pipefail
-
-          apt-get install python-pip -y
-          pip install -U python-openstackclient
+          set -e
+          set -o pipefail
 
           # Create cloud-config
+          source /opt/stack/new/devstack/openrc admin admin
           mkdir -p /etc/kubernetes/
           cat << EOF >> /etc/kubernetes/cloud-config
           [Global]
-          domain-name = $OS_USER_DOMAIN_NAME
-          tenant-id = $OS_PROJECT_ID
+          domain-id = $OS_PROJECT_DOMAIN_ID
+          tenant-name = $OS_TENANT_NAME
           auth-url = $OS_AUTH_URL
           password = $OS_PASSWORD
           username = $OS_USERNAME
           region = $OS_REGION_NAME
+
           [BlockStorage]
           bs-version = v2
           ignore-volume-az = yes
@@ -37,14 +38,8 @@
           export ENABLE_SINGLE_CA_SIGNER=true
           export KUBE_ENABLE_CLUSTER_DNS=false
           export LOG_LEVEL=4
-          # We want to use the openstack cloud provider
-          export CLOUD_PROVIDER=openstack
-          # We want to run a separate cloud-controller-manager for openstack
-          export EXTERNAL_CLOUD_PROVIDER=true
           # DO NOT change the location of the cloud-config file. It is important for the old cinder provider to work
           export CLOUD_CONFIG=/etc/kubernetes/cloud-config
-          # Specify the OCCM binary
-          export EXTERNAL_CLOUD_PROVIDER_BINARY=./openstack-cloud-controller-manager
 
           # location of where the kubernetes processes log their output
           mkdir -p '{{ ansible_user_dir }}/workspace/logs/kubernetes'
@@ -53,7 +48,7 @@
           export ALLOW_PRIVILEGED=true
           # Just kick off all the processes and drop down to the command line
           export ENABLE_DAEMON=true
-          export HOSTNAME_OVERRIDE=$(curl http://169.254.169.254/openstack/latest/meta_data.json | python -c "import sys, json; print json.load(sys.stdin)['name']")
+          export HOSTNAME_OVERRIDE=127.0.0.1
           export MAX_TIME_FOR_URL_API_SERVER=5
           export RUNTIME_CONFIG="settings.k8s.io/v1alpha1=true"
 
