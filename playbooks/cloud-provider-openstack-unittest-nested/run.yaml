@@ -1,3 +1,4 @@
+# Deprecated (Kubernetes nested scenario)
 - hosts: all
   become: yes
   roles:
