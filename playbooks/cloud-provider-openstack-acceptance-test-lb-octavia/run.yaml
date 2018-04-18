@@ -11,6 +11,9 @@
           set -e
           set -o pipefail
 
+          # Build cloud-provider-openstack binaries
+          make build
+
           apt-get install python-pip -y
           pip install -U python-openstackclient python-octaviaclient python-neutronclient
 
