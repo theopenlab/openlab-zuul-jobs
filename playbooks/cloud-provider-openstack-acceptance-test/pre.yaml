@@ -1,4 +1,4 @@
-- name: build cloud-provider-openstack binary
+- name: Install dependencies
   hosts: all
   become: yes
   roles:
@@ -11,9 +11,6 @@
 
           # Install dependencies
           go get -u github.com/Masterminds/glide
-
-          # Build cloud-provider-openstack binaries
-          make build
 
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'

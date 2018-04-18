@@ -11,6 +11,9 @@
           set -e
           set -o pipefail
 
+          # Build cloud-provider-openstack binaries
+          make build
+
           # Create cloud-config
           mkdir -p /etc/kubernetes/
           cat << EOF >> /etc/kubernetes/cloud-config
