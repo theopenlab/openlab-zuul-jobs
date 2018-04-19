@@ -233,13 +233,6 @@
     run: playbooks/cloud-provider-openstack-unittest-nested/run.yaml
     nodeset: ubuntu-xenial-otc
 
-# Deprecated (Kubernetes nested scenario)
-- job:
-    name: openstack-cloud-controller-manager-unittest
-    parent: cloud-provider-openstack-unittest-nested
-    description: |
-      Run Kubernetes openstack-cloud-controller-manager unit test in devstack instance
-
 # Kubernetes cloud-provider-openstack jobs
 - job:
     name: cloud-provider-openstack-unittest
