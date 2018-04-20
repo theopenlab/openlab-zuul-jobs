@@ -52,6 +52,15 @@
           export MAX_TIME_FOR_URL_API_SERVER=5
           export RUNTIME_CONFIG="settings.k8s.io/v1alpha1=true"
 
+          # Workaround to rebuild cinder-flex-volume-driver binary using patched code
+          cp -f pkg/flexvolume/cinder_client.go vendor/k8s.io/cloud-provider-openstack/pkg/flexvolume/cinder_client.go
+          cp -f pkg/flexvolume/cinder_baremetal_util.go vendor/k8s.io/cloud-provider-openstack/pkg/flexvolume/cinder_baremetal_util.go
+          cd /home/zuul/src/k8s.io/cloud-provider-openstack && CGO_ENABLED=0 GOOS=linux go build \
+              -ldflags "-X 'main.version=19c9e833-dirty'" \
+              -o cinder-flex-volume-driver \
+              cmd/cinder-flex-volume-driver/main.go
+          cd -
+
           mkdir -p /usr/libexec/kubernetes/kubelet-plugins/volume/exec/cinder.io~cinder-flex-volume-driver/
           cp cinder-flex-volume-driver /usr/libexec/kubernetes/kubelet-plugins/volume/exec/cinder.io~cinder-flex-volume-driver/
 
@@ -75,7 +84,7 @@
           "$kubectl" create clusterrolebinding --user system:kube-controller-manager  kube-system-cluster-admin-6 --clusterrole cluster-admin
 
           # Run test
-          VOLUME_ID=$(openstack volume create --size 1 test -f value -c id)
+          VOLUME_ID=$(cinder create 1 | awk '/ id / {print $4}')
           cat << EOF | "$kubectl" create -f -
           apiVersion: v1
           kind: Pod
