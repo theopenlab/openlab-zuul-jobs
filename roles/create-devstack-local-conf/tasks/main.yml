@@ -97,3 +97,17 @@
   environment: '{{ zuul | zuul_legacy_vars }}'
   when:
     - '"lbaas" in enable_services'
+
+- name: create devstack local conf with ceph enabled
+  shell:
+    cmd: |
+      set -e
+      set -x
+      cat << EOF >> /tmp/dg-local.conf
+      enable_plugin devstack-plugin-ceph git://git.openstack.org/openstack/devstack-plugin-ceph
+      EOF
+    executable: /bin/bash
+    chdir: '{{ ansible_user_dir }}/workspace'
+  environment: '{{ zuul | zuul_legacy_vars }}'
+  when:
+    - '"ceph" in enable_services'
