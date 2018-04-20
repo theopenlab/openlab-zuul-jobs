@@ -127,8 +127,6 @@
               "$kubectl" describe pod nginx
               # exit 1
           fi
-
-          sleep 7200
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env }}'
