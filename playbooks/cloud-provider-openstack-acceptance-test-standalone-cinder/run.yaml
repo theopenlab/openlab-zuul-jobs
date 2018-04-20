@@ -82,7 +82,7 @@
           cluster/kubectl.sh apply -f '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/persistent-volume-provisioning/cinder/cinder-full.yaml'
 
           # If test passed
-          if timeout 100 bash -c '
+          if timeout 300 bash -c '
               while :
               do
                   [[ $(cluster/kubectl.sh describe pods web | awk "/^Status:/ {print \$2}") == Running ]] && break
