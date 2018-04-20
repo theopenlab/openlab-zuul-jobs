@@ -300,8 +300,6 @@
     description: |
       Run cinder flexvolume acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-flexvolume-cinder/run.yaml
-    secrets:
-      - vexxhost_credentials
 
 - job:
     name: cloud-provider-openstack-acceptance-test-e2e-conformance
