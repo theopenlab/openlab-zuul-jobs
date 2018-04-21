@@ -60,7 +60,7 @@
           export MAX_TIME_FOR_URL_API_SERVER=5
           export RUNTIME_CONFIG="settings.k8s.io/v1alpha1=true"
 
-          sleep 7200
+          sleep 72000
 
           # Workaround to rebuild cinder-flex-volume-driver binary using patched code
           cp -f pkg/flexvolume/cinder_client.go vendor/k8s.io/cloud-provider-openstack/pkg/flexvolume/cinder_client.go
