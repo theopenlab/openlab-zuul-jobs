@@ -105,6 +105,11 @@
       set -x
       cat << EOF >> /tmp/dg-local.conf
       enable_plugin devstack-plugin-ceph git://git.openstack.org/openstack/devstack-plugin-ceph
+      ENABLE_CEPH_CINDER=True
+      ENABLE_CEPH_GLANCE=False
+      ENABLE_CEPH_C_BAK=False
+      ENABLE_CEPH_NOVA=False
+      ENABLE_CEPH_MANILA=False
       EOF
     executable: /bin/bash
     chdir: '{{ ansible_user_dir }}/workspace'
