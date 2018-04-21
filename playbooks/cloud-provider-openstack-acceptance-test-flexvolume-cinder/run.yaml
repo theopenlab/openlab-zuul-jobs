@@ -14,7 +14,6 @@
       environment:
         OVERRIDE_ENABLED_SERVICES: 'key,c-sch,c-api,c-vol,rabbit,mysql'
         PROJECTS: 'openstack/devstack-plugin-ceph'
-        DEVSTACK_GATE_USE_PYTHON3: 'True'
   tasks:
     - shell:
         cmd: |
