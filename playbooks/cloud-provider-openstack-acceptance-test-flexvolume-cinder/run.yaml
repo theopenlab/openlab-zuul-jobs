@@ -60,11 +60,9 @@
           export MAX_TIME_FOR_URL_API_SERVER=5
           export RUNTIME_CONFIG="settings.k8s.io/v1alpha1=true"
 
-          sleep 72000
-
           # Workaround to rebuild cinder-flex-volume-driver binary using patched code
           cp -f pkg/flexvolume/cinder_client.go vendor/k8s.io/cloud-provider-openstack/pkg/flexvolume/cinder_client.go
-          cp -f pkg/flexvolume/cinder_baremetal_util.go vendor/k8s.io/cloud-provider-openstack/pkg/flexvolume/cinder_baremetal_util.go
+          # cp -f pkg/flexvolume/cinder_baremetal_util.go vendor/k8s.io/cloud-provider-openstack/pkg/flexvolume/cinder_baremetal_util.go
           cd /home/zuul/src/k8s.io/cloud-provider-openstack && CGO_ENABLED=0 GOOS=linux go build \
               -ldflags "-X 'main.version=19c9e833-dirty'" \
               -o cinder-flex-volume-driver \
@@ -92,6 +90,9 @@
           "$kubectl" create clusterrolebinding --user system:serviceaccount:kube-system:cloud-controller-manager kube-system-cluster-admin-4 --clusterrole cluster-admin
           "$kubectl" create clusterrolebinding --user system:serviceaccount:kube-system:shared-informers kube-system-cluster-admin-5 --clusterrole cluster-admin
           "$kubectl" create clusterrolebinding --user system:kube-controller-manager  kube-system-cluster-admin-6 --clusterrole cluster-admin
+
+          # Avoid missing feature 400000000000000 error
+          ceph osd crush tunables hammer
 
           # Run test
           VOLUME_ID=$(cinder create 1 | awk '/ id / {print $4}')
@@ -121,7 +122,7 @@
           EOF
 
           # If test passed
-          if timeout 100 bash -c '
+          if timeout 300 bash -c '
               while :
               do
                   [[ $("$kubectl" describe pod nginx | awk "/^Status:/ {print \$2}") == Running ]] && break
