@@ -19,6 +19,10 @@
       export PROJECTS="openstack/devstack-plugin-container $PROJECTS"
       export PROJECTS="openstack/kuryr-libnetwork $PROJECTS"
       export PROJECTS="openstack/zun openstack/zun-tempest-plugin $PROJECTS"
+      export PROJECTS="openstack/diskimage-builder $PROJECTS"
+      export PROJECTS="openstack/tripleo-image-elements $PROJECTS"
+      export PROJECTS="openstack/neutron-lbaas $PROJECTS"
+      export PROJECTS="openstack/octavia python-octaviaclient $PROJECTS"
 
       cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
       ./safe-devstack-vm-gate-wrap.sh
