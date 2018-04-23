@@ -1,8 +1,8 @@
-- name: Run k8s flex volume cinder test
-  hosts: all
+- hosts: all
   become: yes
   pre_tasks:
-    - shell:
+    - name: Install libvirt-bin for flexvolume cinder conformance tests
+      shell:
         cmd: |
           apt install libvirt-bin -y
         executable: /bin/bash
@@ -16,7 +16,8 @@
         OVERRIDE_ENABLED_SERVICES: 'key,c-sch,c-api,c-vol,rabbit,mysql'
         PROJECTS: 'openstack/devstack-plugin-ceph'
   tasks:
-    - shell:
+    - name: Run flexvolume cinder conformance tests with cloud-provider-openstack
+      shell:
         cmd: |
           set -x
           set -e

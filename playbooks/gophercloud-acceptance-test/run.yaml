@@ -9,7 +9,8 @@
         - 'zun'
     - install-devstack
   tasks:
-    - shell:
+    - name: Run acceptance tests with gophercloud
+      shell:
         cmd: |
           set -e
           set -o pipefail

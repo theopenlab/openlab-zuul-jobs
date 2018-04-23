@@ -3,7 +3,8 @@
   roles:
     - export-vexxhost-openrc
   tasks:
-    - shell:
+    - name: Run unit tests with cloud-provider-openstack
+      shell:
         cmd: |
           set -x
           set -e

@@ -7,7 +7,8 @@
         - 'fwaas-v1'
     - install-devstack
   tasks:
-    - shell:
+    - name: Run fwaas acceptance tests with terraform-provider-openstack
+      shell:
         cmd: |
           set -e
           set -o pipefail

@@ -1,10 +1,9 @@
-- name: Set up Kubernetes local cluster
-  hosts: all
+- hosts: all
   roles:
     - export-vexxhost-openrc
   become: yes
   tasks:
-    - name: Set up Kubernetes local cluster
+    - name: Run csi cinder acceptance tests with cloud-provider-openstack
       shell:
         cmd: |
           set -x
@@ -29,7 +28,7 @@
           ignore-volume-az = yes
           EOF
 
-          export API_HOST_IP=$(ifconfig | awk '/^docker0/ {getline; print $2}' | awk -F ':' '{print $2}')
+          export API_HOST_IP=$(ip route get 1.1.1.1 | awk '{print $7}')
           export KUBELET_HOST="0.0.0.0"
           export ALLOW_SECURITY_CONTEXT=true
           export ENABLE_CRI=false
