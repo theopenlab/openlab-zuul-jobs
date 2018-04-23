@@ -61,6 +61,7 @@
           export RUNTIME_CONFIG="settings.k8s.io/v1alpha1=true"
 
           # Workaround to rebuild cinder-flex-volume-driver binary using patched code
+          # https://github.com/liu-sheng/cloud-provider-openstack/pull/17
           cp -f pkg/flexvolume/cinder_client.go vendor/k8s.io/cloud-provider-openstack/pkg/flexvolume/cinder_client.go
           # cp -f pkg/flexvolume/cinder_baremetal_util.go vendor/k8s.io/cloud-provider-openstack/pkg/flexvolume/cinder_baremetal_util.go
           cd /home/zuul/src/k8s.io/cloud-provider-openstack && CGO_ENABLED=0 GOOS=linux go build \
