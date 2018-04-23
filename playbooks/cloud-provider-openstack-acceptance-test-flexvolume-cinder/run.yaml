@@ -1,4 +1,5 @@
-- hosts: all
+- name: Run k8s flex volume cinder test
+  hosts: all
   become: yes
   pre_tasks:
     - shell:
@@ -18,8 +19,8 @@
     - shell:
         cmd: |
           set -x
-          # set -e
-          # set -o pipefail
+          set -e
+          set -o pipefail
 
           # Create cloud-config
           source /opt/stack/new/devstack/openrc admin admin
@@ -27,7 +28,7 @@
           cat << EOF >> /etc/kubernetes/cloud-config
           [Global]
           domain-id = $OS_PROJECT_DOMAIN_ID
-          tenant-name = $OS_TENANT_NAME
+          tenant-name = $OS_PROJECT_NAME
           auth-url = $OS_AUTH_URL
           password = $OS_PASSWORD
           username = $OS_USERNAME
@@ -38,14 +39,14 @@
           ignore-volume-az = yes
           EOF
 
-          export API_HOST_IP=$(ifconfig | awk '/^docker0/ {getline; print $2}' | awk -F ':' '{print $2}')
+          export API_HOST_IP=$(ip route get 1.1.1.1 | awk '{print $7}')
           export KUBELET_HOST="0.0.0.0"
           export ALLOW_SECURITY_CONTEXT=true
           export ENABLE_CRI=false
           export ENABLE_HOSTPATH_PROVISIONER=true
           export ENABLE_SINGLE_CA_SIGNER=true
           export KUBE_ENABLE_CLUSTER_DNS=false
-          export LOG_LEVEL=7
+          export LOG_LEVEL=4
           # DO NOT change the location of the cloud-config file. It is important for the old cinder provider to work
           export CLOUD_CONFIG=/etc/kubernetes/cloud-config
 
@@ -56,7 +57,6 @@
           export ALLOW_PRIVILEGED=true
           # Just kick off all the processes and drop down to the command line
           export ENABLE_DAEMON=true
-          export HOSTNAME_OVERRIDE=127.0.0.1
           export MAX_TIME_FOR_URL_API_SERVER=5
           export RUNTIME_CONFIG="settings.k8s.io/v1alpha1=true"
 
@@ -96,6 +96,8 @@
           # http://lists.ceph.com/pipermail/ceph-users-ceph.com/2017-July/019383.html
           ceph osd crush tunables hammer
 
+          # Sleep to wait for creating serviceaccount default/default complete
+          sleep 5
           # Run test
           VOLUME_ID=$(cinder create 1 | awk '/ id / {print $4}')
           cat << EOF | "$kubectl" create -f -
@@ -132,13 +134,13 @@
               done
               '
           then
-              echo 'Run test successful'
+              echo 'Run test successfully'
               "$kubectl" get pod nginx
           else
               echo 'Run test failed'
               "$kubectl" get pod nginx
               "$kubectl" describe pod nginx
-              # exit 1
+              exit 1
           fi
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
