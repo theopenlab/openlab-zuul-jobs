@@ -88,7 +88,7 @@
             sed -i '/loadbalancer.openstack.org/d' "$test_file"
             cluster/kubectl.sh create -f "$test_file"
 
-            if ! service_name="$service_name" timeout 300 bash -c '
+            if ! service_name="$service_name" timeout 600 bash -c '
                 while :
                 do
                     [[ -n $(cluster/kubectl.sh describe service "$service_name" | awk "/LoadBalancer Ingress/ {print \$3}") ]] && break
