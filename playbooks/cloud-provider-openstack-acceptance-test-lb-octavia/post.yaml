@@ -20,15 +20,15 @@
           for lb_svc_uid in $ext_lb_svc_uid $int_lb_svc_uid; do
               lb_name=$(echo $lb_svc_uid | tr -d '-' | sed 's/^/a/' | cut -c -32)
               {
-                  for pool in $(neutron lbaas-pool-list -f value -c id -c name|grep $lb_name | awk '{print $1}'); do
-                      neutron lbaas-pool-delete $pool
+                  for pool in $(openstack loadbalancer show $lb_name -f value -c pools); do
+                      openstack loadbalancer pool delete $pool
                       sleep 2
                   done
-                  for listener in $(neutron lbaas-listener-list -f value -c id -c name |grep $lb_name | awk '{print $1}'); do
-                      neutron lbaas-listener-delete $listener
+                  for listener in $(openstack loadbalancer show $lb_name -f value -c listeners); do
+                      openstack loadbalancer listener delete $listener
                       sleep 2
                   done
-                  neutron lbaas-loadbalancer-delete $lb_name
+                  openstack loadbalancer delete $lb_name
                   sleep 2
               } || true
           done
