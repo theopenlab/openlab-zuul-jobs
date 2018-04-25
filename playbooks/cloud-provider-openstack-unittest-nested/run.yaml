@@ -7,7 +7,8 @@
     - install-devstack
     - create-virtual-machine
   tasks:
-    - shell:
+    - name: Run unit tests with cloud-provider-openstack (nested)
+      shell:
         cmd: |
           set -e
           set -x

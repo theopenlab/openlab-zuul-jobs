@@ -1,7 +1,8 @@
 - hosts: all
   become: yes
   tasks:
-    - shell:
+    - name: Run ansible zuul job check tests for openlab-zuul-jobs
+      shell:
         cmd: |
           set -e
           set -o pipefail

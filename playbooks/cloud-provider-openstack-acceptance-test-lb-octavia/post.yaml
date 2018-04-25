@@ -3,7 +3,7 @@
   roles:
     - export-vexxhost-openrc
   tasks:
-    - name: Clean kubernetes deployments
+    - name: Clean up resources for lbass octavia acceptance tests
       shell:
         cmd: |
           set -e

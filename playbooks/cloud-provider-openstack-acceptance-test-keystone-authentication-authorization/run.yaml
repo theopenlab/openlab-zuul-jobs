@@ -1,10 +1,9 @@
-- name: Set up Kubernetes local cluster
-  hosts: all
+- hosts: all
   roles:
     - export-vexxhost-openrc
   become: yes
   tasks:
-    - name: Set up Kubernetes local cluster
+    - name: Run keystone authentication and authorization acceptance tests with cloud-provider-openstack
       shell:
         cmd: |
           set -x
@@ -58,7 +57,7 @@
 
           # Go where we cloned kubernetes repository
           cd $GOPATH/src/k8s.io/kubernetes/
-          export API_HOST_IP=$(ifconfig | awk '/^docker0/ {getline; print $2}' | awk -F ':' '{print $2}')
+          export API_HOST_IP=$(ip route get 1.1.1.1 | awk '{print $7}')
           export KUBELET_HOST="0.0.0.0"
           export ALLOW_SECURITY_CONTEXT=true
           export ENABLE_CRI=false

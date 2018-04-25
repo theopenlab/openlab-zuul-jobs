@@ -3,7 +3,8 @@
   roles:
     - export-telefonica-openrc
   tasks:
-    - shell:
+    - name: Run acceptance tests with gophercloud against telefonica public cloud
+      shell:
         cmd: |
           apt-get install python-pip -y
           pip install -U python-openstackclient

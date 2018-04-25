@@ -1,7 +1,7 @@
 - hosts: all
   become: yes
   tasks:
-    - name: Clean up resources
+    - name: Clean up resources for csi cinder acceptance tests
       shell:
         cmd: |
           set -e

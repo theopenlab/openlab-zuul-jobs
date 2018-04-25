@@ -7,7 +7,8 @@
       environment:
         OVERRIDE_ENABLED_SERVICES: 'key,c-sch,c-api,c-vol,rabbit,mysql'
   tasks:
-    - shell:
+    - name: Run cinder standalone acceptance tests with cloud-provider-openstack
+      shell:
         cmd: |
           set -x
           set -e
@@ -22,7 +23,7 @@
           cat << EOF >> /etc/kubernetes/cloud-config
           [Global]
           domain-id = $OS_PROJECT_DOMAIN_ID
-          tenant-name = $OS_TENANT_NAME
+          tenant-name = $OS_PROJECT_NAME
           auth-url = $OS_AUTH_URL
           password = $OS_PASSWORD
           username = $OS_USERNAME
@@ -35,7 +36,7 @@
 
           # Go where we cloned kubernetes repository
           cd $GOPATH/src/k8s.io/kubernetes/
-          export API_HOST_IP=$(ifconfig | awk '/^docker0/ {getline; print $2}' | awk -F ':' '{print $2}')
+          export API_HOST_IP=$(ip route get 1.1.1.1 | awk '{print $7}')
           export KUBELET_HOST="0.0.0.0"
           export ALLOW_SECURITY_CONTEXT=true
           export ENABLE_CRI=false
