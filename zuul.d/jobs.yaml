@@ -245,7 +245,7 @@
     description: |
       Run acceptance test of cloud-provider-openstack
     pre-run: playbooks/cloud-provider-openstack-acceptance-test/pre.yaml
-    nodeset: ubuntu-xenial-vexxhost
+    nodeset: ubuntu-xenial
 
 - job:
     name: cloud-provider-openstack-acceptance-test-keystone-authentication-authorization
