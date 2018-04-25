@@ -15,15 +15,3 @@
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env }}'
-
-    - name: Rename/move the /home/zuul/src/github.com dir to k8s.io
-      shell:
-        cmd: |
-          set -x
-          set -e
-
-          # Rename/move /home/zuul/src/github.com
-          mv github.com k8s.io
-        executable: /bin/bash
-        chdir: '{{ zuul.project.src_dir }}'
-      environment: '{{ golang_env }}'
