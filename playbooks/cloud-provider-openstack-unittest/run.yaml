@@ -11,6 +11,7 @@
           set -o pipefail
 
           go get -u github.com/Masterminds/glide
+          mv github.com k8s.io
           TESTARGS='-v' make test 2>&1 | tee $TEST_RESULTS_TXT
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
