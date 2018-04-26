@@ -120,4 +120,4 @@
               --timeout=120m | tee $LOG_DIR/e2e.log
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
-      environment: '{{ golang_env | combine(vexxhost_openrc) }}'
+      environment: '{{ golang_env | combine(opentelekomcloud_openrc) }}'

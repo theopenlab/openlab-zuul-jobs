@@ -1,7 +1,8 @@
 - hosts: all
   become: yes
   roles:
-    - export-vexxhost-openrc
+    #- export-vexxhost-openrc
+    - export-opentelekomcloud-openrc
   tasks:
     - name: Clean up resources for lbass octavia acceptance tests
       shell:
@@ -34,4 +35,4 @@
           done
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
-      environment: '{{ golang_env | combine(vexxhost_openrc) }}'
+      environment: '{{ golang_env | combine(opentelekomcloud_openrc) }}'
