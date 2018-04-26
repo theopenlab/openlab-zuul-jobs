@@ -3,18 +3,6 @@
   roles:
     - export-vexxhost-openrc
   tasks:
-    - name: Copy all github.com/project to k8s.io
-      shell:
-        cmd: |
-          set -x
-          set -e
-          set -o pipefail
-          
-          mkdir -p k8s.io
-          rsync -avz --progress src/github.com/kubernetes/ src/k8s.io/
-        executable: /bin/bash
-      environment: '{{ golang_env | combine(vexxhost_openrc) }}'
-
     - name: Run unit tests with cloud-provider-openstack
       shell:
         cmd: |
@@ -23,7 +11,7 @@
           set -o pipefail
 
           go get -u github.com/Masterminds/glide
-          cd src/k8s.io/cloud-provider-openstack
           TESTARGS='-v' make test 2>&1 | tee $TEST_RESULTS_TXT
         executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env | combine(vexxhost_openrc) }}'

@@ -3,18 +3,6 @@
   roles:
     - install-k8s
   tasks:
-    - name: rsync cloud-provider-openstack to k8s.io
-      shell:
-        cmd: |
-          set -x
-          set -e
-          set -o pipefail
-          
-          mkdir -p k8s.io
-          rsync -avz --progress src/github.com/kubernetes/ src/k8s.io/
-        executable: /bin/bash
-      environment: '{{ golang_env | combine(vexxhost_openrc) }}'
-
     - name: Install dependencies for cloud-provider-openstack acceptance test
       shell:
         cmd: |
@@ -22,7 +10,8 @@
           set -e
 
           # Install dependencies
-          cd src/k8s.io/cloud-provider-openstack
           go get -u github.com/Masterminds/glide
+
         executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env }}'
