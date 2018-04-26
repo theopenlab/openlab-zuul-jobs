@@ -1,6 +1,10 @@
 - hosts: all
   roles:
-    - export-opentelekomcloud-openrc
+    - clone-devstack-gate-to-workspace
+    - create-devstack-local-conf
+    - role: install-devstack
+      environment:
+        OVERRIDE_ENABLED_SERVICES: 'key'
   become: yes
   tasks:
     - name: Run keystone authentication and authorization acceptance tests with cloud-provider-openstack
@@ -16,24 +20,26 @@
           apt-get install python-pip -y
           pip install -U python-openstackclient
 
-          mkdir -p /etc/kubernetes/
-          cp ./examples/webhook/policy.json /etc/kubernetes/
-          sed -i "s/c1f7910086964990847dc6c8b128f63c/$OS_PROJECT_ID/g" /etc/kubernetes/policy.json
-          sed -i -e "s/k8s-admin/creator/g" /etc/kubernetes/policy.json
-
           # Create cloud-config
+          source /opt/stack/new/devstack/openrc admin admin
+          mkdir -p /etc/kubernetes/
           cat << EOF >> /etc/kubernetes/cloud-config
           [Global]
-          domain-name = $OS_USER_DOMAIN_NAME
-          tenant-id = $OS_PROJECT_ID
+          domain-id = $OS_PROJECT_DOMAIN_ID
+          tenant-name = $OS_PROJECT_NAME
           auth-url = $OS_AUTH_URL
           password = $OS_PASSWORD
           username = $OS_USERNAME
           region = $OS_REGION_NAME
+
           [BlockStorage]
           bs-version = v2
           ignore-volume-az = yes
           EOF
+
+          cp ./examples/webhook/policy.json /etc/kubernetes/
+          sed -i "s/c1f7910086964990847dc6c8b128f63c/$OS_PROJECT_ID/g" /etc/kubernetes/policy.json
+          sed -i -e "s/k8s-admin/creator/g" /etc/kubernetes/policy.json
 
           # Create webhook.kubeconfig
           cat << EOF >> /etc/kubernetes/webhook.kubeconfig
