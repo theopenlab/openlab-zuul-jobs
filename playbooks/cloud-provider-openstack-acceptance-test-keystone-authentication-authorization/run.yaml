@@ -4,7 +4,7 @@
     - create-devstack-local-conf
     - role: install-devstack
       environment:
-        OVERRIDE_ENABLED_SERVICES: 'key'
+        OVERRIDE_ENABLED_SERVICES: 'key,mysql'
   become: yes
   tasks:
     - name: Run keystone authentication and authorization acceptance tests with cloud-provider-openstack
