@@ -1,6 +1,6 @@
 - hosts: all
   roles:
-    - export-vexxhost-openrc
+    - export-opentelekomcloud-openrc
   become: yes
   tasks:
     - name: Run kubernetes E2E conformance tests with cloud-provider-openstack
@@ -114,4 +114,4 @@
               --timeout=120m | tee $LOG_DIR/e2e.log
         executable: /bin/bash
         chdir: '{{ k8s_specific_src_dir }}'
-      environment: '{{ golang_env | combine(vexxhost_openrc) }}'
+      environment: '{{ golang_env | combine(opentelekomcloud_openrc) }}'
