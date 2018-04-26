@@ -173,4 +173,4 @@
           fi
         executable: /bin/bash
         chdir: '{{ k8s_specific_src_dir }}'
-      environment: '{{ golang_env | combine(opentelekomcloud_openrc) }}'
+      environment: '{{ golang_env }}'
