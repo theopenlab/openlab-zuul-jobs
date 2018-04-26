@@ -1,6 +1,7 @@
 - hosts: all
   roles:
-    - export-vexxhost-openrc
+    #- export-vexxhost-openrc
+    - export-opentelekomcloud-openrc
   become: yes
   tasks:
     - name: Run keystone authentication and authorization acceptance tests with cloud-provider-openstack

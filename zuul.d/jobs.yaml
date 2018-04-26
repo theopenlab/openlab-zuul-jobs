@@ -260,7 +260,9 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-k8s-cinder/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-k8s-cinder/post.yaml
     secrets:
-      - vexxhost_credentials
+      #- vexxhost_credentials
+      - opentelekomcloud_credentials
+    nodeset: ubuntu-xenial
 
 - job:
     name: cloud-provider-openstack-acceptance-test-e2e-conformance
@@ -270,7 +272,9 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/post.yaml
     secrets:
-      - vexxhost_credentials
+      #- vexxhost_credentials
+      - opentelekomcloud_credentials
+    nodeset: ubuntu-xenial
 
 - job:
     name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.10
@@ -296,7 +300,9 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/post.yaml
     secrets:
-      - vexxhost_credentials
+      #- vexxhost_credentials
+      - opentelekomcloud_credentials
+    nodeset: ubuntu-xenial
 
 - job:
     name: cloud-provider-openstack-acceptance-test-lb-octavia
@@ -306,7 +312,9 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-lb-octavia/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-lb-octavia/post.yaml
     secrets:
-      - vexxhost_credentials
+      #- vexxhost_credentials
+      - opentelekomcloud_credentials
+    nodeset: ubuntu-xenial
 
 - job:
     name: cloud-provider-openstack-acceptance-test-keystone-authentication-authorization
@@ -315,7 +323,9 @@
       Run keystone auth acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-keystone-authentication-authorization/run.yaml
     secrets:
-      - vexxhost_credentials
+      #- vexxhost_credentials
+      - opentelekomcloud_credentials
+    nodeset: ubuntu-xenial
 
 - job:
     name: cloud-provider-openstack-acceptance-test-flexvolume-cinder
