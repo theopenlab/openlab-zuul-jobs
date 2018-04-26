@@ -2,16 +2,3 @@
   become: yes
   roles:
     - install-k8s
-  tasks:
-    - name: Install dependencies for cloud-provider-openstack acceptance test
-      shell:
-        cmd: |
-          set -x
-          set -e
-
-          # Install dependencies
-          go get -u github.com/Masterminds/glide
-
-        executable: /bin/bash
-        chdir: '{{ zuul.project.src_dir }}'
-      environment: '{{ golang_env }}'
