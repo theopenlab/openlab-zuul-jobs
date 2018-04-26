@@ -1,7 +1,7 @@
 - hosts: all
   become: yes
   roles:
-    - export-opentelekomcloud-openrc
+    - export-vexxhost-openrc
   tasks:
     - name: Run lbass octavia acceptance tests with cloud-provider-openstack
       shell:
@@ -116,4 +116,4 @@
           done
         executable: /bin/bash
         chdir: '{{ k8s_specific_src_dir }}'
-      environment: '{{ golang_env | combine(opentelekomcloud_openrc) }}'
+      environment: '{{ golang_env | combine(vexxhost_openrc) }}'

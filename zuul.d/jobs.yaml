@@ -319,8 +319,8 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-lb-octavia/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-lb-octavia/post.yaml
     secrets:
-      - opentelekomcloud_credentials
-    nodeset: ubuntu-xenial-otc
+      - vexxhost_credentials
+    nodeset: ubuntu-xenial-vexxhost
 
 - job:
     name: cloud-provider-openstack-acceptance-test-keystone-authentication-authorization
