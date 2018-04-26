@@ -1,0 +1,9 @@
+- hosts: all
+  become: yes
+  tasks:
+    - name: Move cloud-provider-openstack to k8s specific directory
+      shell:
+        cmd: |
+          mkdir -p $(dirname '{{ k8s_specific_src_dir }}')
+          mv '{{ zuul.project.src_dir }}' '{{ k8s_specific_src_dir }}'
+        executable: /bin/bash
