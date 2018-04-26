@@ -1,6 +1,7 @@
 - hosts: all
   tasks:
-    - shell:
+    - name: Run unit tests with gophercloud
+      shell:
         cmd: |
           set -e
           set -o pipefail
