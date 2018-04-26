@@ -1,4 +1,4 @@
-- name: Install K8S jobs dependences
+- name: Install K8S jobs dependences (#Deprecated)
   shell:
     cmd: |
       set -e
@@ -23,9 +23,6 @@
           ifconfig -a
       fi
       docker --version
-      # Get the latest stable version of kubernetes
-      export K8S_VERSION=$(curl -sS https://storage.googleapis.com/kubernetes-release/release/stable.txt)
-      echo "K8S_VERSION : ${K8S_VERSION}"
       echo "Starting docker service"
       systemctl enable docker.service
       systemctl start docker.service --ignore-dependencies

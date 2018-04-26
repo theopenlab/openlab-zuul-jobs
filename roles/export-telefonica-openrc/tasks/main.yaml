@@ -1,0 +1,13 @@
+- name: Set fact for telefonica openrc
+  set_fact:
+    telefonica_openrc:
+      OS_PASSWORD: '{{ telefonica_credentials.password }}'
+      OS_AUTH_TYPE: '{{ telefonica_credentials.auth_type }}'
+      OS_AUTH_URL: '{{ telefonica_credentials.auth_url }}'
+      OS_IDENTITY_API_VERSION: '{{ telefonica_credentials.identity_api_version }}'
+      OS_DOMAIN_NAME: '{{ telefonica_credentials.domain_name }}'
+      OS_PROJECT_NAME: '{{ telefonica_credentials.project_name}}'
+      OS_REGION_NAME: '{{ telefonica_credentials.region_name}}'
+      OS_TENANT_NAME: '{{ telefonica_credentials.project_name }}'
+      OS_USERNAME: '{{ telefonica_credentials.user_name }}'
+  no_log: yes

@@ -1,4 +1,4 @@
-- name: Create virtual machines
+- name: Create openstack virtual machine
   shell:
     cmd: |
       set -e
@@ -59,7 +59,7 @@
     executable: /bin/bash
     chdir: '{{ zuul.project.src_dir }}'
 
-- name: Register instance attributes
+- name: Register openstack virtual machine attributes
   shell:
     cmd: |
       set -e
@@ -82,6 +82,6 @@
     chdir: '{{ zuul.project.src_dir }}'
   register: output
 
-- name: Set fact for instance attributes
+- name: Set fact for openstack virtual machine attributes
   set_fact:
     instance_attr: '{{ output.stdout | from_json }}'

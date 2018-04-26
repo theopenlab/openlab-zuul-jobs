@@ -23,3 +23,4 @@
       - --include=*/
       - --exclude=*
       - --prune-empty-dirs
+      - --min-size=1
