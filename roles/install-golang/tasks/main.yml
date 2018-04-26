@@ -1,5 +1,9 @@
+# We can install specify version golang in task, like this:
+#- roles:
+#  - role: install-golang
+#      go_version: '1.10.1'
 ---
-- name: Download the Go tarball
+- name: Download the Go version {{ go_version }} tarball
   get_url:
     url: '{{ go_download_location }}'
     dest: '/usr/local/src/{{ go_tarball }}'
