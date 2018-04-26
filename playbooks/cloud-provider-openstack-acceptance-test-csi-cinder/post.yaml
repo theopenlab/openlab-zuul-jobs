@@ -8,7 +8,7 @@
           set -x
           cd ${GOPATH}/src/k8s.io/kubernetes
           cluster/kubectl.sh config use-context local
-          cluster/kubectl.sh delete -f '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/cinder-csi-plugin/nginx.yaml'
-          cluster/kubectl.sh delete -f '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/manifests/cinder-csi-plugin'
+          cluster/kubectl.sh delete -f '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack/examples/cinder-csi-plugin/nginx.yaml'
+          cluster/kubectl.sh delete -f '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack/manifests/cinder-csi-plugin'
         executable: /bin/bash
       environment: '{{ golang_env }}'
