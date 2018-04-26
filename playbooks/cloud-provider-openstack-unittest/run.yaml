@@ -11,9 +11,8 @@
           set -o pipefail
           
           mkdir -p k8s.io
-          cp -R github.com/kubernetes/* k8s.io/
+          cp -R src/github.com/kubernetes/* src/k8s.io/
         executable: /bin/bash
-        chdir: '{{ zuul.executor.src_root }}'
       environment: '{{ golang_env | combine(vexxhost_openrc) }}'
 
     - name: Run unit tests with cloud-provider-openstack
@@ -26,5 +25,5 @@
           go get -u github.com/Masterminds/glide
           TESTARGS='-v' make test 2>&1 | tee $TEST_RESULTS_TXT
         executable: /bin/bash
-        chdir: '{{ zuul.executor.src_root }}/k8s.io/{{ zuul.project.name }}'
+        chdir: 'src/k8s.io/{{ zuul.project.name }}'
       environment: '{{ golang_env | combine(vexxhost_openrc) }}'
