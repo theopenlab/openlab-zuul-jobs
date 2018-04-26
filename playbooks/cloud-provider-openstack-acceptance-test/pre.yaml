@@ -3,15 +3,14 @@
   roles:
     - install-k8s
   tasks:
-    - name: Install dependencies for cloud-provider-openstack acceptance test
+    - name: Copy cloud-provider-openstack to k8s.io directory
       shell:
         cmd: |
           set -x
           set -e
 
-          # Install dependencies
-          go get -u github.com/Masterminds/glide
-
+          mkdir -p "$GOPATH/src/k8s.io"
+          cp -a "$PWD" "$GOPATH/src/k8s.io"
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env }}'

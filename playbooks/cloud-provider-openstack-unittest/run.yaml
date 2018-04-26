@@ -12,6 +12,7 @@
           set -o pipefail
 
           go get -u github.com/Masterminds/glide
+          cd "$GOPATH/src/k8s.io/cloud-provider-openstack"
           TESTARGS='-v' make test 2>&1 | tee $TEST_RESULTS_TXT
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
