@@ -3,7 +3,7 @@
   roles:
     - export-vexxhost-openrc
   tasks:
-    - name: Clean kubernetes deployments
+    - name: Clean up resources for lbass octavia acceptance tests
       shell:
         cmd: |
           set -e
@@ -13,8 +13,8 @@
           ext_lb_svc_uid=$(cluster/kubectl.sh get services external-http-nginx-service -o=jsonpath='{.metadata.uid}') || true
           int_lb_svc_uid=$(cluster/kubectl.sh get services internal-http-nginx-service -o=jsonpath='{.metadata.uid}') || true
 
-          cluster/kubectl.sh delete -f "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/loadbalancers/external-http-nginx.yaml" || true
           cluster/kubectl.sh delete -f "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/loadbalancers/internal-http-nginx.yaml" || true
+          cluster/kubectl.sh delete -f "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/loadbalancers/external-http-nginx.yaml" || true
           popd
 
           for lb_svc_uid in $ext_lb_svc_uid $int_lb_svc_uid; do
@@ -22,14 +22,14 @@
               {
                   for pool in $(openstack loadbalancer show $lb_name -f value -c pools); do
                       openstack loadbalancer pool delete $pool
-                      sleep 1
+                      sleep 2
                   done
                   for listener in $(openstack loadbalancer show $lb_name -f value -c listeners); do
                       openstack loadbalancer listener delete $listener
-                      sleep 1
+                      sleep 2
                   done
                   openstack loadbalancer delete $lb_name
-                  sleep 1
+                  sleep 2
               } || true
           done
         executable: /bin/bash

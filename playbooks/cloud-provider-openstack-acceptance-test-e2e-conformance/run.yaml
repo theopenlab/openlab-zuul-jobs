@@ -1,14 +1,17 @@
-- name: Run Kubernetes E2E conformance tests with cloud-provider-openstack
-  hosts: all
+- hosts: all
   roles:
     - export-vexxhost-openrc
   become: yes
   tasks:
-    - shell:
+    - name: Run kubernetes E2E conformance tests with cloud-provider-openstack
+      shell:
         cmd: |
           set -x
           set -e
           set -o pipefail
+
+          # Build cloud-provider-openstack binaries
+          make build
 
           # Create cloud-config
           mkdir -p /etc/kubernetes/
@@ -28,7 +31,7 @@
 
           # Go where we cloned kubernetes repository
           cd $GOPATH/src/k8s.io/kubernetes/
-          export API_HOST_IP=$(ifconfig | awk '/^docker0/ {getline; print $2}' | awk -F ':' '{print $2}')
+          export API_HOST_IP=$(ip route get 1.1.1.1 | awk '{print $7}')
           export KUBELET_HOST="0.0.0.0"
           export ALLOW_SECURITY_CONTEXT=true
           export ENABLE_CRI=false
@@ -59,7 +62,6 @@
           export HOSTNAME_OVERRIDE=$(curl http://169.254.169.254/openstack/latest/meta_data.json | python -c "import sys, json; print json.load(sys.stdin)['name']")
           export API_HOST=$HOSTNAME_OVERRIDE
           export EXTERNAL_HOSTNAME=$HOSTNAME_OVERRIDE
-          export API_HOST_IP=$(ip route get 1.1.1.1 | awk '{print $7}')
           export KUBELET_FLAGS="--node-ip $API_HOST_IP"
 
           # diagnostics - print /etc/hosts and resolv.conf
@@ -100,7 +102,6 @@
           export KUBE_FASTBUILD=true
           export KUBERNETES_CONFORMANCE_TEST=y
 
-          set +x
           # Run e2e test using local deployment/provider
           kubetest --dump=$LOG_DIR \
               --test \
@@ -108,7 +109,7 @@
               --deployment=local \
               --provider=local \
               --ginkgo-parallel=1 \
-              --test_args="--ginkgo.focus=\\[Conformance\\]" \
+              --test_args="--ginkgo.focus=\\[Conformance\\] --ginkgo.noColor=true" \
               --timeout=120m | tee $LOG_DIR/e2e.log
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'

@@ -3,11 +3,15 @@
   roles:
     - export-vexxhost-openrc
   tasks:
-    - shell:
+    - name: Run kubernetes cinder acceptance tests with cloud-provider-openstack
+      shell:
         cmd: |
           set -x
           set -e
           set -o pipefail
+
+          # Build cloud-provider-openstack binaries
+          make build
 
           # Create cloud-config
           mkdir -p /etc/kubernetes/
@@ -27,7 +31,7 @@
 
           # Go where we cloned kubernetes repository
           cd $GOPATH/src/k8s.io/kubernetes/
-          export API_HOST_IP=$(ifconfig | awk '/^docker0/ {getline; print $2}' | awk -F ':' '{print $2}')
+          export API_HOST_IP=$(ip route get 1.1.1.1 | awk '{print $7}')
           export KUBELET_HOST="0.0.0.0"
           export ALLOW_SECURITY_CONTEXT=true
           export ENABLE_CRI=false
@@ -75,12 +79,12 @@
           # Sleep to wait for creating serviceaccount default/default complete
           sleep 5
           # Remove node taint
-          cluster/kubectl.sh taint nodes "$HOSTNAME_OVERRIDE" node.cloudprovider.kubernetes.io/uninitialized-
+          cluster/kubectl.sh taint nodes "$HOSTNAME_OVERRIDE" node.cloudprovider.kubernetes.io/uninitialized- || true
           # Cinder test
           cluster/kubectl.sh apply -f '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/persistent-volume-provisioning/cinder/cinder-in-tree-full.yaml'
 
           # If test passed
-          if timeout 100 bash -c '
+          if timeout 300 bash -c '
               while :
               do
                   [[ $(cluster/kubectl.sh describe pods web | awk "/^Status:/ {print \$2}") == Running ]] && break

@@ -1,16 +1,17 @@
-- name: build cloud-provider-openstack binary
-  hosts: all
+- hosts: all
   become: yes
   roles:
     - install-k8s
   tasks:
-    - shell:
+    - name: Install dependencies for cloud-provider-openstack acceptance test
+      shell:
         cmd: |
           set -x
           set -e
 
-          mkdir -p "$GOPATH/src/k8s.io"
-          cp -a "$PWD" "$GOPATH/src/k8s.io"
+          # Install dependencies
+          go get -u github.com/Masterminds/glide
+
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env }}'

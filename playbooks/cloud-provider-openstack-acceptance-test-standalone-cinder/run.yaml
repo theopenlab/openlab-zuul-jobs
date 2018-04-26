@@ -7,11 +7,15 @@
       environment:
         OVERRIDE_ENABLED_SERVICES: 'key,c-sch,c-api,c-vol,rabbit,mysql'
   tasks:
-    - shell:
+    - name: Run cinder standalone acceptance tests with cloud-provider-openstack
+      shell:
         cmd: |
           set -x
           set -e
           set -o pipefail
+
+          # Build cloud-provider-openstack binaries
+          make build
 
           # Create cloud-config
           source /opt/stack/new/devstack/openrc admin admin
@@ -19,7 +23,7 @@
           cat << EOF >> /etc/kubernetes/cloud-config
           [Global]
           domain-id = $OS_PROJECT_DOMAIN_ID
-          tenant-name = $OS_TENANT_NAME
+          tenant-name = $OS_PROJECT_NAME
           auth-url = $OS_AUTH_URL
           password = $OS_PASSWORD
           username = $OS_USERNAME
@@ -32,7 +36,7 @@
 
           # Go where we cloned kubernetes repository
           cd $GOPATH/src/k8s.io/kubernetes/
-          export API_HOST_IP=$(ifconfig | awk '/^docker0/ {getline; print $2}' | awk -F ':' '{print $2}')
+          export API_HOST_IP=$(ip route get 1.1.1.1 | awk '{print $7}')
           export KUBELET_HOST="0.0.0.0"
           export ALLOW_SECURITY_CONTEXT=true
           export ENABLE_CRI=false
@@ -79,7 +83,7 @@
           cluster/kubectl.sh apply -f '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/persistent-volume-provisioning/cinder/cinder-full.yaml'
 
           # If test passed
-          if timeout 100 bash -c '
+          if timeout 300 bash -c '
               while :
               do
                   [[ $(cluster/kubectl.sh describe pods web | awk "/^Status:/ {print \$2}") == Running ]] && break

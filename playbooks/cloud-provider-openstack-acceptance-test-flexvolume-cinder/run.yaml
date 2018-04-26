@@ -1,8 +1,8 @@
-- name: Run k8s flex volume cinder test
-  hosts: all
+- hosts: all
   become: yes
   pre_tasks:
-    - shell:
+    - name: Install libvirt-bin for flexvolume cinder conformance tests
+      shell:
         cmd: |
           apt install libvirt-bin -y
         executable: /bin/bash
@@ -16,11 +16,15 @@
         OVERRIDE_ENABLED_SERVICES: 'key,c-sch,c-api,c-vol,rabbit,mysql'
         PROJECTS: 'openstack/devstack-plugin-ceph'
   tasks:
-    - shell:
+    - name: Run flexvolume cinder conformance tests with cloud-provider-openstack
+      shell:
         cmd: |
           set -x
           set -e
           set -o pipefail
+
+          # Build cloud-provider-openstack binaries
+          make build
 
           # Create cloud-config
           source /opt/stack/new/devstack/openrc admin admin
@@ -60,16 +64,6 @@
           export MAX_TIME_FOR_URL_API_SERVER=5
           export RUNTIME_CONFIG="settings.k8s.io/v1alpha1=true"
 
-          # Workaround to rebuild cinder-flex-volume-driver binary using patched code
-          # https://github.com/liu-sheng/cloud-provider-openstack/pull/17
-          cp -f pkg/flexvolume/cinder_client.go vendor/k8s.io/cloud-provider-openstack/pkg/flexvolume/cinder_client.go
-          # cp -f pkg/flexvolume/cinder_baremetal_util.go vendor/k8s.io/cloud-provider-openstack/pkg/flexvolume/cinder_baremetal_util.go
-          cd /home/zuul/src/k8s.io/cloud-provider-openstack && CGO_ENABLED=0 GOOS=linux go build \
-              -ldflags "-X 'main.version=19c9e833-dirty'" \
-              -o cinder-flex-volume-driver \
-              cmd/cinder-flex-volume-driver/main.go
-          cd -
-
           mkdir -p /usr/libexec/kubernetes/kubelet-plugins/volume/exec/cinder.io~cinder-flex-volume-driver/
           cp cinder-flex-volume-driver /usr/libexec/kubernetes/kubelet-plugins/volume/exec/cinder.io~cinder-flex-volume-driver/
 
@@ -99,31 +93,8 @@
           # Sleep to wait for creating serviceaccount default/default complete
           sleep 5
           # Run test
-          VOLUME_ID=$(cinder create 1 | awk '/ id / {print $4}')
-          cat << EOF | "$kubectl" create -f -
-          apiVersion: v1
-          kind: Pod
-          metadata:
-            name: nginx
-            namespace: default
-          spec:
-            containers:
-            - name: nginx
-              image: nginx
-              volumeMounts:
-              - name: test
-                mountPath: /data
-              ports:
-              - containerPort: 80
-            volumes:
-            - name: test
-              flexVolume:
-                driver: "cinder.io/cinder-flex-volume-driver"
-                fsType: "ext4"
-                options:
-                  volumeID: "$VOLUME_ID"
-                  cinderConfig: "/etc/kubernetes/cloud-config"
-          EOF
+          export VOLUME_ID=$(cinder create 1 | awk '/ id / {print $4}')
+          "$kubectl" create -f examples/cinder-flexvolume/nginx.yaml
 
           # If test passed
           if timeout 300 bash -c '
