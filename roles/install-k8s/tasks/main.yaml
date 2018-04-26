@@ -1,4 +1,4 @@
-- name: install docker, kubernetes {{ k8s_version }} and etcd {{ etcd_version }}, disable iptables
+- name: Install docker, kubernetes {{ k8s_version }} and etcd {{ etcd_version }}, disable iptables
   shell:
     cmd: |
       set -x

@@ -7,6 +7,8 @@
       cat << EOF >> /tmp/dg-local.conf
       [[local|localrc]]
       NETWORK_GATEWAY=10.0.0.1
+      disable_service q-agt q-svc q-dhcp q-l3 q-meta q-metering
+      enable_service neutron-agent neutron-api neutron-dhcp neutron-l3 neutron-metadata-agent neutron-metering
       EOF
     executable: /bin/bash
     chdir: '{{ ansible_user_dir }}/workspace'
@@ -97,6 +99,56 @@
   environment: '{{ zuul | zuul_legacy_vars }}'
   when:
     - '"lbaas" in enable_services'
+
+
+- name: create devstack local conf with fwaas v1 enabled
+  shell:
+    cmd: |
+      set -e
+      set -x
+      cat << EOF >> /tmp/dg-local.conf
+      enable_service neutron-fwaas-v1
+      enable_plugin neutron-fwaas https://git.openstack.org/openstack/neutron-fwaas
+      EOF
+    executable: /bin/bash
+    chdir: '{{ ansible_user_dir }}/workspace'
+  environment: '{{ zuul | zuul_legacy_vars }}'
+  when:
+    - '"fwaas-v1" in enable_services'
+
+- name: create devstack local conf with fwaas v2 enabled
+  shell:
+    cmd: |
+      set -e
+      set -x
+      cat << EOF >> /tmp/dg-local.conf
+      enable_service neutron-fwaas-v2
+      enable_plugin neutron-fwaas https://git.openstack.org/openstack/neutron-fwaas
+      EOF
+    executable: /bin/bash
+    chdir: '{{ ansible_user_dir }}/workspace'
+  environment: '{{ zuul | zuul_legacy_vars }}'
+  when:
+    - '"fwaas-v2" in enable_services'
+
+- name: create devstack local conf with zun enabled
+  shell:
+    cmd: |
+      set -e
+      set -x
+      cat << EOF >> /tmp/dg-local.conf
+      enable_service zun-api,zun-compute,zun-wsproxy
+      enable_plugin devstack-plugin-container https://git.openstack.org/openstack/devstack-plugin-container
+      KURYR_CAPABILITY_SCOPE=global
+      KURYR_ETCD_PORT=2379
+      enable_plugin kuryr-libnetwork https://git.openstack.org/openstack/kuryr-libnetwork
+      enable_plugin zun https://git.openstack.org/openstack/zun
+      EOF
+    executable: /bin/bash
+    chdir: '{{ ansible_user_dir }}/workspace'
+  environment: '{{ zuul | zuul_legacy_vars }}'
+  when:
+    - '"zun" in enable_services'
 
 - name: create devstack local conf with ceph enabled
   shell:
