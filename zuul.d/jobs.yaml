@@ -43,6 +43,14 @@
     run: playbooks/gophercloud-acceptance-test/run.yaml
 
 - job:
+    name: gophercloud-acceptance-test-queens
+    parent: gophercloud-acceptance-test
+    description: |
+      Run gophercloud acceptance test on queens branch
+    vars:
+      os_branch: 'stable/queens'
+
+- job:
     name: gophercloud-acceptance-test-pike
     parent: gophercloud-acceptance-test
     description: |
@@ -75,14 +83,6 @@
       os_branch: 'stable/mitaka'
     nodeset: ubuntu-trusty
 
-# Gophercloud acceptance tests with Telefonica cloud
-- job:
-    name: gophercloud-acceptance-test-telefonica
-    parent: golang-test
-    description: |
-      Run gophercloud acceptance test against telefonica cloud
-    run: playbooks/gophercloud-acceptance-test-telefonica/run.yaml
-
 # Terraform-provider-openstack jobs
 - job:
     name: terraform-provider-openstack-unittest
@@ -98,6 +98,14 @@
     description: |
       Run terraform provider openstack acceptance test on master branch
     run: playbooks/terraform-provider-openstack-acceptance-test/run.yaml
+
+- job:
+    name: terraform-provider-openstack-acceptance-test-queens
+    parent: terraform-provider-openstack-acceptance-test
+    description: |
+      Run terraform provider openstack acceptance test on queens branch
+    vars:
+      os_branch: 'stable/queens'
 
 - job:
     name: terraform-provider-openstack-acceptance-test-pike
@@ -146,6 +154,20 @@
       Run terraform-provider-openstack trove acceptance test on master branch
     run: playbooks/terraform-provider-openstack-acceptance-test-trove/run.yaml
 
+- job:
+    name: terraform-provider-openstack-acceptance-test-lbaas
+    parent: golang-test
+    description: |
+      Run terraform provider openstack lbaas acceptance test on master branch
+    run: playbooks/terraform-provider-openstack-acceptance-test-lbaas/run.yaml
+
+- job:
+    name: terraform-provider-openstack-acceptance-test-fwaas
+    parent: golang-test
+    description: |
+      Run terraform provider openstack fwaas acceptance test on master branch
+    run: playbooks/terraform-provider-openstack-acceptance-test-fwaas/run.yaml
+
 # Gophercloud acceptance tests with Telefonica cloud
 - job:
     name: gophercloud-acceptance-test-telefonica
@@ -153,7 +175,8 @@
     description: |
       Run gophercloud acceptance test against telefonica cloud
     run: playbooks/gophercloud-acceptance-test-telefonica/run.yaml
-
+    secrets:
+      - telefonica_credentials
 
 # terraform-provider-telefonicaopencloud acceptance tests with Telefonica cloud
 - job:
@@ -162,6 +185,8 @@
     description: |
       Run acceptance tests of terraform-provider-telefonicaopencloud repo against telefonica cloud
     run: playbooks/terraform-provider-telefonicaopencloud-acceptance-test-telefonica/run.yaml
+    secrets:
+      - telefonica_credentials
 
 
 # terraform-provider-flexibleengine acceptance tests with orange cloud
@@ -171,52 +196,20 @@
     description: |
       Run acceptance tests of terraform-provider-flexibleengine repo against orange cloud
     run: playbooks/terraform-provider-flexibleengine-acceptance-test-orange/run.yaml
-
-# terraform-provider-opentelekomcloud acceptance tests with Telekom cloud
-- job:
-    name: terraform-provider-opentelekomcloud-acceptance-test-telekom
-    parent: golang-test
-    description: |
-      Run acceptance tests of terraform-provider-opentelekomcloud repo against telekom cloud
-    run: playbooks/terraform-provider-opentelekomcloud-acceptance-test-telekom/run.yaml
     secrets:
-      - telekom_credentials
+      - orange_credentials
 
+# terraform-provider-opentelekomcloud acceptance tests with Open Telekom cloud
 - job:
-    name: openstack-cloud-controller-manager-unit-test
+    name: terraform-provider-opentelekomcloud-acceptance-test-opentelekomcloud
     parent: golang-test
     description: |
-      Run K8S openstack-cloud-controller-manager unit test
-    run: playbooks/openstack-cloud-controller-manager-unit-test/run.yaml
+      Run acceptance tests of terraform-provider-opentelekomcloud repo against open telekom cloud
+    run: playbooks/terraform-provider-opentelekomcloud-acceptance-test-opentelekomcloud/run.yaml
+    secrets:
+      - opentelekomcloud_credentials
 
-- job:
-    name: openstack-cloud-controller-manager-in-devstack
-    parent: golang-test
-    description: |
-      Run K8S openstack-cloud-controller-manager unit test in devstack instance
-    run: playbooks/openstack-cloud-controller-manager-in-devstack/run.yaml
-    nodeset: ubuntu-xenial-large
-
-- job:
-    name: openstack-cloud-controller-manager-acceptance-test-lb-octavia-nested
-    parent: golang-test
-    required-projects:
-      - liu-sheng/openlab-zuul-jobs
-    description: |
-      Run K8S openstack-cloud-controller-manager unit test in devstack instance against lbaas
-    run: playbooks/openstack-cloud-controller-manager-acceptance-test-lb-octavia-nested/run.yaml
-
-- job:
-    name: openstack-cloud-controller-manager-acceptance-test-keystone-authentication
-    parent: golang-test
-    required-projects:
-      - liu-sheng/openlab-zuul-jobs
-    description: |
-      Run K8S openstack-cloud-controller-manager unit test in devstack instance with K8S+keystone authentication
-    run: playbooks/openstack-cloud-controller-manager-acceptance-test-keystone-authentication/run.yaml
-    nodeset: ubuntu-xenial-large
-
-
+# OpenLab job self-check jobs
 - job:
     name: openlab-zuul-jobs-check
     parent: init-test
@@ -228,7 +221,19 @@
       - liu-sheng/project-config
       - liu-sheng/zuul-jobs
     run: playbooks/openlab-zuul-jobs-check/run.yaml
+    vars:
+      excluded_path: ""
 
+# Deprecated (Kubernetes nested scenario)
+- job:
+    name: cloud-provider-openstack-unittest-nested
+    parent: golang-test
+    description: |
+      Run Kubernetes openstack-cloud-controller-manager unit test in devstack instance
+    run: playbooks/cloud-provider-openstack-unittest-nested/run.yaml
+    nodeset: ubuntu-xenial-otc
+
+# Kubernetes cloud-provider-openstack jobs
 - job:
     name: cloud-provider-openstack-unittest
     parent: golang-test
@@ -248,25 +253,6 @@
     nodeset: ubuntu-xenial-vexxhost
 
 - job:
-    name: cloud-provider-openstack-acceptance-test-keystone-authentication-authorization
-    parent: cloud-provider-openstack-acceptance-test
-    description: |
-      Run keystone auth acceptance tests of cloud-provider-openstack
-    run: playbooks/cloud-provider-openstack-acceptance-test-keystone-authentication-authorization/run.yaml
-    secrets:
-      - vexxhost_credentials
-
-- job:
-    name: cloud-provider-openstack-acceptance-test-lb-octavia
-    parent: cloud-provider-openstack-acceptance-test
-    description: |
-      Run lb acceptance tests of cloud-provider-openstack
-    run: playbooks/cloud-provider-openstack-acceptance-test-lb-octavia/run.yaml
-    post-run: playbooks/cloud-provider-openstack-acceptance-test-lb-octavia/post.yaml
-    secrets:
-      - vexxhost_credentials
-
-- job:
     name: cloud-provider-openstack-acceptance-test-k8s-cinder
     parent: cloud-provider-openstack-acceptance-test
     description: |
@@ -275,6 +261,24 @@
     post-run: playbooks/cloud-provider-openstack-acceptance-test-k8s-cinder/post.yaml
     secrets:
       - vexxhost_credentials
+
+- job:
+    name: cloud-provider-openstack-acceptance-test-e2e-conformance
+    parent: cloud-provider-openstack-acceptance-test
+    description: |
+      Run Kubernetes E2E Conformance tests against Kubernetes master
+    run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/run.yaml
+    post-run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/post.yaml
+    secrets:
+      - vexxhost_credentials
+
+- job:
+    name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.10
+    parent: cloud-provider-openstack-acceptance-test-e2e-conformance
+    description: |
+      Run Kubernetes E2E Conformance tests against Kubernetes v1.10
+    vars:
+      k8s_version: 'v1.10.0'
 
 - job:
     name: cloud-provider-openstack-acceptance-test-standalone-cinder
@@ -295,27 +299,28 @@
       - vexxhost_credentials
 
 - job:
+    name: cloud-provider-openstack-acceptance-test-lb-octavia
+    parent: cloud-provider-openstack-acceptance-test
+    description: |
+      Run lb acceptance tests of cloud-provider-openstack
+    run: playbooks/cloud-provider-openstack-acceptance-test-lb-octavia/run.yaml
+    post-run: playbooks/cloud-provider-openstack-acceptance-test-lb-octavia/post.yaml
+    secrets:
+      - vexxhost_credentials
+
+- job:
+    name: cloud-provider-openstack-acceptance-test-keystone-authentication-authorization
+    parent: cloud-provider-openstack-acceptance-test
+    description: |
+      Run keystone auth acceptance tests of cloud-provider-openstack
+    run: playbooks/cloud-provider-openstack-acceptance-test-keystone-authentication-authorization/run.yaml
+    secrets:
+      - vexxhost_credentials
+
+- job:
     name: cloud-provider-openstack-acceptance-test-flexvolume-cinder
     parent: cloud-provider-openstack-acceptance-test
     description: |
       Run cinder flexvolume acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-flexvolume-cinder/run.yaml
     nodeset: ubuntu-xenial
-
-- job:
-    name: cloud-provider-openstack-acceptance-test-e2e-conformance
-    parent: cloud-provider-openstack-acceptance-test
-    description: |
-      Run Kubernetes E2E Conformance tests against Kubernetes master
-    run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/run.yaml
-    post-run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/post.yaml
-    secrets:
-      - vexxhost_credentials
-
-- job:
-    name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.10
-    parent: cloud-provider-openstack-acceptance-test-e2e-conformance
-    description: |
-      Run Kubernetes E2E Conformance tests against Kubernetes v1.10
-    vars:
-      k8s_version: 'v1.10.0'
