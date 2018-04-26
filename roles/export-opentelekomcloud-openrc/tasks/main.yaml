@@ -6,6 +6,8 @@
       OS_AUTH_URL: '{{ opentelekomcloud_credentials.auth_url }}'
       OS_IDENTITY_API_VERSION: '{{ opentelekomcloud_credentials.identity_api_version }}'
       OS_DOMAIN_NAME: '{{ opentelekomcloud_credentials.domain_name }}'
+      OS_USER_DOMAIN_NAME: '{{ opentelekomcloud_credentials.user_domain_name }}'
+      OS_PROJECT_DOMAIN_NAME: '{{ opentelekomcloud_credentials.project_domain_name }}'
       OS_PROJECT_NAME: '{{ opentelekomcloud_credentials.project_name}}'
       OS_REGION_NAME: '{{ opentelekomcloud_credentials.region_name}}'
       OS_TENANT_NAME: '{{ opentelekomcloud_credentials.project_name }}'
