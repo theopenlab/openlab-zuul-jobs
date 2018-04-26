@@ -11,7 +11,7 @@
           set -o pipefail
           
           mkdir -p k8s.io
-          cp -R src/github.com/kubernetes/* src/k8s.io/
+          rsync -avz --progress src/github.com/kubernetes/ src/k8s.io/
         executable: /bin/bash
       environment: '{{ golang_env | combine(vexxhost_openrc) }}'
 
