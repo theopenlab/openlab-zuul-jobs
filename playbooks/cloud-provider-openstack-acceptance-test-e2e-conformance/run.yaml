@@ -104,6 +104,8 @@
           export KUBERNETES_CONFORMANCE_TEST=y
 
           # Run e2e test using local deployment/provider
+          # Must run kubetest under kubernetes root directory
+          cd "$GOPATH/src/k8s.io/kubernetes"
           kubetest --dump=$LOG_DIR \
               --test \
               --build=quick \
