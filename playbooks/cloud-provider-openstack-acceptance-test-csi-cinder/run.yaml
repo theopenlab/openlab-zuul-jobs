@@ -156,4 +156,5 @@
               exit 1
           fi
         executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env | combine(vexxhost_openrc) }}'
