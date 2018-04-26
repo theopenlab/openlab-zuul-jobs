@@ -9,11 +9,8 @@
           set -x
           set -e
 
-          # Install dependencies
-          go get -u github.com/Masterminds/glide
-
-          # Build cloud-provider-openstack binaries
-          make build
+          mkdir -p "$GOPATH/src/k8s.io"
+          cp -a "$PWD" "$GOPATH/src/k8s.io"
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ golang_env }}'
