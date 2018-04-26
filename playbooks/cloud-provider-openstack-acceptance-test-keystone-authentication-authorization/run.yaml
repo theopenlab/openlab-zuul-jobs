@@ -11,7 +11,13 @@
           set -o pipefail
 
           # Build cloud-provider-openstack binaries
+          ZUUL_WORKING_DIR='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}'
+          K8S_WORKING_DIR="$GOPATH/src/k8s.io/cloud-provider-openstack"
+          pushd "$K8S_WORKING_DIR"
           make build
+          rm -rf "$ZUUL_WORKING_DIR"
+          cp -a "$K8S_WORKING_DIR" "$ZUUL_WORKING_DIR"
+          popd
 
           apt-get install python-pip -y
           pip install -U python-openstackclient
