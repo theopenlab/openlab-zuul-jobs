@@ -1,7 +1,8 @@
 - hosts: all
   become: yes
   tasks:
-    - shell:
+    - name: Run unit tests with terraform-provider-openstack
+      shell:
         cmd: |
           set -e
           set -o pipefail

@@ -1,20 +1,13 @@
 - hosts: all
   become: yes
+  roles:
+    - export-telefonica-openrc
   tasks:
-    - shell:
+    - name: Run acceptance tests with gophercloud against telefonica public cloud
+      shell:
         cmd: |
           apt-get install python-pip -y
           pip install -U python-openstackclient
-          # NOTE: the following commands may include sensitive information please do not print in job logs
-          export OS_PASSWORD="`echo {{ telefonica_credentials.password }}`"
-          export OS_AUTH_TYPE="`echo {{ telefonica_credentials.auth_type }}`"
-          export OS_AUTH_URL="`echo {{ telefonica_credentials.auth_url }}`"
-          export OS_IDENTITY_API_VERSION="`echo {{ telefonica_credentials.identity_api_version }}`"
-          export OS_DOMAIN_NAME="`echo {{ telefonica_credentials.domain_name }}`"
-          export OS_PROJECT_NAME="`echo {{ telefonica_credentials.project_name}}`"
-          export OS_REGION_NAME="`echo {{ telefonica_credentials.region_name}}`"
-          export OS_TENANT_NAME="`echo {{ telefonica_credentials.project_name }}`"
-          export OS_USERNAME="`echo {{ telefonica_credentials.user_name }}`"
 
           export OS_SHARE_NETWORK_ID="foobar"
           export OS_FLAVOR_ID_RESIZE=2
@@ -34,6 +27,12 @@
           if [ -z "$OS_NETWORK_ID" ]; then
               export OS_NETWORK_ID="$(openstack network create $OS_NETWORK_NAME -f value -c id)"
               openstack subnet create --network $OS_NETWORK_ID --subnet-range 10.0.10.0/24 $_NET_PREFIX-subnet
+          fi
+
+          export OS_VPC_ID="$(openstack router show $_NET_PREFIX-vpc -f value -c id)"
+          if [ -z "$OS_VPC_ID" ]; then
+              export OS_VPC_ID="$(openstack router create $_NET_PREFIX-vpc -f value -c id)"
+              openstack router add subnet $_NET_PREFIX-vpc $_NET_PREFIX-subnet
           fi
 
           # set -e
@@ -59,4 +58,4 @@
           } 2>&1 | tee $TEST_RESULTS_TXTT
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
-      environment: '{{ golang_env }}'
+      environment: '{{ golang_env | combine(telefonica_openrc) }}'

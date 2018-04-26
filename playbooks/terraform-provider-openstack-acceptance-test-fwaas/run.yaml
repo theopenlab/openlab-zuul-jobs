@@ -4,11 +4,10 @@
     - clone-devstack-gate-to-workspace
     - role: create-devstack-local-conf
       enable_services:
-        - 'manila'
-        - 'designate'
+        - 'fwaas-v1'
     - install-devstack
   tasks:
-    - name: Run acceptance tests with terraform-provider-openstack
+    - name: Run fwaas acceptance tests with terraform-provider-openstack
       shell:
         cmd: |
           set -e
@@ -33,7 +32,6 @@
           echo export OS_FLAVOR_ID=99 >> openrc
           echo export OS_FLAVOR_ID_RESIZE=98 >> openrc
           echo export OS_SHARE_NETWORK_ID=foobar >> openrc
-          echo export OS_DOMAIN_ID=default >> openrc
           source openrc demo demo
           popd
 
@@ -45,10 +43,10 @@
               cd $GOPATH/src/github.com/terraform-providers/terraform-provider-openstack
           fi
 
-          # Run except the DNS/FW/LB test 100 testcases at a time
-          export OS_SWIFT_ENVIRONMENT=1 # for Swift tests
+          # Run the FWaaS test 100 testcases at a time
+          export OS_FW_ENVIRONMENT=1 # for FWaaS tests
           testcases=`go test ./openstack/ -v -list 'Acc'`
-          testcases=`echo "$testcases" | sed '$d' | grep -v -e FW -e LB`
+          testcases=`echo "$testcases" | sed '$d' | grep FW`
           echo "$testcases" | xargs -t -n100 sh -c 'TF_LOG=DEBUG TF_ACC=1 go test ./openstack -v -timeout 120m -run $(echo "$@" | tr " " "|")' argv0 2>&1 | tee $TEST_RESULTS_TXT
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'

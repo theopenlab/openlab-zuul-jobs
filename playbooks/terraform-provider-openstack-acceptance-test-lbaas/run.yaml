@@ -4,11 +4,10 @@
     - clone-devstack-gate-to-workspace
     - role: create-devstack-local-conf
       enable_services:
-        - 'manila'
-        - 'designate'
+        - 'lbaas'
     - install-devstack
   tasks:
-    - name: Run acceptance tests with terraform-provider-openstack
+    - name: Run lbaas acceptance tests with terraform-provider-openstack
       shell:
         cmd: |
           set -e
@@ -33,7 +32,7 @@
           echo export OS_FLAVOR_ID=99 >> openrc
           echo export OS_FLAVOR_ID_RESIZE=98 >> openrc
           echo export OS_SHARE_NETWORK_ID=foobar >> openrc
-          echo export OS_DOMAIN_ID=default >> openrc
+          echo export OS_USE_OCTAVIA=true >> openrc
           source openrc demo demo
           popd
 
@@ -45,10 +44,10 @@
               cd $GOPATH/src/github.com/terraform-providers/terraform-provider-openstack
           fi
 
-          # Run except the DNS/FW/LB test 100 testcases at a time
-          export OS_SWIFT_ENVIRONMENT=1 # for Swift tests
+          # Run the LB test 100 testcases at a time
+          export OS_LB_ENVIRONMENT=1 # for LBaaS tests
           testcases=`go test ./openstack/ -v -list 'Acc'`
-          testcases=`echo "$testcases" | sed '$d' | grep -v -e FW -e LB`
+          testcases=`echo "$testcases" | sed '$d' | grep LB`
           echo "$testcases" | xargs -t -n100 sh -c 'TF_LOG=DEBUG TF_ACC=1 go test ./openstack -v -timeout 120m -run $(echo "$@" | tr " " "|")' argv0 2>&1 | tee $TEST_RESULTS_TXT
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'

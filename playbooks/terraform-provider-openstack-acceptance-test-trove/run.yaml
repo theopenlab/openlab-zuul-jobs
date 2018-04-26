@@ -1,8 +1,8 @@
 - hosts: all
-  name:  Prepare git repos for trove environment
   become: yes
   tasks:
-    - shell:
+    - name:  Prepare git repos for trove environment
+      shell:
         cmd: |
           set -e
           set -x
@@ -20,9 +20,9 @@
       environment: '{{ zuul | zuul_legacy_vars }}'
 
 - hosts: all
-  name:  Install and init trove environment
   tasks:
-    - shell:
+    - name:  Install and init trove environment
+      shell:
         cmd: |
           set -e
           set -x
@@ -42,10 +42,10 @@
       environment: '{{ zuul | zuul_legacy_vars }}'
 
 - hosts: all
-  name: Run acceptance tests of trove
   become: yes
   tasks:
-    - shell:
+    - name: Run trove acceptance tests with terraform-provider-openstack
+      shell:
         cmd: |
           set -e
           set -o pipefail
