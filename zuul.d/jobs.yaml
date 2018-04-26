@@ -287,6 +287,7 @@
       Run cinder standalone acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-standalone-cinder/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-standalone-cinder/post.yaml
+    nodeset: ubuntu-xenial
 
 - job:
     name: cloud-provider-openstack-acceptance-test-csi-cinder
