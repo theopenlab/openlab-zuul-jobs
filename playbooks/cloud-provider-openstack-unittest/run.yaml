@@ -25,5 +25,5 @@
           go get -u github.com/Masterminds/glide
           TESTARGS='-v' make test 2>&1 | tee $TEST_RESULTS_TXT
         executable: /bin/bash
-        chdir: 'src/k8s.io/{{ zuul.project.name }}'
+        chdir: 'src/k8s.io/cloud-provider-openstack'
       environment: '{{ golang_env | combine(vexxhost_openrc) }}'
