@@ -63,7 +63,10 @@
           export MAX_TIME_FOR_URL_API_SERVER=5
 
           # -E preserves the current env vars, but we need to special case PATH
-          sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS "$GOPATH/src/k8s.io/kubernetes/hack/local-up-cluster.sh" -O
+          # Must run local-up-cluster.sh under kubernetes root directory
+          pushd "$GOPATH/src/k8s.io/kubernetes"
+          sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
+          popd
 
           export kubectl="$GOPATH/src/k8s.io/kubernetes/cluster/kubectl.sh"
           # set up the config we need for kubectl to work

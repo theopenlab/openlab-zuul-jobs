@@ -56,7 +56,10 @@
           export MAX_TIME_FOR_URL_API_SERVER=5
 
           # -E preserves the current env vars, but we need to special case PATH
-          sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS "$GOPATH/src/k8s.io/kubernetes/hack/local-up-cluster.sh" -O
+          # Must run local-up-cluster.sh under kubernetes root directory
+          pushd "$GOPATH/src/k8s.io/kubernetes"
+          sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
+          popd
           nohup ./cinder-provisioner --cloud-config "$CLOUD_CONFIG" --kubeconfig /var/run/kubernetes/admin.kubeconfig --id cinder > "$LOG_DIR/cinder-provisioner.log" 2>&1 &
 
           export kubectl="$GOPATH/src/k8s.io/kubernetes/cluster/kubectl.sh"
