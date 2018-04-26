@@ -1,8 +1,7 @@
 - hosts: all
   become: yes
   roles:
-    #- export-vexxhost-openrc
-    - export-opentelekomcloud-openrc
+    - export-vexxhost-openrc
   tasks:
     - name: Run unit tests with cloud-provider-openstack
       shell:
@@ -12,8 +11,7 @@
           set -o pipefail
 
           go get -u github.com/Masterminds/glide
-          cd "$GOPATH/src/k8s.io/cloud-provider-openstack"
           TESTARGS='-v' make test 2>&1 | tee $TEST_RESULTS_TXT
         executable: /bin/bash
-        chdir: '{{ zuul.project.src_dir }}'
-      environment: '{{ golang_env | combine(opentelekomcloud_openrc) }}'
+        chdir: '{{ k8s_specific_src_dir }}'
+      environment: '{{ golang_env | combine(vexxhost_openrc) }}'

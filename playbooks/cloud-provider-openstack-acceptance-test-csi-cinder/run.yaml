@@ -1,7 +1,6 @@
 - hosts: all
   roles:
-    #- export-vexxhost-openrc
-    - export-opentelekomcloud-openrc
+    - export-vexxhost-openrc
   become: yes
   tasks:
     - name: Run csi cinder acceptance tests with cloud-provider-openstack
@@ -12,13 +11,7 @@
           set -o pipefail
 
           # Build cloud-provider-openstack binaries
-          ZUUL_WORKING_DIR='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}'
-          K8S_WORKING_DIR="$GOPATH/src/k8s.io/cloud-provider-openstack"
-          pushd "$K8S_WORKING_DIR"
           make build
-          rm -rf "$ZUUL_WORKING_DIR"
-          cp -a "$K8S_WORKING_DIR" "$ZUUL_WORKING_DIR"
-          popd
 
           # Create cloud-config
           mkdir -p /etc/kubernetes/
@@ -50,7 +43,7 @@
           # DO NOT change the location of the cloud-config file. It is important for the old cinder provider to work
           export CLOUD_CONFIG=/etc/kubernetes/cloud-config
           # Specify the OCCM binary
-          export EXTERNAL_CLOUD_PROVIDER_BINARY=./openstack-cloud-controller-manager
+          export EXTERNAL_CLOUD_PROVIDER_BINARY="$PWD/openstack-cloud-controller-manager"
 
           # location of where the kubernetes processes log their output
           mkdir -p '{{ ansible_user_dir }}/workspace/logs/kubernetes'
@@ -66,17 +59,15 @@
           export FEATURE_GATES="CSIPersistentVolume=true,MountPropagation=true"
           export RUNTIME_CONFIG="storage.k8s.io/v1alpha1=true"
 
-          k8s_root="$GOPATH/src/k8s.io/kubernetes"
-          kubectl="$k8s_root/cluster/kubectl.sh"
           # -E preserves the current env vars, but we need to special case PATH
-          sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS "$k8s_root/hack/local-up-cluster.sh" -O
+          sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS "$GOPATH/src/k8s.io/kubernetes/hack/local-up-cluster.sh" -O
 
+          export kubectl="$GOPATH/src/k8s.io/kubernetes/cluster/kubectl.sh"
           # set up the config we need for kubectl to work
           "$kubectl" config set-cluster local --server=https://localhost:6443 --certificate-authority=/var/run/kubernetes/server-ca.crt
           "$kubectl" config set-credentials myself --client-key=/var/run/kubernetes/client-admin.key --client-certificate=/var/run/kubernetes/client-admin.crt
           "$kubectl" config set-context local --cluster=local --user=myself
           "$kubectl" config use-context local
-
           # Hack for RBAC for all for the new cloud-controller process, we need to do better than this
           "$kubectl" create clusterrolebinding --user system:serviceaccount:kube-system:default kube-system-cluster-admin-1 --clusterrole cluster-admin
           "$kubectl" create clusterrolebinding --user system:serviceaccount:kube-system:pvl-controller kube-system-cluster-admin-2 --clusterrole cluster-admin
@@ -126,7 +117,7 @@
           "$kubectl" create -f manifests/cinder-csi-plugin
           sleep 5
           # If services up
-          if kubectl="$kubectl" timeout 300 bash -c '
+          if timeout 300 bash -c '
               while :
               do
                   "$kubectl" get pod | sed "1d" | awk '\''$2 != "2/2" || $3 != "Running" {err = 1} END {exit err}'\'' && break
@@ -145,7 +136,7 @@
           # Make test
           "$kubectl" create -f examples/cinder-csi-plugin/nginx.yaml
           # If test passed
-          if kubectl="$kubectl" timeout 300 bash -c '
+          if timeout 300 bash -c '
               while :
               do
                   [[ $("$kubectl" describe pod nginx | awk "/^Status:/ {print \$2}") == Running ]] && break
@@ -163,5 +154,5 @@
               exit 1
           fi
         executable: /bin/bash
-        chdir: '{{ zuul.project.src_dir }}'
-      environment: '{{ golang_env | combine(opentelekomcloud_openrc) }}'
+        chdir: '{{ k8s_specific_src_dir }}'
+      environment: '{{ golang_env | combine(vexxhost_openrc) }}'

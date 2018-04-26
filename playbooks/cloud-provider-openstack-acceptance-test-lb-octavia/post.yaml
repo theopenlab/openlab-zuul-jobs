@@ -1,22 +1,20 @@
 - hosts: all
   become: yes
   roles:
-    #- export-vexxhost-openrc
-    - export-opentelekomcloud-openrc
+    - export-vexxhost-openrc
   tasks:
     - name: Clean up resources for lbass octavia acceptance tests
       shell:
         cmd: |
           set -e
           set -x
-          pushd ${GOPATH}/src/k8s.io/kubernetes
-          cluster/kubectl.sh config use-context local
-          ext_lb_svc_uid=$(cluster/kubectl.sh get services external-http-nginx-service -o=jsonpath='{.metadata.uid}') || true
-          int_lb_svc_uid=$(cluster/kubectl.sh get services internal-http-nginx-service -o=jsonpath='{.metadata.uid}') || true
+          kubectl="$GOPATH/src/k8s.io/kubernetes/cluster/kubectl.sh"
+          "$kubectl" config use-context local
+          ext_lb_svc_uid=$("$kubectl" get services external-http-nginx-service -o=jsonpath='{.metadata.uid}') || true
+          int_lb_svc_uid=$("$kubectl" get services internal-http-nginx-service -o=jsonpath='{.metadata.uid}') || true
 
-          cluster/kubectl.sh delete -f "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/loadbalancers/internal-http-nginx.yaml" || true
-          cluster/kubectl.sh delete -f "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/loadbalancers/external-http-nginx.yaml" || true
-          popd
+          "$kubectl" delete -f examples/loadbalancers/internal-http-nginx.yaml || true
+          "$kubectl" delete -f examples/loadbalancers/external-http-nginx.yaml || true
 
           for lb_svc_uid in $ext_lb_svc_uid $int_lb_svc_uid; do
               lb_name=$(echo $lb_svc_uid | tr -d '-' | sed 's/^/a/' | cut -c -32)
@@ -34,5 +32,5 @@
               } || true
           done
         executable: /bin/bash
-        chdir: '{{ zuul.project.src_dir }}'
-      environment: '{{ golang_env | combine(opentelekomcloud_openrc) }}'
+        chdir: '{{ k8s_specific_src_dir }}'
+      environment: '{{ golang_env | combine(vexxhost_openrc) }}'

@@ -2,15 +2,3 @@
   become: yes
   roles:
     - install-k8s
-  tasks:
-    - name: Copy cloud-provider-openstack to k8s.io directory
-      shell:
-        cmd: |
-          set -x
-          set -e
-
-          mkdir -p "$GOPATH/src/k8s.io"
-          cp -a "$PWD" "$GOPATH/src/k8s.io"
-        executable: /bin/bash
-        chdir: '{{ zuul.project.src_dir }}'
-      environment: '{{ golang_env }}'
