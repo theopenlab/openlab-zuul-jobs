@@ -165,12 +165,13 @@
           echo "$allowed"
           [[ "$allowed" =~ '"allowed": true' ]] && echo "Testing k8s-keystone-auth sucessfully!"
 
+          # NOTE: k8s+keystone webhook test case need the OS_DOMAIN_NAME env
+          export OS_DOMAIN_NAME=Default
           "$kubectl" config set-credentials openstackuser --auth-provider=openstack
           "$kubectl" config set-context --cluster=local --user=openstackuser openstackuser@local
           "$kubectl" config use-context openstackuser@local
-          sleep 7200
           if ! "$kubectl" get pods; then
-              echo "Testing kubernetes+keystone authentication and authorizatio failed!"
+              echo "Testing kubernetes+keystone authentication and authorization failed!"
               exit 1
           fi
         executable: /bin/bash
