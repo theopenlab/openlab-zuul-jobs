@@ -6,9 +6,10 @@
         cmd: |
           set -e
           set -x
-          cd ${GOPATH}/src/k8s.io/kubernetes
-          cluster/kubectl.sh config use-context local
-          cluster/kubectl.sh delete -f '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/examples/cinder-csi-plugin/nginx.yaml'
-          cluster/kubectl.sh delete -f '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/manifests/cinder-csi-plugin'
+          kubectl="$GOPATH/src/k8s.io/kubernetes/cluster/kubectl.sh"
+          "$kubectl" config use-context local
+          "$kubectl" delete -f examples/cinder-csi-plugin/nginx.yaml
+          "$kubectl" delete -f manifests/cinder-csi-plugin
         executable: /bin/bash
+        chdir: '{{ k8s_specific_src_dir }}'
       environment: '{{ golang_env }}'

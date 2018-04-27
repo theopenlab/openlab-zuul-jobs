@@ -235,22 +235,30 @@
 
 # Kubernetes cloud-provider-openstack jobs
 - job:
-    name: cloud-provider-openstack-unittest
+    name: cloud-provider-openstack-test
     parent: golang-test
     description: |
       Run unit test of cloud-provider-openstack repo against vexxhost cloud
+    pre-run: playbooks/cloud-provider-openstack-test/pre.yaml
+    nodeset: ubuntu-xenial-vexxhost
+    vars:
+      k8s_specific_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack'
+
+- job:
+    name: cloud-provider-openstack-unittest
+    parent: cloud-provider-openstack-test
+    description: |
+      Run unit test of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-unittest/run.yaml
     secrets:
       - vexxhost_credentials
-    nodeset: ubuntu-xenial-vexxhost
 
 - job:
     name: cloud-provider-openstack-acceptance-test
-    parent: golang-test
+    parent: cloud-provider-openstack-test
     description: |
       Run acceptance test of cloud-provider-openstack
     pre-run: playbooks/cloud-provider-openstack-acceptance-test/pre.yaml
-    nodeset: ubuntu-xenial-vexxhost
 
 - job:
     name: cloud-provider-openstack-acceptance-test-k8s-cinder
