@@ -37,8 +37,8 @@
           EOF
 
           cp ./examples/webhook/policy.json /etc/kubernetes/
-          sed -i "s/c1f7910086964990847dc6c8b128f63c/$OS_PROJECT_ID/g" /etc/kubernetes/policy.json
-          sed -i -e "s/k8s-admin/creator/g" /etc/kubernetes/policy.json
+          sed -i "s/c1f7910086964990847dc6c8b128f63c/$OS_PROJECT_NAME/g" /etc/kubernetes/policy.json
+          sed -i -e "s/k8s-admin/admin/g" /etc/kubernetes/policy.json
 
           # Create webhook.kubeconfig
           cat << EOF >> /etc/kubernetes/webhook.kubeconfig
@@ -98,13 +98,14 @@
           pushd "$GOPATH/src/k8s.io/kubernetes"
           sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
           popd
+          [[ "$OS_AUTH_URL" =~ "v3" ]] && keystone_url=${OS_AUTH_URL} || keystone_url=${OS_AUTH_URL}/v3
           nohup ./k8s-keystone-auth \
                 --tls-cert-file /var/run/kubernetes/serving-kube-apiserver.crt \
                 --tls-private-key-file /var/run/kubernetes/serving-kube-apiserver.key \
                 --keystone-policy-file /etc/kubernetes/policy.json \
                 --log-dir=${LOG_DIR} \
                 --v=10 \
-                --keystone-url ${OS_AUTH_URL} >"${LOG_DIR}/keystone-auth.log" 2>&1 &
+                --keystone-url ${keystone_url} >"${LOG_DIR}/keystone-auth.log" 2>&1 &
 
           export kubectl="$GOPATH/src/k8s.io/kubernetes/cluster/kubectl.sh"
           # set up the config we need for kubectl to work
