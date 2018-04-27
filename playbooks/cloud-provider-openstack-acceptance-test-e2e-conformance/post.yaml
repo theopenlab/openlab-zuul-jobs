@@ -12,7 +12,7 @@
           curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add
           apt-get update && sudo apt-get install google-cloud-sdk --yes
           apt-get install google-cloud-sdk-app-engine-java --yes
-          export LOG_DIR='{{ ansible_user_dir }}/workspace/logs/kubernetes'
+          export LOG_DIR='{{ k8s_log_dir }}'
           # get upload_e2e.py
           wget https://raw.githubusercontent.com/kubernetes/test-infra/master/testgrid/conformance/upload_e2e.py
           # TODO(RuiChen): Add timestamp for e2e.log in order to workaround upload_e2e.py bug
