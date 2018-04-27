@@ -1,7 +1,6 @@
 - hosts: all
   roles:
     - clone-devstack-gate-to-workspace
-    - create-devstack-local-conf
     - role: install-devstack
       environment:
         OVERRIDE_ENABLED_SERVICES: 'key,mysql'
