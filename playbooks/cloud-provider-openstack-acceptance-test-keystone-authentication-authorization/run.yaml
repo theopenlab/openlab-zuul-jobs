@@ -71,11 +71,11 @@
           # We want to use the openstack cloud provider
           export CLOUD_PROVIDER=openstack
           # We want to run a separate cloud-controller-manager for openstack
-          export EXTERNAL_CLOUD_PROVIDER=true
+          # export EXTERNAL_CLOUD_PROVIDER=true
           # DO NOT change the location of the cloud-config file. It is important for the old cinder provider to work
           export CLOUD_CONFIG=/etc/kubernetes/cloud-config
           # Specify the OCCM binary
-          export EXTERNAL_CLOUD_PROVIDER_BINARY="$PWD/openstack-cloud-controller-manager"
+          # export EXTERNAL_CLOUD_PROVIDER_BINARY="$PWD/openstack-cloud-controller-manager"
 
           # location of where the kubernetes processes log their output
           mkdir -p '{{ ansible_user_dir }}/workspace/logs/kubernetes'
