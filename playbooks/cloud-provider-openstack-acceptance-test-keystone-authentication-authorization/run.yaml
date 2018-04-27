@@ -168,6 +168,7 @@
           "$kubectl" config set-credentials openstackuser --auth-provider=openstack
           "$kubectl" config set-context --cluster=local --user=openstackuser openstackuser@local
           "$kubectl" config use-context openstackuser@local
+          sleep 7200
           if ! "$kubectl" get pods; then
               echo "Testing kubernetes+keystone authentication and authorizatio failed!"
               exit 1
