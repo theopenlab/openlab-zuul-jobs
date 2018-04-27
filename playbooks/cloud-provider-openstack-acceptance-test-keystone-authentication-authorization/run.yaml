@@ -114,7 +114,6 @@
           "$kubectl" config set-context local --cluster=local --user=myself
           "$kubectl" config use-context local
           # Hack for RBAC for all for the new cloud-controller process, we need to do better than this
-          sleep 7200
           "$kubectl" create clusterrolebinding --user system:serviceaccount:kube-system:default kube-system-cluster-admin-1 --clusterrole cluster-admin
           "$kubectl" create clusterrolebinding --user system:serviceaccount:kube-system:pvl-controller kube-system-cluster-admin-2 --clusterrole cluster-admin
           "$kubectl" create clusterrolebinding --user system:serviceaccount:kube-system:cloud-node-controller kube-system-cluster-admin-3 --clusterrole cluster-admin
