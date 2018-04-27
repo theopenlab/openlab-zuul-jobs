@@ -1,6 +1,9 @@
 - hosts: all
   roles:
-    - export-vexxhost-openrc
+    - clone-devstack-gate-to-workspace
+    - role: install-devstack
+      environment:
+        OVERRIDE_ENABLED_SERVICES: 'key,mysql'
   become: yes
   tasks:
     - name: Run keystone authentication and authorization acceptance tests with cloud-provider-openstack
@@ -16,24 +19,26 @@
           apt-get install python-pip -y
           pip install -U python-openstackclient
 
-          mkdir -p /etc/kubernetes/
-          cp ./examples/webhook/policy.json /etc/kubernetes/
-          sed -i "s/c1f7910086964990847dc6c8b128f63c/$OS_PROJECT_ID/g" /etc/kubernetes/policy.json
-          sed -i -e "s/k8s-admin/creator/g" /etc/kubernetes/policy.json
-
           # Create cloud-config
+          source /opt/stack/new/devstack/openrc admin admin
+          mkdir -p /etc/kubernetes/
           cat << EOF >> /etc/kubernetes/cloud-config
           [Global]
-          domain-name = $OS_USER_DOMAIN_NAME
-          tenant-id = $OS_PROJECT_ID
+          domain-id = $OS_PROJECT_DOMAIN_ID
+          tenant-name = $OS_PROJECT_NAME
           auth-url = $OS_AUTH_URL
           password = $OS_PASSWORD
           username = $OS_USERNAME
           region = $OS_REGION_NAME
+
           [BlockStorage]
           bs-version = v2
           ignore-volume-az = yes
           EOF
+
+          cp ./examples/webhook/policy.json /etc/kubernetes/
+          sed -i "s/c1f7910086964990847dc6c8b128f63c/$OS_PROJECT_NAME/g" /etc/kubernetes/policy.json
+          sed -i -e "s/k8s-admin/admin/g" /etc/kubernetes/policy.json
 
           # Create webhook.kubeconfig
           cat << EOF >> /etc/kubernetes/webhook.kubeconfig
@@ -65,12 +70,7 @@
           export LOG_LEVEL=4
           # We want to use the openstack cloud provider
           export CLOUD_PROVIDER=openstack
-          # We want to run a separate cloud-controller-manager for openstack
-          export EXTERNAL_CLOUD_PROVIDER=true
-          # DO NOT change the location of the cloud-config file. It is important for the old cinder provider to work
           export CLOUD_CONFIG=/etc/kubernetes/cloud-config
-          # Specify the OCCM binary
-          export EXTERNAL_CLOUD_PROVIDER_BINARY="$PWD/openstack-cloud-controller-manager"
 
           # location of where the kubernetes processes log their output
           mkdir -p '{{ ansible_user_dir }}/workspace/logs/kubernetes'
@@ -93,13 +93,14 @@
           pushd "$GOPATH/src/k8s.io/kubernetes"
           sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
           popd
+          [[ "$OS_AUTH_URL" =~ "v3" ]] && keystone_url=${OS_AUTH_URL} || keystone_url=${OS_AUTH_URL}/v3
           nohup ./k8s-keystone-auth \
                 --tls-cert-file /var/run/kubernetes/serving-kube-apiserver.crt \
                 --tls-private-key-file /var/run/kubernetes/serving-kube-apiserver.key \
                 --keystone-policy-file /etc/kubernetes/policy.json \
                 --log-dir=${LOG_DIR} \
                 --v=10 \
-                --keystone-url ${OS_AUTH_URL} >"${LOG_DIR}/keystone-auth.log" 2>&1 &
+                --keystone-url ${keystone_url} >"${LOG_DIR}/keystone-auth.log" 2>&1 &
 
           export kubectl="$GOPATH/src/k8s.io/kubernetes/cluster/kubectl.sh"
           # set up the config we need for kubectl to work
@@ -107,6 +108,7 @@
           "$kubectl" config set-credentials myself --client-key=/var/run/kubernetes/client-admin.key --client-certificate=/var/run/kubernetes/client-admin.crt
           "$kubectl" config set-context local --cluster=local --user=myself
           "$kubectl" config use-context local
+          sleep 10
           # Hack for RBAC for all for the new cloud-controller process, we need to do better than this
           "$kubectl" create clusterrolebinding --user system:serviceaccount:kube-system:default kube-system-cluster-admin-1 --clusterrole cluster-admin
           "$kubectl" create clusterrolebinding --user system:serviceaccount:kube-system:pvl-controller kube-system-cluster-admin-2 --clusterrole cluster-admin
@@ -158,13 +160,15 @@
           echo "$allowed"
           [[ "$allowed" =~ '"allowed": true' ]] && echo "Testing k8s-keystone-auth sucessfully!"
 
+          # NOTE: k8s+keystone webhook test case need the OS_DOMAIN_NAME env
+          export OS_DOMAIN_NAME=Default
           "$kubectl" config set-credentials openstackuser --auth-provider=openstack
           "$kubectl" config set-context --cluster=local --user=openstackuser openstackuser@local
           "$kubectl" config use-context openstackuser@local
           if ! "$kubectl" get pods; then
-              echo "Testing kubernetes+keystone authentication and authorizatio failed!"
+              echo "Testing kubernetes+keystone authentication and authorization failed!"
               exit 1
           fi
         executable: /bin/bash
         chdir: '{{ k8s_specific_src_dir }}'
-      environment: '{{ golang_env | combine(vexxhost_openrc) }}'
+      environment: '{{ golang_env }}'
