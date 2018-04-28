@@ -1,9 +1,7 @@
 - hosts: all
   become: yes
   roles:
-    - role: export-cloud-openrc
-      vars:
-        cloud_name: 'vexxhost'
+    - export-opentelekomcloud-openrc
   tasks:
     - name: Run unit tests with cloud-provider-openstack
       shell:
@@ -15,5 +13,5 @@
           go get -u github.com/Masterminds/glide
           TESTARGS='-v' make test 2>&1 | tee $TEST_RESULTS_TXT
         executable: /bin/bash
-        chdir: '{{ k8s_os_provider_src_dir }}'
-      environment: '{{ golang_env }}'
+        chdir: '{{ k8s_specific_src_dir }}'
+      environment: '{{ golang_env | combine(opentelekomcloud_openrc) }}'
