@@ -1,7 +1,9 @@
 - hosts: all
   become: yes
   roles:
-    - export-telefonica-openrc
+    - role: export-cloud-openrc
+      vars:
+        cloud_name: 'telefonica'
   tasks:
     - name: Run acceptance tests with terraform-provider-openstack against telefonica public cloud
       shell:
@@ -52,4 +54,4 @@
 
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
-      environment: '{{ golang_env | combine(telefonica_openrc) }}'
+      environment: '{{ golang_env }}'

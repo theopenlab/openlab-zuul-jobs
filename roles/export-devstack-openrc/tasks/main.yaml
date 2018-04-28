@@ -1,0 +1,24 @@
+# Convert multiple key=value pairs to json format
+#   's/^/"/' - add " at the beginning of each line
+#   's/=/": "/' - change = to ": " in each line
+#   's/$/",/' - add ", at the end of each line
+#   '$ s/,$//' - delete comma at the end of the last line
+
+- name: Register devstack openrc
+  shell:
+    cmd: |
+      source '{{ openrc_file }}' admin admin > /dev/null
+      openrc=$(env | grep OS_ | sed -e 's/^/"/' -e 's/=/": "/' -e 's/$/",/' | sed '$ s/,$//')
+      echo "{$openrc}"
+    executable: /bin/bash
+  register: output
+
+- name: Set fact for devstack openrc
+  set_fact:
+    openrc: '{{ output.stdout | from_json }}'
+  no_log: yes
+
+- name: Merge openrc into golang env
+  set_fact:
+    golang_env: '{{ golang_env | combine(openrc) }}'
+  no_log: yes

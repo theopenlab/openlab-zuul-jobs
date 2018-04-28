@@ -1,7 +1,9 @@
 - hosts: all
   become: yes
   roles:
-    - export-opentelekomcloud-openrc
+    - role: export-cloud-openrc
+      vars:
+        cloud_name: 'opentelekomcloud'
   tasks:
     - name: Run acceptance tests with terraform-provider-openstack against opentelekom public cloud
       shell:
@@ -39,4 +41,4 @@
 
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
-      environment: '{{ golang_env | combine(opentelekomcloud_openrc) }}'
+      environment: '{{ golang_env }}'
