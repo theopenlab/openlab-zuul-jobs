@@ -1,4 +1,4 @@
-- name: Install docker, kubernetes {{ k8s_version }} and etcd {{ etcd_version }}, disable iptables
+- name: Disable iptables, install docker, etcd {{ etcd_version }} and kubernetes {{ k8s_version }}
   shell:
     cmd: |
       set -x
@@ -25,7 +25,7 @@
       cp etcd-{{ etcd_version }}-linux-amd64/etcd{,ctl} /usr/local/bin/
 
       # Build k8s cmd
-      git clone https://github.com/kubernetes/kubernetes ${GOPATH}/src/k8s.io/kubernetes -b '{{ k8s_version }}'
-      make -C ${GOPATH}/src/k8s.io/kubernetes WHAT="cmd/kubectl cmd/hyperkube"
+      git clone https://github.com/kubernetes/kubernetes '{{ k8s_src_dir }}' -b '{{ k8s_version }}'
+      make -C '{{ k8s_src_dir }}' WHAT="cmd/kubectl cmd/hyperkube"
     executable: /bin/bash
   environment: '{{ golang_env }}'

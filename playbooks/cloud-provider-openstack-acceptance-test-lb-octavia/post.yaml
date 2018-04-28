@@ -1,20 +1,21 @@
 - hosts: all
   become: yes
   roles:
-    - export-vexxhost-openrc
+    - role: export-cloud-openrc
+      vars:
+        cloud_name: 'vexxhost'
   tasks:
     - name: Clean up resources for lbass octavia acceptance tests
       shell:
         cmd: |
           set -e
           set -x
-          kubectl="$GOPATH/src/k8s.io/kubernetes/cluster/kubectl.sh"
-          "$kubectl" config use-context local
-          ext_lb_svc_uid=$("$kubectl" get services external-http-nginx-service -o=jsonpath='{.metadata.uid}') || true
-          int_lb_svc_uid=$("$kubectl" get services internal-http-nginx-service -o=jsonpath='{.metadata.uid}') || true
+          '{{ kubectl }}' config use-context local
+          ext_lb_svc_uid=$('{{ kubectl }}' get services external-http-nginx-service -o=jsonpath='{.metadata.uid}') || true
+          int_lb_svc_uid=$('{{ kubectl }}' get services internal-http-nginx-service -o=jsonpath='{.metadata.uid}') || true
 
-          "$kubectl" delete -f examples/loadbalancers/internal-http-nginx.yaml || true
-          "$kubectl" delete -f examples/loadbalancers/external-http-nginx.yaml || true
+          '{{ kubectl }}' delete -f examples/loadbalancers/internal-http-nginx.yaml || true
+          '{{ kubectl }}' delete -f examples/loadbalancers/external-http-nginx.yaml || true
 
           for lb_svc_uid in $ext_lb_svc_uid $int_lb_svc_uid; do
               lb_name=$(echo $lb_svc_uid | tr -d '-' | sed 's/^/a/' | cut -c -32)
@@ -32,5 +33,5 @@
               } || true
           done
         executable: /bin/bash
-        chdir: '{{ k8s_specific_src_dir }}'
-      environment: '{{ golang_env | combine(vexxhost_openrc) }}'
+        chdir: '{{ k8s_os_provider_src_dir }}'
+      environment: '{{ golang_env }}'

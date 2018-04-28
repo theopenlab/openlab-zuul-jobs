@@ -242,7 +242,10 @@
     pre-run: playbooks/cloud-provider-openstack-test/pre.yaml
     nodeset: ubuntu-xenial-vexxhost
     vars:
-      k8s_specific_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack'
+      k8s_os_provider_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack'
+      k8s_src_dir: '{{ ansible_user_dir }}/src/k8s.io/kubernetes'
+      k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
+      kubectl: '{{ ansible_user_dir }}/src/k8s.io/kubernetes/cluster/kubectl.sh'
 
 - job:
     name: cloud-provider-openstack-unittest
