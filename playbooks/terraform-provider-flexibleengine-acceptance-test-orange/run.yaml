@@ -1,7 +1,9 @@
 - hosts: all
   become: yes
   roles:
-    - export-orange-openrc
+    - role: export-cloud-openrc
+      vars:
+        cloud_name: 'orange'
   tasks:
     - name: Run acceptance tests with terraform-provider-openstack against orange public cloud
       shell:
@@ -51,4 +53,4 @@
           make testacc 2>&1 | tee $TEST_RESULTS_TXT
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
-      environment: '{{ golang_env | combine(orange_openrc) }}'
+      environment: '{{ golang_env }}'
