@@ -251,8 +251,7 @@
       Run unit test of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-unittest/run.yaml
     secrets:
-      - opentelekomcloud_credentials
-    nodeset: ubuntu-xenial-otc
+      - vexxhost_credentials
 
 - job:
     name: cloud-provider-openstack-acceptance-test
