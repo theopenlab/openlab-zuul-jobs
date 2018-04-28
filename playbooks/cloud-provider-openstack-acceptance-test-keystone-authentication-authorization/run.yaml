@@ -70,6 +70,7 @@
           export LOG_LEVEL=4
           # We want to use the openstack cloud provider
           export CLOUD_PROVIDER=openstack
+          export CLOUD_CONFIG=/etc/kubernetes/cloud-config
 
           # location of where the kubernetes processes log their output
           mkdir -p '{{ ansible_user_dir }}/workspace/logs/kubernetes'
