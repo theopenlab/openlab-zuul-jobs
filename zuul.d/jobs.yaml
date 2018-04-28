@@ -292,6 +292,15 @@
       k8s_version: 'v1.10.0'
 
 - job:
+    name: cloud-provider-openstack-acceptance-test-standalone-cinder
+    parent: cloud-provider-openstack-acceptance-test
+    description: |
+      Run cinder standalone acceptance tests of cloud-provider-openstack
+    run: playbooks/cloud-provider-openstack-acceptance-test-standalone-cinder/run.yaml
+    post-run: playbooks/cloud-provider-openstack-acceptance-test-standalone-cinder/post.yaml
+    nodeset: ubuntu-xenial
+
+- job:
     name: cloud-provider-openstack-acceptance-test-csi-cinder
     parent: cloud-provider-openstack-acceptance-test
     description: |
@@ -325,13 +334,4 @@
     description: |
       Run cinder flexvolume acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-flexvolume-cinder/run.yaml
-    nodeset: ubuntu-xenial
-
-- job:
-    name: cloud-provider-openstack-acceptance-test-standalone-cinder
-    parent: cloud-provider-openstack-acceptance-test
-    description: |
-      Run cinder standalone acceptance tests of cloud-provider-openstack
-    run: playbooks/cloud-provider-openstack-acceptance-test-standalone-cinder/run.yaml
-    post-run: playbooks/cloud-provider-openstack-acceptance-test-standalone-cinder/post.yaml
     nodeset: ubuntu-xenial
