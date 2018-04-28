@@ -2,7 +2,6 @@
   become: yes
   roles:
     - clone-devstack-gate-to-workspace
-    - create-devstack-local-conf
     - role: install-devstack
       environment:
         OVERRIDE_ENABLED_SERVICES: 'key,c-sch,c-api,c-vol,rabbit,mysql'
