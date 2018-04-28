@@ -3,7 +3,7 @@
   roles:
     - role: export-cloud-openrc
       vars:
-        cloud_name: 'opentelekomcloud'
+        cloud_name: 'vexxhost'
   tasks:
     - name: Run unit tests with cloud-provider-openstack
       shell:
