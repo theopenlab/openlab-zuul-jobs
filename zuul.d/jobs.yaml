@@ -238,7 +238,7 @@
     name: cloud-provider-openstack-test
     parent: golang-test
     description: |
-      Run unit test of cloud-provider-openstack repo against vexxhost cloud
+      Base job for all types of cloud-provider-openstack test jobs
     pre-run: playbooks/cloud-provider-openstack-test/pre.yaml
     nodeset: ubuntu-xenial-vexxhost
     vars:

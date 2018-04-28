@@ -170,7 +170,7 @@
           '{{ kubectl }}' config set-context --cluster=local --user=openstackuser openstackuser@local
           '{{ kubectl }}' config use-context openstackuser@local
           if ! '{{ kubectl }}' get pods; then
-              echo "Testing kubernetes+keystone authentication and authorizatio failed!"
+              echo "Testing kubernetes+keystone authentication and authorization failed!"
               exit 1
           fi
         executable: /bin/bash
