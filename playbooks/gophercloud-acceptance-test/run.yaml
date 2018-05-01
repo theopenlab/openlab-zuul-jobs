@@ -7,7 +7,6 @@
         - 'manila'
         - 'designate'
         - 'zun'
-        - 'lbaas'
     - install-devstack
   tasks:
     - name: Run acceptance tests with gophercloud
@@ -50,7 +49,6 @@
               go test -v -tags "fixtures acceptance" ./acceptance/openstack/networking/v2/
               go test -v -tags "fixtures acceptance" ./acceptance/openstack/blockstorage/v2/
               go test -v -tags "fixtures acceptance" -run "SecGroup|Flavor" ./acceptance/openstack/compute/v2/
-              go test -v -tags "fixtures acceptance" ./acceptance/openstack/loadbalancer/v2/
               # To enable more after the fix of https://github.com/gophercloud/gophercloud/issues/608
               # go test -v -tags "fixtures acceptance" ./acceptance/openstack/imageservice/v2/
               # go test -v -tags "fixtures acceptance" ./acceptance/openstack/identity/v2/
