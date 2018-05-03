@@ -1,0 +1,19 @@
+- hosts: all
+  become: yes
+  tasks:
+    - name: Run gofmt and typo checking of cloud-provider-openstack
+      shell:
+        cmd: |
+          set -x
+          set -e
+          set -o pipefail
+
+          ./hack/verify-gofmt.sh
+          ./hack/verify-golint.sh
+
+          curl -L -o ./install-misspell.sh https://git.io/misspell
+          chmod +x ./install-misspell.sh
+          BINDIR=/usr/local/bin ./install-misspell.sh
+          /usr/local/bin/misspell -error -o stderr ./
+        executable: /bin/bash
+        chdir: '{{ k8s_os_provider_src_dir }}'
