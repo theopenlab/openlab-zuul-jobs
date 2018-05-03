@@ -93,7 +93,8 @@
           # Sleep to wait for creating serviceaccount default/default complete
           sleep 5
           # Run test
-          export VOLUME_ID=$(cinder create 1 | awk '/ id / {print $4}')
+          VOLUME_ID=$(cinder create 1 | awk '/ id / {print $4}')
+          sed -i 's/$VOLUME_ID/'"$VOLUME_ID"'/' examples/cinder-flexvolume/nginx.yaml
           '{{ kubectl }}' create -f examples/cinder-flexvolume/nginx.yaml
 
           # If test passed
