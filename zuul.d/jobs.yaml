@@ -18,8 +18,8 @@
       - zuul: liu-sheng/zuul-jobs
     timeout: 1800
     nodeset: ubuntu-xenial
-    #secrets:
-    #  - site_logs
+    secrets:
+      - site_logs
 
 # Common test base job
 - job:
