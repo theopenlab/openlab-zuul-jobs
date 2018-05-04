@@ -1,5 +1,26 @@
 # Shared jobs specific to the OpenLab Project
 
+- job:
+    name: base
+    parent: null
+    description: |
+      A subset of what the 'base' job provides: the absolute minimum considered
+      required to run for any one job.
+      It doesn't set up cached git repositories, will not set up mirrors,
+      doesn't validate the node and does not generate an ARA report.
+      These tasks, if required, can be included by the dependant jobs
+      themselves on a need basis.
+    pre-run: playbooks/base/pre.yaml
+    post-run:
+      - playbooks/base/post-ssh.yaml
+      - playbooks/base/post-logs.yaml
+    roles:
+      - zuul: liu-sheng/zuul-jobs
+    timeout: 1800
+    nodeset: ubuntu-xenial
+    secrets:
+      - site_logs
+
 # Common test base job
 - job:
     name: init-test
