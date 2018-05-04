@@ -336,14 +336,3 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-flexvolume-cinder/run.yaml
     nodeset: ubuntu-xenial
 
-- job:
-    name: misty-unit-test
-    parent: init-test
-    description: |
-      Run unit tests of Misty
-    run: playbooks/misty-unit-test/run.yaml
-    vars:
-      rvm:
-        2.3.6
-        2.4.3
-        2.5.0
