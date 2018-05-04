@@ -17,6 +17,7 @@
       - playbooks/base/post-logs.yaml
     roles:
       - zuul: liu-sheng/zuul-jobs
+      - zuul: liu-sheng/project-config
     timeout: 1800
     nodeset: ubuntu-xenial
     secrets:
