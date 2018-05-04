@@ -79,7 +79,7 @@
           '{{ kubectl }}' create clusterrolebinding --user system:kube-controller-manager  kube-system-cluster-admin-6 --clusterrole cluster-admin
 
           # Sleep to wait for creating serviceaccount default/default complete
-          sleep 5
+          sleep 30
           # Remove node taint
           '{{ kubectl }}' taint nodes "$HOSTNAME_OVERRIDE" node.cloudprovider.kubernetes.io/uninitialized- || true
           # Cinder test
