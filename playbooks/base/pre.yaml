@@ -1,0 +1,11 @@
+- hosts: all
+  roles:
+    - add-build-sshkey
+    - start-zuul-console
+    - validate-host
+    - use-cached-repos
+#    - mirror-info
+#    - configure-mirrors
+    - role: fetch-zuul-cloner
+      destination: "/usr/zuul-env/bin/zuul-cloner"
+      repo_src_dir: "/home/zuul/src/github.com"
