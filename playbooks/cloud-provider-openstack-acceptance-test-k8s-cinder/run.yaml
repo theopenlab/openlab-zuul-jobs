@@ -100,8 +100,6 @@
               '{{ kubectl }}' describe pods web
               exit 1
           fi
-
-          sleep 7200
         executable: /bin/bash
         chdir: '{{ k8s_os_provider_src_dir }}'
       environment: '{{ golang_env }}'

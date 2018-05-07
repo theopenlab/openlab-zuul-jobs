@@ -1,0 +1,20 @@
+- hosts: all
+  become: yes
+  roles:
+    - role: export-cloud-openrc
+      vars:
+        cloud_name: 'vexxhost'
+  tasks:
+    - name: Clean up resources for kubernetes tests
+      shell:
+        cmd: |
+          set -e
+          set -x
+          pip install -U python-openstackclient
+
+          pv_name=$('{{ kubectl }}' get pv | sed '1d' | awk '{print $1}')
+          volume_id=$(openstack volume list | awk "/$pv/ {print \$2}")
+          [[ -n "$volume_id" ]] && openstack volume delete "$volume_id"
+        executable: /bin/bash
+        chdir: '{{ k8s_os_provider_src_dir }}'
+      environment: '{{ golang_env }}'
