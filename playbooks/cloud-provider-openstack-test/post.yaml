@@ -8,7 +8,6 @@
     - name: Clean up resources for kubernetes tests
       shell:
         cmd: |
-          set -e
           set -x
           pip install -U python-openstackclient
 
