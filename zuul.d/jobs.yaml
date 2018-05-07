@@ -245,7 +245,7 @@
       - liu-sheng/zuul-jobs
     run: playbooks/openlab-zuul-jobs-check/run.yaml
     vars:
-      excluded_path: ""
+      excluded_path: "playbooks/base/*"
 
 # Deprecated (Kubernetes nested scenario)
 - job:
