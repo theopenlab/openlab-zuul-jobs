@@ -1,0 +1,13 @@
+- hosts: localhost
+  roles:
+    - role: add-fileserver
+      fileserver: "{{ site_logs }}"
+    - ara-report
+
+- hosts: "{{ site_logs.fqdn }}"
+  gather_facts: False
+  roles:
+    - role: upload-logs
+      # NOTE: because we use same host for zuul status and logs server, added
+      # a '/logs' suffix for the convenience to routing request
+      zuul_log_url: "http://logs.openlabtesting.org/logs"
