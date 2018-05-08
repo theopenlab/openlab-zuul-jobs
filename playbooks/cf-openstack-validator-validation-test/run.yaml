@@ -1,5 +1,12 @@
 - hosts: all
   become: yes
+  pre_tasks:
+    - name: Install python-pip
+      shell:
+        cmd: |
+          apt install python-pip -y
+          # https://review.openstack.org/#/c/562610/
+        executable: /bin/bash
   roles:
     - clone-devstack-gate-to-workspace
     - create-devstack-local-conf
