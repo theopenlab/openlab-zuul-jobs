@@ -368,4 +368,4 @@
     parent: init-test
     description: |
       This job validation tests of cf-openstack-validator aganist devstack
-    run: playbooks/cf-openstack-validator-validation-tes/run.yaml
+    run: playbooks/cf-openstack-validator-validation-test/run.yaml
