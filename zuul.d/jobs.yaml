@@ -370,3 +370,9 @@
       This job validation tests of cf-openstack-validator aganist devstack
     run: playbooks/cf-openstack-validator-validation-test/run.yaml
     nodeset: ubuntu-xenial
+
+- job:
+    name: cf-openstack-validator-validation-test-tmp
+    parent: cf-openstack-validator-validation-test
+    description: |
+      This job validation tests of cf-openstack-validator aganist devstack
