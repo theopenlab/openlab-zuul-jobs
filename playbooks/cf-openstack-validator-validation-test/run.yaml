@@ -4,7 +4,7 @@
     - name: Install python-pip
       shell:
         cmd: |
-          apt install python-pip -y
+          echo 'pip!=8,<10.0.0' > /opt/stack/new/devstack/tools/cap-pip.txt
           # https://review.openstack.org/#/c/562610/
         executable: /bin/bash
   roles:
