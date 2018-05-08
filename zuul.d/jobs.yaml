@@ -265,7 +265,10 @@
     description: |
       Base job for all types of cloud-provider-openstack test jobs
     pre-run: playbooks/cloud-provider-openstack-test/pre.yaml
+    post-run: playbooks/cloud-provider-openstack-test/post.yaml
     nodeset: ubuntu-xenial-vexxhost
+    secrets:
+      - vexxhost_credentials
     vars:
       k8s_os_provider_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack'
       k8s_src_dir: '{{ ansible_user_dir }}/src/k8s.io/kubernetes'
