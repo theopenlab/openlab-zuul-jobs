@@ -40,7 +40,7 @@
       set -e
       set -x
       sed -i '/"Running devstack"/ a\
-          sed -i "s/strip/split/" /opt/stack/new/devstack/inc/python' '{{ ansible_user_dir }}/workspace/devstack-gate/devstack-vm-gate.sh'
+          sed -i "s/strip/split/" /opt/stack/new/devstack/inc/python' /opt/stack/new/devstack-gate/devstack-vm-gate.sh
     executable: /bin/bash
     chdir: '{{ ansible_user_dir }}/workspace'
   environment: '{{ zuul | zuul_legacy_vars }}'
