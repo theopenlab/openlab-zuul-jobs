@@ -227,6 +227,14 @@
       - vexxhost_credentials
 
 - job:
+    name: cloud-provider-openstack-format
+    parent: cloud-provider-openstack-test
+    description: |
+      Run gofmt and typo checking of cloud-provider-openstack
+    run: playbooks/cloud-provider-openstack-format/run.yaml
+    nodeset: ubuntu-xenial
+
+- job:
     name: cloud-provider-openstack-acceptance-test
     parent: cloud-provider-openstack-test
     description: |
