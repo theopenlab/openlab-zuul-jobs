@@ -11,7 +11,11 @@
           set -x
           pip install -U python-openstackclient
 
-          server_id=$(curl http://169.254.169.254/openstack/latest/meta_data.json | python -c "import sys, json; print json.load(sys.stdin)['uuid']")
+          if [ -d /mnt/config/openstack ]; then
+              server_id=$(python -c "import json;print json.load(open('/mnt/config/openstack/latest/meta_data.json', 'r'))['uuid']")
+          else
+              server_id=$(curl http://169.254.169.254/openstack/latest/meta_data.json | python -c "import sys, json; print json.load(sys.stdin)['uuid']")
+          fi
           pv_name=$('{{ kubectl }}' get pv | sed '1d' | awk '{print $1}')
           volume_id=$(openstack volume list | awk "/$pv_name/ {print \$2}")
           if [[ -n "$volume_id" ]]; then

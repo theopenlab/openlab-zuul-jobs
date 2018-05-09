@@ -54,7 +54,11 @@
           export ALLOW_PRIVILEGED=true
           # Just kick off all the processes and drop down to the command line
           export ENABLE_DAEMON=true
-          export HOSTNAME_OVERRIDE=$(curl http://169.254.169.254/openstack/latest/meta_data.json | python -c "import sys, json; print json.load(sys.stdin)['name']")
+          if [ -d /mnt/config/openstack ]; then
+              export HOSTNAME_OVERRIDE=$(hostname)
+          else
+              export HOSTNAME_OVERRIDE=$(curl http://169.254.169.254/openstack/latest/meta_data.json | python -c "import sys, json; print json.load(sys.stdin)['name']")
+          fi
           export MAX_TIME_FOR_URL_API_SERVER=5
 
           # Requirements to deploy the csi cinder driver
@@ -81,7 +85,12 @@
           '{{ kubectl }}' create clusterrolebinding --user system:kube-controller-manager  kube-system-cluster-admin-6 --clusterrole cluster-admin
 
           # Where csi provisioner reads instance id from
-          INSTANCE_UUID=$(curl http://169.254.169.254/openstack/latest/meta_data.json | python -c "import sys, json; print json.load(sys.stdin)['uuid']")
+          # Where csi provisioner reads instance id from
+          if [ -d /mnt/config/openstack ]; then
+              INSTANCE_UUID=$(python -c "import json;print json.load(open('/mnt/config/openstack/latest/meta_data.json', 'r'))['uuid']")
+          else
+              INSTANCE_UUID=$(curl http://169.254.169.254/openstack/latest/meta_data.json | python -c "import sys, json; print json.load(sys.stdin)['uuid']")
+          fi
           echo "$INSTANCE_UUID" > /var/lib/cloud/data/instance-id
 
           # Build latest images from source
