@@ -9,7 +9,6 @@
           set -o pipefail
 
           ./hack/verify-gofmt.sh
-          ./hack/verify-golint.sh
 
           curl -L -o ./install-misspell.sh https://git.io/misspell
           chmod +x ./install-misspell.sh
