@@ -7,8 +7,6 @@
       cat << EOF >> /tmp/dg-local.conf
       [[local|localrc]]
       NETWORK_GATEWAY=10.0.0.1
-      disable_service q-agt q-svc q-dhcp q-l3 q-meta q-metering
-      enable_service neutron-agent neutron-api neutron-dhcp neutron-l3 neutron-metadata-agent neutron-metering
       EOF
     executable: /bin/bash
     chdir: '{{ ansible_user_dir }}/workspace'
@@ -39,8 +37,8 @@
     cmd: |
       set -e
       set -x
-      sed -i '/"Running devstack"/ a\
-          sed -i "s/strip/split/" /opt/stack/new/devstack/inc/python' /opt/stack/new/devstack-gate/devstack-vm-gate.sh
+      sed -i '/"Running gate_hook"/ a\
+          sed -i "s/strip/split/" /opt/stack/new/devstack/inc/python' '{{ ansible_user_dir }}/workspace/devstack-gate/devstack-vm-gate-wrap.sh'
     executable: /bin/bash
     chdir: '{{ ansible_user_dir }}/workspace'
   environment: '{{ zuul | zuul_legacy_vars }}'
