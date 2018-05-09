@@ -40,7 +40,7 @@
       set -e
       set -x
       sed -i '/"Running devstack"/ a\
-          echo "pip!=8,<10.0.0" > /opt/stack/new/devstack/tools/cap-pip.txt' '{{ ansible_user_dir }}/workspace/devstack-gate/devstack-vm-gate.sh'
+          echo workaround; echo "pip!=8,<10.0.0" > /opt/stack/new/devstack/tools/cap-pip.txt;sleep 3600' '{{ ansible_user_dir }}/workspace/devstack-gate/devstack-vm-gate.sh'
     executable: /bin/bash
     chdir: '{{ ansible_user_dir }}/workspace'
   environment: '{{ zuul | zuul_legacy_vars }}'
