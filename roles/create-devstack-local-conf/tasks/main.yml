@@ -34,10 +34,11 @@
   when:
     - os_branch == 'stable/mitaka'
 
-# Populate local conf with specific branch
-- name: create devstack local conf on stable/mitaka branch
+- name: Workaround about pip version error on stable/newton branch
   shell:
     cmd: |
+      set -e
+      set -x
       sed -i '/"Running devstack"/ a\
           echo "pip!=8,<10.0.0" > /opt/stack/new/devstack/tools/cap-pip.txt' '{{ ansible_user_dir }}/workspace/devstack-gate/devstack-vm-gate.sh'
     executable: /bin/bash
