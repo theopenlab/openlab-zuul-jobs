@@ -60,7 +60,7 @@
           export MAX_TIME_FOR_URL_API_SERVER=5
 
           # setup all the host name and ip address(es)
-          export HOSTNAME_OVERRIDE=$(curl http://169.254.169.254/openstack/latest/meta_data.json | python -c "import sys, json; print json.load(sys.stdin)['name']")
+          export HOSTNAME_OVERRIDE=$(hostname)
           export API_HOST=$HOSTNAME_OVERRIDE
           export EXTERNAL_HOSTNAME=$HOSTNAME_OVERRIDE
           export KUBELET_FLAGS="--node-ip $API_HOST_IP"
