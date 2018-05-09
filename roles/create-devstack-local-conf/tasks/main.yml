@@ -39,11 +39,8 @@
     cmd: |
       set -e
       set -x
-      # https://review.openstack.org/#/c/562610
-      cat << EOF >> /tmp/dg-local.conf
-      DEVSTACK_REPO=https://git.openstack.org/openstack-dev/devstack
-      DEVSTACK_BRANCH=refs/changes/10/562610/1
-      EOF
+      sed -i '/"Running devstack"/ a\
+          sed -i "s/strip/split/" /opt/stack/new/devstack/inc/python' /opt/stack/new/devstack-gate/devstack-vm-gate.sh
     executable: /bin/bash
     chdir: '{{ ansible_user_dir }}/workspace'
   environment: '{{ zuul | zuul_legacy_vars }}'
