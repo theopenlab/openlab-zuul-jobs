@@ -4,14 +4,26 @@
     - clone-devstack-gate-to-workspace
     - create-devstack-local-conf
     - install-devstack
+    - export-devstack-openrc
   tasks:
     - name: Run validation tests of cf-openstack-validator aganist devstack
       shell:
         cmd: |
-          set -e
-          set -o pipefail
           set -x
           sleep 7200
 
+          openstack floating ip create public
+          neutron port-create --fixed-ip subnet_id=private-subnet,ip_address=10.0.0.50 --name static_ip private
+          security_group_id=$(openstack security group list | awk "/$(openstack project show admin -f value -c id)/ {print \$2}")
+          openstack security group rule create --ingress --protocol tcp --dst-port 22 "$security_group_id"
+          ssh-keygen -t rsa -b 4096 -N '' -f cf-validator.rsa_id
+          openstack keypair create cf-validator --public-key cf-validator.rsa_id.pub
+          apt install ruby-full -y
+          cp validator.template.yml validator.yml
+          wget --content-disposition https://bosh.io/d/stemcells/bosh-openstack-kvm-ubuntu-trusty-go_agent
+          gem install bundler
+          bundle install
+          ./validate --stemcell bosh-stemcell-3586.5-openstack-kvm-ubuntu-trusty-go_agent.tgz --config validator.yml
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ golang_env }}'
