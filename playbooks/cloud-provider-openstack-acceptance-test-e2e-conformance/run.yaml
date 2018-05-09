@@ -11,6 +11,7 @@
           set -x
           set -e
           set -o pipefail
+          sleep 7200
 
           # Build cloud-provider-openstack binaries
           make build
