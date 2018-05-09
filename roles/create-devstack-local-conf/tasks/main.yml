@@ -39,8 +39,11 @@
     cmd: |
       set -e
       set -x
-      sed -i '/"Running devstack"/ a\
-          echo workaround; echo "pip!=8,<10.0.0" > /opt/stack/new/devstack/tools/cap-pip.txt;sleep 3600' '{{ ansible_user_dir }}/workspace/devstack-gate/devstack-vm-gate.sh'
+      # https://review.openstack.org/#/c/562610
+      cat << EOF >> /tmp/dg-local.conf
+      DEVSTACK_REPO=https://git.openstack.org/openstack-dev/devstack
+      DEVSTACK_BRANCH=refs/changes/10/562610/1
+      EOF
     executable: /bin/bash
     chdir: '{{ ansible_user_dir }}/workspace'
   environment: '{{ zuul | zuul_legacy_vars }}'
