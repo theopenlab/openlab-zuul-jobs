@@ -319,4 +319,4 @@
     description: |
       This job validation tests of cf-openstack-validator aganist devstack
     vars:
-      os_branch: 'stable/queens'
+      os_branch: 'stable/newton'
