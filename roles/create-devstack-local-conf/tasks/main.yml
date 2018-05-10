@@ -7,7 +7,6 @@
       cat << EOF >> /tmp/dg-local.conf
       [[local|localrc]]
       NETWORK_GATEWAY=10.0.0.1
-      WSGI_MODE=mod_wsgi
       EOF
     executable: /bin/bash
     chdir: '{{ ansible_user_dir }}/workspace'
