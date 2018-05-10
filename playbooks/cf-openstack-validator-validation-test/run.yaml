@@ -27,4 +27,3 @@
           ./validate --stemcell bosh-stemcell-3586.5-openstack-kvm-ubuntu-trusty-go_agent.tgz --config validator.yml
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
-      environment: '{{ golang_env }}'
