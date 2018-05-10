@@ -11,7 +11,7 @@
       shell:
         cmd: |
           set -x
-          sleep 7200
+          sleep 10800
 
           source /opt/stack/new/devstack/openrc admin admin
           floating_ip=$(openstack floating ip create public -f value -c floating_ip_address)
