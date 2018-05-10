@@ -12,8 +12,9 @@
           set -x
           sleep 7200
 
-          openstack floating ip create public
-          neutron port-create --fixed-ip subnet_id=private-subnet,ip_address=10.0.0.50 --name static_ip private
+          floating_ip=$(openstack floating ip create public -f value -c floating_ip_address)
+          static_ip=10.0.0.50
+          neutron port-create --fixed-ip subnet_id=private-subnet,ip_address="$static_ip" --name static_ip private
           security_group_id=$(openstack security group list | awk "/$(openstack project show admin -f value -c id)/ {print \$2}")
           openstack security group rule create --ingress --protocol tcp --dst-port 22 "$security_group_id"
           ssh-keygen -t rsa -b 4096 -N '' -f cf-validator.rsa_id
