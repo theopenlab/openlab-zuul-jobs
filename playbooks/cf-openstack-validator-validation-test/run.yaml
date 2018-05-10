@@ -3,9 +3,7 @@
   roles:
     - clone-devstack-gate-to-workspace
     - create-devstack-local-conf
-    - role: install-devstack
-      environment:
-        WSGI_MODE: mod_wsgi
+    - install-devstack
   tasks:
     - name: Run validation tests of cf-openstack-validator aganist devstack
       shell:
