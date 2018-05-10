@@ -4,6 +4,7 @@
     - start-zuul-console
     - validate-host
     - use-cached-repos
+    - mirror-workspace-git-repos
 #    - mirror-info
 #    - configure-mirrors
     - role: fetch-zuul-cloner
