@@ -312,9 +312,6 @@
     description: |
       This job validation tests of cf-openstack-validator aganist devstack
     run: playbooks/cf-openstack-validator-validation-test/run.yaml
-    vars:
-      os_branch: 'stable/newton'
-
 
 - job:
     name: cf-openstack-validator-validation-test-tmp
