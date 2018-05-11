@@ -38,7 +38,7 @@
           cp validator.template.yml validator.yml
           sed -i "/auth_url/ s|<replace-me>|$OS_AUTH_URL|" validator.yml
           sed -i "/username/ s|<replace-me>|$OS_USERNAME|" validator.yml
-          sed -i "/password/ s|<replace-me>|$OS_USERNAME|" validator.yml
+          sed -i "/password/ s|<replace-me>|$OS_PASSWORD|" validator.yml
           sed -i "/domain/ d" validator.yml
           sed -i "/project/ d" validator.yml
           sed -i "/password/ a\  tenant: $OS_TENANT_NAME" validator.yml
