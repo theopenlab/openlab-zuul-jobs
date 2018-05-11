@@ -37,6 +37,7 @@
           sed -i "/domain/ d" validator.yml
           sed -i "/project/ d" validator.yml
           sed -i "/password/ a\  tenant: $OS_TENANT_NAME" validator.yml
+          sed -i "/password/ a\  state_timeout: 600" validator.yml
           sed -i "/network_id/ s|<replace-me>|$network_id|" validator.yml
           sed -i "/floating_ip/ s|<replace-me>|$floating_ip|" validator.yml
           sed -i "/static_ip/ s|<replace-me>|$static_ip|" validator.yml
