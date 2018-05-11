@@ -49,11 +49,15 @@
           sed -i "/instance_type/ s|<replace-me>|$instance_type|" validator.yml
 
           # Download stemcell and change the hypervisor to qemu
-          wget --content-disposition https://bosh.io/d/stemcells/bosh-openstack-kvm-ubuntu-trusty-go_agent -O bosh-openstack-kvm-ubuntu-trusty-go_agent.tgz
           mkdir bosh-openstack-kvm-ubuntu-trusty-go_agent
-          tar -zxvf bosh-openstack-kvm-ubuntu-trusty-go_agent.tgz -C bosh-openstack-kvm-ubuntu-trusty-go_agent
-          sed -i 's/kvm/qemu/g' bosh-openstack-kvm-ubuntu-trusty-go_agent/stemcell.MF
-          tar -zcvf bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz bosh-openstack-kvm-ubuntu-trusty-go_agent/*
+          pushd bosh-openstack-kvm-ubuntu-trusty-go_agent
+          wget --content-disposition https://bosh.io/d/stemcells/bosh-openstack-kvm-ubuntu-trusty-go_agent -O bosh-openstack-kvm-ubuntu-trusty-go_agent.tgz
+          tar -zxvf bosh-openstack-kvm-ubuntu-trusty-go_agent.tgz
+          rm bosh-openstack-kvm-ubuntu-trusty-go_agent.tgz
+          sed -i 's/kvm/qemu/g' stemcell.MF
+          tar -zcvf bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz *
+          mv bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz ../
+          popd
 
           # Install dependencies
           sudo gem install bundler
