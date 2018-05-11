@@ -19,11 +19,19 @@
           openstack security group rule create --ingress --protocol tcp --dst-port 22 "$security_group_id"
           ssh-keygen -t rsa -b 4096 -N '' -f cf-validator.rsa_id
           openstack keypair create cf-validator --public-key cf-validator.rsa_id.pub
-          wget --content-disposition https://bosh.io/d/stemcells/bosh-openstack-kvm-ubuntu-trusty-go_agent
+          wget --content-disposition https://bosh.io/d/stemcells/bosh-openstack-kvm-ubuntu-trusty-go_agent -O bosh-openstack-kvm-ubuntu-trusty-go_agent.tgz
+          mkdir -p bosh-openstack-qemu-ubuntu-trusty-go_agent
+          tar zxvf bosh-openstack-kvm-ubuntu-trusty-go_agent.tgz -C bosh-openstack-qemu-ubuntu-trusty-go_agent
+          pushd bosh-openstack-qemu-ubuntu-trusty-go_agent
+          sed -i 's/kvm/qemu/g' stemcell.MF
+          tar zcvf bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz *
+          mv bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz ../
+          popd
+          rm -fr bosh-openstack-qemu-ubuntu-trusty-go_agent
           cp validator.template.yml validator.yml
           apt install ruby-full -y
           gem install bundler
           bundle install
-          ./validate --stemcell bosh-stemcell-3586.7-openstack-kvm-ubuntu-trusty-go_agent.tgz --config validator.yml
+          ./validate --stemcell bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz --config validator.yml
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
