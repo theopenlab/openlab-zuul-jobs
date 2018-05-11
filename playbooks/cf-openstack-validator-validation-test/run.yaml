@@ -9,7 +9,6 @@
       shell:
         cmd: |
           set -x
-          sleep 10800
 
           source /opt/stack/new/devstack/openrc admin admin
           floating_ip=$(openstack floating ip create public -f value -c floating_ip_address)
@@ -28,10 +27,38 @@
           mv bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz ../
           popd
           rm -fr bosh-openstack-qemu-ubuntu-trusty-go_agent
+          network_id=$(openstack network show private -f value -c id)
+          public_image_id=$(openstack image list | grep -m 1 cirros | awk '{print $2}')
+          instance_type=m1.tiny
+
+          # Linux requirements
+          apt install -y ruby-full make gcc zlib1g-dev libssl-dev ssh
+
+          # Populate validator.yml
           cp validator.template.yml validator.yml
-          apt install ruby-full -y
-          gem install bundler
+          sed -i "/auth_url/ s|<replace-me>|$OS_AUTH_URL|" validator.yml
+          sed -i "/username/ s|<replace-me>|$OS_USERNAME|" validator.yml
+          sed -i "/password/ s|<replace-me>|$OS_USERNAME|" validator.yml
+          sed -i "/domain/ d" validator.yml
+          sed -i "/project/ d" validator.yml
+          sed -i "/password/ a\  tenant: $OS_TENANT_NAME" validator.yml
+          sed -i "/network_id/ s|<replace-me>|$network_id|" validator.yml
+          sed -i "/floating_ip/ s|<replace-me>|$floating_ip|" validator.yml
+          sed -i "/static_ip/ s|<replace-me>|$static_ip|" validator.yml
+          sed -i "/public_image_id/ s|<replace-me>|$public_image_id|" validator.yml
+          sed -i "/instance_type/ s|<replace-me>|$instance_type|" validator.yml
+
+          # Download stemcell and change the hypervisor to qemu
+          wget --content-disposition https://bosh.io/d/stemcells/bosh-openstack-kvm-ubuntu-trusty-go_agent -O bosh-openstack-kvm-ubuntu-trusty-go_agent.tgz
+          mkdir bosh-openstack-kvm-ubuntu-trusty-go_agent
+          tar -zxvf bosh-openstack-kvm-ubuntu-trusty-go_agent.tgz -C bosh-openstack-kvm-ubuntu-trusty-go_agent
+          sed -i 's/kvm/qemu/g' bosh-openstack-kvm-ubuntu-trusty-go_agent/stemcell.MF
+          tar -zcvf bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz bosh-openstack-kvm-ubuntu-trusty-go_agent/*
+
+          # Install dependencies
+          sudo gem install bundler
           bundle install
           ./validate --stemcell bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz --config validator.yml
+          sleep 10800
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
