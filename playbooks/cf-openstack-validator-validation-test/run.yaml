@@ -10,6 +10,10 @@
         cmd: |
           set -x
 
+          source /opt/stack/new/devstack/openrc admin admin
+          instance_type=m1.cf
+          openstack flavor create --ram 512 --disk 5 --vcpu 1 --id 99 "$instance_type"
+
           source /opt/stack/new/devstack/openrc demo demo
           floating_ip=$(openstack floating ip create public -f value -c floating_ip_address)
           static_ip=10.0.0.50
@@ -19,8 +23,6 @@
           openstack keypair create cf-validator --public-key cf-validator.rsa_id.pub
           network_id=$(openstack network show private -f value -c id)
           public_image_id=$(openstack image list | grep -m 1 cirros | awk '{print $2}')
-          instance_type=m1.cf
-          openstack flavor create --ram 512 --disk 5 --vcpu 1 --id 99 "$instance_type"
           # Update subnet dns to allow access to internet
           neutron subnet-update --dns-nameserver 8.8.8.8 private-subnet
 
