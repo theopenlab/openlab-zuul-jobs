@@ -12,7 +12,7 @@
 
           source /opt/stack/new/devstack/openrc admin admin
           instance_type=m1.cf
-          openstack flavor create --ram 512 --disk 5 --vcpu 1 --id 99 "$instance_type"
+          openstack flavor create --ram 512 --disk 4 --vcpu 1 --id 99 "$instance_type"
 
           source /opt/stack/new/devstack/openrc demo demo
           floating_ip=$(openstack floating ip create public -f value -c floating_ip_address)
