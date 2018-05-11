@@ -10,26 +10,19 @@
         cmd: |
           set -x
 
-          source /opt/stack/new/devstack/openrc admin admin
+          source /opt/stack/new/devstack/openrc demo demo
           floating_ip=$(openstack floating ip create public -f value -c floating_ip_address)
           static_ip=10.0.0.50
-          neutron port-create --fixed-ip subnet_id=private-subnet,ip_address="$static_ip" --name static_ip private
-          security_group_id=$(openstack security group list | awk "/$(openstack project show admin -f value -c id)/ {print \$2}")
-          openstack security group rule create --ingress --protocol tcp --dst-port 22 "$security_group_id"
+          # Allow ssh access in the default security group
+          openstack security group rule create --ingress --protocol tcp --dst-port 22 default
           ssh-keygen -t rsa -b 4096 -N '' -f cf-validator.rsa_id
           openstack keypair create cf-validator --public-key cf-validator.rsa_id.pub
-          wget --content-disposition https://bosh.io/d/stemcells/bosh-openstack-kvm-ubuntu-trusty-go_agent -O bosh-openstack-kvm-ubuntu-trusty-go_agent.tgz
-          mkdir -p bosh-openstack-qemu-ubuntu-trusty-go_agent
-          tar zxvf bosh-openstack-kvm-ubuntu-trusty-go_agent.tgz -C bosh-openstack-qemu-ubuntu-trusty-go_agent
-          pushd bosh-openstack-qemu-ubuntu-trusty-go_agent
-          sed -i 's/kvm/qemu/g' stemcell.MF
-          tar zcvf bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz *
-          mv bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz ../
-          popd
-          rm -fr bosh-openstack-qemu-ubuntu-trusty-go_agent
           network_id=$(openstack network show private -f value -c id)
           public_image_id=$(openstack image list | grep -m 1 cirros | awk '{print $2}')
-          instance_type=m1.tiny
+          instance_type=m1.cf
+          openstack flavor create --ram 512 --disk 5 --vcpu 1 --id 99 "$instance_type"
+          # Update subnet dns to allow access to internet
+          neutron subnet-update --dns-nameserver 8.8.8.8 private-subnet
 
           # Linux requirements
           apt install -y ruby-full make gcc zlib1g-dev libssl-dev ssh
