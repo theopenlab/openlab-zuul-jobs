@@ -43,6 +43,7 @@
           sed -i "/static_ip/ s|<replace-me>|$static_ip|" validator.yml
           sed -i "/public_image_id/ s|<replace-me>|$public_image_id|" validator.yml
           sed -i "/instance_type/ s|<replace-me>|$instance_type|" validator.yml
+          sed -i "/use_external_ip/ s|false|true|" validator.yml
 
           # Download stemcell and change the hypervisor to qemu
           mkdir bosh-openstack-kvm-ubuntu-trusty-go_agent
