@@ -29,3 +29,9 @@
     nodes:
       - name: ubuntu-xenial-vexxhost
         label: ubuntu-xenial-vexxhost
+
+- nodeset:
+    name: ubuntu-bionic-vxh-arm64
+    nodes:
+      - name: ubuntu-bionic-vxh-arm64
+        label: ubuntu-bionic-vxh-arm64
