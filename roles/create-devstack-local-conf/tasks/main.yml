@@ -39,6 +39,11 @@
       set -x
       sed -i '/"Running gate_hook"/ a\
           sed -i "s/strip/split/" /opt/stack/new/devstack/inc/python' '{{ ansible_user_dir }}/workspace/devstack-gate/devstack-vm-gate-wrap.sh'
+      cat << EOF >> /tmp/dg-local.conf
+      IDENTITY_API_VERSION=3
+      OS_USER_DOMAIN_ID=default
+      OS_PROJECT_DOMAIN_ID=default
+      EOF
     executable: /bin/bash
     chdir: '{{ ansible_user_dir }}/workspace'
   environment: '{{ zuul | zuul_legacy_vars }}'

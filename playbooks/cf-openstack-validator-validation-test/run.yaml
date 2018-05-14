@@ -31,6 +31,7 @@
 
           # Populate validator.yml
           cp validator.template.yml validator.yml
+          sleep 10800
           sed -i "/auth_url/ s|<replace-me>|$OS_AUTH_URL|" validator.yml
           sed -i "/username/ s|<replace-me>|$OS_USERNAME|" validator.yml
           sed -i "/password/ s|<replace-me>|$OS_PASSWORD|" validator.yml
