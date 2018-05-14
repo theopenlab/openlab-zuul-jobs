@@ -312,11 +312,15 @@
     description: |
       This job validation tests of cf-openstack-validator aganist devstack
     run: playbooks/cf-openstack-validator-validation-test/run.yaml
+    vars:
+      os_branch: 'stable/newton'
 
 - job:
-    name: cf-openstack-validator-validation-test-tmp
-    parent: cf-openstack-validator-validation-test
+    name: cf-acceptance-tests
+    parent: golang-test
     description: |
-      This job validation tests of cf-openstack-validator aganist devstack
+      This job validation tests of cf-acceptance-tests aganist devstack
+      Run cloudfoundry acceptance tests of cf-acceptance-tests
+    run: playbooks/cf-acceptance-tests/run.yaml
     vars:
       os_branch: 'stable/newton'
