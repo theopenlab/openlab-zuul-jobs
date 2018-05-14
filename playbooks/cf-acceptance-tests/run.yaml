@@ -5,7 +5,7 @@
     - create-devstack-local-conf
     - install-devstack
   tasks:
-    - name: Run validation tests of cf-openstack-validator aganist devstack
+    - name: Run cloudfoundry acceptance tests of cf-acceptance-tests
       shell:
         cmd: |
           sleep 10080
