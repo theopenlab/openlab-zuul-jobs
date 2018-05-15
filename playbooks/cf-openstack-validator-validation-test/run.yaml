@@ -4,6 +4,8 @@
     - clone-devstack-gate-to-workspace
     - create-devstack-local-conf
     - install-devstack
+      environment:
+        VOLUME_BACKING_FILE_SIZE: '61440M'
   tasks:
     - name: Run validation tests of cf-openstack-validator aganist devstack
       shell:
