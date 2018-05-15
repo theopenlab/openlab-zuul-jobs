@@ -2,6 +2,8 @@
   roles:
     - move-k8s-repo-to-k8s-specific-dir
   become: yes
+  roles:
+    - install-golang
   tasks:
     - name: Run gofmt and typo checking of cloud-provider-openstack
       shell:
