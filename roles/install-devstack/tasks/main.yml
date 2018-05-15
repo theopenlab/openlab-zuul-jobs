@@ -1,7 +1,7 @@
 - name: Workaround for devstack installation in Newton or earlier
   shell:
     cmd: |
-      # workaround for bug
+      # workaround for bug https://review.openstack.org/#/c/562610/
       sed -i '/"Running gate_hook"/ a\
           sed -i "s/strip/split/" /opt/stack/new/devstack/inc/python' '{{ ansible_user_dir }}/workspace/devstack-gate/devstack-vm-gate-wrap.sh'
     executable: /bin/bash
