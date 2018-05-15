@@ -1,0 +1,2 @@
+---
+k8s_repo_src_dir: '{{ ansible_user_dir }}/src/k8s.io/{{ zuul.project.short_name }}'
