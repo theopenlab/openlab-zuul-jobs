@@ -226,6 +226,16 @@
       - vexxhost_credentials
 
 - job:
+    name: cloud-provider-openstack-format
+    parent: golang-test
+    description: |
+      Run gofmt and typo checking of cloud-provider-openstack
+    run: playbooks/cloud-provider-openstack-format/run.yaml
+    vars:
+      k8s_os_provider_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack'
+
+
+- job:
     name: cloud-provider-openstack-acceptance-test
     parent: cloud-provider-openstack-test
     description: |
