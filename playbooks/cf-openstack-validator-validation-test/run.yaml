@@ -3,7 +3,7 @@
   roles:
     - clone-devstack-gate-to-workspace
     - create-devstack-local-conf
-    - install-devstack
+    - role: install-devstack
       environment:
         VOLUME_BACKING_FILE_SIZE: '61440M'
   tasks:
