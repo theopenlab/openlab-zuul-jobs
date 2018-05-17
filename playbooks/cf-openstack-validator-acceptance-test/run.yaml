@@ -1,0 +1,76 @@
+- hosts: all
+  become: yes
+  pre_tasks:
+    - name: Prepare local conf for cf validation tests
+      shell:
+        cmd: |
+          set -e
+          set -x
+          cat << EOF >> /tmp/dg-local.conf
+          [[local|localrc]]
+          NETWORK_GATEWAY=10.0.0.1
+          IDENTITY_API_VERSION=3
+          OS_USER_DOMAIN_ID=default
+          OS_PROJECT_DOMAIN_ID=default
+          VOLUME_BACKING_FILE_SIZE=62000M
+          EOF
+        executable: /bin/bash
+  roles:
+    - clone-devstack-gate-to-workspace
+    - install-devstack
+  tasks:
+    - name: Run validation tests of cf-openstack-validator aganist devstack
+      shell:
+        cmd: |
+          set -x
+
+          source /opt/stack/new/devstack/openrc admin admin
+          instance_type=m1.cf
+          openstack flavor create --ram 512 --disk 4 --vcpu 1 --id 99 "$instance_type"
+
+          source /opt/stack/new/devstack/openrc demo demo
+          floating_ip=$(openstack floating ip create public -f value -c floating_ip_address)
+          static_ip=10.0.0.50
+          # Allow ssh access in the default security group
+          openstack security group rule create --ingress --protocol tcp --dst-port 22 default
+          ssh-keygen -t rsa -b 4096 -N '' -f cf-validator.rsa_id
+          openstack keypair create cf-validator --public-key cf-validator.rsa_id.pub
+          network_id=$(openstack network show private -f value -c id)
+          public_image_id=$(openstack image list | grep -m 1 cirros | awk '{print $2}')
+          # Update subnet dns to allow access to internet
+          neutron subnet-update --dns-nameserver 8.8.8.8 private-subnet
+
+          # Linux requirements
+          apt install -y ruby-full make gcc zlib1g-dev libssl-dev ssh
+
+          # Populate validator.yml
+          cp validator.template.yml validator.yml
+          sed -i "/auth_url/ s|<replace-me>|$OS_AUTH_URL|" validator.yml
+          sed -i "/username/ s|<replace-me>|$OS_USERNAME|" validator.yml
+          sed -i "/password/ s|<replace-me>|$OS_PASSWORD|" validator.yml
+          sed -i "/domain/ s|<replace-me>|$OS_PROJECT_DOMAIN_ID|" validator.yml
+          sed -i "/project/ s|<replace-me>|$OS_PROJECT_NAME|" validator.yml
+          sed -i "/network_id/ s|<replace-me>|$network_id|" validator.yml
+          sed -i "/floating_ip/ s|<replace-me>|$floating_ip|" validator.yml
+          sed -i "/static_ip/ s|<replace-me>|$static_ip|" validator.yml
+          sed -i "/public_image_id/ s|<replace-me>|$public_image_id|" validator.yml
+          sed -i "/instance_type/ s|<replace-me>|$instance_type|" validator.yml
+          sed -i "/use_external_ip/ s|false|true|" validator.yml
+
+          # Download stemcell and change the hypervisor to qemu
+          mkdir bosh-openstack-kvm-ubuntu-trusty-go_agent
+          pushd bosh-openstack-kvm-ubuntu-trusty-go_agent
+          wget --content-disposition https://bosh.io/d/stemcells/bosh-openstack-kvm-ubuntu-trusty-go_agent -O bosh-openstack-kvm-ubuntu-trusty-go_agent.tgz
+          tar -zxvf bosh-openstack-kvm-ubuntu-trusty-go_agent.tgz
+          rm bosh-openstack-kvm-ubuntu-trusty-go_agent.tgz
+          sed -i 's/kvm/qemu/g' stemcell.MF
+          tar -zcvf bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz *
+          mv bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz ../
+          popd
+
+          # Install dependencies
+          sudo gem install bundler
+          bundle install
+          ./validate --stemcell bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz --config validator.yml
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'

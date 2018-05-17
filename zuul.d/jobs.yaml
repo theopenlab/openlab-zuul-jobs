@@ -315,3 +315,12 @@
       Run cinder flexvolume acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-flexvolume-cinder/run.yaml
     nodeset: ubuntu-xenial
+
+- job:
+    name: cf-openstack-validator-acceptance-test
+    parent: init-test
+    description: |
+      This job validation tests of cf-openstack-validator aganist devstack
+    run: playbooks/cf-openstack-validator-acceptance-test/run.yaml
+    vars:
+      os_branch: 'stable/newton'
