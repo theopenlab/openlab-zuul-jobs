@@ -19,12 +19,6 @@
         label: ubuntu-xenial-ut
 
 - nodeset:
-    name: ubuntu-xenial-otc
-    nodes:
-      - name: ubuntu-xenial-otc
-        label: ubuntu-xenial-otc
-
-- nodeset:
     name: ubuntu-xenial-vexxhost
     nodes:
       - name: ubuntu-xenial-vexxhost
