@@ -198,7 +198,7 @@
     description: |
       Run Kubernetes openstack-cloud-controller-manager unit test in devstack instance
     run: playbooks/cloud-provider-openstack-unittest-nested/run.yaml
-    nodeset: ubuntu-xenial-otc
+    nodeset: ubuntu-xenial
 
 # Kubernetes cloud-provider-openstack jobs
 - job:
