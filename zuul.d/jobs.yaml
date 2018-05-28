@@ -317,11 +317,11 @@
 
 
 - job:
-    name: cf-openstack-validator-validation-test
+    name: cf-openstack-validator-acceptance-test
     parent: init-test
     description: |
       This job validation tests of cf-openstack-validator aganist devstack
-    run: playbooks/cf-openstack-validator-validation-test/run.yaml
+    run: playbooks/cf-openstack-validator-acceptance-test/run.yaml
     vars:
       os_branch: 'stable/newton'
 
