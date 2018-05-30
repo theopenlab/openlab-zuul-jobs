@@ -333,3 +333,12 @@
     run: playbooks/cf-acceptance-tests/run.yaml
     vars:
       os_branch: 'stable/newton'
+
+- job:
+    name: bosh-acceptance-tests
+    parent: golang-test
+    description: |
+      Run cloudfoundry acceptance tests of bosh-acceptance-tests
+    run: playbooks/bosh-acceptance-tests/run.yaml
+    vars:
+      os_branch: 'stable/newton'
