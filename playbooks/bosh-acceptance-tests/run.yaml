@@ -46,7 +46,7 @@
           mv bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz ../
           popd
 
-          sed -i 's|https://bosh.io/d/stemcells/.*$|file://bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz|' bosh-deployment/openstack/cpi.yml
+          sed -i 's|https://bosh.io/d/stemcells/.*$|file:///home/zuul/bosh-1/bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz|' bosh-deployment/openstack/cpi.yml
           #TODO: workaround, because the default instance type m1.xlarge is too large than devstack limit
           openstack flavor create --vcpus 8 --ram 16384 --disk 40 bosh.large
           sed -i "s/m1.xlarge/bosh.large/g" `grep m1.xlarge -rl bosh-deployment/openstack`
