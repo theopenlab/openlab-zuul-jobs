@@ -46,6 +46,8 @@
           mv bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz ../
           popd
 
+          sed -i 's|https://bosh.io/d/stemcells/.*$|file://bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz|' bosh-deployment/openstack/cpi.yml
+
           apt-get install ruby ruby-dev -y
           bosh create-env bosh-deployment/bosh.yml \
               --state=state.json \
