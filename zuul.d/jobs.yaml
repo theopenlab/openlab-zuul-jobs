@@ -345,7 +345,7 @@
     nodeset: ubuntu-xenial-large
 
 - job:
-    name: bosh-acceptance-tests-vexxhots
+    name: bosh-acceptance-tests-vexxhost
     parent: golang-test
     description: |
       Run cloudfoundry acceptance tests of bosh-acceptance-tests on vexxhost cloud
