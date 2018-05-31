@@ -342,3 +342,4 @@
     run: playbooks/bosh-acceptance-tests/run.yaml
     vars:
       os_branch: 'stable/newton'
+    nodeset: ubuntu-xenial-large
