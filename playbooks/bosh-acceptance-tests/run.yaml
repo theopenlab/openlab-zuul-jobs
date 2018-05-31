@@ -1,23 +1,5 @@
 - hosts: all
   become: yes
-  pre_tasks:
-    - name: Prepare local conf for bosh acceptance testing requirements
-      shell:
-        cmd: |
-          set -e
-          set -x
-          cat << EOF >> /tmp/dg-local.conf
-          [[local|localrc]]
-          NETWORK_GATEWAY=10.0.0.1
-          IDENTITY_API_VERSION=3
-          OS_USER_DOMAIN_ID=default
-          OS_PROJECT_DOMAIN_ID=default
-          VOLUME_BACKING_FILE_SIZE=80000M
-          EOF
-        executable: /bin/bash
-  roles:
-    - clone-devstack-gate-to-workspace
-    - install-devstack
   tasks:
     - name: Run cloudfoundry acceptance tests of bosh-acceptance-tests
       shell:
