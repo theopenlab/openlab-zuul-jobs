@@ -47,6 +47,7 @@
           popd
 
           apt-get install ruby ruby-dev -y
+          sed -e '/^.*bosh-openstack-kvm-ubuntu-trusty-go_agent.*$/, +1 c\ \ \ \ url: file:///home/zuul/bosh-1/bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz' bosh-deployment/openstack/cpi.yml
           bosh create-env bosh-deployment/bosh.yml \
               --state=state.json \
               --vars-store=creds.yml \
