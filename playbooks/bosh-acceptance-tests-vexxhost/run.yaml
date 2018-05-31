@@ -1,0 +1,13 @@
+- hosts: all
+  become: yes
+  roles:
+    - role: export-cloud-openrc
+      vars:
+        cloud_name: 'vexxhost'
+  tasks:
+    - name: Run cloudfoundry acceptance tests of bosh-acceptance-tests on vexxhost
+      shell:
+        cmd: |
+          sleep 10080
+        executable: /bin/bash
+        chdir: '{{ ansible_user_dir }}'

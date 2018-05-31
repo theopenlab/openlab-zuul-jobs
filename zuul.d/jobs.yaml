@@ -343,3 +343,11 @@
     vars:
       os_branch: 'stable/newton'
     nodeset: ubuntu-xenial-large
+
+- job:
+    name: bosh-acceptance-tests-vexxhots
+    parent: golang-test
+    description: |
+      Run cloudfoundry acceptance tests of bosh-acceptance-tests on vexxhost cloud
+    run: playbooks/bosh-acceptance-tests-vexxhost/run.yaml
+    nodeset: ubuntu-xenial
