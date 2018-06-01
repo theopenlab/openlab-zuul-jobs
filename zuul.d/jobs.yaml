@@ -340,7 +340,7 @@
     description: |
       Run cloudfoundry acceptance tests of bosh-acceptance-tests
     run: playbooks/bosh-acceptance-tests/run.yaml
-    nodeset: ubuntu-xenial
+    nodeset: ubuntu-xenial-otc
 
 - job:
     name: bosh-acceptance-tests-devstack

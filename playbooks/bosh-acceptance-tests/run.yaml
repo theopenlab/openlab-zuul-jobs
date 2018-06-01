@@ -1,5 +1,9 @@
 - hosts: all
   become: yes
+  roles:
+    - role: export-cloud-openrc
+      vars:
+        cloud_name: 'opentelekomcloud_credentials'
   tasks:
     - name: Run cloudfoundry acceptance tests of bosh-acceptance-tests
       shell:
@@ -102,3 +106,4 @@
 
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}'
+      environment: '{{ golang_env }}'
