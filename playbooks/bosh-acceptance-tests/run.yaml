@@ -1,11 +1,20 @@
 - hosts: all
   become: yes
+  roles:
+    - role: export-cloud-openrc
+      vars:
+        cloud_name: 'opentelekomcloud'
   tasks:
     - name: Run cloudfoundry acceptance tests of bosh-acceptance-tests
       shell:
         cmd: |
-          #TODO: need to source the openlab credentials
-          sleep 10080
+          # Cloud provider specific variables
+          NET_ID="134ca339-24dc-44f5-ae6a-cf0404216ed2"
+          SUBNET_ID="3d6e9157-655f-42ec-9778-94d455730e5c"
+          SMALL_FLAVOR="c1.medium" #1U1G
+          MEDIUM_FLAVOR="c1.large" #2U2G
+          LARGE_FLAVOR="c1.2xlarge" #8U8G
+
           pip install python-openstackclient
           curl -Lo ./bosh https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-3.0.1-linux-amd64
           chmod +x ./bosh
@@ -33,24 +42,28 @@
           popd
 
           sed -i 's|https://bosh.io/d/stemcells/.*$|file:///home/zuul/bosh-1/bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz|' bosh-deployment/openstack/cpi.yml
-          sed -i "s/m1.small/c1.medium/g" `grep m1.small -rl bosh-deployment/openstack`
-          sed -i "s/m1.xlarge/s2.2xlarge.1/g" `grep m1.xlarge -rl bosh-deployment/openstack`
+          sed -i "s/m1.small/${SMALL_FLAVOR}/g" `grep m1.small -rl bosh-deployment/openstack`
+          sed -i "s/m1.xlarge/${LARGE_FLAVOR}/g" `grep m1.xlarge -rl bosh-deployment/openstack`
           sed -i '/^.*human_readable_vm_names.*$/ a\ \ \ \ state_timeout: 300000' bosh-deployment/openstack/cpi.yml
 
           apt-get install ruby ruby-dev -y
+
+          _port_id=$(openstack port create --network openlab-net bosh-port -f value -c id)
+          bosh_ip=$(openstack port show ${_port_id} -f value -c fixed_ips | grep -Eo '([0-9]+\.){3}[0-9]+')
+          openstack port delete ${_port_id}
           bosh create-env bosh-deployment/bosh.yml \
               --state=state.json \
               --vars-store=creds.yml \
               -o bosh-deployment/openstack/cpi.yml \
               -v director_name=bosh-1 \
-              -v internal_cidr=192.168.0.0/24 \
-              -v internal_gw=192.168.0.1 \
-              -v internal_ip=192.168.0.207 \
+              -v internal_cidr=$( openstack subnet show ${SUBNET_ID} -f value -c cidr) \
+              -v internal_gw=$( openstack subnet show ${SUBNET_ID} -f value -c gateway_ip) \
+              -v internal_ip=${bosh_ip} \
               -v auth_url=${OS_AUTH_URL} \
               -v az=eu-de-02 \
               -v default_key_name=microbosh \
               -v default_security_groups=[bosh] \
-              -v net_id=e53441db-0f84-4620-81e6-ce67db862c34 \
+              -v net_id=${NET_ID} \
               -v openstack_password=${OS_PASSWORD} \
               -v openstack_username=${OS_USERNAME} \
               -v openstack_domain=${OS_DOMAIN_NAME} \
@@ -58,7 +71,7 @@
               -v private_key=/home/zuul/bosh-1/microbosh.pem \
               -v region=${OS_REGION_NAME}
 
-          bosh alias-env bosh-1 -e 192.168.0.207 --ca-cert <(bosh int ./creds.yml --path /director_ssl/ca)
+          bosh alias-env bosh-1 -e ${bosh_ip} --ca-cert <(bosh int ./creds.yml --path /director_ssl/ca)
           export BOSH_CLIENT=admin
           export BOSH_CLIENT_SECRET=`bosh int ./creds.yml --path /admin_password`
           bosh -e bosh-1 env
@@ -93,6 +106,27 @@
           # export BOSH_CLIENT=<director username>
           # export BOSH_CLIENT_SECRET=<director password>
           # export BOSH_CA_CERT=<director ca cert content or path>
+          cat << EOF >> bat.yml
+          ---
+          cpi: openstack
+          properties:
+            stemcell:
+              name: bosh-openstack-qemu-ubuntu-trusty-go_agent
+              version: latest
+            pool_size: 1
+            instances: 1
+            instance_type: ${SMALL_FLAVOR}
+            availability_zone: ${OS_AVAILABILITY_ZONE}
+            flavor_with_no_ephemeral_disk: ${MEDIUM_FLAVOR}
+            vip: 0.0.0.43 # Virtual (public/floating) IP assigned to the bat-release job vm ('static' network), for ssh testing
+            networks:
+            - name: default
+              type: dynamic
+              cloud_properties:
+                net_id: ${NET_ID} # Network ID
+                security_groups: ['bosh'] # security groups assigned to deployed VMs
+            key_name: microbosh # (optional) SSH keypair name, overrides the director's default_key_name setting
+          EOF
 
           pushd bosh-acceptance-tests/
           gem install bundler
