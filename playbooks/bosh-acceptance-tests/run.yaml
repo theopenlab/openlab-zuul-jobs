@@ -18,6 +18,7 @@
           SMALL_FLAVOR="c1.medium" #1U1G
           MEDIUM_FLAVOR="c1.large" #2U2G
           LARGE_FLAVOR="c1.2xlarge" #8U8G
+          BUILD_ID="{{ zuul.build }}"
 
           pip install python-openstackclient
           curl -Lo ./bosh https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-3.0.1-linux-amd64
@@ -28,12 +29,9 @@
 
           mkdir bosh-1 && cd bosh-1
           git clone https://github.com/cloudfoundry/bosh-deployment.git
-          openstack keypair delete microbosh || true
-          openstack keypair create microbosh > microbosh.pem
-          if openstack security group list |grep bosh;then
-              openstack security group create bosh --description 'BOSH Security Group'
-              openstack security group rule create --protocol tcp --ingress bosh
-          fi
+          openstack keypair create microbosh-${BUILD_ID} > microbosh.pem
+          openstack security group create bosh-${BUILD_ID} --description 'BOSH Security Group'
+          openstack security group rule create --protocol tcp --ingress bosh-${BUILD_ID}
 
           mkdir bosh-openstack-kvm-ubuntu-trusty-go_agent
           pushd bosh-openstack-kvm-ubuntu-trusty-go_agent
@@ -67,8 +65,8 @@
               -v internal_ip=${bosh_ip} \
               -v auth_url=${OS_AUTH_URL} \
               -v az=eu-de-02 \
-              -v default_key_name=microbosh \
-              -v default_security_groups=[bosh] \
+              -v default_key_name=microbosh-${BUILD_ID} \
+              -v default_security_groups=[bosh-${BUILD_ID}] \
               -v net_id=${NET_ID} \
               -v openstack_password=${OS_PASSWORD} \
               -v openstack_username=${OS_USERNAME} \
@@ -131,8 +129,8 @@
               type: dynamic
               cloud_properties:
                 net_id: ${NET_ID} # Network ID
-                security_groups: ['bosh'] # security groups assigned to deployed VMs
-            key_name: microbosh # (optional) SSH keypair name, overrides the director's default_key_name setting
+                security_groups: [bosh-${BUILD_ID}] # security groups assigned to deployed VMs
+            key_name: microbosh-${BUILD_ID} # (optional) SSH keypair name, overrides the director's default_key_name setting
           EOF
 
           pushd bosh-acceptance-tests/
@@ -143,3 +141,4 @@
 
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}'
+      environment: '{{ golang_env }}'
