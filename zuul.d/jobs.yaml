@@ -341,3 +341,13 @@
       Run cloudfoundry acceptance tests of bosh-acceptance-tests
     run: playbooks/bosh-acceptance-tests/run.yaml
     nodeset: ubuntu-xenial
+
+- job:
+    name: bosh-acceptance-tests-devstack
+    parent: golang-test
+    description: |
+      Run cloudfoundry acceptance tests of bosh-acceptance-tests
+    run: playbooks/bosh-acceptance-tests-devstack/run.yaml
+    vars:
+      os_branch: 'stable/newton'
+    nodeset: ubuntu-xenial-large
