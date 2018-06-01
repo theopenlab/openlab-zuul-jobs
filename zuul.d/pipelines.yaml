@@ -152,12 +152,12 @@
 
 - pipeline:
     name: periodic
-    description: Jobs in this queue are triggered on a timer. UTC-0 and UTC-12
+    description: Jobs in this queue are triggered on a timer. UTC-0 0:00, 8:00 and 16:00
     manager: independent
     precedence: low
     trigger:
       timer:
-        - time: '0 0,12 * * *'
+        - time: '0 0,8,16 * * *'
     success:
       mysql:
     failure:
