@@ -33,6 +33,8 @@
           openstack security group create bosh-${BUILD_ID} --description 'BOSH Security Group'
           openstack security group rule create --protocol tcp --ingress bosh-${BUILD_ID}
 
+          wget --content-disposition https://bosh.io/d/stemcells/bosh-openstack-kvm-ubuntu-trusty-go_agent -O bosh-openstack-kvm-ubuntu-trusty-go_agent.tgz
+          sed -i 's|https://bosh.io/d/stemcells/.*$|file:///home/zuul/bosh-1/bosh-openstack-kvm-ubuntu-trusty-go_agent.tgz|' bosh-deployment/openstack/cpi.yml
           sed -i "s/m1.small/${SMALL_FLAVOR}/g" `grep m1.small -rl bosh-deployment/openstack`
           sed -i "s/m1.xlarge/${LARGE_FLAVOR}/g" `grep m1.xlarge -rl bosh-deployment/openstack`
           sed -i '/^.*human_readable_vm_names.*$/ a\ \ \ \ state_timeout: 300000' bosh-deployment/openstack/cpi.yml
@@ -71,7 +73,7 @@
           bosh -e bosh-1 env
 
           # path to the stemcell you want to use for testing
-          export BAT_STEMCELL=/home/zuul/bosh-1/bosh-stemcell-3541.10-openstack-kvm-ubuntu-trusty-go_agent.tgz
+          export BAT_STEMCELL=/home/zuul/bosh-1/bosh-openstack-kvm-ubuntu-trusty-go_agent.tgz
 
           # path to the bat yaml file which is used to generate the deployment manifest (see below `bat.yml`)
           export BAT_DEPLOYMENT_SPEC=/home/zuul/bosh-1/bat.yml
