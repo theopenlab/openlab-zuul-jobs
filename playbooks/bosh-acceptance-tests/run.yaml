@@ -3,7 +3,7 @@
   roles:
     - role: export-cloud-openrc
       vars:
-        cloud_name: 'opentelekomcloud_credentials'
+        cloud_name: 'opentelekomcloud'
   tasks:
     - name: Run cloudfoundry acceptance tests of bosh-acceptance-tests
       shell:
