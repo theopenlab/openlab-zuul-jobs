@@ -4,19 +4,23 @@
     - name: Run cloudfoundry acceptance tests of bosh-acceptance-tests
       shell:
         cmd: |
+          #TODO: need to source the openlab credentials
           sleep 10080
+          pip install python-openstackclient
           curl -Lo ./bosh https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-3.0.1-linux-amd64
           chmod +x ./bosh
           mv ./bosh /usr/local/bin/bosh
           bosh -v
-          # apt-get install -y build-essential zlibc zlib1g-dev ruby ruby-dev openssl libxslt-dev libxml2-dev libssl-dev libreadline6 libreadline6-dev libyaml-dev libsqlite3-dev sqlite3
+          apt-get install -y build-essential zlibc zlib1g-dev ruby ruby-dev openssl libxslt-dev libxml2-dev libssl-dev libreadline6 libreadline6-dev libyaml-dev libsqlite3-dev sqlite3
 
           mkdir bosh-1 && cd bosh-1
           git clone https://github.com/cloudfoundry/bosh-deployment.git
-          source /opt/stack/new/devstack/openrc admin admin
+          openstack keypair delete microbosh || true
           openstack keypair create microbosh > microbosh.pem
-          openstack security group create bosh --description 'BOSH Security Group'
-          openstack security group rule create --protocol tcp --ingress bosh
+          if openstack security group list |grep bosh;then
+              openstack security group create bosh --description 'BOSH Security Group'
+              openstack security group rule create --protocol tcp --ingress bosh
+          fi
 
           mkdir bosh-openstack-kvm-ubuntu-trusty-go_agent
           pushd bosh-openstack-kvm-ubuntu-trusty-go_agent
@@ -29,9 +33,9 @@
           popd
 
           sed -i 's|https://bosh.io/d/stemcells/.*$|file:///home/zuul/bosh-1/bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz|' bosh-deployment/openstack/cpi.yml
-          #TODO: workaround, because the default instance type m1.xlarge is too large than devstack limit
-          openstack flavor create --vcpus 8 --ram 16384 --disk 40 bosh.large
-          sed -i "s/m1.xlarge/bosh.large/g" `grep m1.xlarge -rl bosh-deployment/openstack`
+          sed -i "s/m1.small/c1.medium/g" `grep m1.small -rl bosh-deployment/openstack`
+          sed -i "s/m1.xlarge/s2.2xlarge.1/g" `grep m1.xlarge -rl bosh-deployment/openstack`
+          sed -i '/^.*human_readable_vm_names.*$/ a\ \ \ \ state_timeout: 300000' bosh-deployment/openstack/cpi.yml
 
           apt-get install ruby ruby-dev -y
           bosh create-env bosh-deployment/bosh.yml \
@@ -39,19 +43,62 @@
               --vars-store=creds.yml \
               -o bosh-deployment/openstack/cpi.yml \
               -v director_name=bosh-1 \
-              -v internal_cidr=10.0.0.0/24 \
-              -v internal_gw=10.0.0.1 \
-              -v internal_ip=10.0.0.6 \
+              -v internal_cidr=192.168.0.0/24 \
+              -v internal_gw=192.168.0.1 \
+              -v internal_ip=192.168.0.207 \
               -v auth_url=${OS_AUTH_URL} \
-              -v az=nova \
+              -v az=eu-de-02 \
               -v default_key_name=microbosh \
               -v default_security_groups=[bosh] \
-              -v net_id=$(openstack network show private -f value -c id) \
+              -v net_id=e53441db-0f84-4620-81e6-ce67db862c34 \
               -v openstack_password=${OS_PASSWORD} \
               -v openstack_username=${OS_USERNAME} \
-              -v openstack_domain=${OS_USER_DOMAIN_ID} \
+              -v openstack_domain=${OS_DOMAIN_NAME} \
               -v openstack_project=${OS_TENANT_NAME} \
               -v private_key=/home/zuul/bosh-1/microbosh.pem \
               -v region=${OS_REGION_NAME}
+
+          bosh alias-env bosh-1 -e 192.168.0.207 --ca-cert <(bosh int ./creds.yml --path /director_ssl/ca)
+          export BOSH_CLIENT=admin
+          export BOSH_CLIENT_SECRET=`bosh int ./creds.yml --path /admin_password`
+          bosh -e bosh-1 env
+
+          # path to the stemcell you want to use for testing
+          export BAT_STEMCELL=/home/zuul/bosh-1/bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz
+
+          # path to the bat yaml file which is used to generate the deployment manifest (see below `bat.yml`)
+          export BAT_DEPLOYMENT_SPEC=/home/zuul/bosh-1/bat.yml
+
+          # BOSH CLI executable path
+          export BAT_BOSH_CLI=bosh
+
+          # DNS host or IP where BOSH-controlled PowerDNS server is running, which is required for the DNS tests. For example, if BAT is being run against a MicroBOSH then this value will be the same as BAT_DIRECTOR
+          export BAT_DNS_HOST=8.8.8.8
+
+          # the name of infrastructure that is used by bosh deployment. Examples: aws, vsphere, openstack, warden, oci.
+          export BAT_INFRASTRUCTURE=openstack
+
+          # the type of networking being used: `dynamic` or `manual`.
+          export BAT_NETWORKING=manual
+
+          # the path to ssh key, used by OS specs to ssh into BOSH VMs
+          export BAT_PRIVATE_KEY=/home/zuul/bosh-1/microbosh.pem
+
+          # Run tests with --fail-fast and skip cleanup in case of failure (optional)
+          export BAT_DEBUG_MODE=true
+
+          export BOSH_OS_BATS=true
+
+          export BOSH_ENVIRONMENT=bosh-1
+          # export BOSH_CLIENT=<director username>
+          # export BOSH_CLIENT_SECRET=<director password>
+          # export BOSH_CA_CERT=<director ca cert content or path>
+
+          pushd bosh-acceptance-tests/
+          gem install bundler
+          bundle install
+          bundle exec rspec spec --tag ~vip_networking --tag ~dynamic_networking --tag ~root_partition --tag ~raw_ephemeral_storage
+          popd
+
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}'
