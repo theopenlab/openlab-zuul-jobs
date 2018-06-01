@@ -123,14 +123,14 @@
             instance_type: ${SMALL_FLAVOR}
             availability_zone: ${OS_AVAILABILITY_ZONE}
             flavor_with_no_ephemeral_disk: ${MEDIUM_FLAVOR}
-            vip: 0.0.0.43 # Virtual (public/floating) IP assigned to the bat-release job vm ('static' network), for ssh testing
+            vip: 0.0.0.43 # Virtual (public/floating) IP assigned to the bat-release job vm, for ssh testing
             networks:
             - name: default
               type: dynamic
               cloud_properties:
                 net_id: ${NET_ID} # Network ID
                 security_groups: [bosh-${BUILD_ID}] # security groups assigned to deployed VMs
-            key_name: microbosh-${BUILD_ID} # (optional) SSH keypair name, overrides the director's default_key_name setting
+            key_name: microbosh-${BUILD_ID} # (optional) SSH keypair name
           EOF
 
           pushd bosh-acceptance-tests/
