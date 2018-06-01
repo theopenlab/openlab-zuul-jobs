@@ -71,7 +71,7 @@
           bosh -e bosh-1 env
 
           # path to the stemcell you want to use for testing
-          export BAT_STEMCELL=/home/zuul/bosh-1/bosh-openstack-kvm-ubuntu-trusty-go_agent.tgz
+          export BAT_STEMCELL=/home/zuul/bosh-1/bosh-stemcell-3541.10-openstack-kvm-ubuntu-trusty-go_agent.tgz
 
           # path to the bat yaml file which is used to generate the deployment manifest (see below `bat.yml`)
           export BAT_DEPLOYMENT_SPEC=/home/zuul/bosh-1/bat.yml
