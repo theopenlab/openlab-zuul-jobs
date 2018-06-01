@@ -122,7 +122,7 @@
             key_name: microbosh-${BUILD_ID} # (optional) SSH keypair name
           EOF
 
-          pushd bosh-acceptance-tests/
+          pushd '{{ zuul.project.src_dir }}'
           gem install bundler
           bundle install
           bundle exec rspec spec --tag ~vip_networking --tag ~dynamic_networking --tag ~root_partition --tag ~raw_ephemeral_storage
