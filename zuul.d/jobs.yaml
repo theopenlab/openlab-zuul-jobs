@@ -332,3 +332,14 @@
     run: playbooks/cf-openstack-validator-acceptance-test/run.yaml
     vars:
       os_branch: 'stable/newton'
+
+- job:
+    name: bosh-acceptance-tests
+    parent: golang-test
+    description: |
+      Run cloudfoundry acceptance tests of bosh-acceptance-tests
+    run: playbooks/bosh-acceptance-tests/run.yaml
+    post-run: playbooks/bosh-acceptance-tests/post.yaml
+    nodeset: ubuntu-xenial-otc
+    secrets:
+      - opentelekomcloud_credentials
