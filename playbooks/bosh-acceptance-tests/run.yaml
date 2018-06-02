@@ -125,6 +125,7 @@
           EOF
 
           pushd '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}'
+          sed -i '/^.*bosh.*$/d' Gemfile
           gem install bundler
           bundle install
           bundle exec rspec spec --tag ~vip_networking --tag ~dynamic_networking --tag ~root_partition --tag ~raw_ephemeral_storage
