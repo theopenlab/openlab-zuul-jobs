@@ -23,7 +23,7 @@
           pip install python-openstackclient
           curl -Lo ./bosh https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-3.0.1-linux-amd64
           chmod +x ./bosh
-          mv ./bosh /usr/local/bin/bosh
+          cp ./bosh /usr/local/bin/bosh
           bosh -v
           apt-get install -y build-essential zlibc zlib1g-dev ruby ruby-dev openssl libxslt-dev libxml2-dev libssl-dev libreadline6 libreadline6-dev libyaml-dev libsqlite3-dev sqlite3
 
@@ -125,9 +125,9 @@
           EOF
 
           pushd '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}'
-          sed -i '/^.*bosh.*$/d' Gemfile
           gem install bundler
           bundle install
+          cp '{{ ansible_user_dir }}/bosh' /usr/local/bin/bosh
           bundle exec rspec spec --tag ~vip_networking --tag ~dynamic_networking --tag ~root_partition --tag ~raw_ephemeral_storage
           popd
 
