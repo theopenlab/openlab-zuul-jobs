@@ -42,7 +42,7 @@
 
           apt-get install ruby ruby-dev -y
 
-          _port_id=$(openstack port create --network openlab-net bosh-port -f value -c id)
+          _port_id=$(openstack port create --network ${NET_ID} bosh-port -f value -c id)
           bosh_ip=$(openstack port show ${_port_id} -f value -c fixed_ips | grep -Eo '([0-9]+\.){3}[0-9]+')
           openstack port delete ${_port_id}
 
