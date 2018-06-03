@@ -32,6 +32,7 @@
           openstack keypair create microbosh-${BUILD_ID} > microbosh.pem
           openstack security group create bosh-${BUILD_ID} --description 'BOSH Security Group'
           openstack security group rule create --protocol tcp --ingress bosh-${BUILD_ID}
+          openstack security group rule create --protocol icmp --ingress bosh-${BUILD_ID}
 
           wget --content-disposition https://bosh.io/d/stemcells/bosh-openstack-kvm-ubuntu-trusty-go_agent -O bosh-openstack-kvm-ubuntu-trusty-go_agent.tgz
           sed -i 's|https://bosh.io/d/stemcells/.*$|file:///home/zuul/bosh-1/bosh-openstack-kvm-ubuntu-trusty-go_agent.tgz|' bosh-deployment/openstack/cpi.yml
@@ -88,7 +89,7 @@
           export BAT_INFRASTRUCTURE=openstack
 
           # the type of networking being used: `dynamic` or `manual`.
-          export BAT_NETWORKING=manual
+          export BAT_NETWORKING=dynamic
 
           # the path to ssh key, used by OS specs to ssh into BOSH VMs
           export BAT_PRIVATE_KEY=/home/zuul/bosh-1/microbosh.pem
@@ -128,7 +129,6 @@
           gem install bundler
           bundle install
           cp '{{ ansible_user_dir }}/bosh' /usr/local/bin/bosh
-          sleep 7200
           bundle exec rspec spec --tag ~vip_networking --tag ~dynamic_networking --tag ~root_partition --tag ~raw_ephemeral_storage
           popd
 
