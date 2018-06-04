@@ -21,6 +21,7 @@
           bosh_ip=$(bosh environments --column=URL)
           bosh alias-env bosh-1 -e ${bosh_ip} --ca-cert <(bosh int ./creds.yml --path /director_ssl/ca)
           bosh -e bosh-1 env
+          sleep 7200
           echo $(bosh -e bosh-1 ss --column=NAME --column=VERSION) | while read line
           do
               if [ -n "$line" ];then bosh -e bosh-1 --non-interactive delete-stemcell ${line/\ /\/};fi
