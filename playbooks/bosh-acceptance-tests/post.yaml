@@ -13,5 +13,13 @@
           BUILD_ID="{{ zuul.build }}"
           openstack keypair delete microbosh-${BUILD_ID} || true
           openstack security group delete bosh-${BUILD_ID} || true
+          echo "Checking residual resources: "
+          openstack server list -c ID -c Name |grep bosh
+          openstack server list -c ID -c Name |grep batlight
+          openstack keypair list |grep bosh
+          openstack security group list |grep bosh
+          openstack image list |grep bosh-openstack-kvm-ubuntu-trusty-go_agent
+          openstack volume list --status available |grep 64
+          sleep 7200
         executable: /bin/bash
       environment: '{{ golang_env }}'
