@@ -108,7 +108,7 @@
           cpi: openstack
           properties:
             stemcell:
-              name: bosh-openstack-kvm-ubuntu-trusty-go_agent
+              name: bat-stemcell-${BUILD_ID}
               version: latest
             pool_size: 1
             instances: 1
