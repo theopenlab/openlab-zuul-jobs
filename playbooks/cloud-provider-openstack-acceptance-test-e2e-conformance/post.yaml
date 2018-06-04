@@ -21,8 +21,11 @@
           if [ '{{ zuul.pipeline }}' != 'periodic' ]; then
               PIPELINE_LOGS_DIR='pr-logs'
           fi
+          # download google account key file
+          echo '{{ gcp_account.key_json }}' > /tmp/key.json
           # upload e2e log to google storage
           python upload_e2e.py --junit=$LOG_DIR/junit_01.xml --log=$LOG_DIR/e2e.log \
-              --bucket=gs://kubernetes-openstack/$PIPELINE_LOGS_DIR/ci-'{{ zuul.job }}'
+              --bucket=gs://k8s-conformance-openstack/$PIPELINE_LOGS_DIR/ci-'{{ zuul.job }}' \
+              --key-file=/tmp/key.json
         executable: /bin/bash
       environment: '{{ golang_env }}'
