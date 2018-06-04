@@ -24,7 +24,7 @@
           sleep 7200
           echo $(bosh -e bosh-1 ss --column=NAME --column=VERSION) | while read line
           do
-              bosh -e bosh-1 --non-interactive delete-stemcell ${line/\ /\/}
+              if [ -n "$line" ];then bosh -e bosh-1 --non-interactive delete-stemcell ${line/\ /\/};fi
           done
           for vm_id in $(bosh -e bosh-1 vms --column=CID); do
               bosh -e bosh-1 --non-interactive delete-vm ${vm_id}
