@@ -334,12 +334,12 @@
       os_branch: 'stable/newton'
 
 - job:
-    name: bosh-acceptance-tests
+    name: bosh-acceptance-test
     parent: golang-test
     description: |
-      Run cloudfoundry acceptance tests of bosh-acceptance-tests
-    run: playbooks/bosh-acceptance-tests/run.yaml
-    post-run: playbooks/bosh-acceptance-tests/post.yaml
+      Run acceptance tests of bosh-acceptance-tests
+    run: playbooks/bosh-acceptance-test/run.yaml
+    post-run: playbooks/bosh-acceptance-test/post.yaml
     nodeset: ubuntu-xenial-otc
     secrets:
       - opentelekomcloud_credentials

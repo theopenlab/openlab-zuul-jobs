@@ -5,7 +5,7 @@
       vars:
         cloud_name: 'opentelekomcloud'
   tasks:
-    - name: Run cloudfoundry acceptance tests of bosh-acceptance-tests
+    - name: Install bosh and run bosh acceptance tests
       shell:
         cmd: |
           set -x
@@ -40,8 +40,8 @@
           sed -i "s/m1.xlarge/${LARGE_FLAVOR}/g" `grep m1.xlarge -rl bosh-deployment/openstack`
           sed -i '/^.*human_readable_vm_names.*$/ a\ \ \ \ state_timeout: 300000' bosh-deployment/openstack/cpi.yml
 
-          apt-get install ruby ruby-dev -y
-
+          # NOTE: We need an available ip for bosh deployment, so following port creation and deletion actions are just
+          # used to reserve an available ip address for bosh deployment
           _port_id=$(openstack port create --network ${NET_ID} bosh-port -f value -c id)
           bosh_ip=$(openstack port show ${_port_id} -f value -c fixed_ips | grep -Eo '([0-9]+\.){3}[0-9]+')
           openstack port delete ${_port_id}
@@ -52,8 +52,8 @@
               --vars-store=creds.yml \
               -o bosh-deployment/openstack/cpi.yml \
               -v director_name=bosh-1 \
-              -v internal_cidr=$( openstack subnet show ${SUBNET_ID} -f value -c cidr) \
-              -v internal_gw=$( openstack subnet show ${SUBNET_ID} -f value -c gateway_ip) \
+              -v internal_cidr=$(openstack subnet show ${SUBNET_ID} -f value -c cidr) \
+              -v internal_gw=$(openstack subnet show ${SUBNET_ID} -f value -c gateway_ip) \
               -v internal_ip=${bosh_ip} \
               -v auth_url=${OS_AUTH_URL} \
               -v az=${OS_AVAILABILITY_ZONE} \
@@ -129,7 +129,7 @@
           gem install bundler
           bundle install
           cp '{{ ansible_user_dir }}/bosh' /usr/local/bin/bosh
-          bundle exec rspec spec --tag ~vip_networking --tag ~dynamic_networking --tag ~root_partition --tag ~raw_ephemeral_storage
+          bundle exec rspec spec --tag ~raw_ephemeral_storage
           popd
 
         executable: /bin/bash
