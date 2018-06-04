@@ -35,7 +35,7 @@
           openstack security group rule create --protocol icmp --ingress bosh-${BUILD_ID}
 
           wget --content-disposition https://bosh.io/d/stemcells/bosh-openstack-kvm-ubuntu-trusty-go_agent -O bosh-openstack-kvm-ubuntu-trusty-go_agent.tgz
-          sed -i 's|https://bosh.io/d/stemcells/.*$|file:///home/zuul/bosh-1/bosh-openstack-kvm-ubuntu-trusty-go_agent.tgz|' bosh-deployment/openstack/cpi.yml
+          sed -i 's|https://bosh.io/d/stemcells/.*$|file://{{ ansible_user_dir }}/bosh-1/bosh-openstack-kvm-ubuntu-trusty-go_agent.tgz|' bosh-deployment/openstack/cpi.yml
           sed -i "s/m1.small/${SMALL_FLAVOR}/g" `grep m1.small -rl bosh-deployment/openstack`
           sed -i "s/m1.xlarge/${LARGE_FLAVOR}/g" `grep m1.xlarge -rl bosh-deployment/openstack`
           sed -i '/^.*human_readable_vm_names.*$/ a\ \ \ \ state_timeout: 300000' bosh-deployment/openstack/cpi.yml
@@ -64,7 +64,7 @@
               -v openstack_username=${OS_USERNAME} \
               -v openstack_domain=${OS_DOMAIN_NAME} \
               -v openstack_project=${OS_TENANT_NAME} \
-              -v private_key=/home/zuul/bosh-1/microbosh.pem \
+              -v private_key="{{ ansible_user_dir }}/bosh-1/microbosh.pem" \
               -v region=${OS_REGION_NAME}
           set -x
 
@@ -74,10 +74,10 @@
           bosh -e bosh-1 env
 
           # path to the stemcell you want to use for testing
-          export BAT_STEMCELL=/home/zuul/bosh-1/bosh-openstack-kvm-ubuntu-trusty-go_agent.tgz
+          export BAT_STEMCELL="{{ ansible_user_dir }}/bosh-1/bosh-openstack-kvm-ubuntu-trusty-go_agent.tgz"
 
           # path to the bat yaml file which is used to generate the deployment manifest (see below `bat.yml`)
-          export BAT_DEPLOYMENT_SPEC=/home/zuul/bosh-1/bat.yml
+          export BAT_DEPLOYMENT_SPEC="{{ ansible_user_dir }}/bosh-1/bat.yml"
 
           # BOSH CLI executable path
           export BAT_BOSH_CLI=bosh
@@ -92,7 +92,7 @@
           export BAT_NETWORKING=dynamic
 
           # the path to ssh key, used by OS specs to ssh into BOSH VMs
-          export BAT_PRIVATE_KEY=/home/zuul/bosh-1/microbosh.pem
+          export BAT_PRIVATE_KEY="{{ ansible_user_dir }}/bosh-1/microbosh.pem"
 
           # Run tests with --fail-fast and skip cleanup in case of failure (optional)
           export BAT_DEBUG_MODE=true
