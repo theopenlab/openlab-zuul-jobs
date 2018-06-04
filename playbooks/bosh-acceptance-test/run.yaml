@@ -108,7 +108,7 @@
           cpi: openstack
           properties:
             stemcell:
-              name: bat-stemcell-${BUILD_ID}
+              name: bosh-openstack-kvm-ubuntu-trusty-go_agent
               version: latest
             pool_size: 1
             instances: 1
@@ -129,7 +129,7 @@
           gem install bundler
           bundle install
           cp '{{ ansible_user_dir }}/bosh' /usr/local/bin/bosh
-          bundle exec rspec spec --tag ~root_partition --tag ~raw_ephemeral_storage
+          bundle exec rspec spec -tag ~raw_ephemeral_storage
           popd
 
         executable: /bin/bash

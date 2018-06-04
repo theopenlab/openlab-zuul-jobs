@@ -21,7 +21,16 @@
           bosh_ip=$(bosh environments --column=URL)
           bosh alias-env bosh-1 -e ${bosh_ip} --ca-cert <(bosh int ./creds.yml --path /director_ssl/ca)
           bosh -e bosh-1 env
-          sleep 7200
+          echo $(bosh -e bosh-1 ss --column=NAME --column=VERSION) | while read line
+          do
+              bosh -e bosh-1 --non-interactive delete-stemcell ${line/\ /\/}
+          done
+          for vm_id in $(bosh -e bosh-1 vms --column=CID); do
+              bosh -e bosh-1 --non-interactive delete-vm ${vm_id}
+          done
+          for vol_id in $(bosh -e bosh-1 disks --orphaned); do
+              bosh -e bosh-1 --non-interactive delete-disk ${vol_id}
+          done
 
           set +x
           bosh delete-env bosh-deployment/bosh.yml \
@@ -44,11 +53,7 @@
               -v private_key="{{ ansible_user_dir }}/bosh-1/microbosh.pem" \
               -v region=${OS_REGION_NAME}
           set -x
-
-          echo "Checking residual resources: "
-          openstack image list -f value |grep bosh-openstack-kvm-ubuntu-trusty-go_agent || true
-          openstack server list -c ID -c Name |grep batlight || true
-          # openstack security group delete bosh-${BUILD_ID} || true
+          openstack security group delete bosh-${BUILD_ID} || true
           openstack keypair delete microbosh-${BUILD_ID} || true
         executable: /bin/bash
       environment: '{{ golang_env }}'
