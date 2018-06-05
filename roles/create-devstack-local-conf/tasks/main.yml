@@ -26,8 +26,6 @@
       OS_USER_DOMAIN_ID=default
       OS_PROJECT_DOMAIN_ID=default
       EOF
-      #TODO workaround to fix the mitaka devstack installation
-      apt remove -y python3-six python-six python-six-whl || true
     executable: /bin/bash
     chdir: '{{ ansible_user_dir }}/workspace'
   environment: '{{ zuul | zuul_legacy_vars }}'
