@@ -26,6 +26,8 @@
       OS_USER_DOMAIN_ID=default
       OS_PROJECT_DOMAIN_ID=default
       EOF
+      pip install "pip==9.0.0"
+      pip3 install "pip==9.0.0"
     executable: /bin/bash
     chdir: '{{ ansible_user_dir }}/workspace'
   environment: '{{ zuul | zuul_legacy_vars }}'
