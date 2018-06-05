@@ -17,8 +17,7 @@
     cmd: |
       set -e
       set -x
-      pip install "pip==9.0.0"
-      pip3 install "pip==9.0.0"
+      sed -i "s/pip!=8/pip!=8,<10.0.0/" /opt/stack/new/devstack/tools/cap-pip.txt
     executable: /bin/bash
     chdir: '{{ ansible_user_dir }}/workspace'
   environment: '{{ zuul | zuul_legacy_vars }}'
