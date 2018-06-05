@@ -12,6 +12,19 @@
     apt install libpcre3-dev -y
   ignore_errors: yes
 
+- name: avoid install pip 10 on stable/mitaka branch
+  shell:
+    cmd: |
+      set -e
+      set -x
+      pip install "pip==9.0.0"
+      pip3 install "pip==9.0.0"
+    executable: /bin/bash
+    chdir: '{{ ansible_user_dir }}/workspace'
+  environment: '{{ zuul | zuul_legacy_vars }}'
+  when:
+    - os_branch == 'stable/mitaka'
+
 - name: Install devstack on {{ os_branch }} branch
   shell:
     cmd: |
