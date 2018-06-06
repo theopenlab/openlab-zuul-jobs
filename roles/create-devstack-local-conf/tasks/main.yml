@@ -95,7 +95,6 @@
   environment: '{{ zuul | zuul_legacy_vars }}'
   when:
     - '"designate" in enable_services'
-    - os_branch != 'stable/mitaka'
 
 - name: create devstack local conf with lbaas enabled
   shell:
