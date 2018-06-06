@@ -149,6 +149,7 @@
   environment: '{{ zuul | zuul_legacy_vars }}'
   when:
     - '"zun" in enable_services'
+    - os_branch != 'stable/mitaka'
 
 - name: create devstack local conf with ceph enabled
   shell:
