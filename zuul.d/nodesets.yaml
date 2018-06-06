@@ -29,3 +29,9 @@
     nodes:
       - name: ubuntu-bionic-vxh-arm64
         label: ubuntu-bionic-vxh-arm64
+
+- nodeset:
+    name: ubuntu-xenial-otc
+    nodes:
+      - name: ubuntu-xenial-otc
+        label: ubuntu-xenial-otc

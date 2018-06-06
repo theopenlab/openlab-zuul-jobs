@@ -1,0 +1,62 @@
+- hosts: all
+  become: yes
+  roles:
+    - role: export-cloud-openrc
+      vars:
+        cloud_name: 'opentelekomcloud'
+  tasks:
+    - name: Clean up resources for bosh acceptance tests
+      shell:
+        cmd: |
+          set -e
+          set -x
+          # Cloud provider specific variables
+          NET_ID="134ca339-24dc-44f5-ae6a-cf0404216ed2"
+          SUBNET_ID="3d6e9157-655f-42ec-9778-94d455730e5c"
+          BUILD_ID="{{ zuul.build }}"
+
+          cd bosh-1
+          export BOSH_CLIENT=admin
+          export BOSH_CLIENT_SECRET=`bosh int ./creds.yml --path /admin_password`
+          bosh_ip=$(bosh environments --column=URL)
+          bosh alias-env bosh-1 -e ${bosh_ip} --ca-cert <(bosh int ./creds.yml --path /director_ssl/ca)
+          bosh -e bosh-1 env
+          for vm_id in $(bosh -e bosh-1 vms --column="VM CID"); do
+              bosh -e bosh-1 -d bat --non-interactive delete-vm ${vm_id}
+          done
+          for vol_id in $(bosh -e bosh-1 disks --orphaned); do
+              bosh -e bosh-1 --non-interactive delete-disk ${vol_id}
+          done
+          for dep_name in $(bosh -e bosh-1 deployments --column="Name"); do
+              bosh -e bosh-1 --non-interactive delete-deployment -d ${dep_name}
+          done
+          for img_id in $(bosh -e bosh-1 ss --column=CID); do
+              img_name=$(openstack image show $img_id -f value -c name)
+              bosh -e bosh-1 --non-interactive delete-stemcell $img_name
+          done
+
+          set +x
+          bosh delete-env bosh-deployment/bosh.yml \
+              --state=state.json \
+              --vars-store=creds.yml \
+              -o bosh-deployment/openstack/cpi.yml \
+              -v director_name=bosh-1 \
+              -v internal_cidr=$(openstack subnet show ${SUBNET_ID} -f value -c cidr) \
+              -v internal_gw=$(openstack subnet show ${SUBNET_ID} -f value -c gateway_ip) \
+              -v internal_ip=${bosh_ip} \
+              -v auth_url=${OS_AUTH_URL} \
+              -v az=${OS_AVAILABILITY_ZONE} \
+              -v default_key_name=microbosh-${BUILD_ID} \
+              -v default_security_groups=[bosh-${BUILD_ID}] \
+              -v net_id=${NET_ID} \
+              -v openstack_password=${OS_PASSWORD} \
+              -v openstack_username=${OS_USERNAME} \
+              -v openstack_domain=${OS_DOMAIN_NAME} \
+              -v openstack_project=${OS_TENANT_NAME} \
+              -v private_key="{{ ansible_user_dir }}/bosh-1/microbosh.pem" \
+              -v region=${OS_REGION_NAME}
+          set -x
+          openstack security group delete bosh-${BUILD_ID} || true
+          openstack keypair delete microbosh-${BUILD_ID} || true
+        executable: /bin/bash
+      environment: '{{ golang_env }}'
