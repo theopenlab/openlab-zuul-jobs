@@ -262,6 +262,7 @@
     post-run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/post.yaml
     secrets:
       - vexxhost_credentials
+      - gcp_account
 
 - job:
     name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.10
