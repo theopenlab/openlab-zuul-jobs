@@ -1,0 +1,11 @@
+- name: Set google account key file path
+  set_fact:
+    gcp_key_file: '/tmp/gcp_key.json'
+  no_log: yes
+
+- name: Save google account key file
+  shell:
+    cmd: |
+      echo '{{ gcp_account.key_json }}' > '{{ hostvars[inventory_hostname]["gcp_key_file"] }}'
+    executable: /bin/bash
+  no_log: yes
