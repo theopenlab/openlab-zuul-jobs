@@ -100,6 +100,21 @@
   when:
     - '"lbaas" in enable_services'
 
+- name: create devstack local conf with octavia enabled
+  shell:
+    cmd: |
+      set -e
+      set -x
+      cat << EOF >> /tmp/dg-local.conf
+      enable_service octavia,o-cw,o-hm,o-hk,o-api
+      enable_plugin octavia https://git.openstack.org/openstack/octavia
+      enable_plugin barbican https://git.openstack.org/openstack/barbican
+      EOF
+    executable: /bin/bash
+    chdir: '{{ ansible_user_dir }}/workspace'
+  environment: '{{ zuul | zuul_legacy_vars }}'
+  when:
+    - '"octavia" in enable_services'
 
 - name: create devstack local conf with fwaas v1 enabled
   shell:
