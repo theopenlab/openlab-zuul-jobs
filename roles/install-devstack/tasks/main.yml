@@ -44,7 +44,7 @@
       export PROJECTS="openstack/barbican openstack/python-barbicanclient $PROJECTS"
       export PROJECTS="openstack/devstack-plugin-container $PROJECTS"
       export PROJECTS="openstack/kuryr-libnetwork $PROJECTS"
-      export PROJECTS="openstack/zun openstack/zun-tempest-plugin $PROJECTS"
+      export PROJECTS="openstack/zun openstack/zun-tempest-plugin openstack/python-zunclient $PROJECTS"
 
       cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
       ./safe-devstack-vm-gate-wrap.sh
