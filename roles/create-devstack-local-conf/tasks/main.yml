@@ -7,12 +7,26 @@
       cat << EOF >> /tmp/dg-local.conf
       [[local|localrc]]
       NETWORK_GATEWAY=10.0.0.1
+      EOF
+    executable: /bin/bash
+    chdir: '{{ ansible_user_dir }}/workspace'
+  environment: '{{ zuul | zuul_legacy_vars }}'
+
+# Use neutron-* services to replace q-* services except Mitaka
+- name: enable neutron services by new services names
+  shell:
+    cmd: |
+      set -e
+      set -x
+      cat << EOF >> /tmp/dg-local.conf
       disable_service q-agt q-svc q-dhcp q-l3 q-meta q-metering
       enable_service neutron-agent neutron-api neutron-dhcp neutron-l3 neutron-metadata-agent neutron-metering
       EOF
     executable: /bin/bash
     chdir: '{{ ansible_user_dir }}/workspace'
   environment: '{{ zuul | zuul_legacy_vars }}'
+  when:
+    - os_branch != 'stable/mitaka'
 
 
 # Populate local conf with specific branch
