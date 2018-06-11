@@ -13,7 +13,7 @@
   environment: '{{ zuul | zuul_legacy_vars }}'
 
 # Use neutron-* services to replace q-* services except Mitaka
-- name: create devstack local conf header
+- name: enable neutron services by new services names
   shell:
     cmd: |
       set -e
