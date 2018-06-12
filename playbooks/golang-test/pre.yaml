@@ -2,3 +2,5 @@
   become: yes
   roles:
     - install-golang
+  environment:
+    OS_BRANCH: vars["os_branch"] | default("master")
