@@ -16,3 +16,8 @@
   set_fact:
     golang_env: '{{ golang_env | combine(openrc) }}'
   no_log: yes
+
+- name: Set OS_BRANCH environment variable
+  set_fact:
+    golang_env: '{{ golang_env | combine({"OS_BRANCH": {{ os_branch }}) }}'
+  no_log: yes
