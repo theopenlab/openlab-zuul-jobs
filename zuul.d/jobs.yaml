@@ -355,21 +355,21 @@
       os_branch: 'stable/newton'
     nodeset: ubuntu-xenial-large
 
-- job:
-    name: openstacksdk-ansible-devel-functional-devstack
-    parent: openstacksdk-ansible-functional-devstack
-    description: |
-      Run openstacksdk ansible functional tests against a master devstack
-      using git devel branch version of ansible.
-    branches: ^(devel|master)$
-    required-projects:
-      - name: github.com/liu-sheng/ansible
-        override-checkout: devel
-      - name: openstack/openstacksdk
-        override-checkout: master
-    vars:
-      # test-matrix grabs branch from the zuul branch setting. If the job
-      # is triggered by ansible, that branch will be devel which doesn't
-      # make sense to devstack. Override so that we run the right thing.
-      test_matrix_branch: master
-      tox_install_siblings: true
+#- job:
+#    name: openstacksdk-ansible-devel-functional-devstack
+#    parent: openstacksdk-ansible-functional-devstack
+#    description: |
+#      Run openstacksdk ansible functional tests against a master devstack
+#      using git devel branch version of ansible.
+#    branches: ^(devel|master)$
+#    required-projects:
+#      - name: github.com/liu-sheng/ansible
+#        override-checkout: devel
+#      - name: openstack/openstacksdk
+#        override-checkout: master
+#    vars:
+#      # test-matrix grabs branch from the zuul branch setting. If the job
+#      # is triggered by ansible, that branch will be devel which doesn't
+#      # make sense to devstack. Override so that we run the right thing.
+#      test_matrix_branch: master
+#      tox_install_siblings: true
