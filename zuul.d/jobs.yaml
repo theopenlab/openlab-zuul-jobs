@@ -31,6 +31,9 @@
     pre-run: playbooks/init-test/pre.yaml
     post-run: playbooks/init-test/post.yaml
     timeout: 10800
+    vars:
+      global_env:
+        os_branch: master
 
 # Golang test base job
 - job:
