@@ -33,7 +33,7 @@
     timeout: 10800
     vars:
       global_env:
-        os_branch: master
+        OS_BRANCH: master
 
 # Golang test base job
 - job:
