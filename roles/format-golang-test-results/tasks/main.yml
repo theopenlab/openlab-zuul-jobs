@@ -11,4 +11,4 @@
       wget https://raw.githubusercontent.com/theopenlab/nosetest-xunit-xslt/master/nosetests.xslt
       xsltproc nosetests.xslt $TEST_RESULTS_XML > $TEST_RESULTS_HTML || true
     executable: /bin/bash
-  environment: '{{ global_env }}'
+  environment: '{{ global_env | combine(test_results_env) }}'
