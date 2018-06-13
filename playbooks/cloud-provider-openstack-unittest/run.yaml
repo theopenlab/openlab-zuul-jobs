@@ -1,6 +1,7 @@
 - hosts: all
   become: yes
   roles:
+    - config-golang
     - role: export-cloud-openrc
       vars:
         cloud_name: 'vexxhost'
@@ -16,4 +17,4 @@
           TESTARGS='-v' make test 2>&1 | tee $TEST_RESULTS_TXT
         executable: /bin/bash
         chdir: '{{ k8s_os_provider_src_dir }}'
-      environment: '{{ golang_env }}'
+      environment: '{{ global_env }}'

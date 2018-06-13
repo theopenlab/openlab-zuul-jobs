@@ -72,5 +72,5 @@
 
 - name: Merge openrc into golang env
   set_fact:
-    golang_env: '{{ golang_env | combine(openrc) }}'
+    global_env: '{{ global_env | combine(openrc) }}'
   no_log: yes
