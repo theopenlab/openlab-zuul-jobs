@@ -43,6 +43,9 @@
       Base job for all types of golang test jobs.
     pre-run: playbooks/golang-test/pre.yaml
     post-run: playbooks/golang-test/post.yaml
+    vars:
+      global_env:
+        OS_BRANCH: master
 
 # Terraform-provider-openstack jobs
 - job:
