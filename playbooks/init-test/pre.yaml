@@ -1,3 +1,13 @@
 - hosts: all
   roles:
     - ensure-legacy-workspace-directory
+  tasks:
+    - name: Set os_branch fact
+      set_fact:
+        os_branch: '{{ vars["os_branch"] | default("master") }}'
+      no_log: yes
+
+    - name: Set global env and init OS_BRANCH env var
+      set_fact:
+        global_env: '{{ {"OS_BRANCH": os_branch} }}'
+      no_log: yes

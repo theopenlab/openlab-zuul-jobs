@@ -121,4 +121,4 @@
               --timeout=150m | tee $LOG_DIR/e2e.log
         executable: /bin/bash
         chdir: '{{ k8s_os_provider_src_dir }}'
-      environment: '{{ golang_env }}'
+      environment: '{{ global_env }}'
