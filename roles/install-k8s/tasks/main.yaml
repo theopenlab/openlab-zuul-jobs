@@ -28,4 +28,4 @@
       git clone https://github.com/kubernetes/kubernetes '{{ k8s_src_dir }}' -b '{{ k8s_version }}'
       make -C '{{ k8s_src_dir }}' WHAT="cmd/kubectl cmd/hyperkube"
     executable: /bin/bash
-  environment: '{{ golang_env }}'
+  environment: '{{ global_env }}'

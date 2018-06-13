@@ -14,3 +14,19 @@
     src: '/usr/local/src/{{ go_tarball }}'
     dest: /usr/local
     remote_src: yes
+
+- name: Set golang env vars
+  set_fact:
+    golang_env:
+      GOPATH: '{{ ansible_user_dir }}'
+      PATH: '/usr/local/go/bin:{{ ansible_user_dir }}/bin:{{ ansible_env.PATH }}'
+      TEST_RESULTS_TXT: '{{ ansible_user_dir }}/workspace/test_results.txt'
+      TEST_ESULTS_XML: '{{ ansible_user_dir }}/workspace/test_results.xml'
+      TEST_RESULTS_HTML: '{{ ansible_user_dir }}/workspace/test_results.html'
+  no_log: yes
+
+- name: Merge golang env vars into global env
+  set_fact:
+    global_env: '{{ global_env | combine(golang_env) }}'
+  no_log: yes
+

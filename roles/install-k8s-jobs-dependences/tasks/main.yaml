@@ -52,4 +52,4 @@
       make -C ${GOPATH}/src/k8s.io/kubernetes WHAT="cmd/kubectl cmd/hyperkube"
 
     executable: /bin/bash
-  environment: '{{ golang_env }}'
+  environment: '{{ global_env }}'

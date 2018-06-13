@@ -40,14 +40,6 @@
       Base job for all types of golang test jobs.
     pre-run: playbooks/golang-test/pre.yaml
     post-run: playbooks/golang-test/post.yaml
-    vars:
-      golang_env:
-        GOPATH: '{{ ansible_user_dir }}'
-        PATH: '/usr/local/go/bin:{{ ansible_user_dir }}/bin:{{ ansible_env.PATH }}'
-        TEST_RESULTS_TXT: '{{ ansible_user_dir }}/workspace/test_results.txt'
-        TEST_RESULTS_XML: '{{ ansible_user_dir }}/workspace/test_results.xml'
-        TEST_RESULTS_HTML: '{{ ansible_user_dir }}/workspace/test_results.html'
-
 
 # Terraform-provider-openstack jobs
 - job:
@@ -336,7 +328,7 @@
 
 - job:
     name: bosh-acceptance-test
-    parent: golang-test
+    parent: init-test
     description: |
       Run acceptance tests of bosh-acceptance-test
     run: playbooks/bosh-acceptance-test/run.yaml

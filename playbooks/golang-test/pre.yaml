@@ -2,5 +2,3 @@
   become: yes
   roles:
     - install-golang
-  environment:
-    OS_BRANCH: 'foo'

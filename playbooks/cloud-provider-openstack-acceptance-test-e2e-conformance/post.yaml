@@ -25,4 +25,4 @@
           python upload_e2e.py --junit=$LOG_DIR/junit_01.xml --log=$LOG_DIR/e2e.log \
               --bucket=gs://kubernetes-openstack/$PIPELINE_LOGS_DIR/ci-'{{ zuul.job }}'
         executable: /bin/bash
-      environment: '{{ golang_env }}'
+      environment: '{{ global_env }}'

@@ -1,7 +1,9 @@
 - hosts: all
   become: yes
   roles:
-    - export-telefonica-openrc
+    - role: export-cloud-openrc
+      vars:
+        cloud_name: 'telefonica'
   tasks:
     - name: Run acceptance tests with gophercloud against telefonica public cloud
       shell:
@@ -58,4 +60,4 @@
           } 2>&1 | tee $TEST_RESULTS_TXTT
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
-      environment: '{{ golang_env | combine(telefonica_openrc) }}'
+      environment: '{{ global_env }}'
