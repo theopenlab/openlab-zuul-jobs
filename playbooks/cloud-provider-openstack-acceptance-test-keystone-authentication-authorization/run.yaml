@@ -4,7 +4,6 @@
     - role: install-devstack
       environment:
         OVERRIDE_ENABLED_SERVICES: 'key,mysql'
-    - role: export-devstack-openrc
   become: yes
   tasks:
     - name: Run keystone authentication and authorization acceptance tests with cloud-provider-openstack
@@ -185,4 +184,4 @@
           fi
         executable: /bin/bash
         chdir: '{{ k8s_os_provider_src_dir }}'
-      environment: '{{ golang_env }}'
+      environment: '{{ global_env }}'

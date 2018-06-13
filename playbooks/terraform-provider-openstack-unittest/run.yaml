@@ -19,4 +19,4 @@
           make test TESTARGS='-v' 2>&1 | tee $TEST_RESULTS_TXT
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
-      environment: '{{ golang_env }}'
+      environment: '{{ global_env }}'
