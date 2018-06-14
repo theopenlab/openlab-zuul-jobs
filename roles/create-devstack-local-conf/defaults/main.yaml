@@ -1,5 +1,4 @@
 ---
-os_branch: 'master'
 enable_services:
   - 'nova'
   - 'neutron'

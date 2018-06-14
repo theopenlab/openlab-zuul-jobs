@@ -65,7 +65,9 @@
     description: |
       Run terraform provider openstack acceptance test on queens branch
     vars:
-      os_branch: 'stable/queens'
+      global_env:
+        OS_BRANCH: stable/queens
+
 
 - job:
     name: terraform-provider-openstack-acceptance-test-pike
@@ -73,15 +75,16 @@
     description: |
       Run terraform provider openstack acceptance test on pike branch
     vars:
-      os_branch: 'stable/pike'
-
+      global_env:
+        OS_BRANCH: stable/pike
 - job:
     name: terraform-provider-openstack-acceptance-test-ocata
     parent: terraform-provider-openstack-acceptance-test
     description: |
       Run terraform provider openstack acceptance test on ocata branch
     vars:
-      os_branch: 'stable/ocata'
+      global_env:
+        OS_BRANCH: stable/ocata
 
 - job:
     name: terraform-provider-openstack-acceptance-test-newton
@@ -89,7 +92,9 @@
     description: |
       Run terraform provider openstack acceptance test on newton branch
     vars:
-      os_branch: 'stable/newton'
+      global_env:
+        OS_BRANCH: stable/newton
+
 
 - job:
     name: terraform-provider-openstack-acceptance-test-mitaka
@@ -97,7 +102,8 @@
     description: |
       Run terraform provider openstack acceptance test on mitaka branch
     vars:
-      os_branch: 'stable/mitaka'
+      global_env:
+        OS_BRANCH: stable/mitaka
     nodeset: ubuntu-trusty
 
 - job:
@@ -309,7 +315,9 @@
       This job validation tests of cf-openstack-validator aganist devstack
     run: playbooks/cf-openstack-validator-acceptance-test/run.yaml
     vars:
-      os_branch: 'stable/newton'
+      global_env:
+        OS_BRANCH: stable/newton
+
 
 - job:
     name: cf-acceptance-tests
@@ -318,7 +326,9 @@
       Run cloudfoundry acceptance tests of cf-acceptance-tests
     run: playbooks/cf-acceptance-tests/run.yaml
     vars:
-      os_branch: 'stable/newton'
+      global_env:
+        OS_BRANCH: stable/newton
+
 
 - job:
     name: bosh-acceptance-test
@@ -338,7 +348,8 @@
       Run cloudfoundry acceptance tests of bosh-acceptance-tests
     run: playbooks/bosh-acceptance-tests-devstack/run.yaml
     vars:
-      os_branch: 'stable/newton'
+      global_env:
+        OS_BRANCH: stable/newton
     nodeset: ubuntu-xenial-large
 
 #- job:

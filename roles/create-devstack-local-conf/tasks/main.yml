@@ -30,7 +30,7 @@
     chdir: '{{ ansible_user_dir }}/workspace'
   environment: '{{ zuul | zuul_legacy_vars }}'
   when:
-    - os_branch == 'stable/mitaka'
+    - gobal_env.OS_BRANCH == 'stable/mitaka'
 
 - name: Workaround about pip version error on stable/newton branch
   shell:
@@ -46,7 +46,7 @@
     chdir: '{{ ansible_user_dir }}/workspace'
   environment: '{{ zuul | zuul_legacy_vars }}'
   when:
-    - os_branch == 'stable/newton'
+    - global_env.OS_BRANCH == 'stable/newton'
 
 # Populate local conf with specific service
 - name: create devstack local conf with manila enabled
@@ -162,7 +162,7 @@
   environment: '{{ zuul | zuul_legacy_vars }}'
   when:
     - '"zun" in enable_services'
-    - os_branch != 'stable/mitaka'
+    - global_env.OS_BRANCH != 'stable/mitaka'
 
 - name: create devstack local conf with ceph enabled
   shell:
