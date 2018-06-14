@@ -1,0 +1,12 @@
+- hosts: all
+  become: yes
+  tasks:
+    - name: Run openstacksdk ansible functional tests against a master devstack
+      shell:
+        cmd: |
+          set -e
+          set -o pipefail
+          set -x
+          pip install ansible
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
