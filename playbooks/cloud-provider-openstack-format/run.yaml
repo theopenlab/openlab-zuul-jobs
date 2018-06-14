@@ -1,6 +1,5 @@
 - hosts: all
   roles:
-    - config-golang
     - move-k8s-repo-to-k8s-specific-dir
   become: yes
   tasks:
