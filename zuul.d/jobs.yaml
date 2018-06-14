@@ -33,6 +33,10 @@
     pre-run: playbooks/init-test/pre.yaml
     post-run: playbooks/init-test/post.yaml
     timeout: 10800
+    vars:
+      global_env:
+        OS_BRANCH: master
+
 
 # Golang test base job
 - job:
@@ -40,15 +44,7 @@
     parent: init-test
     description: |
       Base job for all types of golang test jobs.
-    pre-run: playbooks/golang-test/pre.yaml
     post-run: playbooks/golang-test/post.yaml
-    vars:
-      golang_env:
-        GOPATH: '{{ ansible_user_dir }}'
-        PATH: '/usr/local/go/bin:{{ ansible_user_dir }}/bin:{{ ansible_env.PATH }}'
-        TEST_RESULTS_TXT: '{{ ansible_user_dir }}/workspace/test_results.txt'
-        TEST_RESULTS_XML: '{{ ansible_user_dir }}/workspace/test_results.xml'
-        TEST_RESULTS_HTML: '{{ ansible_user_dir }}/workspace/test_results.html'
 
 # Terraform-provider-openstack jobs
 - job:
@@ -72,7 +68,8 @@
     description: |
       Run terraform provider openstack acceptance test on queens branch
     vars:
-      os_branch: 'stable/queens'
+      global_env:
+        OS_BRANCH: stable/queens
 
 - job:
     name: terraform-provider-openstack-acceptance-test-pike
@@ -80,7 +77,8 @@
     description: |
       Run terraform provider openstack acceptance test on pike branch
     vars:
-      os_branch: 'stable/pike'
+      global_env:
+        OS_BRANCH: stable/pike
 
 - job:
     name: terraform-provider-openstack-acceptance-test-ocata
@@ -88,7 +86,8 @@
     description: |
       Run terraform provider openstack acceptance test on ocata branch
     vars:
-      os_branch: 'stable/ocata'
+      global_env:
+        OS_BRANCH: stable/ocata
 
 - job:
     name: terraform-provider-openstack-acceptance-test-newton
@@ -96,7 +95,8 @@
     description: |
       Run terraform provider openstack acceptance test on newton branch
     vars:
-      os_branch: 'stable/newton'
+      global_env:
+        OS_BRANCH: stable/newton
 
 - job:
     name: terraform-provider-openstack-acceptance-test-mitaka
@@ -104,7 +104,8 @@
     description: |
       Run terraform provider openstack acceptance test on mitaka branch
     vars:
-      os_branch: 'stable/mitaka'
+      global_env:
+        OS_BRANCH: stable/mitaka
     nodeset: ubuntu-trusty
 
 - job:
@@ -235,17 +236,9 @@
     vars:
       k8s_os_provider_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack'
 
-
-- job:
-    name: cloud-provider-openstack-acceptance-test
-    parent: cloud-provider-openstack-test
-    description: |
-      Run acceptance test of cloud-provider-openstack
-    pre-run: playbooks/cloud-provider-openstack-acceptance-test/pre.yaml
-
 - job:
     name: cloud-provider-openstack-acceptance-test-k8s-cinder
-    parent: cloud-provider-openstack-acceptance-test
+    parent: cloud-provider-openstack-test
     description: |
       Run cinder in-tree acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-k8s-cinder/run.yaml
@@ -255,7 +248,7 @@
 
 - job:
     name: cloud-provider-openstack-acceptance-test-e2e-conformance
-    parent: cloud-provider-openstack-acceptance-test
+    parent: cloud-provider-openstack-test
     description: |
       Run Kubernetes E2E Conformance tests against Kubernetes master
     run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/run.yaml
@@ -282,7 +275,7 @@
 
 - job:
     name: cloud-provider-openstack-acceptance-test-standalone-cinder
-    parent: cloud-provider-openstack-acceptance-test
+    parent: cloud-provider-openstack-test
     description: |
       Run cinder standalone acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-standalone-cinder/run.yaml
@@ -291,7 +284,7 @@
 
 - job:
     name: cloud-provider-openstack-acceptance-test-csi-cinder
-    parent: cloud-provider-openstack-acceptance-test
+    parent: cloud-provider-openstack-test
     description: |
       Run cinder csi acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/run.yaml
@@ -301,7 +294,7 @@
 
 - job:
     name: cloud-provider-openstack-acceptance-test-lb-octavia
-    parent: cloud-provider-openstack-acceptance-test
+    parent: cloud-provider-openstack-test
     description: |
       Run lb acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-lb-octavia/run.yaml
@@ -311,7 +304,7 @@
 
 - job:
     name: cloud-provider-openstack-acceptance-test-keystone-authentication-authorization
-    parent: cloud-provider-openstack-acceptance-test
+    parent: cloud-provider-openstack-test
     description: |
       Run keystone auth acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-keystone-authentication-authorization/run.yaml
@@ -319,7 +312,7 @@
 
 - job:
     name: cloud-provider-openstack-acceptance-test-flexvolume-cinder
-    parent: cloud-provider-openstack-acceptance-test
+    parent: cloud-provider-openstack-test
     description: |
       Run cinder flexvolume acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-flexvolume-cinder/run.yaml
@@ -332,11 +325,12 @@
       This job validation tests of cf-openstack-validator aganist devstack
     run: playbooks/cf-openstack-validator-acceptance-test/run.yaml
     vars:
-      os_branch: 'stable/newton'
+      global_env:
+        OS_BRANCH: stable/newton
 
 - job:
     name: bosh-acceptance-test
-    parent: golang-test
+    parent: init-test
     description: |
       Run acceptance tests of bosh-acceptance-tests
     run: playbooks/bosh-acceptance-test/run.yaml
