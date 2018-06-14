@@ -32,7 +32,7 @@
       GOPATH: '{{ ansible_user_dir }}'
       PATH: '/usr/local/go/bin:{{ ansible_user_dir }}/bin:{{ ansible_env.PATH }}'
       TEST_RESULTS_TXT: '{{ ansible_user_dir }}/workspace/test_results.txt'
-      TEST_ESULTS_XML: '{{ ansible_user_dir }}/workspace/test_results.xml'
+      TEST_RESULTS_XML: '{{ ansible_user_dir }}/workspace/test_results.xml'
       TEST_RESULTS_HTML: '{{ ansible_user_dir }}/workspace/test_results.html'
   no_log: yes
 
