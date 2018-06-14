@@ -42,11 +42,6 @@
     description: |
       Base job for all types of golang test jobs.
     post-run: playbooks/golang-test/post.yaml
-    vars:
-      test_results_env:
-        TEST_RESULTS_TXT: '{{ ansible_user_dir }}/workspace/test_results.txt'
-        TEST_ESULTS_XML: '{{ ansible_user_dir }}/workspace/test_results.xml'
-        TEST_RESULTS_HTML: '{{ ansible_user_dir }}/workspace/test_results.html'
 
 # Terraform-provider-openstack jobs
 - job:
