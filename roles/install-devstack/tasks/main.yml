@@ -44,7 +44,7 @@
       export PROJECTS="openstack/barbican openstack/python-barbicanclient $PROJECTS"
       export PROJECTS="openstack/devstack-plugin-container $PROJECTS"
       export PROJECTS="openstack/kuryr-libnetwork $PROJECTS"
-      export PROJECTS="openstack/zun openstack/zun-tempest-plugin $PROJECTS"
+      export PROJECTS="openstack/zun openstack/zun-tempest-plugin openstack/python-zunclient $PROJECTS"
 
       cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
       ./safe-devstack-vm-gate-wrap.sh
@@ -59,6 +59,11 @@
     chdir: '{{ ansible_user_dir }}/workspace'
   environment: '{{ zuul | zuul_legacy_vars }}'
 
+# Convert multiple key=value pairs to json format
+#   's/^/"/' - add " at the beginning of each line
+#   's/=/": "/' - change = to ": " in each line
+#   's/$/",/' - add ", at the end of each line
+#   '$ s/,$//' - delete comma at the end of the last line
 - name: Register devstack openrc
   shell:
     cmd: |

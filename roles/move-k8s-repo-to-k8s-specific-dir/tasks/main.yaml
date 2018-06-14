@@ -3,5 +3,5 @@
     cmd: |
       set -x
       mkdir -p $(dirname '{{ k8s_repo_src_dir }}')
-      mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}' '{{ k8s_repo_src_dir }}'
+      mv '{{ zuul.project.src_dir }}' '{{ k8s_repo_src_dir }}'
     executable: /bin/bash
