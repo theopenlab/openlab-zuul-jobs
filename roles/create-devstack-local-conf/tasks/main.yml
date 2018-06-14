@@ -9,8 +9,20 @@
       NETWORK_GATEWAY=10.0.0.1
       EOF
     executable: /bin/bash
-    chdir: '{{ ansible_user_dir }}/workspace'
-  environment: '{{ zuul | zuul_legacy_vars }}'
+
+# Use neutron-* services to replace q-* services except Mitaka
+- name: enable neutron services by new services names
+  shell:
+    cmd: |
+      set -e
+      set -x
+      cat << EOF >> /tmp/dg-local.conf
+      disable_service q-agt q-svc q-dhcp q-l3 q-meta q-metering
+      enable_service neutron-agent neutron-api neutron-dhcp neutron-l3 neutron-metadata-agent neutron-metering
+      EOF
+    executable: /bin/bash
+  when:
+    - global_env.OS_BRANCH != 'stable/mitaka'
 
 
 # Populate local conf with specific branch
@@ -27,26 +39,9 @@
       OS_PROJECT_DOMAIN_ID=default
       EOF
     executable: /bin/bash
-    chdir: '{{ ansible_user_dir }}/workspace'
-  environment: '{{ zuul | zuul_legacy_vars }}'
   when:
     - global_env.OS_BRANCH == 'stable/mitaka'
 
-- name: Workaround about pip version error on stable/newton branch
-  shell:
-    cmd: |
-      set -e
-      set -x
-      cat << EOF >> /tmp/dg-local.conf
-      IDENTITY_API_VERSION=3
-      OS_USER_DOMAIN_ID=default
-      OS_PROJECT_DOMAIN_ID=default
-      EOF
-    executable: /bin/bash
-    chdir: '{{ ansible_user_dir }}/workspace'
-  environment: '{{ zuul | zuul_legacy_vars }}'
-  when:
-    - global_env.OS_BRANCH == 'stable/newton'
 
 # Populate local conf with specific service
 - name: create devstack local conf with manila enabled
@@ -76,8 +71,6 @@
       enable_plugin manila git://git.openstack.org/openstack/manila
       EOF
     executable: /bin/bash
-    chdir: '{{ ansible_user_dir }}/workspace'
-  environment: '{{ zuul | zuul_legacy_vars }}'
   when:
     - '"manila" in enable_services'
 
@@ -91,8 +84,6 @@
       enable_plugin designate git://git.openstack.org/openstack/designate
       EOF
     executable: /bin/bash
-    chdir: '{{ ansible_user_dir }}/workspace'
-  environment: '{{ zuul | zuul_legacy_vars }}'
   when:
     - '"designate" in enable_services'
 
@@ -108,8 +99,6 @@
       enable_plugin barbican https://git.openstack.org/openstack/barbican
       EOF
     executable: /bin/bash
-    chdir: '{{ ansible_user_dir }}/workspace'
-  environment: '{{ zuul | zuul_legacy_vars }}'
   when:
     - '"lbaas" in enable_services'
 
@@ -124,8 +113,6 @@
       enable_plugin neutron-fwaas https://git.openstack.org/openstack/neutron-fwaas
       EOF
     executable: /bin/bash
-    chdir: '{{ ansible_user_dir }}/workspace'
-  environment: '{{ zuul | zuul_legacy_vars }}'
   when:
     - '"fwaas-v1" in enable_services'
 
@@ -139,8 +126,6 @@
       enable_plugin neutron-fwaas https://git.openstack.org/openstack/neutron-fwaas
       EOF
     executable: /bin/bash
-    chdir: '{{ ansible_user_dir }}/workspace'
-  environment: '{{ zuul | zuul_legacy_vars }}'
   when:
     - '"fwaas-v2" in enable_services'
 
@@ -158,11 +143,11 @@
       enable_plugin zun https://git.openstack.org/openstack/zun
       EOF
     executable: /bin/bash
-    chdir: '{{ ansible_user_dir }}/workspace'
-  environment: '{{ zuul | zuul_legacy_vars }}'
   when:
     - '"zun" in enable_services'
     - global_env.OS_BRANCH != 'stable/mitaka'
+    - global_env.OS_BRANCH != 'stable/newton'
+    - global_env.OS_BRANCH != 'stable/ocata'
 
 - name: create devstack local conf with ceph enabled
   shell:
@@ -178,7 +163,5 @@
       ENABLE_CEPH_MANILA=False
       EOF
     executable: /bin/bash
-    chdir: '{{ ansible_user_dir }}/workspace'
-  environment: '{{ zuul | zuul_legacy_vars }}'
   when:
     - '"ceph" in enable_services'
