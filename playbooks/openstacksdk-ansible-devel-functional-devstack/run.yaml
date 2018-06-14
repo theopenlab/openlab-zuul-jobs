@@ -10,7 +10,7 @@
           set -e
           set -o pipefail
           set -x
-          pip install python-tox
+          pip install tox
           pip install -e '{{ zuul.project.src_dir }}'
           ansible --version
           pip show ansible
