@@ -1,5 +1,8 @@
 - hosts: all
   become: yes
+  roles:
+    - clone-devstack-gate-to-workspace
+    - install-devstack
   tasks:
     - name: Run openstacksdk ansible functional tests against a master devstack
       shell:
@@ -7,6 +10,13 @@
           set -e
           set -o pipefail
           set -x
-          pip install ansible
+          pip install python-tox
+          pip install -e '{{ zuul.project.src_dir }}'
+          ansible --version
+          pip show ansible
+          git clone http://git.openstack.org/openstack/openstacksdk
+          cd openstacksdk
+          tox -eansible
         executable: /bin/bash
-        chdir: '{{ zuul.project.src_dir }}'
+        chdir: '{{ ansible_user_dir }}'
+      environment: '{{ global_env }}'
