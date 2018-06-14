@@ -343,6 +343,7 @@
 
 - job:
     name: openstacksdk-ansible-devel-functional-devstack
+    parent: init-test
     description: |
       Run openstacksdk ansible functional tests against a master devstack
       using git devel branch version of ansible.
