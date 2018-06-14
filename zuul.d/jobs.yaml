@@ -351,5 +351,3 @@
     required-projects:
       - name: liu-sheng/ansible
         override-checkout: devel
-      - name: openstack/openstacksdk
-        override-checkout: master
