@@ -30,7 +30,7 @@
     chdir: '{{ ansible_user_dir }}/workspace'
   environment: '{{ zuul | zuul_legacy_vars }}'
   when:
-    - global.OS_BRANCH == 'stable/mitaka'
+    - global_env.OS_BRANCH == 'stable/mitaka'
 
 - name: Workaround about pip version error on stable/newton branch
   shell:
