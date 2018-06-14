@@ -163,6 +163,8 @@
   when:
     - '"zun" in enable_services'
     - global_env.OS_BRANCH != 'stable/mitaka'
+    - global_env.OS_BRANCH != 'stable/newton'
+    - global_env.OS_BRANCH != 'stable/ocata'
 
 - name: create devstack local conf with ceph enabled
   shell:
