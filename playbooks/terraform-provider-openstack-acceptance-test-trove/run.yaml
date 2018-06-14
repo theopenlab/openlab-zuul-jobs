@@ -43,6 +43,8 @@
 
 - hosts: all
   become: yes
+  roles:
+    - config-golang
   tasks:
     - name: Run trove acceptance tests with terraform-provider-openstack
       shell:

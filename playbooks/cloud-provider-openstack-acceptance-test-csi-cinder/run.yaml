@@ -1,8 +1,10 @@
 - hosts: all
   roles:
+    - config-golang
     - role: export-cloud-openrc
       vars:
         cloud_name: 'vexxhost'
+    - install-k8s
   become: yes
   tasks:
     - name: Run csi cinder acceptance tests with cloud-provider-openstack

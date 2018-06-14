@@ -1,6 +1,7 @@
 - hosts: all
   become: yes
   roles:
+    - config-golang
     - clone-devstack-gate-to-workspace
     - create-devstack-local-conf
     - role: install-devstack

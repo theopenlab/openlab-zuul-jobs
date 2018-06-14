@@ -1,9 +1,11 @@
 - hosts: all
   become: yes
   roles:
+    - config-golang
     - role: export-cloud-openrc
       vars:
         cloud_name: 'vexxhost'
+    - install-k8s
   tasks:
     - name: Run lbass octavia acceptance tests with cloud-provider-openstack
       shell:

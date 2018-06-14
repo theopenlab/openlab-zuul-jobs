@@ -233,17 +233,9 @@
     vars:
       k8s_os_provider_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack'
 
-
-- job:
-    name: cloud-provider-openstack-acceptance-test
-    parent: cloud-provider-openstack-test
-    description: |
-      Run acceptance test of cloud-provider-openstack
-    pre-run: playbooks/cloud-provider-openstack-acceptance-test/pre.yaml
-
 - job:
     name: cloud-provider-openstack-acceptance-test-k8s-cinder
-    parent: cloud-provider-openstack-acceptance-test
+    parent: cloud-provider-openstack-test
     description: |
       Run cinder in-tree acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-k8s-cinder/run.yaml
@@ -253,7 +245,7 @@
 
 - job:
     name: cloud-provider-openstack-acceptance-test-e2e-conformance
-    parent: cloud-provider-openstack-acceptance-test
+    parent: cloud-provider-openstack-test
     description: |
       Run Kubernetes E2E Conformance tests against Kubernetes master
     run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/run.yaml
@@ -271,7 +263,7 @@
 
 - job:
     name: cloud-provider-openstack-acceptance-test-standalone-cinder
-    parent: cloud-provider-openstack-acceptance-test
+    parent: cloud-provider-openstack-test
     description: |
       Run cinder standalone acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-standalone-cinder/run.yaml
@@ -280,7 +272,7 @@
 
 - job:
     name: cloud-provider-openstack-acceptance-test-csi-cinder
-    parent: cloud-provider-openstack-acceptance-test
+    parent: cloud-provider-openstack-test
     description: |
       Run cinder csi acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/run.yaml
@@ -290,7 +282,7 @@
 
 - job:
     name: cloud-provider-openstack-acceptance-test-lb-octavia
-    parent: cloud-provider-openstack-acceptance-test
+    parent: cloud-provider-openstack-test
     description: |
       Run lb acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-lb-octavia/run.yaml
@@ -300,7 +292,7 @@
 
 - job:
     name: cloud-provider-openstack-acceptance-test-keystone-authentication-authorization
-    parent: cloud-provider-openstack-acceptance-test
+    parent: cloud-provider-openstack-test
     description: |
       Run keystone auth acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-keystone-authentication-authorization/run.yaml
@@ -308,7 +300,7 @@
 
 - job:
     name: cloud-provider-openstack-acceptance-test-flexvolume-cinder
-    parent: cloud-provider-openstack-acceptance-test
+    parent: cloud-provider-openstack-test
     description: |
       Run cinder flexvolume acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-flexvolume-cinder/run.yaml

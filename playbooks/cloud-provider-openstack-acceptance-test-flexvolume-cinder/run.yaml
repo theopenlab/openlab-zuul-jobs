@@ -7,6 +7,7 @@
           apt install libvirt-bin -y
         executable: /bin/bash
   roles:
+    - config-golang
     - clone-devstack-gate-to-workspace
     - role: create-devstack-local-conf
       enable_services:

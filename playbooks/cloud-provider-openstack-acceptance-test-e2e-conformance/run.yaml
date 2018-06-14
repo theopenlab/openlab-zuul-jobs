@@ -1,8 +1,10 @@
 - hosts: all
   roles:
+    - config-golang
     - role: export-cloud-openrc
       vars:
         cloud_name: 'vexxhost'
+    - install-k8s
   become: yes
   tasks:
     - name: Run kubernetes E2E conformance tests with cloud-provider-openstack
