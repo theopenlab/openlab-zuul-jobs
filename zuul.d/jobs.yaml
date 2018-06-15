@@ -348,4 +348,3 @@
       Run openstacksdk ansible functional tests against a master devstack
       using git devel branch version of ansible.
     run: playbooks/openstacksdk-ansible-devel-functional-devstack/run.yaml
-
