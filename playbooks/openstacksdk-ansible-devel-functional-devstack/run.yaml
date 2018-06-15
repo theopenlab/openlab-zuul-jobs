@@ -16,6 +16,7 @@
           pip show ansible
           git clone http://git.openstack.org/openstack/openstacksdk
           cd openstacksdk
+          sleep 7200
           tox -eansible
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}'
