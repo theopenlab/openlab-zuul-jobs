@@ -347,10 +347,5 @@
     description: |
       Run openstacksdk ansible functional tests against a master devstack
       using git devel branch version of ansible.
-    branches: ^(devel|master)$
     run: playbooks/openstacksdk-ansible-devel-functional-devstack/run.yaml
-    required-projects:
-      - name: liu-sheng/ansible
-        override-checkout: devel
-      - name: openstack/openstacksdk
-        override-checkout: master
+

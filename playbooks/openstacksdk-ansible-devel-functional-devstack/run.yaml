@@ -1,5 +1,16 @@
 - hosts: all
   become: yes
+  tasks:
+    - name: Clone opnstacksdk
+      shell:
+        cmd: |
+          set -e
+          set -x
+          git clone http://git.openstack.org/openstack/openstacksdk '{{ ansible_user_dir }}/src/git.openstack.org/openstack/openstacksdk'
+        executable: /bin/bash
+
+- hosts: all
+  become: yes
   roles:
     - clone-devstack-gate-to-workspace
     - install-devstack
@@ -7,5 +18,5 @@
     - role: tox
       vars:
         tox_install_siblings: true
-        zuul_work_dir: '{{ ansible_user_dir }}/openstacksdk'
+        zuul_work_dir: '{{ ansible_user_dir }}/src/git.openstack.org/openstack/openstacksdk'
         tox_envlist: ansible
