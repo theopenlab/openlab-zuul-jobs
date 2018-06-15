@@ -1,6 +1,7 @@
 - hosts: all
   become: yes
   roles:
+    - config-golang
     - role: export-cloud-openrc
       vars:
         cloud_name: 'telefonica'
@@ -54,4 +55,4 @@
 
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
-      environment: '{{ golang_env }}'
+      environment: '{{ global_env }}'

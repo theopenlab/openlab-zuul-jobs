@@ -1,6 +1,7 @@
 - hosts: all
   become: yes
   roles:
+    - config-golang
     - role: export-cloud-openrc
       vars:
         cloud_name: 'orange'
@@ -53,4 +54,4 @@
           make testacc 2>&1 | tee $TEST_RESULTS_TXT
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
-      environment: '{{ golang_env }}'
+      environment: '{{ global_env }}'

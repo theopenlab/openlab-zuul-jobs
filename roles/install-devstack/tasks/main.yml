@@ -27,16 +27,16 @@
     chdir: '{{ ansible_user_dir }}/workspace'
   environment: '{{ zuul | zuul_legacy_vars }}'
   when:
-    - os_branch == 'stable/mitaka'
+    - global_env.OS_BRANCH == 'stable/mitaka'
 
-- name: Install devstack on {{ os_branch }} branch
+- name: Install devstack on {{ global_env.OS_BRANCH }} branch
   shell:
     cmd: |
       set -e
       set -x
       export PYTHONUNBUFFERED=true
       export GIT_BASE=https://github.com
-      export OVERRIDE_ZUUL_BRANCH='{{ os_branch }}'
+      export OVERRIDE_ZUUL_BRANCH='{{ global_env.OS_BRANCH }}'
       export DEVSTACK_GATE_NEUTRON=1
       export DEVSTACK_GATE_FIXED_RANGE=10.0.0.0/20
       export PROJECTS="openstack/designate $PROJECTS"
@@ -60,3 +60,27 @@
     executable: /bin/bash
     chdir: '{{ ansible_user_dir }}/workspace'
   environment: '{{ zuul | zuul_legacy_vars }}'
+
+# Convert multiple key=value pairs to json format
+#   's/^/"/' - add " at the beginning of each line
+#   's/=/": "/' - change = to ": " in each line
+#   's/$/",/' - add ", at the end of each line
+#   '$ s/,$//' - delete comma at the end of the last line
+- name: Register devstack openrc
+  shell:
+    cmd: |
+      source '{{ openrc_file }}' admin admin > /dev/null
+      openrc=$(env | grep OS_ | sed -e 's/^/"/' -e 's/=/": "/' -e 's/$/",/' | sed '$ s/,$//')
+      echo "{$openrc}"
+    executable: /bin/bash
+  register: output
+
+- name: Set fact for devstack openrc
+  set_fact:
+    openrc: '{{ output.stdout | from_json }}'
+  no_log: yes
+
+- name: Merge devstack openrc into global env
+  set_fact:
+    global_env: '{{ global_env | combine(openrc) }}'
+  no_log: yes

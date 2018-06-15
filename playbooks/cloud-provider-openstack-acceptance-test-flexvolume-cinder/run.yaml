@@ -7,6 +7,7 @@
           apt install libvirt-bin -y
         executable: /bin/bash
   roles:
+    - config-golang
     - clone-devstack-gate-to-workspace
     - role: create-devstack-local-conf
       enable_services:
@@ -15,7 +16,6 @@
       environment:
         OVERRIDE_ENABLED_SERVICES: 'key,c-sch,c-api,c-vol,rabbit,mysql'
         PROJECTS: 'openstack/devstack-plugin-ceph'
-    - role: export-devstack-openrc
   tasks:
     - name: Run flexvolume cinder conformance tests with cloud-provider-openstack
       shell:
@@ -116,4 +116,4 @@
           fi
         executable: /bin/bash
         chdir: '{{ k8s_os_provider_src_dir }}'
-      environment: '{{ golang_env }}'
+      environment: '{{ global_env }}'

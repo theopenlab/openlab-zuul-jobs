@@ -1,11 +1,11 @@
 - hosts: all
   become: yes
   roles:
+    - config-golang
     - clone-devstack-gate-to-workspace
     - role: install-devstack
       environment:
         OVERRIDE_ENABLED_SERVICES: 'key,c-sch,c-api,c-vol,rabbit,mysql'
-    - role: export-devstack-openrc
   tasks:
     - name: Run cinder standalone acceptance tests with cloud-provider-openstack
       shell:
@@ -98,4 +98,4 @@
           fi
         executable: /bin/bash
         chdir: '{{ k8s_os_provider_src_dir }}'
-      environment: '{{ golang_env }}'
+      environment: '{{ global_env }}'
