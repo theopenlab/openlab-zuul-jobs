@@ -113,8 +113,6 @@
       enable_plugin barbican https://git.openstack.org/openstack/barbican
       EOF
     executable: /bin/bash
-    chdir: '{{ ansible_user_dir }}/workspace'
-  environment: '{{ zuul | zuul_legacy_vars }}'
   when:
     - '"octavia" in enable_services'
 
