@@ -1,6 +1,7 @@
 - hosts: all
   roles:
     - config-golang
+    - install-k8s
     - clone-devstack-gate-to-workspace
     - role: install-devstack
       environment:
