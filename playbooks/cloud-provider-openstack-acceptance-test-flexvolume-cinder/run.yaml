@@ -16,6 +16,7 @@
       environment:
         OVERRIDE_ENABLED_SERVICES: 'key,c-sch,c-api,c-vol,rabbit,mysql'
         PROJECTS: 'openstack/devstack-plugin-ceph'
+    - install-k8s
   tasks:
     - name: Run flexvolume cinder conformance tests with cloud-provider-openstack
       shell:

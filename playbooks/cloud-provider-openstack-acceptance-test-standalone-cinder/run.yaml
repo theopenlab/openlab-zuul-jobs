@@ -7,6 +7,7 @@
     - role: install-devstack
       environment:
         OVERRIDE_ENABLED_SERVICES: 'key,c-sch,c-api,c-vol,rabbit,mysql'
+    - install-k8s
   tasks:
     - name: Run cinder standalone acceptance tests with cloud-provider-openstack
       shell:
