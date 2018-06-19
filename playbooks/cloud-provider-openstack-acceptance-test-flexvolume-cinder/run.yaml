@@ -8,6 +8,7 @@
         executable: /bin/bash
   roles:
     - config-golang
+    - install-k8s
     - clone-devstack-gate-to-workspace
     - role: create-devstack-local-conf
       enable_services:
