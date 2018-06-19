@@ -119,7 +119,7 @@
     description: |
       Run terraform-provider-openstack trove acceptance test on master branch
     run: playbooks/terraform-provider-openstack-acceptance-test-trove/run.yaml
-   nodeset: ubuntu-xenial-large
+    nodeset: ubuntu-xenial-large
 
 - job:
     name: terraform-provider-openstack-acceptance-test-lbaas
