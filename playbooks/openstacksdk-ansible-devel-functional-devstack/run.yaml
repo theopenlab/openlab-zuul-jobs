@@ -2,12 +2,9 @@
   become: yes
   tasks:
     - name: Clone opnstacksdk
-      shell:
-        cmd: |
-          set -e
-          set -x
-          git clone http://git.openstack.org/openstack/openstacksdk '{{ ansible_user_dir }}/src/git.openstack.org/openstack/openstacksdk'
-        executable: /bin/bash
+      git:
+        repo: http://git.openstack.org/openstack/openstacksdk
+        dest: '{{ ansible_user_dir }}/src/git.openstack.org/openstack/openstacksdk'
 
 - hosts: all
   become: yes
