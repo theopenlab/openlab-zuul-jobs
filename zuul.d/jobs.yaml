@@ -373,4 +373,4 @@
     run: playbooks/shade-ansible-functional-devstack/run.yaml
     required-projects:
       - name: liu-sheng/ansible
-        override-checkout: stable-2.6
+        override-checkout: stable-2.5
