@@ -122,7 +122,8 @@
       set -e
       set -x
       cat << EOF >> /tmp/dg-local.conf
-      enable_service neutron-fwaas-v1
+      disable_service neutron-agent neutron-api neutron-dhcp neutron-l3 neutron-metadata-agent neutron-metering
+      enable_service q-agt q-svc q-dhcp q-l3 q-meta q-metering q-fwaas-v1
       enable_plugin neutron-fwaas https://git.openstack.org/openstack/neutron-fwaas
       EOF
     executable: /bin/bash
@@ -135,7 +136,8 @@
       set -e
       set -x
       cat << EOF >> /tmp/dg-local.conf
-      enable_service neutron-fwaas-v2
+      disable_service neutron-agent neutron-api neutron-dhcp neutron-l3 neutron-metadata-agent neutron-metering
+      enable_service q-agt q-svc q-dhcp q-l3 q-meta q-metering q-fwaas-v2
       enable_plugin neutron-fwaas https://git.openstack.org/openstack/neutron-fwaas
       EOF
     executable: /bin/bash
