@@ -93,7 +93,7 @@
       set -e
       set -x
       cat << EOF >> /tmp/dg-local.conf
-      enable_service octavia,o-cw,o-hm,o-hk,o-api
+      enable_service neutron-lbaasv2,octavia,o-cw,o-hm,o-hk,o-api
       enable_plugin neutron-lbaas https://git.openstack.org/openstack/neutron-lbaas
       enable_plugin octavia https://git.openstack.org/openstack/octavia
       enable_plugin barbican https://git.openstack.org/openstack/barbican
@@ -102,6 +102,19 @@
   when:
     - '"lbaas" in enable_services'
 
+- name: create devstack local conf with octavia enabled
+  shell:
+    cmd: |
+      set -e
+      set -x
+      cat << EOF >> /tmp/dg-local.conf
+      enable_service octavia,o-cw,o-hm,o-hk,o-api
+      enable_plugin octavia https://git.openstack.org/openstack/octavia
+      enable_plugin barbican https://git.openstack.org/openstack/barbican
+      EOF
+    executable: /bin/bash
+  when:
+    - '"octavia" in enable_services'
 
 - name: create devstack local conf with fwaas v1 enabled
   shell:
@@ -109,7 +122,8 @@
       set -e
       set -x
       cat << EOF >> /tmp/dg-local.conf
-      enable_service neutron-fwaas-v1
+      disable_service neutron-agent neutron-api neutron-dhcp neutron-l3 neutron-metadata-agent neutron-metering
+      enable_service q-agt q-svc q-dhcp q-l3 q-meta q-metering q-fwaas-v1
       enable_plugin neutron-fwaas https://git.openstack.org/openstack/neutron-fwaas
       EOF
     executable: /bin/bash
@@ -122,7 +136,8 @@
       set -e
       set -x
       cat << EOF >> /tmp/dg-local.conf
-      enable_service neutron-fwaas-v2
+      disable_service neutron-agent neutron-api neutron-dhcp neutron-l3 neutron-metadata-agent neutron-metering
+      enable_service q-agt q-svc q-dhcp q-l3 q-meta q-metering q-fwaas-v2
       enable_plugin neutron-fwaas https://git.openstack.org/openstack/neutron-fwaas
       EOF
     executable: /bin/bash
