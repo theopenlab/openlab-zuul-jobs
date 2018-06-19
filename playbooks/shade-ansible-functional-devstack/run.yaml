@@ -3,8 +3,8 @@
   tasks:
     - name: Clone opnstacksdk
       git:
-        repo: http://git.openstack.org/openstack/shade
-        dest: '{{ ansible_user_dir }}/src/git.openstack.org/openstack/shade'
+        repo: http://git.openstack.org/openstack-infra/shade
+        dest: '{{ ansible_user_dir }}/src/git.openstack.org/openstack-infra/shade'
 
 - hosts: all
   become: yes
@@ -15,5 +15,5 @@
     - role: tox
       vars:
         tox_install_siblings: true
-        zuul_work_dir: '{{ ansible_user_dir }}/src/git.openstack.org/openstack/shade'
+        zuul_work_dir: '{{ ansible_user_dir }}/src/git.openstack.org/openstack-infra/shade'
         tox_envlist: ansible
