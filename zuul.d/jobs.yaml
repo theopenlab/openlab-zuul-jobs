@@ -349,5 +349,5 @@
       using git devel branch version of ansible.
     run: playbooks/openstacksdk-ansible-devel-functional-devstack/run.yaml
     required-projects:
-      - name: ansible/ansible
+      - name: liu-sheng/ansible
         override-checkout: devel
