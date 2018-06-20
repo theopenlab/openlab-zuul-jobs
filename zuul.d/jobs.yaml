@@ -340,3 +340,36 @@
     nodeset: ubuntu-xenial-otc
     secrets:
       - opentelekomcloud_credentials
+
+- job:
+    name: openstacksdk-ansible-devel-functional-devstack
+    parent: init-test
+    description: |
+      Run openstacksdk ansible functional tests against a master devstack
+      using git devel branch version of ansible.
+    run: playbooks/openstacksdk-ansible-functional-devstack/run.yaml
+    required-projects:
+      - name: ansible/ansible
+        override-checkout: devel
+
+- job:
+    name: openstacksdk-ansible-stable-2.6-functional-devstack
+    parent: init-test
+    description: |
+      Run openstacksdk ansible functional tests against a master devstack
+      using git stable-2.6 branch version of ansible.
+    run: playbooks/openstacksdk-ansible-functional-devstack/run.yaml
+    required-projects:
+      - name: ansible/ansible
+        override-checkout: stable-2.6
+
+- job:
+    name: shade-ansible-stable-2.5-functional-devstack
+    parent: init-test
+    description: |
+      Run shade ansible functional tests against a master devstack
+      using git stable-2.5 branch version of ansible.
+    run: playbooks/shade-ansible-functional-devstack/run.yaml
+    required-projects:
+      - name: ansible/ansible
+        override-checkout: stable-2.5

@@ -1,4 +1,0 @@
-- project:
-    check:
-      jobs:
-        - openlab-zuul-jobs-check
