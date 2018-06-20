@@ -256,6 +256,7 @@
     secrets:
       - vexxhost_credentials
       - gcp_account
+      - dockerhub
 
 - job:
     name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.10
