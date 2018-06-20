@@ -1,7 +1,7 @@
 - hosts: all
   become: yes
   tasks:
-    - name: Clone opnstacksdk
+    - name: Clone shade
       git:
         repo: http://git.openstack.org/openstack-infra/shade
         dest: '{{ ansible_user_dir }}/src/git.openstack.org/openstack-infra/shade'
