@@ -23,6 +23,8 @@
     executable: /bin/bash
   when:
     - global_env.OS_BRANCH != 'stable/mitaka'
+    - '"fwaas-v1" not in enable_services'
+    - '"fwaas-v2" not in enable_services'
 
 
 # Populate local conf with specific branch
@@ -122,8 +124,7 @@
       set -e
       set -x
       cat << EOF >> /tmp/dg-local.conf
-      disable_service neutron-agent neutron-api neutron-dhcp neutron-l3 neutron-metadata-agent neutron-metering
-      enable_service q-agt q-svc q-dhcp q-l3 q-meta q-metering q-fwaas-v1
+      enable_service q-fwaas-v1
       enable_plugin neutron-fwaas https://git.openstack.org/openstack/neutron-fwaas
       EOF
     executable: /bin/bash
@@ -136,8 +137,7 @@
       set -e
       set -x
       cat << EOF >> /tmp/dg-local.conf
-      disable_service neutron-agent neutron-api neutron-dhcp neutron-l3 neutron-metadata-agent neutron-metering
-      enable_service q-agt q-svc q-dhcp q-l3 q-meta q-metering q-fwaas-v2
+      enable_service q-fwaas-v2
       enable_plugin neutron-fwaas https://git.openstack.org/openstack/neutron-fwaas
       EOF
     executable: /bin/bash
