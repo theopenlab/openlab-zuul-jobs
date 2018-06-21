@@ -352,7 +352,6 @@
     required-projects:
       - name: liu-sheng/ansible
         override-checkout: devel
-      - openstack/openstacksdk
 
 - job:
     name: openstacksdk-ansible-stable-2.6-functional-devstack
