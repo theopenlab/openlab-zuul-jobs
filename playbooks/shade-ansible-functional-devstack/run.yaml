@@ -1,13 +1,5 @@
 - hosts: all
   become: yes
-  tasks:
-    - name: Clone shade
-      git:
-        repo: http://git.openstack.org/openstack-infra/shade
-        dest: '{{ ansible_user_dir }}/src/git.openstack.org/openstack-infra/shade'
-
-- hosts: all
-  become: yes
   roles:
     - clone-devstack-gate-to-workspace
     - install-devstack

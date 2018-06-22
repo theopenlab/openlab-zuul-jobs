@@ -1,13 +1,5 @@
 - hosts: all
   become: yes
-  tasks:
-    - name: Clone opnstacksdk
-      git:
-        repo: http://git.openstack.org/openstack/openstacksdk
-        dest: '{{ ansible_user_dir }}/src/git.openstack.org/openstack/openstacksdk'
-
-- hosts: all
-  become: yes
   roles:
     - clone-devstack-gate-to-workspace
     - install-devstack
