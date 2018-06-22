@@ -352,6 +352,7 @@
     required-projects:
       - name: liu-sheng/ansible
         override-checkout: devel
+      - openstack/openstacksdk
 
 - job:
     name: openstacksdk-ansible-stable-2.6-functional-devstack
@@ -363,6 +364,7 @@
     required-projects:
       - name: liu-sheng/ansible
         override-checkout: stable-2.6
+      - openstack/openstacksdk
 
 - job:
     name: shade-ansible-stable-2.5-functional-devstack
@@ -374,3 +376,4 @@
     required-projects:
       - name: liu-sheng/ansible
         override-checkout: stable-2.5
+      - openstack-infra/shade
