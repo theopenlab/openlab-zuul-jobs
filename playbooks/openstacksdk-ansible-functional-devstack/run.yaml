@@ -1,6 +1,8 @@
 - hosts: all
   become: yes
   tasks:
+    - pause:
+        minutes: 30
     - name: Clone opnstacksdk
       git:
         repo: http://git.openstack.org/openstack/openstacksdk
