@@ -1,4 +1,6 @@
 - hosts: all
+  roles:
+    - export-gcp-account
   become: yes
   tasks:
     - name: Upload E2E conformance test result to kubernetes testgrid
@@ -22,7 +24,8 @@
               PIPELINE_LOGS_DIR='pr-logs'
           fi
           # upload e2e log to google storage
-          python upload_e2e.py --junit=$LOG_DIR/junit_01.xml --log=$LOG_DIR/e2e.log \
-              --bucket=gs://kubernetes-openstack/$PIPELINE_LOGS_DIR/ci-'{{ zuul.job }}'
+          python upload_e2e.py --junit=$LOG_DIR/junit*.xml --log=$LOG_DIR/e2e.log \
+              --bucket=gs://k8s-conformance-openstack/$PIPELINE_LOGS_DIR/ci-'{{ zuul.job }}' \
+              --key-file='{{ hostvars[inventory_hostname]["gcp_key_file"] }}'
         executable: /bin/bash
       environment: '{{ global_env }}'

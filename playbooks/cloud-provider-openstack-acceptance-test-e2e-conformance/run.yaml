@@ -120,7 +120,22 @@
               --provider=local \
               --ginkgo-parallel=1 \
               --test_args="--ginkgo.focus=\\[Conformance\\] --ginkgo.noColor=true" \
-              --timeout=120m | tee $LOG_DIR/e2e.log
+              --timeout=150m | tee $LOG_DIR/e2e.log
+        executable: /bin/bash
+        chdir: '{{ k8s_os_provider_src_dir }}'
+      environment: '{{ global_env }}'
+    - name: Run image build and publish for cloud-provider-openstack
+      shell:
+        cmd: |
+          set -x
+          set -e
+          set -o pipefail
+
+          if [ '{{ zuul.pipeline }}' != 'periodic' ]; then
+              exit 0;
+          fi
+
+          DOCKER_USERNAME={{dockerhub.username}} DOCKER_PASSWORD={{dockerhub.password}} REGISTRY=docker.io/k8scloudprovider VERSION=latest make upload-images 2>&1 | tee $LOG_DIR/image-build-upload.log
         executable: /bin/bash
         chdir: '{{ k8s_os_provider_src_dir }}'
       environment: '{{ global_env }}'
