@@ -131,6 +131,14 @@
     - name: Run image build and publish for cloud-provider-openstack
       shell:
         cmd: |
+          # NOTE(flaper87): Export these variables
+          # before setting -x and -e to avoid leaking
+          # sensitive data.
+          export DOCKER_USERNAME={{dockerhub.username}}
+          export DOCKER_PASSWORD={{dockerhub.password}}
+          export REGISTRY=docker.io/k8scloudprovider
+          export VERSION=latest
+
           set -x
           set -e
           set -o pipefail
@@ -139,7 +147,7 @@
               exit 0;
           fi
 
-          DOCKER_USERNAME={{dockerhub.username}} DOCKER_PASSWORD={{dockerhub.password}} REGISTRY=docker.io/k8scloudprovider VERSION=latest make upload-images 2>&1 | tee $LOG_DIR/image-build-upload.log
+          make upload-images 2>&1 | tee $LOG_DIR/image-build-upload.log
         executable: /bin/bash
         chdir: '{{ k8s_os_provider_src_dir }}'
       environment: '{{ global_env }}'
