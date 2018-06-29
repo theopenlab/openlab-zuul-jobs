@@ -5,7 +5,7 @@
     - clone-devstack-gate-to-workspace
     - role: create-devstack-local-conf
       enable_services:
-        - 'lbaas'
+        - 'octavia'
     - install-devstack
   tasks:
     - name: Run lbaas acceptance tests with terraform-provider-openstack
