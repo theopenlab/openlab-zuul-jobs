@@ -101,6 +101,8 @@
       enable_plugin barbican https://git.openstack.org/openstack/barbican
       # Avoid to confict with vm fixed ip in some public cloud
       OCTAVIA_MGMT_SUBNET=192.168.10.0/24
+      OCTAVIA_MGMT_SUBNET_START=192.168.10.2
+      OCTAVIA_MGMT_SUBNET_END=192.168.10.200
       EOF
     executable: /bin/bash
   when:
@@ -117,6 +119,8 @@
       enable_plugin barbican https://git.openstack.org/openstack/barbican
       # Avoid to confict with vm fixed ip in some public cloud
       OCTAVIA_MGMT_SUBNET=192.168.10.0/24
+      OCTAVIA_MGMT_SUBNET_START=192.168.10.2
+      OCTAVIA_MGMT_SUBNET_END=192.168.10.200
       EOF
     executable: /bin/bash
   when:
