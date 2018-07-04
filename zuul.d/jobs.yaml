@@ -319,6 +319,15 @@
       global_env:
         OS_BRANCH: stable/newton
 
+- job:
+    name: bosh-openstack-cpi-release-acceptance-test
+    parent: init-test
+    description: |
+      This job validation tests of bosh-openstack-cpi-release aganist devstack
+    run: playbooks/bosh-openstack-cpi-release-acceptance-test/run.yaml
+    vars:
+      global_env:
+        OS_BRANCH: stable/newton
 
 - job:
     name: bosh-acceptance-test
