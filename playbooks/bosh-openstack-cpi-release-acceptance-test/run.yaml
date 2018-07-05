@@ -37,10 +37,10 @@
         bosh create-release --force --tarball bosh-openstack-cpi.tgz
 
         # Git clone cf-openstack-validator
-        git clone https://github.com/cloudfoundry-incubator/cf-openstack-validator /home/zuul/src/github.com/cloudfoundry-incubator/cf-openstack-validator
-        pushd /home/zuul/src/github.com/cloudfoundry-incubator/cf-openstack-validator
-        cp bosh-openstack-cpi.tgz .
+        git clone https://github.com/cloudfoundry-incubator/cf-openstack-validator '{{ ansible_user_dir }}/src/github.com/cloudfoundry-incubator/cf-openstack-validator'
+        cp bosh-openstack-cpi.tgz '{{ ansible_user_dir }}/src/github.com/cloudfoundry-incubator/cf-openstack-validator'
 
+        pushd '{{ ansible_user_dir }}/src/github.com/cloudfoundry-incubator/cf-openstack-validator'
         source /opt/stack/new/devstack/openrc admin admin
         INSTANCE_TYPE=m1.cf
         openstack flavor create --ram 512 --disk 4 --vcpu 1 --id 99 "$INSTANCE_TYPE"
