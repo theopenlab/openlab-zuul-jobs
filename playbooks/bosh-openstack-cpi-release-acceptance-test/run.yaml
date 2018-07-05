@@ -33,6 +33,12 @@
         apt-get install -y build-essential zlibc zlib1g-dev ruby ruby-dev openssl libxslt-dev libxml2-dev libssl-dev libreadline6 libreadline6-dev libyaml-dev libsqlite3-dev sqlite3
 
         # Create latest cpi release
+        bosh create-release --force --tarball bosh-openstack-cpi.tgz
+
+        # Git clone cf-openstack-validator
+        git clone https://github.com/cloudfoundry-incubator/cf-openstack-validator /home/zuul/src/github.com/cloudfoundry-incubator/cf-openstack-validator
+        pushd /home/zuul/src/github.com/cloudfoundry-incubator/cf-openstack-validator
+        cp bosh-openstack-cpi.tgz .
 
         source /opt/stack/new/devstack/openrc admin admin
         INSTANCE_TYPE=m1.cf
@@ -77,7 +83,7 @@
         apt install -y ruby-full make gcc zlib1g-dev libssl-dev ssh
         gem install bundler
         bundle install
-        ./validate --stemcell bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz --config validator.yml
+        ./validate -s bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz -c validator.yml -r bosh-openstack-cpi.tgz --tag cpi_api
         sleep 7200
       args:
         executable: /bin/bash
