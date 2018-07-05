@@ -6,14 +6,14 @@
       shell: |
         set -ex
 
-        cat << EOF >> /tmp/dg-local.conf
+        cat >> /tmp/dg-local.conf <<< '
         [[local|localrc]]
         NETWORK_GATEWAY=10.0.0.1
         IDENTITY_API_VERSION=3
         OS_USER_DOMAIN_ID=default
         OS_PROJECT_DOMAIN_ID=default
         VOLUME_BACKING_FILE_SIZE=62000M
-        EOF
+        '
       args:
         executable: /bin/bash
 
