@@ -83,6 +83,7 @@
         # Run test
         bundle install
         ./validate -s bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz -c validator.yml -r bosh-openstack-cpi.tgz --tag cpi_api
+        sleep 7200
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
