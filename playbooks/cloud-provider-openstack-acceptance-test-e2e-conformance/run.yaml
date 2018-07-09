@@ -14,10 +14,6 @@
           set -e
           set -o pipefail
 
-          # workaround for issue 251
-          sed -i '/^build:/ s/$/ manila-provisioner/' Makefile
-          sed -i '/^images:/ s/$/ image-manila-provisioner/' Makefile
-
           # Build cloud-provider-openstack binaries
           make build
 
