@@ -83,6 +83,7 @@
         # Run test
         bundle install
         ./validate -s bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz -c validator.yml -r bosh-openstack-cpi.tgz --tag cpi_api
+        popd
 
         # Collect cpi logs
         ln -s ~/.cf-openstack-validator/logs '{{ ansible_user_dir }}/workspace/cpi-logs'

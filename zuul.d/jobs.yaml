@@ -342,10 +342,10 @@
       - opentelekomcloud_credentials
 
 - job:
-    name: bosh-openstack-cpi-release-acceptance-test
+    name: bosh-openstack-cpi-release-acceptance-test-newton
     parent: init-test
     description: |
-      This job validation tests of bosh-openstack-cpi-release aganist devstack
+      This job validation tests of bosh-openstack-cpi-release aganist OpenStack Newton release
     run: playbooks/bosh-openstack-cpi-release-acceptance-test/run.yaml
     vars:
       global_env:

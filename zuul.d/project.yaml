@@ -7,4 +7,4 @@
     name: cloudfoundry-incubator/bosh-openstack-cpi-release
     recheck-newton:
       jobs:
-        - bosh-openstack-cpi-release-acceptance-test
+        - bosh-openstack-cpi-release-acceptance-test-newton
