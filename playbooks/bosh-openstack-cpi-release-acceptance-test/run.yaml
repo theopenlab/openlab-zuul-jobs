@@ -80,13 +80,14 @@
         mv bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz ../
         popd
 
+        # Collect cpi logs
+        mkdir -p ~/.cf-openstack-validator/logs
+        ln -s ~/.cf-openstack-validator/logs '{{ ansible_user_dir }}/workspace/logs/cpi-logs'
+
         # Run test
         bundle install
         ./validate -s bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz -c validator.yml -r bosh-openstack-cpi.tgz --tag cpi_api
         popd
-
-        # Collect cpi logs
-        ln -s ~/.cf-openstack-validator/logs '{{ ansible_user_dir }}/workspace/logs/cpi-logs'
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
