@@ -1,16 +1,5 @@
 - hosts: all
   become: yes
-  pre_tasks:
-    - name: set zuul_work_dir if using openstacksdk
-      set_fact:
-        zuul_work_dir: '{{ ansible_user_dir }}/src/git.openstack.org/openstack/openstacksdk'
-      when: os_sdk == 'openstacksdk'
-
-    - name: set zuul_work_dir if using shade
-      set_fact:
-        zuul_work_dir: '{{ ansible_user_dir }}/src/git.openstack.org/openstack-infra/shade'
-      when: os_sdk == 'shade'
-
   roles:
     - clone-devstack-gate-to-workspace
     - role: export-cloud-openrc
@@ -20,5 +9,5 @@
     - role: tox
       vars:
         tox_install_siblings: true
-        zuul_work_dir: '{{ zuul_work_dir }}'
+        zuul_work_dir: '{{ ansible_user_dir }}/{{ zuul.projects.values() | selectattr("short_name", "equalto", os_sdk) | list)[0].src_dir }}'
         tox_envlist: ansible
