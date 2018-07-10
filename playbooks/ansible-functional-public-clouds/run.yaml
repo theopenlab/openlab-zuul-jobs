@@ -1,16 +1,45 @@
 - hosts: all
   become: yes
-  pre_tasks:
-    - name: install python-openstackclient
-      pip:
-        name: python-openstackclient
+  vars:
+    sdk_ansible_tests_dirs:
+      openstacksdk: '{{ ansible_user_dir }}/src/git.openstack.org/openstack/openstacksdk/openstack/tests/ansible'
+      shade: '{{ ansible_user_dir }}/src/git.openstack.org/openstack-infra/shade/shade/tests/ansible'
   roles:
-    - clone-devstack-gate-to-workspace
     - export-cloud-openrc
-    - ensure-tox
-    - role: tox
-      vars:
-        tox_install_siblings: true
-        zuul_work_dir: '{{ ansible_user_dir }}/{{ (zuul.projects.values() | selectattr("short_name", "equalto", os_sdk) | list)[0].src_dir }}'
-        tox_envlist: ansible
+  tasks:
+    - name: Create clouds.yaml of {{ cloud_name }}
+      shell: |
+        cat >> /etc/openstack/clouds.yaml <<< '
+        clouds:
+          {{ cloud_name }}:
+            auth:
+              username: "$OS_USERNAME"
+              password: "$OS_PASSWORD"
+              auth_url: "$OS_AUTH_URL"
+              project_name: "$OS_PROJECT_NAME"
+              project_domain_name: "$OS_DOMAIN_NAME"
+              user_domain_name: "$OS_DOMAIN_NAME"
+            identity_api_version: "$OS_IDENTITY_API_VERSION"
+            regions:
+            - name: "$OS_REGION_NAME"
+        '
+      args:
+        executable: /bin/bash
+      no_log: yes
       environment: '{{ global_env }}'
+
+    - name: Install dependencies
+      pip:
+        name: "{{ item }}"
+      with_items:
+        - python-openstackclient
+        - ansible
+
+    - name: Run tests
+      shell: |
+        export OS_CLOUD={{ cloud_name }}
+        test_img=$(openstack image list -f value -c ID -c Name|grep Community_Ubuntu_16.04 | awk '{print $1}')
+        ansible-playbook -vvv ./run.yml -e "cloud={{ cloud_name }} image=${test_img}" --tags "keypair,security_group"
+      args:
+        executable: /bin/bash
+        chdir: {{ sdk_ansible_tests_dirs[opentelekomcloud] }}
