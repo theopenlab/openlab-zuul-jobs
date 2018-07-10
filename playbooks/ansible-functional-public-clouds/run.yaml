@@ -2,9 +2,7 @@
   become: yes
   roles:
     - clone-devstack-gate-to-workspace
-    - role: export-cloud-openrc
-      vars:
-        cloud_name: '{{ cloud_name }}'
+    - export-cloud-openrc
     - ensure-tox
     - role: tox
       vars:
