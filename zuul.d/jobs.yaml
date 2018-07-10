@@ -350,6 +350,7 @@
     vars:
       global_env:
         OS_BRANCH: stable/newton
+
     name: openstacksdk-ansible-devel-functional-devstack
     parent: init-test
     description: |
