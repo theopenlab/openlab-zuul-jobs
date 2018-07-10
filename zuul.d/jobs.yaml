@@ -387,3 +387,18 @@
       - name: liu-sheng/ansible
         override-checkout: stable-2.5
       - openstack-infra/shade
+
+- job:
+    name: openstacksdk-ansible-devel-functional-opentelekomcloud
+    parent: init-test
+    description: |
+      Run openstacksdk ansible functional tests against a master devstack
+      using git devel branch version of ansible.
+    run: playbooks/ansible-functional-public-clouds/run.yaml
+    required-projects:
+      - name: liu-sheng/ansible
+        override-checkout: devel
+      - openstack/openstacksdk
+    vars:
+      cloud_name: opentelekomcloud
+      os_sdk: openstacksdk
