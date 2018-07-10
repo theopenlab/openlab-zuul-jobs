@@ -8,7 +8,7 @@
 
 - project:
     name: liu-sheng/ansible
-    third-party-check:
+    check:
       jobs:
         - openstacksdk-ansible-devel-functional-devstack:
             branches: devel
