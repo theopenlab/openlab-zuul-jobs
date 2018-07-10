@@ -5,7 +5,7 @@
 
 - project:
     name: ansible/ansible
-    third-party-check:
+    check:
       jobs:
         - openstacksdk-ansible-devel-functional-devstack:
             branches: devel

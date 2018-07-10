@@ -689,34 +689,3 @@
       github:
         status: 'failure'
       mysql:
-
-- pipeline:
-    name: third-party-check
-    description: |
-      Newly uploaded patchsets to projects that are external to OpenStack
-      enter this pipeline to receive an initial +/-1 Verified vote.
-    success-message: Build succeeded (third-party-check pipeline).
-    failure-message: Build failed (third-party-check pipeline).
-    manager: independent
-    trigger:
-      github:
-        - event: pull_request
-          action:
-            - opened
-            - changed
-            - reopened
-        - event: pull_request
-          action: comment
-          comment: (?i)^\s*recheck\s*$
-    start:
-      github:
-        status: pending
-        comment: false
-    success:
-      github:
-        status: 'success'
-      mysql:
-    failure:
-      github:
-        status: 'failure'
-      mysql:
