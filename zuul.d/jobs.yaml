@@ -1,7 +1,5 @@
 # Shared jobs specific to the OpenLab Project
 
-# Shared jobs specific to the OpenLab Project
-
 - job:
     name: base
     parent: null
@@ -340,16 +338,6 @@
     nodeset: ubuntu-xenial-otc
     secrets:
       - opentelekomcloud_credentials
-
-- job:
-    name: bosh-openstack-cpi-release-acceptance-test-newton
-    parent: init-test
-    description: |
-      This job validation tests of bosh-openstack-cpi-release aganist OpenStack Newton release
-    run: playbooks/bosh-openstack-cpi-release-acceptance-test/run.yaml
-    vars:
-      global_env:
-        OS_BRANCH: stable/newton
 
 - job:
     name: openstacksdk-ansible-devel-functional-devstack

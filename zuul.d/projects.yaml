@@ -4,12 +4,6 @@
         - openlab-zuul-jobs-check
 
 - project:
-    name: cloudfoundry-incubator/bosh-openstack-cpi-release
-    recheck-newton:
-      jobs:
-        - bosh-openstack-cpi-release-acceptance-test-newton
-
-- project:
     name: ansible/ansible
     check:
       jobs:
