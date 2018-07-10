@@ -443,3 +443,5 @@
     vars:
       cloud_name: opentelekomcloud
       os_sdk: openstacksdk
+    secrets:
+      - opentelekomcloud_credentials
