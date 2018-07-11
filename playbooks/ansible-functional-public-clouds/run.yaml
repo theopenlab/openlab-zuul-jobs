@@ -41,4 +41,4 @@
         ansible-playbook -vvv ./run.yml -e "cloud={{ cloud_name }} image=${test_img}" --tags "keypair,security_group"
       args:
         executable: /bin/bash
-        chdir: "{{ sdk_ansible_tests_dirs[cloud_name] }}"
+        chdir: "{{ sdk_ansible_tests_dirs[os_sdk] }}"
