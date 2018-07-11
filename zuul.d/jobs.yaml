@@ -350,3 +350,45 @@
     vars:
       global_env:
         OS_BRANCH: stable/newton
+
+- job:
+    name: openstacksdk-ansible-devel-functional-devstack
+    parent: init-test
+    description: |
+      Run openstacksdk ansible functional tests against a master devstack
+      using git devel branch version of ansible.
+    run: playbooks/ansible-functional-devstack/run.yaml
+    required-projects:
+      - name: ansible/ansible
+        override-checkout: devel
+      - openstack/openstacksdk
+    vars:
+      os_sdk: openstacksdk
+
+- job:
+    name: openstacksdk-ansible-stable-2.6-functional-devstack
+    parent: init-test
+    description: |
+      Run openstacksdk ansible functional tests against a master devstack
+      using git stable-2.6 branch version of ansible.
+    run: playbooks/ansible-functional-devstack/run.yaml
+    required-projects:
+      - name: ansible/ansible
+        override-checkout: stable-2.6
+      - openstack/openstacksdk
+    vars:
+      os_sdk: openstacksdk
+
+- job:
+    name: shade-ansible-stable-2.5-functional-devstack
+    parent: init-test
+    description: |
+      Run shade ansible functional tests against a master devstack
+      using git stable-2.5 branch version of ansible.
+    run: playbooks/ansible-functional-devstack/run.yaml
+    required-projects:
+      - name: ansible/ansible
+        override-checkout: stable-2.5
+      - openstack-infra/shade
+    vars:
+      os_sdk: shade
