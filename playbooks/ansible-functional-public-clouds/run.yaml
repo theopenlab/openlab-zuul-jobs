@@ -32,7 +32,13 @@
         - python-openstackclient
         - ansible
 
-    - name: Run tests
+    - name: modify run.yml to allow ignoring errors per test case
+      lineinfile:
+        path: "{{ sdk_ansible_tests_dirs[os_sdk] }}/run.yml"
+        insertafter: "^- hosts: localhost"
+        line: "  ignore_errors: yes"
+
+    - name: Run test cases
       shell: |
         export OS_CLOUD={{ cloud_name }}
         test_img=$(openstack image list -f value -c ID -c Name|grep Community_Ubuntu_16.04 | awk '{print $1}')
