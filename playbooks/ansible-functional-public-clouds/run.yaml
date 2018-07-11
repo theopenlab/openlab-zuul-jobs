@@ -22,8 +22,6 @@
                 project_domain_name: {{ global_env.OS_DOMAIN_NAME }}
                 user_domain_name: {{ global_env.OS_DOMAIN_NAME }}
               identity_api_version: {{ global_env.OS_IDENTITY_API_VERSION }}
-              regions:
-              - name: {{ global_env.OS_REGION_NAME }}
           EOF
         executable: /bin/bash
 
