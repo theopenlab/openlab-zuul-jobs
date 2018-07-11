@@ -8,25 +8,25 @@
     - export-cloud-openrc
   tasks:
     - name: Create clouds.yaml of {{ cloud_name }}
-      shell: |
-        mkdir -p /etc/openstack/
-        cat >> /etc/openstack/clouds.yaml <<< '
-        clouds:
-          {{ cloud_name }}:
-            auth:
-              username: "$OS_USERNAME"
-              password: "$OS_PASSWORD"
-              auth_url: "$OS_AUTH_URL"
-              project_name: "$OS_PROJECT_NAME"
-              project_domain_name: "$OS_DOMAIN_NAME"
-              user_domain_name: "$OS_DOMAIN_NAME"
-            identity_api_version: "$OS_IDENTITY_API_VERSION"
-            regions:
-            - name: "$OS_REGION_NAME"
-        '
-      args:
+      shell:
+        cmd: |
+          mkdir -p /etc/openstack/
+          cat << EOF >> /etc/openstack/clouds.yaml
+          clouds:
+            {{ cloud_name }}:
+              auth:
+                username: {{ OS_USERNAME }}
+                password: {{ OS_PASSWORD }}
+                auth_url: {{ OS_AUTH_URL }}
+                project_name: {{ OS_PROJECT_NAME }}
+                project_domain_name: {{ OS_DOMAIN_NAME }}
+                user_domain_name: {{ OS_DOMAIN_NAME }}
+              identity_api_version: {{ OS_IDENTITY_API_VERSION }}
+              regions:
+              - name: {{ OS_REGION_NAME }}
+          EOF
         executable: /bin/bash
-      environment: '{{ global_env }}'
+      vars: '{{ global_env }}'
 
     - name: Install dependencies
       pip:
