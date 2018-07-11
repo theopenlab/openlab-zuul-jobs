@@ -370,6 +370,7 @@
     vars:
       global_env:
         OS_BRANCH: stable/mitaka
+    nodeset: ubuntu-trusty
 
 - job:
     name: bosh-acceptance-test
