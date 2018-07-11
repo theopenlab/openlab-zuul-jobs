@@ -440,7 +440,7 @@
     name: openstacksdk-ansible-devel-functional-opentelekomcloud
     parent: init-test
     description: |
-      Run openstacksdk ansible functional tests against a master devstack
+      Run openstacksdk ansible functional tests against a opentelekomcloud
       using git devel branch version of ansible.
     run: playbooks/ansible-functional-public-clouds/run.yaml
     required-projects:
@@ -452,3 +452,54 @@
       os_sdk: openstacksdk
     secrets:
       - opentelekomcloud_credentials
+
+- job:
+    name: openstacksdk-ansible-devel-functional-orange
+    parent: init-test
+    description: |
+      Run openstacksdk ansible functional tests against orange cloud
+      using git devel branch version of ansible.
+    run: playbooks/ansible-functional-public-clouds/run.yaml
+    required-projects:
+      - name: liu-sheng/ansible
+        override-checkout: devel
+      - openstack/openstacksdk
+    vars:
+      cloud_name: orange
+      os_sdk: openstacksdk
+    secrets:
+      - orange_credentials
+
+- job:
+    name: openstacksdk-ansible-devel-functional-huaweicloud
+    parent: init-test
+    description: |
+      Run openstacksdk ansible functional tests against huaweicloud
+      using git devel branch version of ansible.
+    run: playbooks/ansible-functional-public-clouds/run.yaml
+    required-projects:
+      - name: liu-sheng/ansible
+        override-checkout: devel
+      - openstack/openstacksdk
+    vars:
+      cloud_name: huaweicloud
+      os_sdk: openstacksdk
+    secrets:
+      - huaweicloud_credentials
+
+- job:
+    name: openstacksdk-ansible-devel-functional-telefonica
+    parent: init-test
+    description: |
+      Run openstacksdk ansible functional tests against telefonica cloud
+      using git devel branch version of ansible.
+    run: playbooks/ansible-functional-public-clouds/run.yaml
+    required-projects:
+      - name: liu-sheng/ansible
+        override-checkout: devel
+      - openstack/openstacksdk
+    vars:
+      cloud_name: telefonica
+      os_sdk: openstacksdk
+    secrets:
+      - telefonica_credentials
