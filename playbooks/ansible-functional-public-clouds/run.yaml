@@ -46,3 +46,5 @@
       args:
         executable: /bin/bash
         chdir: "{{ sdk_ansible_tests_dirs[os_sdk] }}"
+      register: testing_output
+      failed_when: "'FAILED' in testing_output.stderr"
