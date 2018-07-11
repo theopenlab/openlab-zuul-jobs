@@ -15,18 +15,17 @@
           clouds:
             {{ cloud_name }}:
               auth:
-                username: {{ OS_USERNAME }}
-                password: {{ OS_PASSWORD }}
-                auth_url: {{ OS_AUTH_URL }}
-                project_name: {{ OS_PROJECT_NAME }}
-                project_domain_name: {{ OS_DOMAIN_NAME }}
-                user_domain_name: {{ OS_DOMAIN_NAME }}
-              identity_api_version: {{ OS_IDENTITY_API_VERSION }}
+                username: {{ global_env.OS_USERNAME }}
+                password: {{ global_env.OS_PASSWORD }}
+                auth_url: {{ global_env.OS_AUTH_URL }}
+                project_name: {{ global_env.OS_PROJECT_NAME }}
+                project_domain_name: {{ global_env.OS_DOMAIN_NAME }}
+                user_domain_name: {{ global_env.OS_DOMAIN_NAME }}
+              identity_api_version: {{ global_env.OS_IDENTITY_API_VERSION }}
               regions:
-              - name: {{ OS_REGION_NAME }}
+              - name: {{ global_env.OS_REGION_NAME }}
           EOF
         executable: /bin/bash
-      vars: '{{ global_env }}'
 
     - name: Install dependencies
       pip:
