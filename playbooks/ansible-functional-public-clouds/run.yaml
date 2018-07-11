@@ -13,8 +13,6 @@
         clouds:
           {{ cloud_name }}:
             auth:
-              username: "$OS_USERNAME"
-              password: "$OS_PASSWORD"
               auth_url: "$OS_AUTH_URL"
               project_name: "$OS_PROJECT_NAME"
               project_domain_name: "$OS_DOMAIN_NAME"
@@ -25,7 +23,6 @@
         '
       args:
         executable: /bin/bash
-      no_log: yes
       environment: '{{ global_env }}'
 
     - name: Install dependencies

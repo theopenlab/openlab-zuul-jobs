@@ -15,6 +15,7 @@
       OS_ACCESS_KEY: '{{ opentelekomcloud_credentials.access_key }}'
       OS_SECRET_KEY: '{{ opentelekomcloud_credentials.secret_key }}'
       OS_AVAILABILITY_ZONE: '{{ opentelekomcloud_credentials.availability_zone }}'
+  no_log: yes
   when: cloud_name == 'opentelekomcloud'
 
 - name: Set fact for orange openrc
