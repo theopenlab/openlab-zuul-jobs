@@ -42,7 +42,7 @@
       shell: |
         export OS_CLOUD={{ cloud_name }}
         test_img=$(openstack image list -f value -c ID -c Name|grep Community_Ubuntu_16.04 | awk '{print $1}')
-        ansible-playbook ./run.yml -e "cloud={{ cloud_name }} image=${test_img}" --skip-tags "client_config"
+        ansible-playbook ./run.yml -e "cloud={{ cloud_name }} image=${test_img}" --tags "group,keypair"
       args:
         executable: /bin/bash
         chdir: "{{ sdk_ansible_tests_dirs[os_sdk] }}"
