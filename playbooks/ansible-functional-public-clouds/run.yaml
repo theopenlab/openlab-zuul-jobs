@@ -7,6 +7,10 @@
   environment:
     OS_CLOUD: "{{ cloud_name }}"
   pre_tasks:
+    -name: Setup cloud openrc
+     include_role:
+       name: export-cloud-openrc
+
     - name: Create clouds.yaml of {{ cloud_name }}
       shell:
         cmd: |
@@ -47,7 +51,6 @@
       register: flavor_query
 
   roles:
-    - export-cloud-openrc
     - ensure-tox
     - role: tox
       vars:
