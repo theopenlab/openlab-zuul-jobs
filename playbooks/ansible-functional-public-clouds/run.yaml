@@ -41,8 +41,22 @@
     - name: Run test cases
       shell: |
         export OS_CLOUD={{ cloud_name }}
+        _NET_PREFIX="ansible-testing"
+        export OS_NETWORK_NAME="$_NET_PREFIX-net"
+        export OS_NETWORK_ID="$(openstack network show $OS_NETWORK_NAME -f value -c id)"
+        if [ -z "$OS_NETWORK_ID" ]; then
+            export OS_NETWORK_ID="$(openstack network create $OS_NETWORK_NAME -f value -c id)"
+            openstack subnet create --network $OS_NETWORK_ID --subnet-range 192.168.99.0/24 $_NET_PREFIX-subnet
+        fi
+
+        export OS_VPC_ID="$(openstack router show $_NET_PREFIX-vpc -f value -c id)"
+        if [ -z "$OS_VPC_ID" ]; then
+            export OS_VPC_ID="$(openstack router create $_NET_PREFIX-vpc -f value -c id)"
+            openstack router add subnet $_NET_PREFIX-vpc $_NET_PREFIX-subnet
+        fi
         test_img=$(openstack image list -f value -c ID -c Name|grep Community_Ubuntu_16.04 | awk '{print $1}')
-        ansible-playbook ./run.yml -e "cloud={{ cloud_name }} image=${test_img}" --skip-tags "client_config"
+        test_flavor=$(openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column VCPUs | head -n 1 | awk '{print $1}')
+        ansible-playbook ./run.yml -e "cloud={{ cloud_name }} image=${test_img} flavor=c1.large network=${OS_NETWORK_ID} flavor=${test_flavor}" --skip-tags "client_config"
       args:
         executable: /bin/bash
         chdir: "{{ sdk_ansible_tests_dirs[os_sdk] }}"

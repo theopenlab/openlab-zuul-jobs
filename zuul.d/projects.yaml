@@ -38,5 +38,3 @@
       jobs:
         - openstacksdk-ansible-devel-functional-opentelekomcloud
         - openstacksdk-ansible-devel-functional-orange
-        - openstacksdk-ansible-devel-functional-huaweicloud
-        - openstacksdk-ansible-devel-functional-telefonica
