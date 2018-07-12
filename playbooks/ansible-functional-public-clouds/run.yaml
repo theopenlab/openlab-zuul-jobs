@@ -6,7 +6,7 @@
       shade: '{{ ansible_user_dir }}/src/git.openstack.org/openstack-infra/shade/shade/tests/ansible'
   environment:
     OS_CLOUD: "{{ cloud_name }}"
-  pre_tasks:
+  tasks:
     - name: Setup cloud openrc
       include_role:
         name: export-cloud-openrc
@@ -50,9 +50,13 @@
         executable: /bin/bash
       register: flavor_query
 
-  roles:
-    - ensure-tox
-    - role: tox
+    - name: Ensure tox installed
+      include_role:
+        name: ensure-tox
+
+    - name: Run test cases
+      include_role:
+        name: tox
       vars:
         tox_install_siblings: true
         zuul_work_dir: '{{ ansible_user_dir }}/{{ (zuul.projects.values() | selectattr("short_name", "equalto", os_sdk) | list)[0].src_dir }}'
@@ -61,3 +65,5 @@
         tox_environment:
           ANSIBLE_VAR_flavor: "{{ flavor_query.stdout }}"
           ANSIBLE_VAR_server_network: "ansible-testing-net"
+      register: testing_output
+      failed_when: "'FAILED' in testing_output.stdout"
