@@ -33,7 +33,7 @@
       pip: name=python-openstackclient
 
     # workaround bug introduced by https://review.openstack.org/#/c/568698/
-    - name: Install dependencies
+    - name: Install python-glanceclient 2.11.1 (workaruond)
       pip:
         name: python-glanceclient
         version: 2.11.1
