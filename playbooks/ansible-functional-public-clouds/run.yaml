@@ -64,6 +64,15 @@
       include_role:
         name: ensure-tox
 
+    - name: Run tox without test for dependencies installation
+      include_role:
+        name: tox
+      vars:
+        tox_install_siblings: true
+        zuul_work_dir: '{{ sdk_src_dir }}'
+        tox_envlist: ansible
+        tox_extra_args: "--notest"
+
     - name: Run test cases
       include_role:
         name: tox
@@ -72,12 +81,7 @@
         zuul_work_dir: '{{ sdk_src_dir }}'
         tox_envlist: ansible
         # auth group image keypair keystone keystone_role network nova_flavor object port router security_group server subnet user user_group volume
-        tox_extra_args: "-- -c {{ cloud_name }} {{ item }}"
+        tox_extra_args: "-- -c {{ cloud_name }} auth image keypair network port router security_group server subnet volume"
         tox_environment:
           ANSIBLE_VAR_flavor: "{{ flavor_query.stdout }}"
           ANSIBLE_VAR_server_network: "ansible-testing-net"
-      with_items:
-        - auth
-        - group
-        - image
-        - keypair
