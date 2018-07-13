@@ -71,11 +71,13 @@
         tox_install_siblings: true
         zuul_work_dir: '{{ sdk_src_dir }}'
         tox_envlist: ansible
-        tox_extra_args: "-- -c {{ cloud_name }} auth group image keypair keystone keystone_role network nova_flavor object port router security_group server subnet user user_group volume"
+        # auth group image keypair keystone keystone_role network nova_flavor object port router security_group server subnet user user_group volume
+        tox_extra_args: "-- -c {{ cloud_name }} {{ item }}"
         tox_environment:
           ANSIBLE_VAR_flavor: "{{ flavor_query.stdout }}"
           ANSIBLE_VAR_server_network: "ansible-testing-net"
-      register: testing_output
-      failed_when: "'FAILED' in testing_output.stderr"
-
-    - debug: msg="{{ testing_output }}"
+      with_items:
+        - auth
+        - group
+        - image
+        - keypair
