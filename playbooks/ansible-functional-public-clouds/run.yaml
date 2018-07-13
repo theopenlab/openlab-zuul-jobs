@@ -82,4 +82,4 @@
         ANSIBLE_VAR_flavor: "{{ flavor_query.stdout }}"
         ANSIBLE_VAR_server_network: "ansible-testing-net"
       register: testing_output
-      failed_when: "'FAILED' in testing_output.stdout"
+      failed_when: "'FAILED' in testing_output.stdout or ERROR in testing_output.stdout"
