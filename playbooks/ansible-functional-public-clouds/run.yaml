@@ -65,14 +65,6 @@
       include_role:
         name: ensure-tox
 
-    - name: test env
-      shell: |
-        set -x
-        env
-      environment:
-        ANSIBLE_VAR_flavor: "{{ flavor_query.stdout }}"
-        ANSIBLE_VAR_server_network: "ansible-testing-net"
-
     - name: Run test cases
       include_role:
         name: tox
