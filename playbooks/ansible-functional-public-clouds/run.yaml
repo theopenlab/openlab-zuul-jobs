@@ -81,6 +81,9 @@
         zuul_work_dir: '{{ sdk_src_dir }}'
         tox_envlist: ansible
         tox_extra_args: "-- -c {{ cloud_name }} auth group image keypair keystone keystone_role network nova_flavor object port router security_group server subnet user user_group volume"
+        tox_environment:
+          ANSIBLE_VAR_flavor: "{{ flavor_query.stdout }}"
+          ANSIBLE_VAR_server_network: "ansible-testing-net"
       environment:
         ANSIBLE_VAR_flavor: "{{ flavor_query.stdout }}"
         ANSIBLE_VAR_server_network: "ansible-testing-net"
