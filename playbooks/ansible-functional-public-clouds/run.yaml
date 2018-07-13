@@ -47,7 +47,9 @@
         line: "  ignore_errors: yes"
 
     - name: modify run-ansible-tests.sh to disable verbose output
-      shell: sed -i -e 's/ -vvv//g' run-ansible-tests.sh
+      shell: |
+        sed -i -e 's/ -vvv//g' run-ansible-tests.sh
+        sed -i -e '/^USE_DEV=0$/a set -ex"
       args:
         executable: /bin/bash
         chdir: '{{ sdk_src_dir }}/extras'
