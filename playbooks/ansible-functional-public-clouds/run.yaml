@@ -46,10 +46,9 @@
         insertafter: "^- hosts: localhost"
         line: "  ignore_errors: yes"
 
-    - name: modify run-ansible-tests.sh to disable verbose output
+    - name: modify sdk test scripts
       shell: |
         sed -i -e 's/ -vvv//g' ./extras/run-ansible-tests.sh
-        sed -i -e '/^USE_DEV=0$/a set -ex' ./extras/run-ansible-tests.sh
         sed -i -e 's/^passenv = HOME USER$/passenv = HOME USER ANSIBLE_VAR_*/g' tox.ini
       args:
         executable: /bin/bash
