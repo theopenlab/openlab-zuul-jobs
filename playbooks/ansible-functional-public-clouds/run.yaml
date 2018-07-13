@@ -90,5 +90,4 @@
       register: testing_output
       failed_when: "'FAILED' in testing_output.stderr"
 
-    - debug: msg="{{ testing_output.stdout }}"
-    - debug: msg="{{ testing_output.stderr }}"
+    - debug: msg="{{ testing_output }}"
