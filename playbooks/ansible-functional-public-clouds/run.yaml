@@ -53,7 +53,7 @@
         sed -i -e '/^passenv = HOME USER$/d' tox.ini
       args:
         executable: /bin/bash
-        chdir: '{{ sdk_src_dir }}/extras'
+        chdir: '{{ sdk_src_dir }}'
 
     - name: query flavor for testing
       shell: openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column VCPUs | head -n 1 | awk '{print $1}'
