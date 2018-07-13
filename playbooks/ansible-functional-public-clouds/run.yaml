@@ -1,9 +1,11 @@
 - hosts: all
   become: yes
   vars:
+    sdk_project: '{{ (zuul.projects.values() | selectattr("short_name", "equalto", os_sdk) | list)[0] }}'
+    sdk_src_dir: '{{ ansible_user_dir }}/{{ sdk_project.src_dir }}'
     sdk_ansible_tests_dirs:
-      openstacksdk: '{{ ansible_user_dir }}/src/git.openstack.org/openstack/openstacksdk/openstack/tests/ansible'
-      shade: '{{ ansible_user_dir }}/src/git.openstack.org/openstack-infra/shade/shade/tests/ansible'
+      openstacksdk: '{{ sdk_src_dir }}/openstack/tests/ansible'
+      shade: '{{ sdk_src_dir }}/shade/tests/ansible'
   environment:
     OS_CLOUD: "{{ cloud_name }}"
   tasks:
@@ -44,6 +46,12 @@
         insertafter: "^- hosts: localhost"
         line: "  ignore_errors: yes"
 
+    - name: modify run-ansible-tests.sh to disable verbose output
+      shell: sed -e -i 's/ -vvv//g'run-ansible-tests.sh
+      args:
+        executable: /bin/bash
+        chdir: '{{ sdk_src_dir }}/extras'
+
     - name: query flavor for testing
       shell: openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column VCPUs | head -n 1 | awk '{print $1}'
       args:
@@ -59,11 +67,11 @@
         name: tox
       vars:
         tox_install_siblings: true
-        zuul_work_dir: '{{ ansible_user_dir }}/{{ (zuul.projects.values() | selectattr("short_name", "equalto", os_sdk) | list)[0].src_dir }}'
+        zuul_work_dir: '{{ sdk_src_dir }}'
         tox_envlist: ansible
         tox_extra_args: "-- -c {{ cloud_name }} auth group image keypair keystone keystone_role network nova_flavor object port router security_group server subnet user user_group volume"
-        tox_environment:
-          ANSIBLE_VAR_flavor: "{{ flavor_query.stdout }}"
-          ANSIBLE_VAR_server_network: "ansible-testing-net"
+      environment:
+        ANSIBLE_VAR_flavor: "{{ flavor_query.stdout }}"
+        ANSIBLE_VAR_server_network: "ansible-testing-net"
       register: testing_output
       failed_when: "'FAILED' in testing_output.stdout"
