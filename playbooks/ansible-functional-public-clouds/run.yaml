@@ -1,0 +1,85 @@
+- hosts: all
+  become: yes
+  vars:
+    sdk_project: '{{ (zuul.projects.values() | selectattr("short_name", "equalto", os_sdk) | list)[0] }}'
+    sdk_src_dir: '{{ ansible_user_dir }}/{{ sdk_project.src_dir }}'
+    sdk_ansible_tests_dirs:
+      openstacksdk: '{{ sdk_src_dir }}/openstack/tests/ansible'
+      shade: '{{ sdk_src_dir }}/shade/tests/ansible'
+  environment:
+    OS_CLOUD: "{{ cloud_name }}"
+  tasks:
+    - name: Setup cloud openrc
+      include_role:
+        name: export-cloud-openrc
+
+    - name: Create clouds.yaml of {{ cloud_name }}
+      shell:
+        cmd: |
+          mkdir -p /etc/openstack/
+          cat << EOF >> /etc/openstack/clouds.yaml
+          clouds:
+            {{ cloud_name }}:
+              auth:
+                username: {{ global_env.OS_USERNAME }}
+                password: {{ global_env.OS_PASSWORD }}
+                auth_url: {{ global_env.OS_AUTH_URL }}
+                project_name: {{ global_env.OS_PROJECT_NAME }}
+                project_domain_name: {{ global_env.OS_DOMAIN_NAME }}
+                user_domain_name: {{ global_env.OS_DOMAIN_NAME }}
+              identity_api_version: {{ global_env.OS_IDENTITY_API_VERSION }}
+          EOF
+        executable: /bin/bash
+
+    - name: Install dependencies
+      pip: name=python-openstackclient
+
+    # workaround bug introduced by https://review.openstack.org/#/c/568698/
+    - name: Install python-glanceclient 2.11.0 (workaruond)
+      pip:
+        name: python-glanceclient
+        version: 2.11.0
+
+    - name: modify run.yml to allow ignoring errors per test case
+      lineinfile:
+        path: "{{ sdk_ansible_tests_dirs[os_sdk] }}/run.yml"
+        insertafter: "^- hosts: localhost"
+        line: "  ignore_errors: yes"
+
+    - name: modify sdk test scripts
+      shell: |
+        sed -i -e 's/ -vvv//g' ./extras/run-ansible-tests.sh
+        sed -i -e 's/^passenv = HOME USER$/passenv = HOME USER ANSIBLE_VAR_*/g' tox.ini
+      args:
+        executable: /bin/bash
+        chdir: '{{ sdk_src_dir }}'
+
+    - name: query flavor for testing
+      shell: openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column VCPUs | head -n 1 | awk '{print $1}'
+      args:
+        executable: /bin/bash
+      register: flavor_query
+
+    - name: Ensure tox installed
+      include_role:
+        name: ensure-tox
+
+    - name: Run tox without test for dependencies installation
+      include_role:
+        name: tox
+      vars:
+        tox_install_siblings: true
+        zuul_work_dir: '{{ sdk_src_dir }}'
+        tox_envlist: ansible
+        tox_extra_args: "--notest"
+
+    - name: Run test cases
+      shell: tox -eansible -- -c "{{ cloud_name }}" auth group image keypair keystone keystone_role network nova_flavor object port router security_group server subnet user user_group volume
+      args:
+        executable: /bin/bash
+        chdir: '{{ sdk_src_dir }}'
+      environment:
+        ANSIBLE_VAR_flavor: "{{ flavor_query.stdout }}"
+        ANSIBLE_VAR_server_network: "ansible-testing-net"
+      register: testing_output
+      failed_when: "'FAILED' in testing_output.stdout or 'ERROR' in testing_output.stdout"
