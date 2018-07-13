@@ -13,10 +13,14 @@
       include_role:
         name: export-cloud-openrc
 
+    - name: Create openstack cloud config directory
+      file:
+        path: /etc/openstack/
+        state: directory
+
     - name: Create clouds.yaml of {{ cloud_name }}
       shell:
         cmd: |
-          mkdir -p /etc/openstack/
           cat << EOF >> /etc/openstack/clouds.yaml
           clouds:
             {{ cloud_name }}:
@@ -74,7 +78,7 @@
         tox_extra_args: "--notest"
 
     - name: Run test cases
-      shell: tox -eansible -- -c "{{ cloud_name }}" auth group image keypair keystone keystone_role network nova_flavor object port router security_group server subnet user user_group volume
+      shell: tox -eansible -- -c "{{ cloud_name }}" auth group image keypair keystone_role keystone_domain network nova_flavor object port router security_group server subnet user user_group volume
       args:
         executable: /bin/bash
         chdir: '{{ sdk_src_dir }}'
