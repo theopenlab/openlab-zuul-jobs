@@ -35,7 +35,7 @@
       pip: name=python-openstackclient
 
     # workaround bug introduced by https://review.openstack.org/#/c/568698/
-    - name: Install python-glanceclient 2.11.1 (workaruond)
+    - name: Install python-glanceclient 2.11.0 (workaruond)
       pip:
         name: python-glanceclient
         version: 2.11.0
@@ -48,8 +48,9 @@
 
     - name: modify run-ansible-tests.sh to disable verbose output
       shell: |
-        sed -i -e 's/ -vvv//g' run-ansible-tests.sh
-        sed -i -e '/^USE_DEV=0$/a set -ex' run-ansible-tests.sh
+        sed -i -e 's/ -vvv//g' ./extras/run-ansible-tests.sh
+        sed -i -e '/^USE_DEV=0$/a set -ex' ./extras/run-ansible-tests.sh
+        sed -i -e '/^passenv = HOME USER$/d' tox.ini
       args:
         executable: /bin/bash
         chdir: '{{ sdk_src_dir }}/extras'
@@ -84,4 +85,4 @@
         ANSIBLE_VAR_flavor: "{{ flavor_query.stdout }}"
         ANSIBLE_VAR_server_network: "ansible-testing-net"
       register: testing_output
-      failed_when: "'FAILED' in testing_output.stdout"
+      failed_when: "'FAILED' in testing_output.stderr"
