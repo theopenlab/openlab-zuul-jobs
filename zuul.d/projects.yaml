@@ -38,7 +38,5 @@
     name: liu-sheng/ansible
     periodic:
       jobs:
-        - openstacksdk-ansible-stable-2.6-functional-opentelekomcloud:
-          branches: stable-2.6
-        - openstacksdk-ansible-stable-2.6-functional-orange:
-          branches: stable-2.6
+        - openstacksdk-ansible-stable-2.6-functional-opentelekomcloud
+        - openstacksdk-ansible-stable-2.6-functional-orange
