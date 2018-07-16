@@ -158,7 +158,7 @@
     precedence: low
     trigger:
       timer:
-        - time: '0 10 * * *'
+        - time: '5 11 * * *'
     success:
       mysql:
     failure:
