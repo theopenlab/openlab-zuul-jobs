@@ -437,15 +437,15 @@
       os_sdk: shade
 
 - job:
-    name: openstacksdk-ansible-devel-functional-opentelekomcloud
+    name: openstacksdk-ansible-stable-2.6-functional-opentelekomcloud
     parent: init-test
     description: |
       Run openstacksdk ansible functional tests against a opentelekomcloud
-      using git devel branch version of ansible.
+      using git stable-2.6 branch version of ansible.
     run: playbooks/ansible-functional-public-clouds/run.yaml
     required-projects:
       - name: ansible/ansible
-        override-checkout: devel
+        override-checkout: stable-2.6
       - openstack/openstacksdk
     vars:
       cloud_name: opentelekomcloud
@@ -454,15 +454,15 @@
       - opentelekomcloud_credentials
 
 - job:
-    name: openstacksdk-ansible-devel-functional-orange
+    name: openstacksdk-ansible-stable-2.6-functional-orange
     parent: init-test
     description: |
       Run openstacksdk ansible functional tests against orange cloud
-      using git devel branch version of ansible.
+      using git stable-2.6 branch version of ansible.
     run: playbooks/ansible-functional-public-clouds/run.yaml
     required-projects:
       - name: ansible/ansible
-        override-checkout: devel
+        override-checkout: stable-2.6
       - openstack/openstacksdk
     vars:
       cloud_name: orange

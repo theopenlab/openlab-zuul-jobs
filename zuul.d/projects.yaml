@@ -38,5 +38,5 @@
     name: ansible/ansible
     periodic:
       jobs:
-        - openstacksdk-ansible-devel-functional-opentelekomcloud
-        - openstacksdk-ansible-devel-functional-orange
+        - openstacksdk-ansible-stable-2.6-functional-opentelekomcloud
+        - openstacksdk-ansible-stable-2.6-functional-orange
