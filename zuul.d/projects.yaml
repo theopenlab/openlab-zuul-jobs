@@ -34,6 +34,8 @@
               - ^lib/ansible/plugins/inventory/openstack.py
               - ^lib/ansible/module_utils/openstack.py
               - ^lib/ansible/utils/module_docs_fragments/openstack.py
+- project:
+    name: ansible/ansible
     periodic:
       jobs:
         - openstacksdk-ansible-devel-functional-opentelekomcloud
