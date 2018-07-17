@@ -150,7 +150,6 @@
         status: 'failure'
       mysql:
 
-# time: 0 0,12 * * *
 - pipeline:
     name: periodic
     description: Jobs in this queue are triggered on a timer. UTC-0 and UTC-12
@@ -158,7 +157,7 @@
     precedence: low
     trigger:
       timer:
-        - time: '50 7 * * *'
+        - time: '0 0,8,16 * * *'
     success:
       mysql:
     failure:
