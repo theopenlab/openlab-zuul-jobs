@@ -35,6 +35,7 @@
                       "flavor": "$flavor",
                       "image_name": "packer-linux-openstack-demo",
                       "source_image_name": "Community_Ubuntu_16.04_TSI_latest",
+                      "ssh_username": "ubuntu",
                       "networks": ["$network"]
                   }
               ],
