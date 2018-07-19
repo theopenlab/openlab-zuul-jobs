@@ -469,3 +469,14 @@
       os_sdk: openstacksdk
     secrets:
       - orange_credentials
+
+- jobs:
+    name: packer-functional-opentelekomcloud
+    parent: init-test
+    description: |
+      Test image building functionality of Packer against opentelekomcloud.
+    run: playbooks/packer-functional-public-clouds/run.yaml
+    vars:
+      cloud_name: opentelekomcloud
+    secrets:
+      - opentelekomcloud_credentials
