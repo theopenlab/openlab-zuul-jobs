@@ -10,6 +10,7 @@
           set -ex
           set -o pipefail
           pip install python-openstackclient
+          pip install python-glanceclient==2.11.0
           mkdir -p $GOPATH/src/github.com/hashicorp/
           mv $GOPATH/src/github.com/liu-sheng/packer $GOPATH/src/github.com/hashicorp/packer || true
           cd $GOPATH/src/github.com/hashicorp/packer
@@ -18,6 +19,7 @@
           packer version
           flavor=$(openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column VCPUs | head -n 1 | awk '{print $1}')
           network=$(openstack network show openlab-net -f value -c id)
+          image_name="packer-linux-openstack-demo-$(date +%s)"
 
           cat << EOF >> welcome.txt
           WELCOME TO PACKER!
@@ -33,7 +35,7 @@
                   {
                       "type": "openstack",
                       "flavor": "$flavor",
-                      "image_name": "packer-linux-openstack-demo",
+                      "image_name": "$image_name",
                       "source_image_name": "Community_Ubuntu_16.04_TSI_latest",
                       "ssh_username": "ubuntu",
                       "networks": ["$network"]
@@ -61,7 +63,7 @@
           EOF
           packer validate os-template.json
           packer build os-template.json -color=false
-          openstack image show packer-linux-openstack-demo
-          openstack image delete packer-linux-openstack-demo
+          openstack image show $image_name
+          openstack image delete $image_name
         executable: /bin/bash
       environment: '{{ global_env }}'
