@@ -22,7 +22,7 @@
                   {
                       "type": "openstack",
                       "flavor": "$flavor",
-                      "image_name": "packer-linux-openstack-demo-{{timestamp}}",
+                      "image_name": "packer-linux-openstack-demo",
                       "source_image": "bdc1bed3-ede4-4a47-b5a5-3dfaa3a6b9e9",
                   }
               ],
