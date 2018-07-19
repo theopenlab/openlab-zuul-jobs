@@ -13,7 +13,39 @@
           mv $GOPATH/src/github.com/liu-sheng/packer $GOPATH/src/github.com/hashicorp/packer || true
           cd $GOPATH/src/github.com/hashicorp/packer
           go get ./...
-          go build -o bin/packer .
+          make dev
+          packer version
+          flavor=$(openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column VCPUs | head -n 1 | awk '{print $1}')
+          cat << EOF >> os-template.json
+          {
+              "builders": [
+                  {
+                      "type": "openstack",
+                      "flavor": "{{ flavor }}",
+                      "image_name": "packer-linux-openstack-demo-{{timestamp}}",
+                      "source_image": "bdc1bed3-ede4-4a47-b5a5-3dfaa3a6b9e9",
+                  }
+              ],
+              "provisioners": [
+                  {
+                      "type": "file",
+                      "source": "./welcome.txt",
+                      "destination": "/home/ubuntu/"
+                  },
+                  {
+                      "type": "shell",
+                      "inline":[
+                          "ls -al /home/ubuntu",
+                          "cat /home/ubuntu/welcome.txt"
+                      ]
+                  },
+                  {
+                      "type": "shell",
+                      "script": "./example.sh"
+                  }
+              ]
+          }
+          EOF
           sleep 7200
         executable: /bin/bash
       environment: '{{ global_env }}'
