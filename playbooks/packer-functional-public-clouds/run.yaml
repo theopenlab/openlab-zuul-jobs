@@ -59,7 +59,8 @@
               ]
           }
           EOF
-          packer build os-template.json
+          packer validate os-template.json
+          packer build os-template.json -color=false
           openstack image show packer-linux-openstack-demo
           openstack image delete packer-linux-openstack-demo
         executable: /bin/bash
