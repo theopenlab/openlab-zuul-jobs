@@ -21,7 +21,7 @@
               "builders": [
                   {
                       "type": "openstack",
-                      "flavor": "{{ flavor }}",
+                      "flavor": "$flavor",
                       "image_name": "packer-linux-openstack-demo-{{timestamp}}",
                       "source_image": "bdc1bed3-ede4-4a47-b5a5-3dfaa3a6b9e9",
                   }
