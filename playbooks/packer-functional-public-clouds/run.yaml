@@ -62,7 +62,7 @@
           }
           EOF
           packer validate os-template.json
-          packer build os-template.json -color=false
+          packer build -color=false os-template.json
           openstack image show $image_name
           openstack image delete $image_name
         executable: /bin/bash
