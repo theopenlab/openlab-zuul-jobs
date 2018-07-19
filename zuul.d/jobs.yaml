@@ -477,6 +477,6 @@
       Test image building functionality of Packer against opentelekomcloud.
     run: playbooks/packer-functional-public-clouds/run.yaml
     vars:
-      cloud_name: opentelekomcloud
+      cloud_name: orange
     secrets:
-      - opentelekomcloud_credentials
+      - orange_credentials
