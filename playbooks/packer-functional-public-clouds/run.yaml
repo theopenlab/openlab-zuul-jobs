@@ -4,10 +4,8 @@
     - config-golang
     - export-cloud-openrc
   tasks:
-    - name: Create image by Packer
+    - name: Create image by packer
       shell:
         cmd: |
-          set -ex
-          set -o pipefail
           sleep 7200
         executable: /bin/bash

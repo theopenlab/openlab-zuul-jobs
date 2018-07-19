@@ -476,8 +476,6 @@
     description: |
       Test image building functionality of Packer against opentelekomcloud.
     run: playbooks/packer-functional-public-clouds/run.yaml
-    required-projects:
-      - name: liu-sheng/packer
     vars:
       global_env:
         OS_BRANCH: stable/mitaka
