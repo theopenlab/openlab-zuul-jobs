@@ -481,6 +481,5 @@
     vars:
       global_env:
         OS_BRANCH: stable/mitaka
-      cloud_name: opentelekomcloud
     secrets:
       - opentelekomcloud_credentials
