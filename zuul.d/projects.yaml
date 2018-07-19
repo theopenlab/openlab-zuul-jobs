@@ -41,8 +41,8 @@
         - openstacksdk-ansible-stable-2.6-functional-orange:
             branches: stable-2.6
 
-#- project:
-#    name: liu-sheng/packer
-#    check:
-#      jobs:
-#        - packer-functional-opentelekomcloud
+- project:
+    name: liu-sheng/packer
+    check:
+      jobs:
+        - packer-functional-opentelekomcloud

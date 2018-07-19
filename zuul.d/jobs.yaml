@@ -470,13 +470,13 @@
     secrets:
       - orange_credentials
 
-- jobs:
+- job:
     name: packer-functional-opentelekomcloud
     parent: init-test
     description: |
       Test image building functionality of Packer against opentelekomcloud.
     run: playbooks/packer-functional-public-clouds/run.yaml
     vars:
-      cloud_name: orange
+      cloud_name: opentelekomcloud
     secrets:
-      - orange_credentials
+      - opentelekomcloud_credentials
