@@ -45,4 +45,5 @@
     name: liu-sheng/packer
     check:
       jobs:
-        - packer-functional-opentelekomcloud
+        - packer-functional-opentelekomcloud:
+            branches: master
