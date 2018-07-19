@@ -9,6 +9,7 @@
         cmd: |
           set -ex
           set -o pipefail
+          mkdir -p $GOPATH/src/github.com/hashicorp/
           mv $GOPATH/src/github.com/liu-sheng/packer $GOPATH/src/github.com/hashicorp/packer || true
           cd $GOPATH/src/github.com/hashicorp/packer
           go get ./...
