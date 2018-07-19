@@ -9,6 +9,10 @@
         cmd: |
           set -ex
           set -o pipefail
+          mv $GOPATH/src/github.com/liu-sheng/packer $GOPATH/src/github.com/hashicorp/packer || true
+          cd $GOPATH/src/github.com/hashicorp/packer
+          go get ./...
+          go build -o bin/packer .
           sleep 7200
         executable: /bin/bash
       environment: '{{ global_env }}'
