@@ -477,8 +477,6 @@
       Test image building functionality of Packer against opentelekomcloud.
     run: playbooks/packer-functional-public-clouds/run.yaml
     vars:
-      global_env:
-        OS_BRANCH: stable/mitaka
       cloud_name: opentelekomcloud
     secrets:
       - opentelekomcloud_credentials
