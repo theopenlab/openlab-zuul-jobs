@@ -11,4 +11,3 @@
           set -o pipefail
           sleep 7200
         executable: /bin/bash
-      environment: '{{ global_env }}'
