@@ -52,7 +52,8 @@
               ]
           }
           EOF
-          sg_id=$(openstack security group list --project $OS_PROJECT_NAME -f value -c ID -c Name |grep default |head -n 1 |awk '{print $1}')
+          sg_id=$(openstack security group list --project $OS_PROJECT_NAME -f value -c ID -c Name |grep default \
+              |head -n 1 |awk '{print $1}')
           openstack security group rule create --ingress --protocol tcp --dst-port 22 $sg_id
           packer validate os-template.json
           packer build -color=false os-template.json
