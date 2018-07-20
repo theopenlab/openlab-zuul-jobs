@@ -1,0 +1,59 @@
+- hosts: all
+  become: yes
+  roles:
+    - clone-devstack-gate-to-workspace
+    - install-devstack
+    - config-packer
+  tasks:
+    - name: Create image by Packer
+      shell:
+        cmd: |
+          set -ex
+          set -o pipefail
+          cat << EOF >> welcome.txt
+          WELCOME TO PACKER!
+          EOF
+          cat << EOF >> example.sh
+          #!/bin/bash
+          echo "hello"
+          EOF
+          image_name="packer-cirros-$(date +%s)"
+          cat << EOF >> os-template.json
+          {
+              "builders": [
+                  {
+                      "type": "openstack",
+                      "flavor": "m1.tiny",
+                      "image_name": "$image_name",
+                      "source_image_name": "cirros-0.3.5-x86_64-disk",
+                      "ssh_username": "cirros",
+                      "networks": ["private"],
+                      "floating_ip_pool": "public"
+                  }
+              ],
+              "provisioners": [
+                  {
+                      "type": "file",
+                      "source": "./welcome.txt",
+                      "destination": "/home/cirros/"
+                  },
+                  {
+                      "type": "shell",
+                      "inline":[
+                          "ls -al /home/cirros",
+                          "cat /home/cirros/welcome.txt"
+                      ]
+                  },
+                  {
+                      "type": "shell",
+                      "script": "./example.sh"
+                  }
+              ]
+          }
+          EOF
+          packer validate os-template.json
+          packer build -color=false os-template.json
+          openstack image show $image_name
+          openstack image delete $image_name
+        executable: /bin/bash
+      environment: '{{ global_env }}'

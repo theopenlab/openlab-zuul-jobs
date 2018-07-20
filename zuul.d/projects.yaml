@@ -45,4 +45,6 @@
     name: liu-sheng/packer
     check:
       jobs:
-        - packer-functional-opentelekomcloud
+        # - packer-master-functional-opentelekomcloud
+        - packer-master-functional-devstack
+        - packer-1.2.3-functional-devstack

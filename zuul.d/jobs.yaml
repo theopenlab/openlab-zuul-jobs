@@ -471,7 +471,7 @@
       - orange_credentials
 
 - job:
-    name: packer-functional-opentelekomcloud
+    name: packer-master-functional-opentelekomcloud
     parent: init-test
     description: |
       Test image building functionality of Packer against opentelekomcloud.
@@ -480,3 +480,19 @@
       cloud_name: opentelekomcloud
     secrets:
       - opentelekomcloud_credentials
+
+- job:
+    name: packer-master-functional-devstack
+    parent: init-test
+    description: |
+      Test image building functionality of Packer of master against devstack.
+    run: playbooks/bosh-acceptance-tests-devstack/run.yaml
+
+- job:
+    name: packer-1.2.3-functional-devstack
+    parent: init-test
+    description: |
+      Test image building functionality of Packer of version 1.2.3 against devstack.
+    run: playbooks/bosh-acceptance-tests-devstack/run.yaml
+    vars:
+      packer_version: 1.2.3
