@@ -24,7 +24,7 @@
     - name: Download the required Packer binary
       get_url:
         url: '{{ packer_download_url }}'
-        tmp_dest: '/tmp/packer_{{ packer_version }}_linux_amd64.zip'
+        dest: '/tmp/packer_{{ packer_version }}_linux_amd64.zip'
       when:
         - curr_packer_version.stdout != packer_version
 
