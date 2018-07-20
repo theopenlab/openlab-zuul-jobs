@@ -11,5 +11,6 @@
           set -ex
           set -o pipefail
           sleep 7200
+          # DRIVER=openstack make test-integration test/integration/core/core-commands.bats
         executable: /bin/bash
       environment: '{{ global_env }}'
