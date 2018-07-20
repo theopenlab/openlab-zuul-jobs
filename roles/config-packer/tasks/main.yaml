@@ -31,7 +31,7 @@
     - name: Extract the Packer tarball to place
       unarchive:
         src: '/tmp/packer_{{ packer_version }}_linux_amd64.zip'
-        dest: /usr/local/bin/packer
+        dest: /usr/local/bin/
         remote_src: yes
       when:
         - curr_packer_version.stdout != packer_version
