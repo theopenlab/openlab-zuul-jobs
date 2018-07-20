@@ -474,10 +474,22 @@
     name: packer-master-functional-opentelekomcloud
     parent: init-test
     description: |
-      Test image building functionality of Packer against opentelekomcloud.
+      Test image building functionality of Packer of master against opentelekomcloud.
     run: playbooks/packer-functional-public-clouds/run.yaml
     vars:
       cloud_name: opentelekomcloud
+    secrets:
+      - opentelekomcloud_credentials
+
+- job:
+    name: packer-master-functional-opentelekomcloud
+    parent: init-test
+    description: |
+      Test image building functionality of Packer of version 1.2.3 against opentelekomcloud.
+    run: playbooks/packer-functional-public-clouds/run.yaml
+    vars:
+      cloud_name: opentelekomcloud
+      packer_version: 1.2.3
     secrets:
       - opentelekomcloud_credentials
 
