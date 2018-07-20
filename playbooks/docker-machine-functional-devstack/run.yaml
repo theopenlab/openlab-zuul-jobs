@@ -1,0 +1,15 @@
+- hosts: all
+  become: yes
+  roles:
+    - clone-devstack-gate-to-workspace
+    # - install-devstack
+    - config-docker-machine
+  tasks:
+    - name: Create image by Packer
+      shell:
+        cmd: |
+          set -ex
+          set -o pipefail
+          sleep 7200
+        executable: /bin/bash
+      environment: '{{ global_env }}'
