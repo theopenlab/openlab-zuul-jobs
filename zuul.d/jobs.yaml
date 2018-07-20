@@ -482,14 +482,14 @@
       - opentelekomcloud_credentials
 
 - job:
-    name: packer-1.2.3-functional-opentelekomcloud
+    name: packer-1.2.5-functional-opentelekomcloud
     parent: init-test
     description: |
-      Test image building functionality of Packer of version 1.2.3 against opentelekomcloud.
+      Test image building functionality of Packer of version 1.2.5 against opentelekomcloud.
     run: playbooks/packer-functional-public-clouds/run.yaml
     vars:
       cloud_name: opentelekomcloud
-      packer_version: 1.2.3
+      packer_version: 1.2.5
     secrets:
       - opentelekomcloud_credentials
 
@@ -501,13 +501,13 @@
     run: playbooks/packer-functional-devstack/run.yaml
 
 - job:
-    name: packer-1.2.3-functional-devstack
+    name: packer-1.2.5-functional-devstack
     parent: init-test
     description: |
-      Test image building functionality of Packer of version 1.2.3 against devstack.
+      Test image building functionality of Packer of version 1.2.5 against devstack.
     run: playbooks/packer-functional-devstack/run.yaml
     vars:
-      packer_version: 1.2.3
+      packer_version: 1.2.5
 
 - job:
     name: docker-machine-master-functional-devstack

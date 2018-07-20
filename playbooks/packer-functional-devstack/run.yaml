@@ -52,6 +52,7 @@
               ]
           }
           EOF
+          sleep 7200
           packer validate os-template.json
           packer build -color=false os-template.json
           openstack image show $image_name
