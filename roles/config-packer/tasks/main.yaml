@@ -21,16 +21,12 @@
       ignore_errors: yes
       register: curr_packer_version
 
-    - name: Download the required Packer binary
-      get_url:
-        url: '{{ packer_download_url }}'
-        dest: '/tmp/packer_{{ packer_version }}_linux_amd64.zip'
-      when:
-        - curr_packer_version.stdout != packer_version
+    - name: Install unzip
+      package: name=unzip
 
     - name: Extract the Packer tarball to place
       unarchive:
-        src: '/tmp/packer_{{ packer_version }}_linux_amd64.zip'
+        src: '{{ packer_download_url }}'
         dest: /usr/local/bin/
         remote_src: yes
       when:
