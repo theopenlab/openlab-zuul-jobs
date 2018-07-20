@@ -18,10 +18,6 @@
           cat << EOF >> welcome.txt
           WELCOME TO PACKER!
           EOF
-          cat << EOF >> example.sh
-          #!/bin/bash
-          echo "hello"
-          EOF
 
           cat << EOF >> os-template.json
           {
@@ -47,10 +43,6 @@
                           "ls -al /home/ubuntu",
                           "cat /home/ubuntu/welcome.txt"
                       ]
-                  },
-                  {
-                      "type": "shell",
-                      "script": "./example.sh"
                   }
               ]
           }
