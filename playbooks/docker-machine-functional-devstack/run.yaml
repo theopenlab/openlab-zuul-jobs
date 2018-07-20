@@ -2,7 +2,7 @@
   become: yes
   roles:
     - clone-devstack-gate-to-workspace
-    # - install-devstack
+    - install-devstack
     - config-docker-machine
   tasks:
     - name: Create image by Packer
@@ -10,7 +10,13 @@
         cmd: |
           set -ex
           set -o pipefail
-          sleep 7200
-          # DRIVER=openstack make test-integration test/integration/core/core-commands.bats
+          git clone https://github.com/sstephenson/bats.git
+          pushd bats
+          ./install.sh /usr/local
+          popd
+          pushd $GOPATH/src/github.com/docker/machine
+          DRIVER=openstack make test-integration test/integration/core/core-commands.bats
+          popd
         executable: /bin/bash
+        chdir: '{{ ansible_user_dir }}/workspace'
       environment: '{{ global_env }}'
