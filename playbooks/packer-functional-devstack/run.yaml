@@ -13,10 +13,6 @@
           cat << EOF >> welcome.txt
           WELCOME TO PACKER!
           EOF
-          cat << EOF >> example.sh
-          #!/bin/bash
-          echo "hello"
-          EOF
           image_name="packer-cirros-$(date +%s)"
           network=$(openstack network show private -f value -c id)
           cat << EOF >> os-template.json
@@ -44,10 +40,6 @@
                           "ls -al /home/cirros",
                           "cat /home/cirros/welcome.txt"
                       ]
-                  },
-                  {
-                      "type": "shell",
-                      "script": "./example.sh"
                   }
               ]
           }
