@@ -18,6 +18,7 @@
           echo "hello"
           EOF
           image_name="packer-cirros-$(date +%s)"
+          network=$(openstack network show private -f value -c id)
           cat << EOF >> os-template.json
           {
               "builders": [
@@ -27,7 +28,7 @@
                       "image_name": "$image_name",
                       "source_image_name": "cirros-0.3.5-x86_64-disk",
                       "ssh_username": "cirros",
-                      "networks": ["private"],
+                      "networks": ["$network"],
                       "floating_ip_pool": "public"
                   }
               ],
