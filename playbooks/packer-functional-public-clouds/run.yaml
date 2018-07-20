@@ -1,7 +1,7 @@
 - hosts: all
   become: yes
   roles:
-    - config-golang
+    - config-packer
     - export-cloud-openrc
   tasks:
     - name: Create image by Packer
@@ -11,12 +11,6 @@
           set -o pipefail
           pip install python-openstackclient
           pip install python-glanceclient==2.11.0
-          mkdir -p $GOPATH/src/github.com/hashicorp/
-          mv $GOPATH/src/github.com/liu-sheng/packer $GOPATH/src/github.com/hashicorp/packer || true
-          cd $GOPATH/src/github.com/hashicorp/packer
-          go get ./...
-          make dev
-          packer version
           flavor=$(openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column VCPUs | head -n 1 | awk '{print $1}')
           network=$(openstack network show openlab-net -f value -c id)
           image_name="packer-linux-openstack-demo-$(date +%s)"
