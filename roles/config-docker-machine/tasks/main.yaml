@@ -9,7 +9,7 @@
         go get github.com/docker/machine
         cd $GOPATH/src/github.com/docker/machine
         make build
-        sleep 3000
+        cp ./bin/docker-machine /usr/local/bin/
         docker-machine version
       environment: '{{ global_env }}'
   when:
