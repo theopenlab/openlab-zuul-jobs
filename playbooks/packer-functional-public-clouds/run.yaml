@@ -59,5 +59,7 @@
           packer build -color=false os-template.json
           openstack image show $image_name
           openstack image delete $image_name
+          # NOTE: in public clouds, it will leave legacy volumes with same name of image, need to clean manually
+          openstack volume delete $image_name --purge
         executable: /bin/bash
       environment: '{{ global_env }}'
