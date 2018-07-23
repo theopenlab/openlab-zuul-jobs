@@ -15,6 +15,7 @@
           EOF
           image_name="packer-cirros-$(date +%s)"
           network=$(openstack network show private -f value -c id)
+          src_img_name=$(openstack image list |grep -Eo "cirros.*-disk")
           cat << EOF >> os-template.json
           {
               "builders": [
@@ -22,7 +23,7 @@
                       "type": "openstack",
                       "flavor": "m1.tiny",
                       "image_name": "$image_name",
-                      "source_image_name": "cirros-0.3.5-x86_64-disk",
+                      "source_image_name": "$src_img_name",
                       "ssh_username": "cirros",
                       "networks": ["$network"],
                       "floating_ip_pool": "public"

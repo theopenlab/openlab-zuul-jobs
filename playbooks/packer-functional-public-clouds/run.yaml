@@ -13,14 +13,11 @@
           pip install python-glanceclient==2.11.0
           flavor=$(openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column VCPUs | head -n 1 | awk '{print $1}')
           network=$(openstack network show openlab-net -f value -c id)
-          image_name="packer-linux-openstack-demo-$(date +%s)"
+          src_img_name=$(openstack image list |grep -Eo "cirros.*0.4.0.*-disk")
+          image_name="packer-cirros-openstack-$(date +%s)"
 
           cat << EOF >> welcome.txt
           WELCOME TO PACKER!
-          EOF
-          cat << EOF >> example.sh
-          #!/bin/bash
-          echo "hello"
           EOF
 
           cat << EOF >> os-template.json
@@ -30,8 +27,8 @@
                       "type": "openstack",
                       "flavor": "$flavor",
                       "image_name": "$image_name",
-                      "source_image_name": "Community_Ubuntu_16.04_TSI_latest",
-                      "ssh_username": "ubuntu",
+                      "source_image_name": "$src_img_name",
+                      "ssh_username": "cirros",
                       "networks": ["$network"]
                   }
               ],
@@ -39,18 +36,14 @@
                   {
                       "type": "file",
                       "source": "./welcome.txt",
-                      "destination": "/home/ubuntu/"
+                      "destination": "/home/cirros/"
                   },
                   {
                       "type": "shell",
                       "inline":[
-                          "ls -al /home/ubuntu",
-                          "cat /home/ubuntu/welcome.txt"
+                          "ls -al /home/cirros",
+                          "cat /home/cirros/welcome.txt"
                       ]
-                  },
-                  {
-                      "type": "shell",
-                      "script": "./example.sh"
                   }
               ]
           }
