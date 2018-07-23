@@ -15,6 +15,7 @@
           ./install.sh /usr/local
           popd
           pushd $GOPATH/src/github.com/docker/machine
+          sleep 7200
           DEBUG=true VERBOSE=true DRIVER=openstack make test-integration test/integration/core/core-commands.bats
           popd
         executable: /bin/bash
