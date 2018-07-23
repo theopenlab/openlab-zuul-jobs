@@ -494,6 +494,42 @@
       - opentelekomcloud_credentials
 
 - job:
+    name: packer-1.2.5-functional-orange
+    parent: init-test
+    description: |
+      Test image building functionality of Packer of version 1.2.5 against orange.
+    run: playbooks/packer-functional-public-clouds/run.yaml
+    vars:
+      cloud_name: orange
+      packer_version: 1.2.5
+    secrets:
+      - orange_credentials
+
+- job:
+    name: packer-1.2.5-functional-telefonica
+    parent: init-test
+    description: |
+      Test image building functionality of Packer of version 1.2.5 against telefonica.
+    run: playbooks/packer-functional-public-clouds/run.yaml
+    vars:
+      cloud_name: telefonica
+      packer_version: 1.2.5
+    secrets:
+      - telefonica_credentials
+
+- job:
+    name: packer-1.2.5-functional-huaweicloud
+    parent: init-test
+    description: |
+      Test image building functionality of Packer of version 1.2.5 against huaweicloud.
+    run: playbooks/packer-functional-public-clouds/run.yaml
+    vars:
+      cloud_name: huaweicloud
+      packer_version: 1.2.5
+    secrets:
+      - huaweicloud_credentials
+
+- job:
     name: packer-master-functional-devstack
     parent: init-test
     description: |
