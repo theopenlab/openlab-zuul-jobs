@@ -1,0 +1,36 @@
+---
+- name: Install master of Packer from source
+  block:
+    - name: config golang
+      include_role:
+        name: config-golang
+    - name: install packer from source
+      shell: |
+        set -ex
+        go get github.com/hashicorp/packer
+        cd $GOPATH/src/github.com/hashicorp/packer
+        make dev
+        packer version
+      environment: '{{ global_env }}'
+  when:
+    - packer_version == "master"
+
+- name: Install relased packages of Packer
+  block:
+    - name: Check if has satisfied Packer installed
+      shell: packer version |grep -Eo '([0-9]+\.)+[0-9]+'
+      ignore_errors: yes
+      register: curr_packer_version
+
+    - name: Install unzip
+      package: name=unzip
+
+    - name: Extract the Packer tarball to place
+      unarchive:
+        src: '{{ packer_download_url }}'
+        dest: /usr/local/bin/
+        remote_src: yes
+      when:
+        - curr_packer_version.stdout != packer_version
+  when:
+    - packer_version != "master"
