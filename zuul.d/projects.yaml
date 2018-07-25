@@ -57,3 +57,4 @@
     check:
       jobs:
         - docker-machine-master-functional-devstack
+        - docker-machine-master-functional-devstack-mitaka
