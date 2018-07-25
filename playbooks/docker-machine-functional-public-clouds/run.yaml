@@ -41,8 +41,8 @@
           machine_name="docker-machine-$(date +%s)"
           pushd $GOPATH/src/github.com/docker/machine
           docker-machine -D create -d openstack $machine_name
-          docker-machine rm $machine_name -y -f
-          # DEBUG=true VERBOSE=true DRIVER=openstack make test-integration test/integration/core
+          # docker-machine rm $machine_name -y -f
+          DEBUG=true VERBOSE=true DRIVER=openstack make test-integration test/integration/core
           popd
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'
