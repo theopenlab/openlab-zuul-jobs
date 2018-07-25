@@ -78,12 +78,16 @@
         tox_extra_args: "--notest"
 
     - name: Run test cases
-      shell: tox -eansible -- -c "{{ cloud_name }}" auth group image keypair keystone_role keystone_domain network nova_flavor object port router security_group server subnet user user_group volume
+      # Disable public cloud policy limit roles: group keystone_domain keystone_role nova_flavor user user_group
+      shell: tox -eansible -- -c "{{ cloud_name }}" auth image keypair network object port router security_group server subnet volume
       args:
         executable: /bin/bash
         chdir: '{{ sdk_src_dir }}'
       environment:
         ANSIBLE_VAR_flavor: "{{ flavor_query.stdout }}"
         ANSIBLE_VAR_server_network: "openlab-jobs-net"
+        ANSIBLE_VAR_floating_ip_pool_name: "admin_external_net"
+        ANSIBLE_VAR_enable_subnet_dhcp: "true"
+        ANSIBLE_VAR_network_external: "false"
       register: testing_output
       failed_when: "'FAILED' in testing_output.stdout or 'ERROR' in testing_output.stdout"
