@@ -562,3 +562,14 @@
       global_env:
         OS_BRANCH: stable/mitaka
     nodeset: ubuntu-trusty
+
+- job:
+    name: docker-machine-master-functional-opentelekomcloud
+    parent: init-test
+    description: |
+      Test image building functionality of Packer of master against opentelekomcloud.
+    run: playbooks/docker-machine-functional-public-clouds/run.yaml
+    vars:
+      cloud_name: opentelekomcloud
+    secrets:
+      - opentelekomcloud_credentials

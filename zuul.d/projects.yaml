@@ -58,3 +58,4 @@
       jobs:
         - docker-machine-master-functional-devstack
         - docker-machine-master-functional-devstack-mitaka
+        - docker-machine-master-functional-opentelekomcloud
