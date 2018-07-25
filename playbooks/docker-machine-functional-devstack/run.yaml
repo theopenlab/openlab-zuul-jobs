@@ -31,6 +31,7 @@
           pushd $GOPATH/src/github.com/docker/machine
           export OS_FLAVOR_ID=1
           export OS_IMAGE_NAME=$(openstack image list |grep -Eo "cirros.*-disk")
+          sleep 7200
           docker-machine -D create -d openstack test1
           DEBUG=true VERBOSE=true DRIVER=openstack make test-integration test/integration/core
           popd
