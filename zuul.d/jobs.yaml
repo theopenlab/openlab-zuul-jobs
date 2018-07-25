@@ -567,9 +567,42 @@
     name: docker-machine-master-functional-opentelekomcloud
     parent: init-test
     description: |
-      Test image building functionality of Packer of master against opentelekomcloud.
+      Test functionalities of Docker machine of master against opentelekomcloud.
     run: playbooks/docker-machine-functional-public-clouds/run.yaml
     vars:
       cloud_name: opentelekomcloud
     secrets:
       - opentelekomcloud_credentials
+
+- job:
+    name: docker-machine-maste-functional-orange
+    parent: init-test
+    description: |
+      Test functionalities of Docker machine of master against orange.
+    run: playbooks/docker-machine-functional-public-clouds/run.yaml
+    vars:
+      cloud_name: orange
+    secrets:
+      - orange_credentials
+
+- job:
+    name: docker-machine-maste-functional-telefonica
+    parent: init-test
+    description: |
+      Test functionalities of Docker machine of master against telefonica.
+    run: playbooks/docker-machine-functional-public-clouds/run.yaml
+    vars:
+      cloud_name: telefonica
+    secrets:
+      - telefonica_credentials
+
+- job:
+    name: docker-machine-maste-functional-huaweicloud
+    parent: init-test
+    description: |
+      Test functionalities of Docker machine of master against huaweicloud.
+    run: playbooks/docker-machine-functional-public-clouds/run.yaml
+    vars:
+      cloud_name: huaweicloud
+    secrets:
+      - huaweicloud_credentials

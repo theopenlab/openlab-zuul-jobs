@@ -28,10 +28,17 @@
           ifconfig -a
 
           pushd $GOPATH/src/github.com/docker/machine
+          pip install python-openstackclient
+          pip install python-glanceclient==2.11.0
           export OS_FLAVOR_ID=$(openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column VCPUs | head -n 1 | awk '{print $1}')
           export OS_IMAGE_NAME=$(openstack image list |grep -Eo "cirros.*0.4.0.*-disk")
-          sleep 7200
-          docker-machine -D create -d openstack test1
+          export OS_TENANT_ID=$(openstack token issue -f value -c project_id)
+          export OS_NETWORK_NAME=openlab-jobs-net
+          export OS_SSH_USER="cirros"
+          export OS_FLOATINGIP_POOL="admin_external_net"
+          machine_name="docker-machine-$(date +%s)"
+          docker-machine -D create -d openstack $machine_name
+          docker-machine rm $machine_name -y -f
           # DEBUG=true VERBOSE=true DRIVER=openstack make test-integration test/integration/core
           popd
         executable: /bin/bash
