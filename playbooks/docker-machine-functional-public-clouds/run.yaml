@@ -32,7 +32,7 @@
           # Select a flavor have 2048M memory and 2 vCPU at least
           export OS_FLAVOR_ID=$(openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column \
               VCPUs | awk '{if($2>=2048 && $3>=2){print $1}}' | head -n 1)
-          export OS_IMAGE_NAME=$(openstack image list -f value -c Name |grep -Eo ".*Ubuntu_16.04_TSI_latest.*")
+          export OS_IMAGE_NAME=$(openstack image list -f value -c Name |grep -Eo "Ubuntu 16.04 Server 64bit")
           export OS_TENANT_ID=$(openstack token issue -f value -c project_id)
           export OS_NETWORK_NAME=openlab-jobs-net
           export OS_SSH_USER="ubuntu"
