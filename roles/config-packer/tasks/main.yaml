@@ -7,7 +7,8 @@
     - name: install packer from source
       shell: |
         set -ex
-        go get github.com/hashicorp/packer
+        mkdir -p $GOPATH/src/github.com/hashicorp/packer
+        cp -r '{{ zuul.project.src_dir }}' $GOPATH/src/github.com/hashicorp/
         cd $GOPATH/src/github.com/hashicorp/packer
         make dev
         packer version
