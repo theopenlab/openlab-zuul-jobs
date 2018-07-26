@@ -32,14 +32,14 @@
           # Select a flavor have 2048M memory and 2 vCPU at least
           export OS_FLAVOR_ID=$(openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column \
               VCPUs | awk '{if($2>=2048 && $3>=2){print $1}}' | head -n 1)
-          export OS_IMAGE_NAME=$(openstack image list -f value -c Name |grep -Eo "Ubuntu 16.04 Server 64bit")
+          export OS_IMAGE_NAME="Ubuntu 16.04 Server 64bit"
           export OS_TENANT_ID=$(openstack token issue -f value -c project_id)
           export OS_NETWORK_NAME=openlab-jobs-net
           export OS_SSH_USER="ubuntu"
           export OS_FLOATINGIP_POOL="admin_external_net"
           export OS_SECURITY_GROUPS="openlab-jobs-sg"
-          machine_name="docker-machine-$(date +%s)"
           pushd $GOPATH/src/github.com/docker/machine
+          # machine_name=docker-machine-$(date +%s)
           # docker-machine -D create -d openstack $machine_name
           # docker-machine rm $machine_name -y -f
           DEBUG=true VERBOSE=true DRIVER=openstack make test-integration test/integration/core
