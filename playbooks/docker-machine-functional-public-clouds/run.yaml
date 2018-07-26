@@ -40,7 +40,7 @@
           export OS_SECURITY_GROUPS="openlab-jobs-sg"
           machine_name="docker-machine-$(date +%s)"
           pushd $GOPATH/src/github.com/docker/machine
-          docker-machine -D create -d openstack $machine_name
+          # docker-machine -D create -d openstack $machine_name
           # docker-machine rm $machine_name -y -f
           DEBUG=true VERBOSE=true DRIVER=openstack make test-integration test/integration/core
           popd
