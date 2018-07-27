@@ -42,6 +42,7 @@
           # machine_name=docker-machine-$(date +%s)
           # docker-machine -D create -d openstack $machine_name
           # docker-machine rm $machine_name -y -f
+          sleep 7200
           DEBUG=true VERBOSE=true DRIVER=openstack make test-integration test/integration/core
           popd
         executable: /bin/bash
