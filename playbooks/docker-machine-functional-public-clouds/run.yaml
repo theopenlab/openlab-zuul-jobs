@@ -39,11 +39,18 @@
           export OS_FLOATINGIP_POOL="admin_external_net"
           export OS_SECURITY_GROUPS="openlab-jobs-sg"
           pushd $GOPATH/src/github.com/docker/machine
-          # machine_name=docker-machine-$(date +%s)
-          # docker-machine -D create -d openstack $machine_name
-          # docker-machine rm $machine_name -y -f
-          sleep 7200
-          DEBUG=true VERBOSE=true DRIVER=openstack make test-integration test/integration/core
+          # NOTE1: tests in test/integration/core/certs-extra-san.bats have references about boot2docker, which
+          # probably only used by virtual box
+          # NOTE2: tests in test/integration/core/crashreport.bats are only for virtualbox, skipped
+          DEBUG=true VERBOSE=true DRIVER=openstack make test-integration \
+              test/integration/core/scp.bats \
+              test/integration/core/core-commands.bats \
+              test/integration/core/ssh-backends.bats \
+              test/integration/core/engine-options.bats \
+              test/integration/core/regenerate-certs.bats \
+              test/integration/core/env_shell.bats \
+              test/integration/core/inspect_format.bats \
+              test/integration/core/swarm-options.bats
           popd
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'
