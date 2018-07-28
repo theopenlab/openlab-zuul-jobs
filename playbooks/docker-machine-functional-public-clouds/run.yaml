@@ -38,9 +38,9 @@
           export OS_SSH_USER="ubuntu"
           export OS_FLOATINGIP_POOL="admin_external_net"
           export OS_SECURITY_GROUPS="openlab-jobs-sg"
-          # NOTE: Have to specify AZ in huaweicloud
-          if [ '{{ cloud_name }}' == 'huaweicloud' ]; then
-              export OS_AVAILABILITY_ZONE="cn-east-1a"
+          export OS_SSH_USER="{{ ssh_user | default('ubuntu') }}"
+          if "{{ availablity_zone | default('') }}"; then:
+              export OS_AVAILABILITY_ZONE="{{ availablity_zone }}"
           fi
           pushd $GOPATH/src/github.com/docker/machine
           # NOTE1: tests in test/integration/core/certs-extra-san.bats have references about boot2docker, which

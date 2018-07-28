@@ -593,6 +593,7 @@
     run: playbooks/docker-machine-functional-public-clouds/run.yaml
     vars:
       cloud_name: telefonica
+      ssh_user: linux
     secrets:
       - telefonica_credentials
 
@@ -604,6 +605,7 @@
     run: playbooks/docker-machine-functional-public-clouds/run.yaml
     vars:
       cloud_name: huaweicloud
+      availablity_zone: cn-east-1a
     secrets:
       - huaweicloud_credentials
 
