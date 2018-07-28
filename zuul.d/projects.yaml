@@ -66,8 +66,5 @@
     name: liu-sheng/bosh-huaweicloud-cpi-release
     check:
       jobs:
-        - docker-machine-master-functional-devstack-mitaka
-        - docker-machine-master-functional-opentelekomcloud
-        - docker-machine-maste-functional-orange
         - bosh-huaweicloud-cpi-release-acceptance-test
 
