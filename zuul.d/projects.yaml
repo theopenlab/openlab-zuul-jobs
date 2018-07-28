@@ -34,12 +34,12 @@
               - ^lib/ansible/plugins/inventory/openstack.py
               - ^lib/ansible/module_utils/openstack.py
               - ^lib/ansible/utils/module_docs_fragments/openstack.py
-    periodic:
-      jobs:
-        - openstacksdk-ansible-stable-2.6-functional-opentelekomcloud:
-            branches: stable-2.6
-        - openstacksdk-ansible-stable-2.6-functional-orange:
-            branches: stable-2.6
+#    periodic:
+#      jobs:
+#        - openstacksdk-ansible-stable-2.6-functional-opentelekomcloud:
+#            branches: stable-2.6
+#        - openstacksdk-ansible-stable-2.6-functional-orange:
+#            branches: stable-2.6
 
 - project:
     name: liu-sheng/packer
