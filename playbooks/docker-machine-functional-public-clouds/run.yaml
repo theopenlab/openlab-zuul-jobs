@@ -39,9 +39,6 @@
           export OS_FLOATINGIP_POOL="admin_external_net"
           export OS_SECURITY_GROUPS="openlab-jobs-sg"
           export OS_SSH_USER="{{ ssh_user | default('ubuntu') }}"
-          if "{{ availablity_zone | default('') }}"; then:
-              export OS_AVAILABILITY_ZONE="{{ availablity_zone }}"
-          fi
           pushd $GOPATH/src/github.com/docker/machine
           DEBUG=true VERBOSE=true DRIVER=openstack make test-integration test/integration/core/
           popd
