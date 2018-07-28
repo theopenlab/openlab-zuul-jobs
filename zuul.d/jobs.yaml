@@ -606,3 +606,11 @@
       cloud_name: huaweicloud
     secrets:
       - huaweicloud_credentials
+
+- job:
+    name: bosh-huaweicloud-cpi-release-acceptance-test
+    description: |
+      This job validation tests of bosh-huaweicloud-cpi-release aganist Huaweicloud
+    run: playbooks/bosh-huaweicloud-cpi-release-acceptance-test/run.yaml
+    secrets:
+      - huaweicloud_credentials
