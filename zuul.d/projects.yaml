@@ -57,7 +57,7 @@
     check:
       jobs:
         #- docker-machine-master-functional-devstack-mitaka
-        - docker-machine-master-functional-opentelekomcloud
-        - docker-machine-maste-functional-orange
+        # - docker-machine-master-functional-opentelekomcloud
+        # - docker-machine-maste-functional-orange
         - docker-machine-maste-functional-telefonica
-        - docker-machine-maste-functional-huaweicloud
+        # - docker-machine-maste-functional-huaweicloud

@@ -42,6 +42,7 @@
           # NOTE1: tests in test/integration/core/certs-extra-san.bats have references about boot2docker, which
           # probably only used by virtual box
           # NOTE2: tests in test/integration/core/crashreport.bats are only for virtualbox, skipped
+          sleep 7200
           DEBUG=true VERBOSE=true DRIVER=openstack make test-integration test/integration/core/
           popd
         executable: /bin/bash
