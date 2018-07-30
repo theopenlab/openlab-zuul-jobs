@@ -8,9 +8,9 @@
       shell: |
         set -ex
         mkdir -p $GOPATH/src/github.com/hashicorp/packer
-        mv '{{ zuul.project.src_dir }}' $GOPATH/src/github.com/hashicorp/packer
+        mv '{{ zuul.project.src_dir }}' $GOPATH/src/github.com/hashicorp/
+        cp -r '{{ zuul.project.src_dir }}' $GOPATH/src/github.com/hashicorp/
         cd $GOPATH/src/github.com/hashicorp/packer
-        sleep 7200
         make dev
         packer version
       environment: '{{ global_env }}'
