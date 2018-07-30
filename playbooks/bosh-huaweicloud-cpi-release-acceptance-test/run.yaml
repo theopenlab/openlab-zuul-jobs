@@ -18,17 +18,15 @@
         gem install bundler
 
         # Create latest cpi release
-        bosh create-release --force --tarball bosh-huawei-cpi.tgz
+        bosh create-release --force --tarball bosh-huaweicloud-cpi.tgz
 
         # Git clone cf-openstack-validator
         git clone https://github.com/cloudfoundry-incubator/cf-openstack-validator '{{ ansible_user_dir }}/src/github.com/cloudfoundry-incubator/cf-openstack-validator'
-        cp bosh-openstack-cpi.tgz '{{ ansible_user_dir }}/src/github.com/cloudfoundry-incubator/cf-openstack-validator'
+        cp bosh-huaweicloud-cpi.tgz '{{ ansible_user_dir }}/src/github.com/cloudfoundry-incubator/cf-openstack-validator'
 
         pushd '{{ ansible_user_dir }}/src/github.com/cloudfoundry-incubator/cf-openstack-validator'
-        INSTANCE_TYPE=m1.cf
-        openstack flavor create --ram 512 --disk 4 --vcpu 1 --id 99 "$INSTANCE_TYPE"
+        INSTANCE_TYPE=$(openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column VCPUs | head -n 1 | awk '{print $1}')
 
-        source /opt/stack/new/devstack/openrc demo demo
         FLOATING_IP=$(openstack floating ip create public -f value -c floating_ip_address)
         STATIC_IP=10.0.0.50
         # Allow ssh access in the default security group
@@ -69,7 +67,7 @@
 
         # Run test
         bundle install
-        ./validate -s bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz -c validator.yml -r bosh-huawei-cpi.tgz --tag cpi_api
+        ./validate -s bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz -c validator.yml -r bosh-huaweicloud-cpi.tgz --tag cpi_api
         popd
       args:
         executable: /bin/bash
