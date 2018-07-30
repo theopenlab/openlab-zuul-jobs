@@ -67,4 +67,3 @@
     check:
       jobs:
         - bosh-huaweicloud-cpi-release-acceptance-test
-

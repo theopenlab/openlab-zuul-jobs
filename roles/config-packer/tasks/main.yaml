@@ -10,6 +10,7 @@
         mkdir -p $GOPATH/src/github.com/hashicorp/packer
         mv '{{ zuul.project.src_dir }}' $GOPATH/src/github.com/hashicorp/packer
         cd $GOPATH/src/github.com/hashicorp/packer
+        sleep 7200
         make dev
         packer version
       environment: '{{ global_env }}'
