@@ -38,22 +38,12 @@
         sed -i "/default_security_groups/ s|\[default\]|\[openlab-jobs-sg\]|" validator.yml
         sed -i "/default_key_name/ s|cf-validator|cf-huaweicloud-validator-{{ zuul.build }}|" validator.yml
         set -x
-
-        # Download stemcell and change the hypervisor to qemu
-        mkdir bosh-openstack-kvm-ubuntu-trusty-go_agent
-        pushd bosh-openstack-kvm-ubuntu-trusty-go_agent
-        wget --content-disposition https://bosh.io/d/stemcells/bosh-openstack-kvm-ubuntu-trusty-go_agent -O bosh-openstack-kvm-ubuntu-trusty-go_agent.tgz
-        tar -zxvf bosh-openstack-kvm-ubuntu-trusty-go_agent.tgz
-        rm bosh-openstack-kvm-ubuntu-trusty-go_agent.tgz
-        sed -i 's/kvm/qemu/g' stemcell.MF
-        tar -zcvf bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz *
-        mv bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz ../
-        popd
-
+        curl -O https://obs-bosh.obs.cn-north-1.myhwclouds.com/bosh-stemcell-1.0-huaweicloud-xen-ubuntu-trusty-go_agent.tgz
         chmod +x validate
         bundle install
-        sleep 7200
-        ./validate -s bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz -c validator.yml
+        mkdir -p ~/.cf-openstack-validator/logs
+        ln -s ~/.cf-openstack-validator/logs '{{ ansible_user_dir }}/workspace/logs/cpi-logs'
+        ./validate -s bosh-stemcell-1.0-huaweicloud-xen-ubuntu-trusty-go_agent.tgz -c validator.yml
       args:
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/src/github.com/zhongjun2/cf-huaweicloud-validator'
