@@ -41,8 +41,6 @@
         curl -O https://obs-bosh.obs.cn-north-1.myhwclouds.com/bosh-stemcell-1.0-huaweicloud-xen-ubuntu-trusty-go_agent.tgz
         chmod +x validate
         bundle install
-        mkdir -p ~/.cf-openstack-validator/logs
-        ln -s ~/.cf-openstack-validator/logs '{{ ansible_user_dir }}/workspace/logs/cpi-logs'
         ./validate -s bosh-stemcell-1.0-huaweicloud-xen-ubuntu-trusty-go_agent.tgz -c validator.yml
       args:
         executable: /bin/bash
