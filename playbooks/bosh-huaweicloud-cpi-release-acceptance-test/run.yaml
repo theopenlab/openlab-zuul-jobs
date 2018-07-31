@@ -4,7 +4,6 @@
     - role: export-cloud-openrc
       vars:
         cloud_name: 'huaweicloud'
-
   tasks:
     - name: Run validation tests of cf-huaweicloud-validator aganist huaweicloud
       shell: |
@@ -37,11 +36,18 @@
         sed -i "/default_key_name/ s|cf-validator|cf-huaweicloud-validator-{{ zuul.build }}|" validator.yml
         set -x
 
-        sleep 7200
-        # Collect cpi logs
-        mkdir -p ~/.cf-openstack-validator/logs
-        ln -s ~/.cf-openstack-validator/logs '{{ ansible_user_dir }}/workspace/logs/cpi-logs'
+        # Download stemcell and change the hypervisor to qemu
+        mkdir bosh-openstack-kvm-ubuntu-trusty-go_agent
+        pushd bosh-openstack-kvm-ubuntu-trusty-go_agent
+        wget --content-disposition https://bosh.io/d/stemcells/bosh-openstack-kvm-ubuntu-trusty-go_agent -O bosh-openstack-kvm-ubuntu-trusty-go_agent.tgz
+        tar -zxvf bosh-openstack-kvm-ubuntu-trusty-go_agent.tgz
+        rm bosh-openstack-kvm-ubuntu-trusty-go_agent.tgz
+        sed -i 's/kvm/qemu/g' stemcell.MF
+        tar -zcvf bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz *
+        mv bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz ../
+        popd
 
+        ./validate -s bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz -c validator.yml
       args:
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/src/github.com/zhongjun2/cf-huaweicloud-validator'
