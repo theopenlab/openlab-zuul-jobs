@@ -19,12 +19,13 @@
 
         # Create latest cpi release
         bosh create-release --force --tarball bosh-huaweicloud-cpi.tgz
+        openstack keypair create bosh-huawei-cpi-${BUILD_ID} > microbosh.pem
 
         # Git clone cf-openstack-validator
-        git clone https://github.com/cloudfoundry-incubator/cf-openstack-validator '{{ ansible_user_dir }}/src/github.com/cloudfoundry-incubator/cf-openstack-validator'
-        cp bosh-huaweicloud-cpi.tgz '{{ ansible_user_dir }}/src/github.com/cloudfoundry-incubator/cf-openstack-validator'
+        git clone https://github.com/liu-sheng/cf-huaweicloud-validator '{{ ansible_user_dir }}/src/github.com/liu-sheng/cf-huaweicloud-validator'
+        cp bosh-huaweicloud-cpi.tgz '{{ ansible_user_dir }}/src/github.com/zhongjun2/cf-huaweicloud-validator'
 
-        pushd '{{ ansible_user_dir }}/src/github.com/cloudfoundry-incubator/cf-openstack-validator'
+        pushd '{{ ansible_user_dir }}/src/github.com/liu-sheng/cf-huaweicloud-validator'
         INSTANCE_TYPE=$(openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column VCPUs | head -n 1 | awk '{print $1}')
 
         FLOATING_IP=$(openstack floating ip create public -f value -c floating_ip_address)
