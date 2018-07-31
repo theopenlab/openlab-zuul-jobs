@@ -52,6 +52,7 @@
 
         chmod +x validate
         bundle install
+        sleep 7200
         ./validate -s bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz -c validator.yml
       args:
         executable: /bin/bash
