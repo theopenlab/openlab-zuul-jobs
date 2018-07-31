@@ -39,7 +39,7 @@
           export OS_FLOATINGIP_POOL="admin_external_net"
           export OS_SECURITY_GROUPS="openlab-jobs-sg"
           export OS_SSH_USER="{{ ssh_user | default('ubuntu') }}"
-          az="{{ availablity_zone | default('') }}
+          az="{{ availablity_zone | default('') }}"
           if [ -n $az ];then
               export OS_AVAILABILITY_ZONE=$az
           fi
