@@ -46,3 +46,7 @@
         - packer-1.2.5-functional-orange
         - packer-1.2.5-functional-telefonica
         - packer-1.2.5-functional-huaweicloud
+        - packer-1.2.5-functional-devstack
+    check:
+      jobs:
+        - packer-master-functional-devstack
