@@ -611,6 +611,7 @@
 
 - job:
     name: bosh-huaweicloud-cpi-release-acceptance-test
+    parent: init-test
     description: |
       This job validation tests of bosh-huaweicloud-cpi-release aganist Huaweicloud
     run: playbooks/bosh-huaweicloud-cpi-release-acceptance-test/run.yaml
