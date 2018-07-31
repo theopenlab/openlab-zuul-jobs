@@ -19,6 +19,7 @@
         STATIC_IP=$(openstack port show ${_port_id} -f value -c fixed_ips | grep -Eo '([0-9]+\.){3}[0-9]+')
         openstack port delete ${_port_id}
 
+        set +x
         cp validator.template.yml validator.yml
         sed -i "/auth_url/ s|<replace-me>|$OS_AUTH_URL|" validator.yml
         sed -i "/username/ s|<replace-me>|$OS_USERNAME|" validator.yml
@@ -33,6 +34,8 @@
 
         sed -i "/default_security_groups/ s|default|openlab-jobs-sg|" validator.yml
         sed -i "/default_key_name/ s|cf-validator|cf-huaweicloud-validator-{{ zuul.build }}|" validator.yml
+        set -x
+
         sleep 7200
         # Collect cpi logs
         mkdir -p ~/.cf-openstack-validator/logs
