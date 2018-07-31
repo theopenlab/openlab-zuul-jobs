@@ -605,7 +605,7 @@
     run: playbooks/docker-machine-functional-public-clouds/run.yaml
     vars:
       cloud_name: huaweicloud
-      availablity_zone: cn-east-1a
+      availablity_zone: cn-east-2a
     secrets:
       - huaweicloud_credentials
 

@@ -38,6 +38,7 @@
         sed -i "/default_security_groups/ s|\[default\]|\[openlab-jobs-sg\]|" validator.yml
         sed -i "/default_key_name/ s|cf-validator|cf-huaweicloud-validator-{{ zuul.build }}|" validator.yml
         set -x
+        sleep 7200
         curl -O https://obs-bosh.obs.cn-north-1.myhwclouds.com/bosh-stemcell-1.0-huaweicloud-xen-ubuntu-trusty-go_agent.tgz
         chmod +x validate
         bundle install
