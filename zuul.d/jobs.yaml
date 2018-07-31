@@ -614,5 +614,7 @@
     description: |
       This job validation tests of bosh-huaweicloud-cpi-release aganist Huaweicloud
     run: playbooks/bosh-huaweicloud-cpi-release-acceptance-test/run.yaml
+    required-projects:
+      - name: zhongjun2/cf-huaweicloud-validator
     secrets:
       - huaweicloud_credentials
