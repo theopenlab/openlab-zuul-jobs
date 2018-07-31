@@ -51,6 +51,7 @@
         popd
 
         chmod +x validate
+        sleep 7200
         bundle install
         ./validate -s bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz -c validator.yml
       args:
