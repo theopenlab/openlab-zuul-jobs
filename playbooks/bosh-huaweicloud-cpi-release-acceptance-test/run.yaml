@@ -40,4 +40,5 @@
 
       args:
         executable: /bin/bash
-        chdir: '{{ zuul.project.src_dir }}'
+        chdir: '{{ ansible_user_dir }}/src/github.com/zhongjun2/cf-huaweicloud-validator'
+      environment: '{{ global_env }}'
