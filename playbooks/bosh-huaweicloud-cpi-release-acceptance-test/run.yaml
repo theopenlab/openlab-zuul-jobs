@@ -18,6 +18,8 @@
         STATIC_IP=$(openstack port show ${_port_id} -f value -c fixed_ips | grep -Eo '([0-9]+\.){3}[0-9]+')
         openstack port delete ${_port_id}
         NETWORK_ID=$(openstack network show openlab-jobs-net -f value -c id)
+        INSTANCE_TYPE=$(openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column \
+            VCPUs | awk '{if($2>=2048 && $3>=2){print $1}}' | head -n 1)
 
         set +x
         cp validator.template.yml validator.yml
