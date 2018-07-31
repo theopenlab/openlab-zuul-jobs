@@ -18,13 +18,14 @@
         _port_id=$(openstack port create --network openlab-jobs-net cf-huaweicloud-validator-port -f value -c id)
         STATIC_IP=$(openstack port show ${_port_id} -f value -c fixed_ips | grep -Eo '([0-9]+\.){3}[0-9]+')
         openstack port delete ${_port_id}
+        NETWORK_ID=$(openstack network show openlab-jobs-net -f value -c id)
 
         set +x
         cp validator.template.yml validator.yml
         sed -i "/auth_url/ s|<replace-me>|$OS_AUTH_URL|" validator.yml
         sed -i "/username/ s|<replace-me>|$OS_USERNAME|" validator.yml
         sed -i "/password/ s|<replace-me>|$OS_PASSWORD|" validator.yml
-        sed -i "/domain/ s|<replace-me>|$OS_PROJECT_DOMAIN_ID|" validator.yml
+        sed -i "/domain/ s|<replace-me>|$OS_DOMAIN_NAME|" validator.yml
         sed -i "/project/ s|<replace-me>|$OS_PROJECT_NAME|" validator.yml
         sed -i "/network_id/ s|<replace-me>|$NETWORK_ID|" validator.yml
         sed -i "/floating_ip/ s|<replace-me>|$FLOATING_IP|" validator.yml
@@ -32,7 +33,7 @@
         sed -i "/instance_type/ s|<replace-me>|$INSTANCE_TYPE|" validator.yml
         sed -i "/use_external_ip/ s|false|true|" validator.yml
 
-        sed -i "/default_security_groups/ s|default|openlab-jobs-sg|" validator.yml
+        sed -i "/default_security_groups/ s|[default]|[openlab-jobs-sg]|" validator.yml
         sed -i "/default_key_name/ s|cf-validator|cf-huaweicloud-validator-{{ zuul.build }}|" validator.yml
         set -x
 
