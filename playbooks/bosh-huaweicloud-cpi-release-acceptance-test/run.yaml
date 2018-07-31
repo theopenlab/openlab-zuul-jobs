@@ -33,7 +33,7 @@
         sed -i "/instance_type/ s|<replace-me>|$INSTANCE_TYPE|" validator.yml
         sed -i "/use_external_ip/ s|false|true|" validator.yml
 
-        sed -i "/default_security_groups/ s|[default]|[openlab-jobs-sg]|" validator.yml
+        sed -i "/default_security_groups/ s|\[default\]|\[openlab-jobs-sg\]|" validator.yml
         sed -i "/default_key_name/ s|cf-validator|cf-huaweicloud-validator-{{ zuul.build }}|" validator.yml
         set -x
 
