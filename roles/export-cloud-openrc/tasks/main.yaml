@@ -51,6 +51,21 @@
   no_log: yes
   when: cloud_name == 'telefonica'
 
+- name: Set fact for huaweicloud openrc
+  set_fact:
+    openrc:
+      OS_PASSWORD: '{{ huaweicloud_credentials.password }}'
+      OS_AUTH_TYPE: '{{ huaweicloud_credentials.auth_type }}'
+      OS_AUTH_URL: '{{ huaweicloud_credentials.auth_url }}'
+      OS_IDENTITY_API_VERSION: '{{ huaweicloud_credentials.identity_api_version }}'
+      OS_DOMAIN_NAME: '{{ huaweicloud_credentials.domain_name }}'
+      OS_PROJECT_NAME: '{{ huaweicloud_credentials.project_name}}'
+      OS_REGION_NAME: '{{ huaweicloud_credentials.region_name}}'
+      OS_TENANT_NAME: '{{ huaweicloud_credentials.project_name }}'
+      OS_USERNAME: '{{ huaweicloud_credentials.user_name }}'
+  no_log: yes
+  when: cloud_name == 'huaweicloud'
+
 - name: Set fact for vexxhost openrc
   set_fact:
     openrc:
