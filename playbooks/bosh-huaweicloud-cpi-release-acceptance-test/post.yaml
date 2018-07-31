@@ -8,8 +8,7 @@
     - name: Clean up resources for cf-huaweicloud-validator tests
       shell:
         cmd: |
-          set -e
-          set -x
+          set -ex
           openstack keypair delete cf-huaweicloud-validator-"{{ zuul.build }}" || true
         executable: /bin/bash
       environment: '{{ global_env }}'

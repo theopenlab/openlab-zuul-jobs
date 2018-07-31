@@ -47,6 +47,7 @@
         mv bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz ../
         popd
 
+        chmod +x validate
         ./validate -s bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz -c validator.yml
       args:
         executable: /bin/bash
