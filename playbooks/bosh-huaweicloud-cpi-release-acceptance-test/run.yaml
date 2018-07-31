@@ -9,6 +9,9 @@
     - name: Run validation tests of cf-huaweicloud-validator aganist huaweicloud
       shell: |
         set -ex
+        pip install python-openstackclient
+        pip install python-glanceclient==2.11.0
+
         # Populate validator.yml
         openstack keypair create cf-huaweicloud-validator-"{{ zuul.build }}" > cf-validator.rsa_id
         FLOATING_IP=$(openstack floating ip create admin_external_net -f value -c floating_ip_address)
