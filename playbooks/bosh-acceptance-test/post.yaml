@@ -14,7 +14,6 @@
           NET_ID="134ca339-24dc-44f5-ae6a-cf0404216ed2"
           SUBNET_ID="3d6e9157-655f-42ec-9778-94d455730e5c"
           BUILD_ID="{{ zuul.build }}"
-          sleep 3600
 
           cd bosh-1
           export BOSH_CLIENT=admin
