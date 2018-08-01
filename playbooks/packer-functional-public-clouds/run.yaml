@@ -49,10 +49,6 @@
               ]
           }
           EOF
-          # NOTE: Have to specify AZ in huaweicloud
-          if [ '{{ cloud_name }}' == 'huaweicloud' ]; then
-              sed -i '5i\      "availability_zone": "cn-east-1a",' packer-template.json
-          fi
           packer validate os-template.json
           packer build -color=false os-template.json
           openstack image show $image_name
