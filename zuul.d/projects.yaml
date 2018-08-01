@@ -42,11 +42,16 @@
     name: theopenlab/packer
     periodic:
       jobs:
-        - packer-1.2.5-functional-opentelekomcloud
-        - packer-1.2.5-functional-orange
-        - packer-1.2.5-functional-telefonica
-        - packer-1.2.5-functional-huaweicloud
-        - packer-1.2.5-functional-devstack
+        - packer-1.2.5-functional-opentelekomcloud:
+            branches: master
+        - packer-1.2.5-functional-orange:
+            branches: master
+        - packer-1.2.5-functional-telefonica:
+            branches: master
+        - packer-1.2.5-functional-huaweicloud:
+            branches: master
+        - packer-1.2.5-functional-devstack:
+            branches: master
     check:
       jobs:
         - packer-master-functional-devstack
