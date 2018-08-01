@@ -39,7 +39,7 @@
             _port_id=$(openstack port create --network openlab-jobs-net cf-huaweicloud-validator-port -f value -c id)
             STATIC_IP=$(openstack port show ${_port_id} -f value -c fixed_ips | grep -Eo '([0-9]+\.){3}[0-9]+')
             openstack port delete ${_port_id}
-            NETWORK_ID=$(openstack network show openlab-jobs-net -f value -c id)
+            SUBNET_ID=$(openstack subnet show openlab-jobs-subnet -f value -c id)
             INSTANCE_TYPE=$(openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column \
                 VCPUs | awk '{if($2>=2048 && $3>=2){print $1}}' | head -n 1)
             chmod 0600 cf-validator.rsa_id
@@ -53,7 +53,7 @@
             sed -i "/project/ s|<replace-me>|$OS_PROJECT_NAME|" validator.yml
             set -x
 
-            sed -i "/network_id/ s|<replace-me>|$NETWORK_ID|" validator.yml
+            sed -i "/network_id/ s|<replace-me>|$SUBNET_ID|" validator.yml
             sed -i "/floating_ip/ s|<replace-me>|{{ floating_ip }}|" validator.yml
             sed -i "/static_ip/ s|<replace-me>|$STATIC_IP|" validator.yml
             sed -i "/instance_type/ s|<replace-me>|$INSTANCE_TYPE|" validator.yml
