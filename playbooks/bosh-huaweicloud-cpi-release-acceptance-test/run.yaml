@@ -14,7 +14,8 @@
             set -ex
             pip install python-openstackclient
             pip install python-glanceclient==2.11.0
-            apt-get install -y build-essential zlibc zlib1g-dev ruby ruby-dev openssl libxslt-dev libxml2-dev libssl-dev libreadline6 libreadline6-dev libyaml-dev libsqlite3-dev sqlite3
+            apt-get install -y build-essential zlibc zlib1g-dev ruby ruby-dev openssl libxslt-dev libxml2-dev \
+                libssl-dev libreadline6 libreadline6-dev libyaml-dev libsqlite3-dev sqlite3
             gem install bundler
           args:
             executable: /bin/bash
@@ -53,7 +54,7 @@
             sed -i "/project/ s|<replace-me>|$OS_PROJECT_NAME|" validator.yml
             set -x
 
-            sed -i "/network_id/ s|<replace-me>|$SUBNET_ID|" validator.yml
+            sed -i "/subnet_id/ s|<replace-me>|$SUBNET_ID|" validator.yml
             sed -i "/floating_ip/ s|<replace-me>|{{ floating_ip }}|" validator.yml
             sed -i "/static_ip/ s|<replace-me>|$STATIC_IP|" validator.yml
             sed -i "/instance_type/ s|<replace-me>|$INSTANCE_TYPE|" validator.yml
@@ -79,6 +80,7 @@
           shell: |
             set -ex
             openstack floating ip delete "{{ floating_ip }}" || true
+            openstack keypair delete cf-huaweicloud-validator-"{{ zuul.build }}" || true
           args:
             executable: /bin/bash
           environment: '{{ global_env }}'
