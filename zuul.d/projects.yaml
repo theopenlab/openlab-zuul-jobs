@@ -43,7 +43,7 @@
 
 - project:
     name: liu-sheng/packer
-    check:#
+    check:
       jobs:
 #        - packer-1.2.5-functional-opentelekomcloud
 #        - packer-1.2.5-functional-orange
