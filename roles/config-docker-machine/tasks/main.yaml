@@ -7,7 +7,8 @@
     - name: install Docker machine from source
       shell: |
         set -ex
-        go get github.com/docker/machine
+        mkdir -p $GOPATH/src/github.com/docker/machine
+        cp -r '{{ zuul.project.src_dir }}' $GOPATH/src/github.com/docker/
         cd $GOPATH/src/github.com/docker/machine
         make build
         cp ./bin/docker-machine /usr/local/bin/

@@ -43,7 +43,7 @@
 
 - project:
     name: liu-sheng/packer
-    check:
+    check:#
       jobs:
 #        - packer-1.2.5-functional-opentelekomcloud
 #        - packer-1.2.5-functional-orange
@@ -58,9 +58,9 @@
       jobs:
         #- docker-machine-master-functional-devstack-mitaka
         - docker-machine-master-functional-opentelekomcloud
-        - docker-machine-maste-functional-orange
-        - docker-machine-maste-functional-telefonica
-        - docker-machine-maste-functional-huaweicloud
+        #- docker-machine-maste-functional-orange
+        #- docker-machine-maste-functional-telefonica
+        #- docker-machine-maste-functional-huaweicloud
 
 - project:
     name: zhongjun2/bosh-huaweicloud-cpi-release
