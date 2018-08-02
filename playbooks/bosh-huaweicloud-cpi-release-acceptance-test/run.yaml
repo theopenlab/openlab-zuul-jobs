@@ -75,6 +75,7 @@
             chmod +x validate
             bundle update fog-huaweicloud
             bundle install
+            sleep 7200
             ./validate -s bosh-stemcell-1.0-huaweicloud-xen-ubuntu-trusty-go_agent.tgz -c validator.yml -r bosh-huaweicloud-cpi.tgz
           args:
             executable: /bin/bash
