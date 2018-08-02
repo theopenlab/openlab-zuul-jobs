@@ -68,8 +68,3 @@
       jobs:
         - bosh-huaweicloud-cpi-release-acceptance-test
 
-- project:
-    name: liu-sheng/bosh-acceptance-tests
-    check:
-      jobs:
-        - bosh-acceptance-test-huaweicloud
