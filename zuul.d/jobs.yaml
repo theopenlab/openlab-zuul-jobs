@@ -618,3 +618,13 @@
       - zhongjun2/cf-huaweicloud-validator
     secrets:
       - huaweicloud_credentials
+
+- job:
+    name: bosh-acceptance-test-huaweicloud
+    parent: init-test
+    description: |
+      This job run tests of bosh-acceptance-test aganist Huaweicloud
+    run: playbooks/bosh-acceptance-test-huaweicloud/run.yaml
+    post-run: playbooks/bosh-acceptance-test-huaweicloud/post.yaml
+    secrets:
+      - huaweicloud_credentials

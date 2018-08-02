@@ -4,136 +4,134 @@
     - role: export-cloud-openrc
       vars:
         cloud_name: 'huaweicloud'
+  vars:
+    floating_ip: ''
   tasks:
-    - name: Install bosh and run bosh acceptance tests
-      shell:
-        cmd: |
-          set -x
-          set -e
-          set -o pipefail
+      block:
+        - name: Install required packages
+          shell: |
+            set -ex
+            curl -Lo ./bosh https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-3.0.1-linux-amd64
+            chmod +x ./bosh
+            mv ./bosh /usr/local/bin/bosh
+            pip install python-openstackclient
+            pip install python-glanceclient==2.11.0
+            apt-get install -y build-essential zlibc zlib1g-dev ruby ruby-dev openssl libxslt-dev libxml2-dev \
+                libssl-dev libreadline6 libreadline6-dev libyaml-dev libsqlite3-dev sqlite3
+          args:
+            executable: /bin/bash
 
-          SMALL_FLAVOR=$(openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column \
-              VCPUs | awk '{if($2>=1024 && $3>=1){print $1}}' | head -n 1)
-          MEDIUM_FLAVOR=$(openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column \
-              VCPUs | awk '{if($2>=2048 && $3>=2){print $1}}' | head -n 1)
-          LARGE_FLAVOR=$(openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column \
-              VCPUs | awk '{if($2>=8096 && $3>=8){print $1}}' | head -n 1)
-          NET_ID=$(openstack network show openlab-jobs-net -f value -c id)
-          SUBNET_ID=$(openstack subnet show openlab-jobs-subnet -f value -c id)
-          BUILD_ID="{{ zuul.build }}"
+        - name: Create floating ip
+          shell: |
+            openstack floating ip create admin_external_net -f value -c floating_ip_address
+          args:
+            executable: /bin/bash
+          environment: '{{ global_env }}'
+          register: floating_ip_adr
 
-          pip install python-openstackclient
-          curl -Lo ./bosh https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-3.0.1-linux-amd64
-          chmod +x ./bosh
-          cp ./bosh /usr/local/bin/bosh
-          bosh -v
-          apt-get install -y build-essential zlibc zlib1g-dev ruby ruby-dev openssl libxslt-dev libxml2-dev libssl-dev libreadline6 libreadline6-dev libyaml-dev libsqlite3-dev sqlite3
+        - name: Set floating ip variable
+          set_fact:
+            floating_ip: '{{ floating_ip_adr.stdout }}'
 
-          mkdir bosh-1 && cd bosh-1
-          git clone https://github.com/cloudfoundry/bosh-deployment.git
-          openstack keypair create microbosh-${BUILD_ID} > microbosh.pem
-          openstack security group create bosh-${BUILD_ID} --description 'BOSH Security Group'
-          openstack security group rule create --protocol tcp --ingress bosh-${BUILD_ID}
-          openstack security group rule create --protocol icmp --ingress bosh-${BUILD_ID}
+        - name: Install bosh and run bosh acceptance tests
+          shell:
+            cmd: |
+              set -xe
 
-          wget --content-disposition https://bosh.io/d/stemcells/bosh-openstack-kvm-ubuntu-trusty-go_agent -O bosh-openstack-kvm-ubuntu-trusty-go_agent.tgz
-          sed -i 's|https://bosh.io/d/stemcells/.*$|file://{{ ansible_user_dir }}/bosh-1/bosh-openstack-kvm-ubuntu-trusty-go_agent.tgz|' bosh-deployment/openstack/cpi.yml
-          sed -i "s/m1.small/${SMALL_FLAVOR}/g" `grep m1.small -rl bosh-deployment/openstack`
-          sed -i "s/m1.xlarge/${LARGE_FLAVOR}/g" `grep m1.xlarge -rl bosh-deployment/openstack`
-          sed -i '/^.*human_readable_vm_names.*$/ a\ \ \ \ state_timeout: 300000' bosh-deployment/openstack/cpi.yml
+              _port_id=$(openstack port create --network openlab-jobs-net bosh-port -f value -c id)
+              fixed_ip=$(openstack port show ${_port_id} -f value -c fixed_ips | grep -Eo '([0-9]+\.){3}[0-9]+')
+              openstack port delete ${_port_id}
 
-          # NOTE: We need an available ip for bosh deployment, so following port creation and deletion actions are just
-          # used to reserve an available ip address for bosh deployment
-          _port_id=$(openstack port create --network ${NET_ID} bosh-port -f value -c id)
-          bosh_ip=$(openstack port show ${_port_id} -f value -c fixed_ips | grep -Eo '([0-9]+\.){3}[0-9]+')
-          openstack port delete ${_port_id}
+              mkdir bosh-1 && cd bosh-1
+              git clone https://github.com/zhongjun2/bosh-deployment.git
+              openstack keypair create bosh-acc-hec-"{{ zuul.build }}" > bosh-acc-hec.pem
 
-          set +x
-          bosh create-env bosh-deployment/bosh.yml \
-              --state=state.json \
-              --vars-store=creds.yml \
-              -o bosh-deployment/openstack/cpi.yml \
-              -v director_name=bosh-1 \
-              -v internal_cidr=$(openstack subnet show ${SUBNET_ID} -f value -c cidr) \
-              -v internal_gw=$(openstack subnet show ${SUBNET_ID} -f value -c gateway_ip) \
-              -v internal_ip=${bosh_ip} \
-              -v auth_url=${OS_AUTH_URL} \
-              -v az=${OS_AVAILABILITY_ZONE} \
-              -v default_key_name=microbosh-${BUILD_ID} \
-              -v default_security_groups=[bosh-${BUILD_ID}] \
-              -v net_id=${NET_ID} \
-              -v openstack_password=${OS_PASSWORD} \
-              -v openstack_username=${OS_USERNAME} \
-              -v openstack_domain=${OS_DOMAIN_NAME} \
-              -v openstack_project=${OS_TENANT_NAME} \
-              -v private_key="{{ ansible_user_dir }}/bosh-1/microbosh.pem" \
-              -v region=${OS_REGION_NAME}
-          set -x
+              set +x
+              bosh create-env bosh-deployment/bosh.yml \
+                  --state=state.json \
+                  --vars-store=creds.yml \
+                  -o bosh-deployment/huaweicloud/cpi.yml \
+                  -o bosh-deployment/external-ip-not-recommended.yml \
+                  -v director_name=bosh-1 \
+                  -v internal_cidr=$(openstack subnet show openlab-jobs-subnet -f value -c cidr) \
+                  -v internal_gw=$(openstack subnet show openlab-jobs-subnet -f value -c gateway_ip) \
+                  -v internal_ip=${fixed_ip} \
+                  -v external_ip="{{ floating_ip }}" \
+                  -v auth_url=${OS_AUTH_URL} \
+                  -v az=ap-southeast-1a \
+                  -v default_key_name=bosh-acc-hec-"{{ zuul.build }}" \
+                  -v default_security_groups=[openlab-jobs-sg] \
+                  -v net_id=$(openstack network show openlab-jobs-net -f value -c id) \
+                  -v huaweicloud_password=${OS_PASSWORD} \
+                  -v huaweicloud_username=${OS_USERNAME} \
+                  -v huaweicloud_domain=${OS_DOMAIN_NAME} \
+                  -v huaweicloud_project=${OS_TENANT_NAME} \
+                  -v private_key="{{ ansible_user_dir }}/bosh-1/bosh-acc-hec.pem" \
+                  -v region=${OS_REGION_NAME}
+              set -x
 
-          bosh alias-env bosh-1 -e ${bosh_ip} --ca-cert <(bosh int ./creds.yml --path /director_ssl/ca)
-          export BOSH_CLIENT=admin
-          export BOSH_CLIENT_SECRET=`bosh int ./creds.yml --path /admin_password`
-          bosh -e bosh-1 env
+              bosh alias-env bosh-1 -e ${bosh_ip} --ca-cert <(bosh int ./creds.yml --path /director_ssl/ca)
+              export BOSH_CLIENT=admin
+              export BOSH_CLIENT_SECRET=`bosh int ./creds.yml --path /admin_password`
+              bosh -e bosh-1 env
 
-          # path to the stemcell you want to use for testing
-          export BAT_STEMCELL="{{ ansible_user_dir }}/bosh-1/bosh-openstack-kvm-ubuntu-trusty-go_agent.tgz"
+              export BAT_STEMCELL="{{ ansible_user_dir }}/bosh-1/bosh-openstack-kvm-ubuntu-trusty-go_agent.tgz"
+              export BAT_DEPLOYMENT_SPEC="{{ ansible_user_dir }}/bosh-1/bat.yml"
+              export BAT_BOSH_CLI=bosh
+              export BAT_DNS_HOST=8.8.8.8
+              export BAT_INFRASTRUCTURE=openstack
+              export BAT_NETWORKING=dynamic
+              export BAT_PRIVATE_KEY="{{ ansible_user_dir }}/bosh-1/bosh-acc-hec.pem"
+              export BAT_DEBUG_MODE=true
+              export BOSH_OS_BATS=true
+              export BOSH_ENVIRONMENT=bosh-1
 
-          # path to the bat yaml file which is used to generate the deployment manifest (see below `bat.yml`)
-          export BAT_DEPLOYMENT_SPEC="{{ ansible_user_dir }}/bosh-1/bat.yml"
+              SMALL_FLAVOR=$(openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column \
+                  VCPUs | awk '{if($2>=1024 && $3>=1){print $1}}' | head -n 1)
+              MEDIUM_FLAVOR=$(openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column \
+                  VCPUs | awk '{if($2>=2048 && $3>=2){print $1}}' | head -n 1)
+              LARGE_FLAVOR=$(openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column \
+                  VCPUs | awk '{if($2>=8096 && $3>=8){print $1}}' | head -n 1)
 
-          # BOSH CLI executable path
-          export BAT_BOSH_CLI=bosh
+              cat << EOF >> bat.yml
+              ---
+              cpi: openstack
+              properties:
+                stemcell:
+                  name: bosh-openstack-kvm-ubuntu-trusty-go_agent
+                  version: latest
+                pool_size: 1
+                instances: 1
+                instance_type: ${SMALL_FLAVOR}
+                availability_zone: ap-southeast-1a
+                flavor_with_no_ephemeral_disk: ${MEDIUM_FLAVOR}
+                vip: 0.0.0.43 # Virtual (public/floating) IP assigned to the bat-release job vm, for ssh testing
+                networks:
+                - name: default
+                  type: dynamic
+                  cloud_properties:
+                    net_id: $(openstack network show openlab-jobs-net -f value -c id) # Network ID
+                    security_groups: [openlab-jobs-sg] # security groups assigned to deployed VMs
+                key_name: bosh-acc-hec-"{{ zuul.build }}" # (optional) SSH keypair name
+              EOF
 
-          # DNS host or IP where BOSH-controlled PowerDNS server is running, which is required for the DNS tests. For example, if BAT is being run against a MicroBOSH then this value will be the same as BAT_DIRECTOR
-          export BAT_DNS_HOST=8.8.8.8
+              pushd '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}'
+              gem install bundler
+              bundle install
+              cp '{{ ansible_user_dir }}/bosh' /usr/local/bin/bosh
+              bundle exec rspec spec --tag ~raw_ephemeral_storage
+              popd
 
-          # the name of infrastructure that is used by bosh deployment. Examples: aws, vsphere, openstack, warden, oci.
-          export BAT_INFRASTRUCTURE=openstack
+            executable: /bin/bash
+            chdir: '{{ ansible_user_dir }}'
+          environment: '{{ global_env }}'
 
-          # the type of networking being used: `dynamic` or `manual`.
-          export BAT_NETWORKING=dynamic
-
-          # the path to ssh key, used by OS specs to ssh into BOSH VMs
-          export BAT_PRIVATE_KEY="{{ ansible_user_dir }}/bosh-1/microbosh.pem"
-
-          # Run tests with --fail-fast and skip cleanup in case of failure (optional)
-          export BAT_DEBUG_MODE=true
-
-          export BOSH_OS_BATS=true
-
-          export BOSH_ENVIRONMENT=bosh-1
-          # export BOSH_CLIENT=<director username>
-          # export BOSH_CLIENT_SECRET=<director password>
-          # export BOSH_CA_CERT=<director ca cert content or path>
-          cat << EOF >> bat.yml
-          ---
-          cpi: openstack
-          properties:
-            stemcell:
-              name: bosh-openstack-kvm-ubuntu-trusty-go_agent
-              version: latest
-            pool_size: 1
-            instances: 1
-            instance_type: ${SMALL_FLAVOR}
-            availability_zone: ${OS_AVAILABILITY_ZONE}
-            flavor_with_no_ephemeral_disk: ${MEDIUM_FLAVOR}
-            vip: 0.0.0.43 # Virtual (public/floating) IP assigned to the bat-release job vm, for ssh testing
-            networks:
-            - name: default
-              type: dynamic
-              cloud_properties:
-                net_id: ${NET_ID} # Network ID
-                security_groups: [bosh-${BUILD_ID}] # security groups assigned to deployed VMs
-            key_name: microbosh-${BUILD_ID} # (optional) SSH keypair name
-          EOF
-
-          pushd '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}'
-          gem install bundler
-          bundle install
-          cp '{{ ansible_user_dir }}/bosh' /usr/local/bin/bosh
-          bundle exec rspec spec --tag ~raw_ephemeral_storage
-          popd
-
-        executable: /bin/bash
-        chdir: '{{ ansible_user_dir }}'
-      environment: '{{ global_env }}'
+      always:
+        - name: Cleanup resources
+          shell: |
+            set -ex
+            openstack floating ip delete "{{ floating_ip }}" || true
+            openstack keypair delete bosh-acc-hec-"{{ zuul.build }}" || true
+          args:
+            executable: /bin/bash
+          environment: '{{ global_env }}'
