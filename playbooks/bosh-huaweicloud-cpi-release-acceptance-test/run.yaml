@@ -12,13 +12,19 @@
         - name: Install required packages
           shell: |
             set -ex
+            curl -Lo ./bosh https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-3.0.1-linux-amd64
+            chmod +x ./bosh
+            mv ./bosh /usr/local/bin/bosh
             pip install python-openstackclient
             pip install python-glanceclient==2.11.0
             apt-get install -y build-essential zlibc zlib1g-dev ruby ruby-dev openssl libxslt-dev libxml2-dev \
                 libssl-dev libreadline6 libreadline6-dev libyaml-dev libsqlite3-dev sqlite3
             gem install bundler
+            bosh create-release --force --tarball bosh-huaweicloud-cpi.tgz
+            cp bosh-huaweicloud-cpi.tgz '{{ ansible_user_dir }}/src/github.com/zhongjun2/cf-huaweicloud-validator'
           args:
             executable: /bin/bash
+            chdir: '{{ zuul.project.src_dir }}'
 
         - name: Create floating ip
           shell: |
@@ -69,8 +75,7 @@
             chmod +x validate
             bundle update fog-huaweicloud
             bundle install
-            sleep 7200
-            ./validate -s bosh-stemcell-1.0-huaweicloud-xen-ubuntu-trusty-go_agent.tgz -c validator.yml
+            ./validate -s bosh-stemcell-1.0-huaweicloud-xen-ubuntu-trusty-go_agent.tgz -c validator.yml -r bosh-huaweicloud-cpi.tgz
           args:
             executable: /bin/bash
             chdir: '{{ ansible_user_dir }}/src/github.com/zhongjun2/cf-huaweicloud-validator'
