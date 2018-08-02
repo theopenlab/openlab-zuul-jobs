@@ -11,8 +11,8 @@
           set -e
           set -x
           # Cloud provider specific variables
-          NET_ID="134ca339-24dc-44f5-ae6a-cf0404216ed2"
-          SUBNET_ID="3d6e9157-655f-42ec-9778-94d455730e5c"
+          NET_ID=$(openstack network show openlab-jobs-net -f value -c id)
+          SUBNET_ID=$(openstack subnet show openlab-jobs-subnet -f value -c id)
           BUILD_ID="{{ zuul.build }}"
 
           cd bosh-1
