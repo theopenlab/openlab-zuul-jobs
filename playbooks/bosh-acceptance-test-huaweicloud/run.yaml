@@ -45,7 +45,7 @@
 
               mkdir bosh-1 && cd bosh-1
               git clone https://github.com/zhongjun2/bosh-deployment.git
-              openstack keypair create bosh-acc-hec-"{{ zuul.build }}" > bosh-acc-hec.pem
+              openstack keypair create bosh-acc-huaweicloud-"{{ zuul.build }}" > bosh-acc-huaweicloud.pem
 
               set +x
               bosh create-env bosh-deployment/bosh.yml \
@@ -60,14 +60,14 @@
                   -v external_ip="{{ floating_ip }}" \
                   -v auth_url=${OS_AUTH_URL} \
                   -v az=ap-southeast-1a \
-                  -v default_key_name=bosh-acc-hec-"{{ zuul.build }}" \
+                  -v default_key_name=bosh-acc-huaweicloud-"{{ zuul.build }}" \
                   -v default_security_groups=[openlab-jobs-sg] \
                   -v subnet_id=$(openstack network show openlab-jobs-net -f value -c id) \
                   -v huaweicloud_password=${OS_PASSWORD} \
                   -v huaweicloud_username=${OS_USERNAME} \
                   -v huaweicloud_domain=${OS_DOMAIN_NAME} \
                   -v huaweicloud_project=${OS_TENANT_NAME} \
-                  -v private_key="{{ ansible_user_dir }}/bosh-1/bosh-acc-hec.pem" \
+                  -v private_key="{{ ansible_user_dir }}/bosh-1/bosh-acc-huaweicloud.pem" \
                   -v region=${OS_REGION_NAME}
               set -x
 
@@ -76,13 +76,13 @@
               export BOSH_CLIENT_SECRET=`bosh int ./creds.yml --path /admin_password`
               bosh -e bosh-1 env
 
-              export BAT_STEMCELL="{{ ansible_user_dir }}/bosh-1/bosh-openstack-kvm-ubuntu-trusty-go_agent.tgz"
+              export BAT_STEMCELL="{{ ansible_user_dir }}/bosh-1/bosh-huaweicloud-xen-ubuntu-trusty-go_agent.tgz"
               export BAT_DEPLOYMENT_SPEC="{{ ansible_user_dir }}/bosh-1/bat.yml"
               export BAT_BOSH_CLI=bosh
               export BAT_DNS_HOST=8.8.8.8
               export BAT_INFRASTRUCTURE=openstack
               export BAT_NETWORKING=dynamic
-              export BAT_PRIVATE_KEY="{{ ansible_user_dir }}/bosh-1/bosh-acc-hec.pem"
+              export BAT_PRIVATE_KEY="{{ ansible_user_dir }}/bosh-1/bosh-acc-huaweicloud.pem"
               export BAT_DEBUG_MODE=true
               export BOSH_OS_BATS=true
               export BOSH_ENVIRONMENT=bosh-1
@@ -99,7 +99,7 @@
               cpi: openstack
               properties:
                 stemcell:
-                  name: bosh-openstack-kvm-ubuntu-trusty-go_agent
+                  name: bosh-huaweicloud-xen-ubuntu-trusty-go_agent
                   version: latest
                 pool_size: 1
                 instances: 1
@@ -113,7 +113,7 @@
                   cloud_properties:
                     net_id: $(openstack network show openlab-jobs-net -f value -c id) # Network ID
                     security_groups: [openlab-jobs-sg] # security groups assigned to deployed VMs
-                key_name: bosh-acc-hec-"{{ zuul.build }}" # (optional) SSH keypair name
+                key_name: bosh-acc-huaweicloud-"{{ zuul.build }}" # (optional) SSH keypair name
               EOF
 
               pushd '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}'
@@ -132,7 +132,7 @@
           shell: |
             set -ex
             openstack floating ip delete "{{ floating_ip }}" || true
-            openstack keypair delete bosh-acc-hec-"{{ zuul.build }}" || true
+            openstack keypair delete bosh-acc-huaweicloud-"{{ zuul.build }}" || true
 
             cd bosh-1
             export BOSH_CLIENT=admin
@@ -165,14 +165,14 @@
                 -v internal_ip=${bosh_ip} \
                 -v auth_url=${OS_AUTH_URL} \
                 -v az=ap-southeast-1a \
-                -v default_key_name=bosh-acc-hec-"{{ zuul.build }}" \
+                -v default_key_name=bosh-acc-huaweicloud-"{{ zuul.build }}" \
                 -v default_security_groups=[openlab-jobs-sg] \
                 -v subnet_id=$(openstack network show openlab-jobs-net -f value -c id) \
                 -v huaweicloud_password=${OS_PASSWORD} \
                 -v huaweicloud_username=${OS_USERNAME} \
                 -v huaweicloud_domain=${OS_DOMAIN_NAME} \
                 -v huaweicloud_project=${OS_TENANT_NAME} \
-                -v private_key="{{ ansible_user_dir }}/bosh-1/bosh-acc-hec.pem" \
+                -v private_key="{{ ansible_user_dir }}/bosh-1/bosh-acc-huaweicloud.pem" \
                 -v region=${OS_REGION_NAME}
             set -x
           args:

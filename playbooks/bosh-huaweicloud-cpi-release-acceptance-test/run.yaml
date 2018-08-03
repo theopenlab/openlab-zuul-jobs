@@ -72,7 +72,7 @@
             mkdir -p '{{ ansible_user_dir }}/workspace/logs/'
             mkdir -p ~/.cf-openstack-validator/logs
             ln -s ~/.cf-openstack-validator/logs '{{ ansible_user_dir }}/workspace/logs/cpi-logs'
-            curl -O https://obs-bosh-otc.obs.otc.t-systems.com/bosh-stemcell-1.0-huaweicloud-xen-ubuntu-trusty-go_agent.tgz
+            curl -O https://obs-bosh.obs.otc.t-systems.com/bosh-stemcell-1.0-huaweicloud-xen-ubuntu-trusty-go_agent.tgz
             chmod +x validate
             bundle update fog-huaweicloud
             bundle install
