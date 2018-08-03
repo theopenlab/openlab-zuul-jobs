@@ -134,9 +134,6 @@
         - name: Cleanup resources
           shell: |
             set -ex
-            openstack floating ip delete "{{ floating_ip }}" || true
-            openstack keypair delete bosh-acc-huaweicloud-"{{ zuul.build }}" || true
-
             cd bosh-1
             export BOSH_CLIENT=admin
             export BOSH_CLIENT_SECRET=`bosh int ./creds.yml --path /admin_password`
@@ -178,6 +175,8 @@
                 -v private_key="{{ ansible_user_dir }}/bosh-1/bosh-acc-huaweicloud.pem" \
                 -v region=${OS_REGION_NAME}
             set -x
+            openstack floating ip delete "{{ floating_ip }}" || true
+            openstack keypair delete bosh-acc-huaweicloud-"{{ zuul.build }}" || true
           args:
             executable: /bin/bash
             chdir: '{{ ansible_user_dir }}'
