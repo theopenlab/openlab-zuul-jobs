@@ -7,6 +7,7 @@
   vars:
     floating_ip: ''
   tasks:
+    - name: Test bosh acceptance tests against huaweicloud
       block:
         - name: Install required packages
           shell: |
