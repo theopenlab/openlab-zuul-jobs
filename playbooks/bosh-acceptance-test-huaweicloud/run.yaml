@@ -120,7 +120,6 @@
               pushd '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}'
               gem install bundler
               bundle install
-              cp '{{ ansible_user_dir }}/bosh' /usr/local/bin/bosh
               bundle exec rspec spec --tag ~raw_ephemeral_storage
               popd
 
