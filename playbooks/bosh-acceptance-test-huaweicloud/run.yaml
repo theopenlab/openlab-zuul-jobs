@@ -38,6 +38,7 @@
           shell:
             cmd: |
               set -xe
+              set -o pipefail
 
               _port_id=$(openstack port create --network openlab-jobs-net bosh-port -f value -c id)
               fixed_ip=$(openstack port show ${_port_id} -f value -c fixed_ips | grep -Eo '([0-9]+\.){3}[0-9]+')
