@@ -70,7 +70,7 @@
 
 
 - project:
-    name: liu-sheng/machine
+    name: liu-sheng/bosh-acceptance-tests
     check:
       jobs:
         - bosh-acceptance-test-huaweicloud
