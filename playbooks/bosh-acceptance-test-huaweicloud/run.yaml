@@ -52,7 +52,7 @@
                   --state=state.json \
                   --vars-store=creds.yml \
                   -o bosh-deployment/huaweicloud/cpi.yml \
-                  -o bosh-deployment/external-ip-not-recommended.yml \
+                  -o bosh-deployment/external-ip-with-registry-not-recommended.yml \
                   -v director_name=bosh-1 \
                   -v internal_cidr=$(openstack subnet show openlab-jobs-subnet -f value -c cidr) \
                   -v internal_gw=$(openstack subnet show openlab-jobs-subnet -f value -c gateway_ip) \
@@ -158,7 +158,7 @@
                 --state=state.json \
                 --vars-store=creds.yml \
                 -o bosh-deployment/huaweicloud/cpi.yml \
-                -o bosh-deployment/external-ip-not-recommended.yml \
+                -o bosh-deployment/external-ip-with-registry-not-recommended.yml \
                 -v director_name=bosh-1 \
                 -v internal_cidr=$(openstack subnet show openlab-jobs-subnet -f value -c cidr) \
                 -v internal_gw=$(openstack subnet show openlab-jobs-subnet -f value -c gateway_ip) \
