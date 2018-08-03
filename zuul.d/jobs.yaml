@@ -625,6 +625,5 @@
     description: |
       This job run tests of bosh-acceptance-test aganist Huaweicloud
     run: playbooks/bosh-acceptance-test-huaweicloud/run.yaml
-    post-run: playbooks/bosh-acceptance-test-huaweicloud/post.yaml
     secrets:
       - huaweicloud_credentials

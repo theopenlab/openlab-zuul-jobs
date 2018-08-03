@@ -62,7 +62,7 @@
                   -v az=ap-southeast-1a \
                   -v default_key_name=bosh-acc-hec-"{{ zuul.build }}" \
                   -v default_security_groups=[openlab-jobs-sg] \
-                  -v net_id=$(openstack network show openlab-jobs-net -f value -c id) \
+                  -v subnet_id=$(openstack network show openlab-jobs-net -f value -c id) \
                   -v huaweicloud_password=${OS_PASSWORD} \
                   -v huaweicloud_username=${OS_USERNAME} \
                   -v huaweicloud_domain=${OS_DOMAIN_NAME} \
@@ -133,6 +133,49 @@
             set -ex
             openstack floating ip delete "{{ floating_ip }}" || true
             openstack keypair delete bosh-acc-hec-"{{ zuul.build }}" || true
+
+            cd bosh-1
+            export BOSH_CLIENT=admin
+            export BOSH_CLIENT_SECRET=`bosh int ./creds.yml --path /admin_password`
+            bosh_ip=$(bosh environments --column=URL)
+            bosh alias-env bosh-1 -e ${bosh_ip} --ca-cert <(bosh int ./creds.yml --path /director_ssl/ca)
+            bosh -e bosh-1 env
+            for vm_id in $(bosh -e bosh-1 vms --column="VM CID"); do
+                bosh -e bosh-1 -d bat --non-interactive delete-vm ${vm_id}
+            done
+            for vol_id in $(bosh -e bosh-1 disks --orphaned); do
+                bosh -e bosh-1 --non-interactive delete-disk ${vol_id}
+            done
+            for dep_name in $(bosh -e bosh-1 deployments --column="Name"); do
+                bosh -e bosh-1 --non-interactive delete-deployment -d ${dep_name}
+            done
+            for img_id in $(bosh -e bosh-1 ss --column=CID); do
+                img_name=$(openstack image show $img_id -f value -c name)
+                bosh -e bosh-1 --non-interactive delete-stemcell $img_name
+            done
+            set +x
+            bosh delete-env bosh-deployment/bosh.yml \
+                --state=state.json \
+                --vars-store=creds.yml \
+                -o bosh-deployment/huaweicloud/cpi.yml \
+                -o bosh-deployment/external-ip-not-recommended.yml \
+                -v director_name=bosh-1 \
+                -v internal_cidr=$(openstack subnet show openlab-jobs-subnet -f value -c cidr) \
+                -v internal_gw=$(openstack subnet show openlab-jobs-subnet -f value -c gateway_ip) \
+                -v internal_ip=${bosh_ip} \
+                -v auth_url=${OS_AUTH_URL} \
+                -v az=ap-southeast-1a \
+                -v default_key_name=bosh-acc-hec-"{{ zuul.build }}" \
+                -v default_security_groups=[openlab-jobs-sg] \
+                -v subnet_id=$(openstack network show openlab-jobs-net -f value -c id) \
+                -v huaweicloud_password=${OS_PASSWORD} \
+                -v huaweicloud_username=${OS_USERNAME} \
+                -v huaweicloud_domain=${OS_DOMAIN_NAME} \
+                -v huaweicloud_project=${OS_TENANT_NAME} \
+                -v private_key="{{ ansible_user_dir }}/bosh-1/bosh-acc-hec.pem" \
+                -v region=${OS_REGION_NAME}
+            set -x
           args:
             executable: /bin/bash
+            chdir: '{{ ansible_user_dir }}'
           environment: '{{ global_env }}'
