@@ -37,6 +37,18 @@
             branches: stable-2.6
         - openstacksdk-ansible-stable-2.6-functional-orange:
             branches: stable-2.6
+        - openstacksdk-ansible-stable-2.6-functional-devstack:
+            branches: stable-2.6
+        - openstacksdk-ansible-stable-2.6-functional-devstack-queens:
+            branches: stable-2.6
+        - openstacksdk-ansible-stable-2.6-functional-devstack-pike:
+            branches: stable-2.6
+        - openstacksdk-ansible-stable-2.6-functional-devstack-ocata:
+            branches: stable-2.6
+        - openstacksdk-ansible-stable-2.6-functional-devstack-newton:
+            branches: stable-2.6
+        - openstacksdk-ansible-stable-2.6-functional-devstack-mitaka:
+            branches: stable-2.6
 
 - project:
     name: theopenlab/packer
@@ -51,6 +63,16 @@
         - packer-1.2.5-functional-huaweicloud:
             branches: master
         - packer-1.2.5-functional-devstack:
+            branches: master
+        - packer-1.2.5-functional-devstack-queens:
+            branches: master
+        - packer-1.2.5-functional-devstack-pike:
+            branches: master
+        - packer-1.2.5-functional-devstack-ocata:
+            branches: master
+        - packer-1.2.5-functional-devstack-newton:
+            branches: master
+        - packer-1.2.5-functional-devstack-mitaka:
             branches: master
     check:
       jobs:

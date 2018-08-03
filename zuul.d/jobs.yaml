@@ -190,6 +190,7 @@
     run: playbooks/openlab-zuul-jobs-check/run.yaml
     vars:
       excluded_path: "playbooks/base/*"
+    nodeset: ubuntu-xenial-ut
 
 # Deprecated (Kubernetes nested scenario)
 - job:
@@ -368,6 +369,87 @@
       os_sdk: openstacksdk
 
 - job:
+    name: openstacksdk-ansible-stable-2.6-functional-devstack-queens
+    parent: init-test
+    description: |
+      Run openstacksdk ansible functional tests against a queens devstack
+      using git stable-2.6 branch version of ansible.
+    run: playbooks/ansible-functional-devstack/run.yaml
+    required-projects:
+      - name: ansible/ansible
+        override-checkout: stable-2.6
+      - openstack/openstacksdk
+    vars:
+      os_sdk: openstacksdk
+      global_env:
+        OS_BRANCH: stable/queens
+
+- job:
+    name: openstacksdk-ansible-stable-2.6-functional-devstack-pike
+    parent: init-test
+    description: |
+      Run openstacksdk ansible functional tests against a pike devstack
+      using git stable-2.6 branch version of ansible.
+    run: playbooks/ansible-functional-devstack/run.yaml
+    required-projects:
+      - name: ansible/ansible
+        override-checkout: stable-2.6
+      - openstack/openstacksdk
+    vars:
+      os_sdk: openstacksdk
+      global_env:
+        OS_BRANCH: stable/pike
+
+- job:
+    name: openstacksdk-ansible-stable-2.6-functional-devstack-ocata
+    parent: init-test
+    description: |
+      Run openstacksdk ansible functional tests against a ocata devstack
+      using git stable-2.6 branch version of ansible.
+    run: playbooks/ansible-functional-devstack/run.yaml
+    required-projects:
+      - name: ansible/ansible
+        override-checkout: stable-2.6
+      - openstack/openstacksdk
+    vars:
+      os_sdk: openstacksdk
+      global_env:
+        OS_BRANCH: stable/ocata
+
+- job:
+    name: openstacksdk-ansible-stable-2.6-functional-devstack-newton
+    parent: init-test
+    description: |
+      Run openstacksdk ansible functional tests against a newton devstack
+      using git stable-2.6 branch version of ansible.
+    run: playbooks/ansible-functional-devstack/run.yaml
+    required-projects:
+      - name: ansible/ansible
+        override-checkout: stable-2.6
+      - openstack/openstacksdk
+    vars:
+      os_sdk: openstacksdk
+      global_env:
+        OS_BRANCH: stable/newton
+
+- job:
+    name: openstacksdk-ansible-stable-2.6-functional-devstack-mitaka
+    parent: init-test
+    description: |
+      Run openstacksdk ansible functional tests against a mitaka devstack
+      using git stable-2.6 branch version of ansible.
+    run: playbooks/ansible-functional-devstack/run.yaml
+    required-projects:
+      - name: ansible/ansible
+        override-checkout: stable-2.6
+      - openstack/openstacksdk
+    vars:
+      os_sdk: openstacksdk
+      global_env:
+        OS_BRANCH: stable/mitaka
+    nodeset: ubuntu-trusty
+
+- job:
     name: shade-ansible-stable-2.5-functional-devstack
     parent: init-test
     description: |
@@ -474,10 +556,66 @@
     name: packer-1.2.5-functional-devstack
     parent: init-test
     description: |
-      Test image building functionality of Packer of version 1.2.5 against devstack.
+      Test image building functionality of Packer of version 1.2.5 against master devstack.
     run: playbooks/packer-functional-devstack/run.yaml
     vars:
       packer_version: 1.2.5
+
+- job:
+    name: packer-1.2.5-functional-devstack-queens
+    parent: init-test
+    description: |
+      Test image building functionality of Packer of version 1.2.5 against queens devstack.
+    run: playbooks/packer-functional-devstack/run.yaml
+    vars:
+      packer_version: 1.2.5
+      global_env:
+        OS_BRANCH: stable/queens
+
+- job:
+    name: packer-1.2.5-functional-devstack-pike
+    parent: init-test
+    description: |
+      Test image building functionality of Packer of version 1.2.5 against pike devstack.
+    run: playbooks/packer-functional-devstack/run.yaml
+    vars:
+      packer_version: 1.2.5
+      global_env:
+        OS_BRANCH: stable/pike
+
+- job:
+    name: packer-1.2.5-functional-devstack-ocata
+    parent: init-test
+    description: |
+      Test image building functionality of Packer of version 1.2.5 against ocata devstack.
+    run: playbooks/packer-functional-devstack/run.yaml
+    vars:
+      packer_version: 1.2.5
+      global_env:
+        OS_BRANCH: stable/ocata
+
+- job:
+    name: packer-1.2.5-functional-devstack-newton
+    parent: init-test
+    description: |
+      Test image building functionality of Packer of version 1.2.5 against newton devstack.
+    run: playbooks/packer-functional-devstack/run.yaml
+    vars:
+      packer_version: 1.2.5
+      global_env:
+        OS_BRANCH: stable/newton
+
+- job:
+    name: packer-1.2.5-functional-devstack-mitaka
+    parent: init-test
+    description: |
+      Test image building functionality of Packer of version 1.2.5 against mitaka devstack.
+    run: playbooks/packer-functional-devstack/run.yaml
+    vars:
+      packer_version: 1.2.5
+      global_env:
+        OS_BRANCH: stable/mitaka
+    nodeset: ubuntu-trusty
 
 - job:
     name: docker-machine-0.15.0-functional-opentelekomcloud
