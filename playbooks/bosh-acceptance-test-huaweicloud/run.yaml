@@ -71,7 +71,7 @@
                   -v region=${OS_REGION_NAME}
               set -x
 
-              bosh alias-env bosh-1 -e ${bosh_ip} --ca-cert <(bosh int ./creds.yml --path /director_ssl/ca)
+              bosh alias-env bosh-1 -e "{{ floating_ip }}" --ca-cert <(bosh int ./creds.yml --path /director_ssl/ca)
               export BOSH_CLIENT=admin
               export BOSH_CLIENT_SECRET=`bosh int ./creds.yml --path /admin_password`
               bosh -e bosh-1 env
