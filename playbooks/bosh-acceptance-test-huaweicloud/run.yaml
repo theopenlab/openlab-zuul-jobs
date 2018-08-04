@@ -148,6 +148,7 @@
             for dep_name in $(bosh -e bosh-1 deployments --column="Name"); do
                 bosh -e bosh-1 --non-interactive delete-deployment -d ${dep_name}
             done
+            sleep 7200
             for img_id in $(bosh -e bosh-1 ss --column=CID); do
                 img_name=$(openstack image show $img_id -f value -c name)
                 bosh -e bosh-1 --non-interactive delete-stemcell $img_name
