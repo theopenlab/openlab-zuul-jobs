@@ -136,9 +136,7 @@
             cd bosh-1
             export BOSH_CLIENT=admin
             export BOSH_CLIENT_SECRET=`bosh int ./creds.yml --path /admin_password`
-            bosh_ip=$(bosh environments --column=URL)
-            bosh alias-env bosh-1 -e ${bosh_ip} --ca-cert <(bosh int ./creds.yml --path /director_ssl/ca)
-            bosh -e bosh-1 env
+            bosh -e bosh-1 clean-up --all --non-interactive
             for vm_id in $(bosh -e bosh-1 vms --column="VM CID"); do
                 bosh -e bosh-1 -d bat --non-interactive delete-vm ${vm_id}
             done
@@ -148,7 +146,6 @@
             for dep_name in $(bosh -e bosh-1 deployments --column="Name"); do
                 bosh -e bosh-1 --non-interactive delete-deployment -d ${dep_name}
             done
-            sleep 7200
             for img_id in $(bosh -e bosh-1 ss --column=CID); do
                 img_name=$(openstack image show $img_id -f value -c name)
                 bosh -e bosh-1 --non-interactive delete-stemcell $img_name
