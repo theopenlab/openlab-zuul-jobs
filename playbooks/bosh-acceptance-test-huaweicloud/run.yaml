@@ -91,7 +91,6 @@
               export BAT_INFRASTRUCTURE=openstack
               export BAT_NETWORKING=dynamic
               export BAT_PRIVATE_KEY="{{ ansible_user_dir }}/bosh-1/bosh-acc-huaweicloud.pem"
-              export BAT_DEBUG_MODE=true
               export BOSH_OS_BATS=true
               export BOSH_ENVIRONMENT=bosh-1
 
