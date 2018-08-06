@@ -114,7 +114,7 @@
                 instance_type: ${SMALL_FLAVOR}
                 availability_zone: ap-southeast-1a
                 flavor_with_no_ephemeral_disk: ${MEDIUM_FLAVOR}
-                vip: 0.0.0.43 # Virtual (public/floating) IP assigned to the bat-release job vm, for ssh testing
+                vip: $(openstack floating ip create admin_external_net -f value -c floating_ip_address)
                 networks:
                 - name: default
                   type: dynamic
