@@ -44,7 +44,6 @@
           export OS_IMAGE_NAME="Ubuntu 16.04 Server 64bit"
           export OS_TENANT_ID=$(openstack token issue -f value -c project_id)
           export OS_NETWORK_NAME=openlab-jobs-net
-          export OS_SSH_USER="ubuntu"
           export OS_FLOATINGIP_POOL="admin_external_net"
           export OS_SECURITY_GROUPS="openlab-jobs-sg"
           export OS_SSH_USER="{{ ssh_user | default('ubuntu') }}"
