@@ -564,47 +564,51 @@
     nodeset: ubuntu-trusty
 
 - job:
-    name: docker-machine-master-functional-opentelekomcloud
+    name: docker-machine-0.15.0-functional-opentelekomcloud
     parent: init-test
     description: |
-      Test functionalities of Docker machine of master against opentelekomcloud.
+      Test functionalities of Docker machine of 0.15.0 version against opentelekomcloud.
     run: playbooks/docker-machine-functional-public-clouds/run.yaml
     vars:
       cloud_name: opentelekomcloud
+      docker_machine_version: 0.15.0
     secrets:
       - opentelekomcloud_credentials
 
 - job:
-    name: docker-machine-maste-functional-orange
+    name: docker-machine-0.15.0-functional-orange
     parent: init-test
     description: |
-      Test functionalities of Docker machine of master against orange.
+      Test functionalities of Docker machine of 0.15.0 version against orange.
     run: playbooks/docker-machine-functional-public-clouds/run.yaml
     vars:
       cloud_name: orange
+      docker_machine_version: 0.15.0
     secrets:
       - orange_credentials
 
 - job:
-    name: docker-machine-maste-functional-telefonica
+    name: docker-machine-0.15.0-functional-telefonica
     parent: init-test
     description: |
-      Test functionalities of Docker machine of master against telefonica.
+      Test functionalities of Docker machine of 0.15.0 version against telefonica.
     run: playbooks/docker-machine-functional-public-clouds/run.yaml
     vars:
       cloud_name: telefonica
+      docker_machine_version: 0.15.0
       ssh_user: linux
     secrets:
       - telefonica_credentials
 
 - job:
-    name: docker-machine-maste-functional-huaweicloud
+    name: docker-machine-0.15.0-functional-huaweicloud
     parent: init-test
     description: |
-      Test functionalities of Docker machine of master against huaweicloud.
+      Test functionalities of Docker machine of 0.15.0 version against huaweicloud.
     run: playbooks/docker-machine-functional-public-clouds/run.yaml
     vars:
       cloud_name: huaweicloud
+      docker_machine_version: 0.15.0
     secrets:
       - huaweicloud_credentials
 
