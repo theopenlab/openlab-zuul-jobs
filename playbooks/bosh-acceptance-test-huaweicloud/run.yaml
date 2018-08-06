@@ -101,7 +101,7 @@
               cpi: openstack
               properties:
                 stemcell:
-                  name: bosh-stemcell-1.0-huaweicloud-xen-ubuntu-trusty-go_agent
+                  name: bosh-huaweicloud-xen-ubuntu-trusty-go_agent/1.0
                   version: latest
                 pool_size: 1
                 instances: 1
@@ -150,6 +150,7 @@
                 img_name=$(openstack image show $img_id -f value -c name)
                 bosh -e bosh-1 --non-interactive delete-stemcell $img_name
             done
+            sleep 7200
             set +x
             bosh delete-env bosh-deployment/bosh.yml \
                 --state=state.json \
