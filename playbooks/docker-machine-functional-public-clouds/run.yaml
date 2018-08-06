@@ -15,7 +15,7 @@
           popd
 
           mkdir -p $GOPATH/src/github.com/docker/machine
-          cp -r '{{ zuul.project.src_dir }}' $GOPATH/src/github.com/docker/
+          cp -r '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}' $GOPATH/src/github.com/docker/
           pushd $GOPATH/src/github.com/docker/machine
           make build
           cp ./bin/docker-machine /usr/local/bin/
