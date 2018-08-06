@@ -124,7 +124,6 @@
               EOF
 
               pushd '{{ ansible_user_dir }}/src/github.com/liu-sheng/bosh-acceptance-tests'
-              sed -i -e "s/net_id/subnet_id/g" ./templates/openstack.yml.erb
               gem install bundler
               bundle install
               cp '{{ ansible_user_dir }}/bosh' /usr/local/bin/bosh
