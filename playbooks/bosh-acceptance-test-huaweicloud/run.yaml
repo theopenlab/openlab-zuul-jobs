@@ -128,7 +128,7 @@
               gem install bundler
               bundle install
               cp '{{ ansible_user_dir }}/bosh' /usr/local/bin/bosh
-              bundle exec rspec spec --tag ~raw_ephemeral_storage
+              bundle exec rspec spec --tag core
               popd
 
             executable: /bin/bash
