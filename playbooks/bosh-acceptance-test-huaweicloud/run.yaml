@@ -50,28 +50,34 @@
               openstack keypair create bosh-acc-huaweicloud-"{{ zuul.build }}" > bosh-acc-huaweicloud.pem
 
               set +x
+              cat << EOF >> vars.yml
+              ---
+              director_name: bosh-1
+              internal_cidr: $(openstack subnet show openlab-jobs-subnet -f value -c cidr)
+              internal_gw: $(openstack subnet show openlab-jobs-subnet -f value -c gateway_ip)
+              internal_ip: ${fixed_ip}
+              external_ip: "{{ floating_ip }}"
+              auth_url: ${OS_AUTH_URL}
+              az: ap-southeast-1a
+              default_key_name: bosh-acc-huaweicloud-"{{ zuul.build }}"
+              default_security_groups: [openlab-jobs-sg]
+              subnet_id: $(openstack network show openlab-jobs-net -f value -c id)
+              huaweicloud_password: ${OS_PASSWORD}
+              huaweicloud_username: ${OS_USERNAME}
+              huaweicloud_domain: ${OS_DOMAIN_NAME}
+              huaweicloud_project: ${OS_TENANT_NAME}
+              private_key: "{{ ansible_user_dir }}/bosh-1/bosh-acc-huaweicloud.pem"
+              region: ${OS_REGION_NAME}
+
+              EOF
+              set -x
+
               bosh create-env bosh-deployment/bosh.yml \
                   --state=state.json \
                   --vars-store=creds.yml \
                   -o bosh-deployment/huaweicloud/cpi.yml \
                   -o bosh-deployment/external-ip-with-registry-not-recommended.yml \
-                  -v director_name=bosh-1 \
-                  -v internal_cidr=$(openstack subnet show openlab-jobs-subnet -f value -c cidr) \
-                  -v internal_gw=$(openstack subnet show openlab-jobs-subnet -f value -c gateway_ip) \
-                  -v internal_ip=${fixed_ip} \
-                  -v external_ip="{{ floating_ip }}" \
-                  -v auth_url=${OS_AUTH_URL} \
-                  -v az=ap-southeast-1a \
-                  -v default_key_name=bosh-acc-huaweicloud-"{{ zuul.build }}" \
-                  -v default_security_groups=[openlab-jobs-sg] \
-                  -v subnet_id=$(openstack network show openlab-jobs-net -f value -c id) \
-                  -v huaweicloud_password=${OS_PASSWORD} \
-                  -v huaweicloud_username=${OS_USERNAME} \
-                  -v huaweicloud_domain=${OS_DOMAIN_NAME} \
-                  -v huaweicloud_project=${OS_TENANT_NAME} \
-                  -v private_key="{{ ansible_user_dir }}/bosh-1/bosh-acc-huaweicloud.pem" \
-                  -v region=${OS_REGION_NAME}
-              set -x
+                  --vars-file=vars.yml
 
               bosh alias-env bosh-1 -e "{{ floating_ip }}" --ca-cert <(bosh int ./creds.yml --path /director_ssl/ca)
               export BOSH_CLIENT=admin
@@ -101,7 +107,7 @@
               cpi: openstack
               properties:
                 stemcell:
-                  name: bosh-huaweicloud-xen-ubuntu-trusty-go_agent/1.0
+                  name: bosh-huaweicloud-xen-ubuntu-trusty-go_agent
                   version: latest
                 pool_size: 1
                 instances: 1
@@ -150,29 +156,13 @@
                 img_name=$(openstack image show $img_id -f value -c name)
                 bosh -e bosh-1 --non-interactive delete-stemcell $img_name
             done
-            sleep 7200
-            set +x
             bosh delete-env bosh-deployment/bosh.yml \
                 --state=state.json \
                 --vars-store=creds.yml \
                 -o bosh-deployment/huaweicloud/cpi.yml \
                 -o bosh-deployment/external-ip-with-registry-not-recommended.yml \
-                -v director_name=bosh-1 \
-                -v internal_cidr=$(openstack subnet show openlab-jobs-subnet -f value -c cidr) \
-                -v internal_gw=$(openstack subnet show openlab-jobs-subnet -f value -c gateway_ip) \
-                -v external_ip="{{ floating_ip }}"
-                -v auth_url=${OS_AUTH_URL} \
-                -v az=ap-southeast-1a \
-                -v default_key_name=bosh-acc-huaweicloud-"{{ zuul.build }}" \
-                -v default_security_groups=[openlab-jobs-sg] \
-                -v subnet_id=$(openstack network show openlab-jobs-net -f value -c id) \
-                -v huaweicloud_password=${OS_PASSWORD} \
-                -v huaweicloud_username=${OS_USERNAME} \
-                -v huaweicloud_domain=${OS_DOMAIN_NAME} \
-                -v huaweicloud_project=${OS_TENANT_NAME} \
-                -v private_key="{{ ansible_user_dir }}/bosh-1/bosh-acc-huaweicloud.pem" \
-                -v region=${OS_REGION_NAME}
-            set -x
+                --vars-file=vars.yml
+
             openstack floating ip delete "{{ floating_ip }}" || true
             openstack keypair delete bosh-acc-huaweicloud-"{{ zuul.build }}" || true
           args:
