@@ -1,3 +1,0 @@
----
-docker_machine_version: 'master'
-docker_machine_download_url: 'https://github.com/docker/machine/releases/download/v{{ docker_machine_version }}/docker-machine-Linux-x86_64'

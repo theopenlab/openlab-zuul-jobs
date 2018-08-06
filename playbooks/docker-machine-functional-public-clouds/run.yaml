@@ -14,6 +14,20 @@
           ./install.sh /usr/local
           popd
 
+          # install Docker
+          apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D || true
+          apt-key adv --keyserver hkp://pgp.mit.edu:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D || true
+          apt-add-repository 'deb http://apt.dockerproject.org/repo ubuntu-xenial main'
+          apt-get update
+          apt-cache policy docker-engine
+          apt-get install -y docker-engine=1.12.6-0~ubuntu-xenial
+          cat /lib/systemd/system/docker.service
+          sed -r -i "s|(ExecStart)=(.+)|\1=\2 --iptables=false|" /lib/systemd/system/docker.service
+          cat /lib/systemd/system/docker.service
+          systemctl daemon-reload
+          systemctl restart docker
+          ifconfig -a
+
           mkdir -p $GOPATH/src/github.com/docker/machine
           cp -r '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}' $GOPATH/src/github.com/docker/
           pushd $GOPATH/src/github.com/docker/machine

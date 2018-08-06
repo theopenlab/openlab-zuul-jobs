@@ -583,7 +583,7 @@
     run: playbooks/docker-machine-functional-public-clouds/run.yaml
     vars:
       cloud_name: orange
-      docker_machine_version: 0.15.0
+    override-checkout: v0.15.0
     secrets:
       - orange_credentials
 
@@ -595,8 +595,8 @@
     run: playbooks/docker-machine-functional-public-clouds/run.yaml
     vars:
       cloud_name: telefonica
-      docker_machine_version: 0.15.0
       ssh_user: linux
+    override-checkout: v0.15.0
     secrets:
       - telefonica_credentials
 
@@ -608,7 +608,7 @@
     run: playbooks/docker-machine-functional-public-clouds/run.yaml
     vars:
       cloud_name: huaweicloud
-      docker_machine_version: 0.15.0
+    override-checkout: v0.15.0
     secrets:
       - huaweicloud_credentials
 
