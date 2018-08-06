@@ -59,7 +59,7 @@
               external_ip: "{{ floating_ip }}"
               auth_url: ${OS_AUTH_URL}
               az: ap-southeast-1a
-              default_key_name: bosh-acc-huaweicloud-"{{ zuul.build }}"
+              default_key_name: "bosh-acc-huaweicloud-{{ zuul.build }}"
               default_security_groups: [openlab-jobs-sg]
               subnet_id: $(openstack network show openlab-jobs-net -f value -c id)
               huaweicloud_password: ${OS_PASSWORD}
