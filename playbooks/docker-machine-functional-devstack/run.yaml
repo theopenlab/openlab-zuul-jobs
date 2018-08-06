@@ -4,7 +4,7 @@
     - clone-devstack-gate-to-workspace
     - create-devstack-local-conf
     - install-devstack
-    - config-docker-machine
+    - config-golang
   tasks:
     - name: Create Docker machine
       shell:
@@ -28,6 +28,14 @@
           systemctl daemon-reload
           systemctl restart docker
           ifconfig -a
+
+          mkdir -p $GOPATH/src/github.com/docker/machine
+          cp -r '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}' $GOPATH/src/github.com/docker/
+          pushd $GOPATH/src/github.com/docker/machine
+          make build
+          cp ./bin/docker-machine /usr/local/bin/
+          docker-machine version
+          popd
 
           pushd $GOPATH/src/github.com/docker/machine
           export OS_FLAVOR_ID=1
