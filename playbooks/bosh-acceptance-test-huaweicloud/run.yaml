@@ -6,6 +6,7 @@
         cloud_name: 'huaweicloud'
   vars:
     floating_ip: ''
+    bat_floating_ip: ''
   tasks:
     - name: Test bosh acceptance tests against huaweicloud
       block:
@@ -33,6 +34,18 @@
         - name: Set floating ip variable
           set_fact:
             floating_ip: '{{ floating_ip_adr.stdout }}'
+
+        - name: Create bat floating ip
+          shell: |
+            openstack floating ip create admin_external_net -f value -c floating_ip_address
+          args:
+            executable: /bin/bash
+          environment: '{{ global_env }}'
+          register: bat_floating_ip_adr
+
+        - name: Set bat floating ip variable
+          set_fact:
+            bat_floating_ip: '{{ bat_floating_ip_adr.stdout }}'
 
         - name: Install bosh and run bosh acceptance tests
           shell:
@@ -114,7 +127,7 @@
                 instance_type: ${SMALL_FLAVOR}
                 availability_zone: ap-southeast-1a
                 flavor_with_no_ephemeral_disk: ${MEDIUM_FLAVOR}
-                vip: $(openstack floating ip create admin_external_net -f value -c floating_ip_address)
+                vip: "{{ bat_floating_ip }}"
                 networks:
                 - name: default
                   type: dynamic
@@ -165,6 +178,7 @@
                 --vars-file=vars.yml 2>&1
 
             openstack floating ip delete "{{ floating_ip }}" || true
+            openstack floating ip delete "{{ bat_floating_ip }}" || true
             openstack keypair delete bosh-acc-huaweicloud-"{{ zuul.build }}" || true
           args:
             executable: /bin/bash
