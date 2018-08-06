@@ -478,3 +478,52 @@
     run: playbooks/packer-functional-devstack/run.yaml
     vars:
       packer_version: 1.2.5
+
+- job:
+    name: docker-machine-0.15.0-functional-opentelekomcloud
+    parent: init-test
+    description: |
+      Test functionalities of Docker machine of 0.15.0 version against opentelekomcloud.
+    run: playbooks/docker-machine-functional-public-clouds/run.yaml
+    vars:
+      cloud_name: opentelekomcloud
+    override-checkout: v0.15.0
+    secrets:
+      - opentelekomcloud_credentials
+
+- job:
+    name: docker-machine-0.15.0-functional-orange
+    parent: init-test
+    description: |
+      Test functionalities of Docker machine of 0.15.0 version against orange.
+    run: playbooks/docker-machine-functional-public-clouds/run.yaml
+    vars:
+      cloud_name: orange
+    override-checkout: v0.15.0
+    secrets:
+      - orange_credentials
+
+- job:
+    name: docker-machine-0.15.0-functional-telefonica
+    parent: init-test
+    description: |
+      Test functionalities of Docker machine of 0.15.0 version against telefonica.
+    run: playbooks/docker-machine-functional-public-clouds/run.yaml
+    vars:
+      cloud_name: telefonica
+      ssh_user: linux
+    override-checkout: v0.15.0
+    secrets:
+      - telefonica_credentials
+
+- job:
+    name: docker-machine-0.15.0-functional-huaweicloud
+    parent: init-test
+    description: |
+      Test functionalities of Docker machine of 0.15.0 version against huaweicloud.
+    run: playbooks/docker-machine-functional-public-clouds/run.yaml
+    vars:
+      cloud_name: huaweicloud
+    override-checkout: v0.15.0
+    secrets:
+      - huaweicloud_credentials

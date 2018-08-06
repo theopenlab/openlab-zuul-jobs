@@ -1,0 +1,55 @@
+- hosts: all
+  become: yes
+  roles:
+    - export-cloud-openrc
+    - config-golang
+  tasks:
+    - name: Create Docker machine
+      shell:
+        cmd: |
+          set -ex
+          set -o pipefail
+          git clone https://github.com/sstephenson/bats.git
+          pushd bats
+          ./install.sh /usr/local
+          popd
+
+          # install Docker
+          apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D || true
+          apt-key adv --keyserver hkp://pgp.mit.edu:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D || true
+          apt-add-repository 'deb http://apt.dockerproject.org/repo ubuntu-xenial main'
+          apt-get update
+          apt-cache policy docker-engine
+          apt-get install -y docker-engine=1.12.6-0~ubuntu-xenial
+          cat /lib/systemd/system/docker.service
+          sed -r -i "s|(ExecStart)=(.+)|\1=\2 --iptables=false|" /lib/systemd/system/docker.service
+          cat /lib/systemd/system/docker.service
+          systemctl daemon-reload
+          systemctl restart docker
+          ifconfig -a
+
+          mkdir -p $GOPATH/src/github.com/docker/machine
+          cp -r '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}' $GOPATH/src/github.com/docker/
+          pushd $GOPATH/src/github.com/docker/machine
+          make build
+          cp ./bin/docker-machine /usr/local/bin/
+          docker-machine version
+          popd
+
+          pip install python-openstackclient
+          pip install python-glanceclient==2.11.0
+          # Select a flavor have 2048M memory and 2 vCPU at least
+          export OS_FLAVOR_ID=$(openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column \
+              VCPUs | awk '{if($2>=2048 && $3>=2){print $1}}' | head -n 1)
+          export OS_IMAGE_NAME="Ubuntu 16.04 Server 64bit"
+          export OS_TENANT_ID=$(openstack token issue -f value -c project_id)
+          export OS_NETWORK_NAME=openlab-jobs-net
+          export OS_FLOATINGIP_POOL="admin_external_net"
+          export OS_SECURITY_GROUPS="openlab-jobs-sg"
+          export OS_SSH_USER="{{ ssh_user | default('ubuntu') }}"
+          pushd $GOPATH/src/github.com/docker/machine
+          DEBUG=true VERBOSE=true DRIVER=openstack make test-integration test/integration/core/
+          popd
+        executable: /bin/bash
+        chdir: '{{ ansible_user_dir }}/workspace'
+      environment: '{{ global_env }}'

@@ -55,3 +55,16 @@
     check:
       jobs:
         - packer-master-functional-devstack
+
+- project:
+    name: theopenlab/machine
+    periodic:
+      jobs:
+        - docker-machine-0.15.0-functional-opentelekomcloud:
+            branches: master
+        - docker-machine-0.15.0-functional-orange:
+            branches: master
+        - docker-machine-0.15.0-functional-telefonica:
+            branches: master
+        - docker-machine-0.15.0-functional-huaweicloud:
+            branches: master
