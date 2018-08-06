@@ -159,7 +159,7 @@
                 -v director_name=bosh-1 \
                 -v internal_cidr=$(openstack subnet show openlab-jobs-subnet -f value -c cidr) \
                 -v internal_gw=$(openstack subnet show openlab-jobs-subnet -f value -c gateway_ip) \
-                -v internal_ip=${bosh_ip} \
+                -v external_ip="{{ floating_ip }}"
                 -v auth_url=${OS_AUTH_URL} \
                 -v az=ap-southeast-1a \
                 -v default_key_name=bosh-acc-huaweicloud-"{{ zuul.build }}" \
