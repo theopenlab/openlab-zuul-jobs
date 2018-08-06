@@ -2,7 +2,7 @@
   become: yes
   roles:
     - export-cloud-openrc
-    - config-docker-machine
+    - config-golang
   tasks:
     - name: Create Docker machine
       shell:
@@ -12,6 +12,14 @@
           git clone https://github.com/sstephenson/bats.git
           pushd bats
           ./install.sh /usr/local
+          popd
+
+          mkdir -p $GOPATH/src/github.com/docker/machine
+          cp -r '{{ zuul.project.src_dir }}' $GOPATH/src/github.com/docker/
+          pushd $GOPATH/src/github.com/docker/machine
+          make build
+          cp ./bin/docker-machine /usr/local/bin/
+          docker-machine version
           popd
 
           pip install python-openstackclient

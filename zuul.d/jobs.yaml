@@ -571,7 +571,7 @@
     run: playbooks/docker-machine-functional-public-clouds/run.yaml
     vars:
       cloud_name: opentelekomcloud
-      docker_machine_version: 0.15.0
+    override-checkout: v0.15.0
     secrets:
       - opentelekomcloud_credentials
 
