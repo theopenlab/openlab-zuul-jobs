@@ -140,8 +140,8 @@
               gem install bundler
               bundle install
               cp '{{ ansible_user_dir }}/bosh' /usr/local/bin/bosh
-              sleep 7200
               sed -i -e "s/net_id/subnet_id/g" ./templates/openstack.yml.erb
+              sleep 7200
               bundle exec rspec spec --tag core
               popd
 
