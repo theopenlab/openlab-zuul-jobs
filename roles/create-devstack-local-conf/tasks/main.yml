@@ -23,6 +23,9 @@
     executable: /bin/bash
   when:
     - global_env.OS_BRANCH != 'stable/mitaka'
+    - global_env.OS_BRANCH != 'stable/newton'
+    - global_env.OS_BRANCH != 'stable/ocata'
+    - global_env.OS_BRANCH != 'stable/pike'
     - '"fwaas-v1" not in enable_services'
     - '"fwaas-v2" not in enable_services'
 
