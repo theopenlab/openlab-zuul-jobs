@@ -2,6 +2,7 @@
   become: yes
   roles:
     - clone-devstack-gate-to-workspace
+    - create-devstack-local-conf
     - install-devstack
     - ensure-tox
     - role: tox

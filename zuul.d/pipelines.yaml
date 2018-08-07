@@ -151,6 +151,30 @@
       mysql:
 
 - pipeline:
+    name: recheck-rocky
+    description: |
+      Commenting "recheck stable/rocky" enter this pipeline to run tests on
+      stable/rocky of OpenStack and receive an initial +/-1 Verified vote.
+    manager: independent
+    trigger:
+      github:
+        - event: pull_request
+          action: comment
+          comment: (?i)^\s*recheck\s+stable\/rocky\s*$
+    start:
+      github:
+        status: pending
+        comment: false
+    success:
+      github:
+        status: 'success'
+      mysql:
+    failure:
+      github:
+        status: 'failure'
+      mysql:
+
+- pipeline:
     name: periodic
     description: Jobs in this queue are triggered on a timer. UTC-0 0:00, 8:00 and 16:00
     manager: independent
