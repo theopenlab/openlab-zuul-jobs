@@ -100,7 +100,8 @@
               export BAT_STEMCELL="{{ ansible_user_dir }}/bosh-1/bosh-stemcell-1.0-huaweicloud-xen-ubuntu-trusty-go_agent.tgz"
               export BAT_DEPLOYMENT_SPEC="{{ ansible_user_dir }}/bosh-1/bat.yml"
               export BAT_BOSH_CLI=bosh
-              export BAT_DNS_HOST=8.8.8.8
+              # export BAT_DNS_HOST=8.8.8.8
+              export BAT_DNS_HOST=100.125.1.250
               export BAT_INFRASTRUCTURE=openstack
               export BAT_NETWORKING=dynamic
               export BAT_PRIVATE_KEY="{{ ansible_user_dir }}/bosh-1/bosh-acc-huaweicloud.pem"
