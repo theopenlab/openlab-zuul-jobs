@@ -15,19 +15,17 @@
           pushd bats
           ./install.sh /usr/local
           popd
-          sleep 7200
           # install Docker
           apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D || true
           apt-key adv --keyserver hkp://pgp.mit.edu:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D || true
-          apt-add-repository 'deb http://apt.dockerproject.org/repo ubuntu-xenial main'
+          apt-add-repository 'deb http://apt.dockerproject.org/repo ubuntu-trusty main'
           apt-get update
           apt-cache policy docker-engine
-          apt-get install -y docker-engine=1.12.6-0~ubuntu-xenial
+          apt-get install -y docker-engine=1.12.6-0~ubuntu-trusty
           cat /lib/systemd/system/docker.service
           sed -r -i "s|(ExecStart)=(.+)|\1=\2 --iptables=false|" /lib/systemd/system/docker.service
           cat /lib/systemd/system/docker.service
-          systemctl daemon-reload
-          systemctl restart docker
+          service docker restart
           ifconfig -a
 
           curl -O http://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-disk1.img
@@ -43,7 +41,14 @@
           docker-machine version
           export OS_FLAVOR_ID=2
           export OS_IMAGE_NAME="Ubuntu 16.04 Server 64bit"
-          docker-machine -D create -d openstack test1
+          export OS_DOMAIN_ID=default
+          openstack security group rule create --proto tcp --dst-port 22 default
+          openstack security group rule create --proto tcp --dst-port 2376 default
+          openstack security group rule create --proto icmp default
+          export OS_SSH_USER=ubuntu
+          export OS_NETWORK_NAME=private
+          export OS_FLOATINGIP_POOL=public
+
           DEBUG=true VERBOSE=true DRIVER=openstack make test-integration test/integration/core
           popd
         executable: /bin/bash
