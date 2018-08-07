@@ -16,7 +16,7 @@
           EOF
           image_name="packer-cirros-$(date +%s)"
           network=$(openstack network show private -f value -c id)
-          src_img_name=$(openstack image list |grep -Eo "cirros.*-disk")
+          src_img_name=$(openstack image list |grep -Eo "cirros-.*")
           cat << EOF >> os-template.json
           {
               "builders": [
