@@ -95,6 +95,8 @@
               bosh alias-env bosh-1 -e "{{ floating_ip }}" --ca-cert <(bosh int ./creds.yml --path /director_ssl/ca)
               export BOSH_CLIENT=admin
               export BOSH_CLIENT_SECRET=`bosh int ./creds.yml --path /admin_password`
+              export BOSH_ENVIRONMENT=bosh-1
+              export BOSH_GW_PRIVATE_KEY="{{ ansible_user_dir }}/bosh-1/bosh-acc-huaweicloud.pem"
               bosh -e bosh-1 env
 
               export BAT_STEMCELL="{{ ansible_user_dir }}/bosh-1/bosh-stemcell-1.0-huaweicloud-xen-ubuntu-trusty-go_agent.tgz"
@@ -106,7 +108,6 @@
               export BAT_NETWORKING=dynamic
               export BAT_PRIVATE_KEY="{{ ansible_user_dir }}/bosh-1/bosh-acc-huaweicloud.pem"
               export BOSH_OS_BATS=true
-              export BOSH_ENVIRONMENT=bosh-1
 
               SMALL_FLAVOR=$(openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column \
                   VCPUs | awk '{if($2>=1024 && $3>=1){print $1}}' | head -n 1)
@@ -142,7 +143,6 @@
               bundle install
               cp '{{ ansible_user_dir }}/bosh' /usr/local/bin/bosh
               sed -i -e "s/net_id/subnet_id/g" ./templates/openstack.yml.erb
-              sleep 7200
               bundle exec rspec spec --tag core
               popd
 
@@ -157,6 +157,7 @@
             cd bosh-1
             export BOSH_CLIENT=admin
             export BOSH_CLIENT_SECRET=`bosh int ./creds.yml --path /admin_password`
+            export BOSH_ENVIRONMENT=bosh-1
             bosh -e bosh-1 clean-up --all --non-interactive
             for vm_id in $(bosh -e bosh-1 vms --column="VM CID"); do
                 bosh -e bosh-1 -d bat --non-interactive delete-vm ${vm_id}
