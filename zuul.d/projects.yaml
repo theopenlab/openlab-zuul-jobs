@@ -90,3 +90,13 @@
             branches: master
         - docker-machine-0.15.0-functional-huaweicloud:
             branches: master
+        - docker-machine-0.15.0-functional-devstack-mitaka:
+            branches: master
+        - docker-machine-0.15.0-functional-devstack-newton:
+            branches: master
+        - docker-machine-0.15.0-functional-devstack-ocata:
+            branches: master
+        - docker-machine-0.15.0-functional-devstack-pike:
+            branches: master
+        - docker-machine-0.15.0-functional-devstack-queens:
+            branches: master
