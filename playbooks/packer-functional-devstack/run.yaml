@@ -16,7 +16,7 @@
           EOF
           image_name="packer-cirros-$(date +%s)"
           network=$(openstack network show private -f value -c id)
-          src_img_name=$(openstack image list |grep -Eo "cirros-.*")
+          src_img_name=$(openstack image list -f value -c Name | grep -Eo "cirros-.*" | grep -v ramdisk | grep -v kernel)
           cat << EOF >> os-template.json
           {
               "builders": [
@@ -46,8 +46,10 @@
               ]
           }
           EOF
-          sg_id=$(openstack security group list --project $OS_PROJECT_NAME -f value -c ID -c Name |grep default \
-              |head -n 1 |awk '{print $1}')
+          # NOTE: "--project" option is not supported for "openstack security group list" command
+          # in M and N release, so we have to filter "default" sg of current project by project id.
+          project_id=$(openstack token issue -f value -c project_id)
+          sg_id=$(openstack security group list | grep default | grep $project_id | head -n 1 | awk '{print $2}')
           openstack security group rule create --ingress --protocol tcp --dst-port 22 $sg_id
           packer validate os-template.json
           packer build -color=false os-template.json
