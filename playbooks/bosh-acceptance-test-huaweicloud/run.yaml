@@ -177,7 +177,7 @@
                 --vars-store=creds.yml \
                 -o bosh-deployment/huaweicloud/cpi.yml \
                 -o bosh-deployment/external-ip-with-registry-not-recommended.yml \
-                --vars-file=vars.yml 2>&1
+                --vars-file=vars.yml || true
 
             openstack floating ip delete "{{ floating_ip }}" || true
             openstack floating ip delete "{{ bat_floating_ip }}" || true
