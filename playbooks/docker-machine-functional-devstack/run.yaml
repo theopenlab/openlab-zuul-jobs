@@ -48,6 +48,7 @@
           export OS_SSH_USER=ubuntu
           export OS_NETWORK_NAME=private
           export OS_FLOATINGIP_POOL=public
+          sleep 7200
 
           DEBUG=true VERBOSE=true DRIVER=openstack make test-integration test/integration/core
           popd
