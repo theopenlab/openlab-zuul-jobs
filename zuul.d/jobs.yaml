@@ -546,11 +546,11 @@
       packer_version: 1.2.5
 
 - job:
-    name: docker-machine-master-functional-devstack
+    name: docker-machine-master-functional-devstack-mitaka
     parent: init-test
     description: |
-      Test image building functionality of Docker machine of master against devstack.
-    run: playbooks/docker-machine-functional-devstack/run.yaml
+      Test image building functionality of Docker machine of master against devstack of Mitaka.
+    run: playbooks/docker-machine-functional-devstack-mitaka/run.yaml
 
 - job:
     name: docker-machine-master-functional-devstack-mitaka
