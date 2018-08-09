@@ -6,8 +6,17 @@
   tasks:
     - name: Run integration tests of docker machine aganist {{ cloud_name }}
       block:
+        - name: Install openstackclient
+          shell: |
+            set -ex
+            pip install python-openstackclient
+            pip install python-glanceclient==2.11.0
+          args:
+            executable: /bin/bash
+
         - name: Pre-create floating ips used by docker machine tests
           shell: |
+            set -e
             fip1=$(openstack floating ip create admin_external_net -f value -c floating_ip_address)
             fip2=$(openstack floating ip create admin_external_net -f value -c floating_ip_address)
             fip3=$(openstack floating ip create admin_external_net -f value -c floating_ip_address)
@@ -49,8 +58,6 @@
               docker-machine version
               popd
 
-              pip install python-openstackclient
-              pip install python-glanceclient==2.11.0
               # Select a flavor have 2048M memory and 2 vCPU at least
               export OS_FLAVOR_ID=$(openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column \
                   VCPUs | awk '{if($2>=2048 && $3>=2){print $1}}' | head -n 1)
