@@ -41,6 +41,8 @@
               pushd $GOPATH/src/github.com/docker/machine
 
               export DRIVER=openstack
+              export DEBUG=true
+              export VERBOSE=true
               export BASE_TEST_DIR=$(realpath test/integration)
               export MACHINE_ROOT="$BASE_TEST_DIR/../.."
               export MACHINE_STORAGE_PATH="/tmp/machine-bats-test-$DRIVER"
