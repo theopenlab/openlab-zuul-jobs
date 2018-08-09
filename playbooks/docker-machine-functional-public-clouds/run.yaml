@@ -41,7 +41,7 @@
               pushd $GOPATH/src/github.com/docker/machine
 
               export DRIVER=openstack
-              export BASE_TEST_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+              export BASE_TEST_DIR=$(realpath test/integration)
               export MACHINE_ROOT="$BASE_TEST_DIR/../.."
               export MACHINE_STORAGE_PATH="/tmp/machine-bats-test-$DRIVER"
               export MACHINE_BIN_NAME=docker-machine
@@ -75,7 +75,11 @@
             set -ex
             export DRIVER=openstack
             export MACHINE_STORAGE_PATH="/tmp/machine-bats-test-$DRIVER"
-            sleep 7200
+            for machine_name in $(docker-machine ls -q); do
+                fip=$(docker-machine ip $machine_name)
+                docker-machine rm -f $machine_name
+                openstack floating ip delete $fip
+            done
           args:
             executable: /bin/bash
           environment: '{{ global_env }}'
