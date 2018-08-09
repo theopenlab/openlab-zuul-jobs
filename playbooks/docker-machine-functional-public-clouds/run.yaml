@@ -68,7 +68,7 @@
               export OS_SECURITY_GROUPS="openlab-jobs-sg"
               export OS_SSH_USER="{{ ssh_user | default('ubuntu') }}"
               pushd $GOPATH/src/github.com/docker/machine
-              DEBUG=true VERBOSE=true DRIVER=openstack make test-integration test/integration/core/
+              # DEBUG=true VERBOSE=true DRIVER=openstack make test-integration test/integration/core/
               popd
             executable: /bin/bash
             chdir: '{{ ansible_user_dir }}/workspace'
