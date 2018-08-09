@@ -36,19 +36,8 @@
               ./install.sh /usr/local
               popd
 
-              # install Docker
-              apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D || true
-              apt-key adv --keyserver hkp://pgp.mit.edu:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D || true
-              apt-add-repository 'deb http://apt.dockerproject.org/repo ubuntu-xenial main'
-              apt-get update
-              apt-cache policy docker-engine
-              apt-get install -y docker-engine=1.12.6-0~ubuntu-xenial
-              cat /lib/systemd/system/docker.service
-              sed -r -i "s|(ExecStart)=(.+)|\1=\2 --iptables=false|" /lib/systemd/system/docker.service
-              cat /lib/systemd/system/docker.service
-              systemctl daemon-reload
-              systemctl restart docker
-              ifconfig -a
+              apt-get install docker.io docker -y
+              docker version
 
               mkdir -p $GOPATH/src/github.com/docker/machine
               cp -r '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}' $GOPATH/src/github.com/docker/
@@ -67,17 +56,45 @@
               export OS_FLOATINGIP_POOL="admin_external_net"
               export OS_SECURITY_GROUPS="openlab-jobs-sg"
               export OS_SSH_USER="{{ ssh_user | default('ubuntu') }}"
+
               pushd $GOPATH/src/github.com/docker/machine
-              # DEBUG=true VERBOSE=true DRIVER=openstack make test-integration test/integration/core/
+
+              export DRIVER=openstack
+              export BASE_TEST_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+              export MACHINE_ROOT="$BASE_TEST_DIR/../.."
+              export MACHINE_STORAGE_PATH="/tmp/machine-bats-test-$DRIVER"
+              export MACHINE_BIN_NAME=docker-machine
+              export BATS_LOG="$MACHINE_ROOT/bats.log"
+              export B2D_LOCATION=~/.docker/machine/cache/boot2docker.iso
+              export SHARED_NAME="bats-$DRIVER-test-shared-$(date +%s)"
+              export MACHINE_BUGSNAG_API_TOKEN=no-report
+
+              function machine() {
+                  "$MACHINE_ROOT"/bin/"$MACHINE_BIN_NAME" "$@"
+              }
+              export -f machine
+
+              bats_tests=core-commands crashreport engine-options env_shell inspect_format regenerate-certs scp ssh-backends
+              set +e
+              EXIT_STATUS=0
+              for tests in ${bats_tests};do
+                  bats test/integration/core/${tests}.bats
+                  if [[ $? -ne 0 ]]; then
+                      EXIT_STATUS=1
+                  fi
+              set -e
+              exit  ${EXIT_STATUS}
               popd
             executable: /bin/bash
-            chdir: '{{ ansible_user_dir }}/workspace'
           environment: '{{ global_env }}'
 
       always:
         - name: Cleanup resources
           shell: |
             set -ex
+            export DRIVER=openstack
+            export MACHINE_STORAGE_PATH="/tmp/machine-bats-test-$DRIVER"
+            sleep 7200
             openstack floating ip delete $(echo "{{ floating_ip_addrs.stdout }}") || true
           args:
             executable: /bin/bash
