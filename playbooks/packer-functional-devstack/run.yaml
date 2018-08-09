@@ -50,7 +50,12 @@
           # in M and N release, so we have to filter "default" sg of current project by project id.
           project_id=$(openstack token issue -f value -c project_id)
           sg_id=$(openstack security group list | grep default | grep $project_id | head -n 1 | awk '{print $2}')
-          openstack security group rule create --ingress --protocol tcp --dst-port 22 $sg_id
+          # NOTE: openstackclient CLI options are not compatible in Mitaka and other release
+          if [ "{{ global_env.OS_BRANCH }}" == "stable/mitaka" ]; then
+              openstack security group rule create --proto tcp --dst-port 22 $sg_id
+          else
+              openstack security group rule create --ingress --protocol tcp --dst-port 22 $sg_id
+          fi
           packer validate os-template.json
           packer build -color=false os-template.json
           openstack image show $image_name

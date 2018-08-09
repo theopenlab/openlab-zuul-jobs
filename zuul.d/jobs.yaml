@@ -477,6 +477,8 @@
     vars:
       cloud_name: opentelekomcloud
       os_sdk: openstacksdk
+      # Disable public cloud policy limit roles: group keystone_domain keystone_role nova_flavor user user_group
+      test_cases: auth image keypair network object port router security_group server subnet volume
     secrets:
       - opentelekomcloud_credentials
 
@@ -494,8 +496,48 @@
     vars:
       cloud_name: orange
       os_sdk: openstacksdk
+      # Disable public cloud policy limit roles: group keystone_domain keystone_role nova_flavor user user_group object
+      test_cases: auth image keypair network port router security_group server subnet volume
     secrets:
       - orange_credentials
+
+- job:
+    name: openstacksdk-ansible-stable-2.6-functional-telefonica
+    parent: init-test
+    description: |
+      Run openstacksdk ansible functional tests against telefonica cloud
+      using git stable-2.6 branch version of ansible.
+    run: playbooks/ansible-functional-public-clouds/run.yaml
+    required-projects:
+      - name: ansible/ansible
+        override-checkout: stable-2.6
+      - openstack/openstacksdk
+    vars:
+      cloud_name: telefonica
+      os_sdk: openstacksdk
+      # Disable public cloud policy limit roles: group keystone_domain keystone_role nova_flavor user user_group object
+      test_cases: auth image keypair network port router security_group server subnet volume
+    secrets:
+      - telefonica_credentials
+
+- job:
+    name: openstacksdk-ansible-stable-2.6-functional-huaweicloud
+    parent: init-test
+    description: |
+      Run openstacksdk ansible functional tests against huaweicloud
+      using git stable-2.6 branch version of ansible.
+    run: playbooks/ansible-functional-public-clouds/run.yaml
+    required-projects:
+      - name: ansible/ansible
+        override-checkout: stable-2.6
+      - openstack/openstacksdk
+    vars:
+      cloud_name: huaweicloud
+      os_sdk: openstacksdk
+      # Disable public cloud policy limit roles: group keystone_domain keystone_role nova_flavor user user_group object
+      test_cases: auth image keypair network port router security_group server subnet volume
+    secrets:
+      - huaweicloud_credentials
 
 - job:
     name: packer-1.2.5-functional-opentelekomcloud
