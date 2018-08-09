@@ -53,6 +53,7 @@
           # NOTE: openstackclient CLI options are not compatible in Mitaka and other release
           if [ "{{ global_env.OS_BRANCH }}" == "stable/mitaka" ]; then
               openstack security group rule create --proto tcp --dst-port 22 $sg_id
+              export OS_DOMAIN_ID=default
           else
               openstack security group rule create --ingress --protocol tcp --dst-port 22 $sg_id
           fi
