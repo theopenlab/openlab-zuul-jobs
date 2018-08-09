@@ -53,7 +53,6 @@
     - name: modify sdk test scripts
       shell: |
         sed -i -e 's/ -vvv//g' ./extras/run-ansible-tests.sh
-        sed -i -e 's/^passenv = HOME USER$/passenv = HOME USER ANSIBLE_VAR_*/g' tox.ini
       args:
         executable: /bin/bash
         chdir: '{{ sdk_src_dir }}'
@@ -78,8 +77,7 @@
         tox_extra_args: "--notest"
 
     - name: Run test cases
-      # Disable public cloud policy limit roles: group keystone_domain keystone_role nova_flavor user user_group
-      shell: tox -eansible -- -c "{{ cloud_name }}" auth image keypair network object port router security_group server subnet volume
+      shell: tox -eansible -- -c "{{ cloud_name }}" "{{ test_cases }}"
       args:
         executable: /bin/bash
         chdir: '{{ sdk_src_dir }}'
@@ -89,5 +87,7 @@
         ANSIBLE_VAR_floating_ip_pool_name: "admin_external_net"
         ANSIBLE_VAR_enable_subnet_dhcp: "true"
         ANSIBLE_VAR_network_external: "false"
+        ANSIBLE_VAR_no_security_groups: "false"
+        ANSIBLE_VAR_boot_volume_size: "40"
       register: testing_output
       failed_when: "'FAILED' in testing_output.stdout or 'ERROR' in testing_output.stdout"
