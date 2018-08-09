@@ -78,7 +78,7 @@
         - name: Cleanup resources
           shell: |
             set -ex
-            openstack floating ip delete "{{ floating_ip_addrs.stdout }}" || true
+            openstack floating ip delete $(echo "{{ floating_ip_addrs.stdout }}") || true
           args:
             executable: /bin/bash
           environment: '{{ global_env }}'
