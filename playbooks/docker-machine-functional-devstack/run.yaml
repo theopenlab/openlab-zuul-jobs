@@ -37,7 +37,7 @@
           git cherry-pick pr4543
           make build
           cp ./bin/docker-machine /usr/local/bin/
-          docker-machine versio
+          docker-machine version
           export OS_FLAVOR_ID=11
           export OS_IMAGE_NAME="Ubuntu 16.04 Server 64bit"
           export OS_DOMAIN_ID=default
