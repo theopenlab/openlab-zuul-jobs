@@ -71,6 +71,7 @@
               }
               export -f machine
               EXIT_STATUS=0
+              sleep 7200
               bats_tests="core-commands engine-options env_shell inspect_format regenerate-certs scp ssh-backends"
               for tests in ${bats_tests};do
                   echo "=> test/integration/core/${tests}.bats"
