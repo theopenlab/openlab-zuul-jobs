@@ -47,6 +47,7 @@
               export OS_FLOATINGIP_POOL="admin_external_net"
               export OS_SECURITY_GROUPS="openlab-jobs-sg"
               export OS_SSH_USER="{{ ssh_user | default('ubuntu') }}"
+              unset OS_AVAILABILITY_ZONE
 
               pushd $GOPATH/src/github.com/docker/machine
 
@@ -71,7 +72,6 @@
               bats_tests="core-commands engine-options"
               set +e
               EXIT_STATUS=0
-              sleep 7200
               for tests in ${bats_tests};do
                   bats test/integration/core/${tests}.bats
                   if [[ $? -ne 0 ]]; then
