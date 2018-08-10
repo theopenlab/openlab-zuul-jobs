@@ -25,10 +25,11 @@
               pushd $GOPATH/src/github.com/docker/machine
 
               # Work around of issues 4542 and issues 4544
+              git remote add upstream https://github.com/docker/machine
               git config --global user.email 'zuul@openlab.com'
               git config --global user.name 'openlab'
-              git fetch origin refs/pull/4543/head:pr4543
-              git fetch origin refs/pull/4545/head:pr4545
+              git fetch upstream refs/pull/4543/head:pr4543
+              git fetch upstream refs/pull/4545/head:pr4545
               git cherry-pick pr4545
               git cherry-pick pr4543
 
@@ -67,7 +68,7 @@
               export -f machine
 
               #  engine-options env_shell inspect_format regenerate-certs scp ssh-backends
-              bats_tests="core-commands crashreport"
+              bats_tests="core-commands engine-options"
               set +e
               EXIT_STATUS=0
               for tests in ${bats_tests};do
