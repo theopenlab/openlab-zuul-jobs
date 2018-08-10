@@ -14,12 +14,9 @@
           pushd bats
           ./install.sh /usr/local
           popd
-          curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-          add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
           apt-get update
-          apt-cache policy docker-ce
-          apt-get install -y docker-ce
-          docker version
+          apt-get install apt-transport-https ca-certificates
+          wget -qO- https://get.docker.com/ | sh
 
           curl -O http://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-disk1.img
           openstack image create --file xenial-server-cloudimg-amd64-disk1.img --min-disk 1 --container-format bare \
