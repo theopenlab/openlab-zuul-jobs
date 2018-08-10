@@ -16,7 +16,11 @@
               ./install.sh /usr/local
               popd
 
-              apt-get install docker.io docker -y
+              curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+              add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+              apt-get update
+              apt-cache policy docker-ce
+              apt-get install -y docker-ce
               docker version
 
               mkdir -p $GOPATH/src/github.com/docker/machine
@@ -66,8 +70,7 @@
                   "$MACHINE_ROOT"/bin/"$MACHINE_BIN_NAME" "$@"
               }
               export -f machine
-              # env_shell inspect_format regenerate-certs scp ssh-backends
-              bats_tests="core-commands engine-options"
+              bats_tests="core-commands engine-options env_shell inspect_format regenerate-certs scp ssh-backends"
               set +e
               EXIT_STATUS=0
               for tests in ${bats_tests};do
