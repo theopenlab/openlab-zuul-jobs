@@ -58,9 +58,9 @@
       jobs:
         - docker-machine-master-functional-devstack-mitaka
         - docker-machine-0.15.0-functional-huaweicloud
-#        - docker-machine-0.15.0-functional-opentelekomcloud
-#        - docker-machine-0.15.0-functional-orange
-#        - docker-machine-0.15.0-functional-telefonica
+        - docker-machine-0.15.0-functional-opentelekomcloud
+        - docker-machine-0.15.0-functional-orange
+        - docker-machine-0.15.0-functional-telefonica
 
 - project:
     name: zhongjun2/bosh-huaweicloud-cpi-release

@@ -15,6 +15,9 @@
               pushd bats
               ./install.sh /usr/local
               popd
+              apt-get update
+              apt-get install apt-transport-https ca-certificates
+              wget -qO- https://get.docker.com/ | sh
 
               mkdir -p $GOPATH/src/github.com/docker/machine
               cp -r '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}' $GOPATH/src/github.com/docker/
@@ -64,7 +67,6 @@
               }
               export -f machine
               EXIT_STATUS=0
-              sleep 7200
               bats_tests="core-commands engine-options env_shell inspect_format regenerate-certs scp ssh-backends"
               for tests in ${bats_tests};do
                   echo "=> test/integration/core/${tests}.bats"
