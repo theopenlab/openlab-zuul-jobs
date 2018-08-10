@@ -16,13 +16,6 @@
               ./install.sh /usr/local
               popd
 
-              apt-get update
-              apt-get install apt-transport-https ca-certificates
-              wget -qO- https://get.docker.com/ | sh
-              sed -r -i "s|(ExecStart)=(.+)|\1=\2 --iptables=false|" /lib/systemd/system/docker.service
-              systemctl daemon-reload
-              service docker restart
-
               mkdir -p $GOPATH/src/github.com/docker/machine
               cp -r '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}' $GOPATH/src/github.com/docker/
               pushd $GOPATH/src/github.com/docker/machine
