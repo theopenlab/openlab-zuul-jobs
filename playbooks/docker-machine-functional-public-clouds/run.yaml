@@ -10,7 +10,6 @@
           shell:
             cmd: |
               set -ex
-              set -o pipefail
               pip install python-openstackclient
               git clone https://github.com/sstephenson/bats.git
               pushd bats
@@ -71,9 +70,11 @@
               bats_tests="core-commands engine-options"
               set +e
               EXIT_STATUS=0
-              bats test/integration/core/core-commands.bats
-              bats test/integration/core/engine-options.bats
-
+              for tests in ${bats_tests};do
+                  echo "=> test/integration/core/${tests}.bats"
+                  bats test/integration/core/${tests}.bats
+                  [[ $? -ne 0 ]] && EXIT_STATUS=1
+              done
               set -e
               popd
               exit  ${EXIT_STATUS}

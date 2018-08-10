@@ -10,7 +10,6 @@
       shell:
         cmd: |
           set -ex
-          set -o pipefail
           git clone https://github.com/sstephenson/bats.git
           pushd bats
           ./install.sh /usr/local
@@ -69,6 +68,7 @@
           set +e
           EXIT_STATUS=0
           for tests in ${bats_tests};do
+              echo "=> test/integration/core/${tests}.bats"
               bats test/integration/core/${tests}.bats
               [[ $? -ne 0 ]] && EXIT_STATUS=1
           done
