@@ -73,9 +73,7 @@
           EXIT_STATUS=0
           for tests in ${bats_tests};do
               echo "=> test/integration/core/${tests}.bats"
-              set +e
               bats test/integration/core/${tests}.bats || EXIT_STATUS=1
-              set -e
           done
           popd
           exit  ${EXIT_STATUS}
