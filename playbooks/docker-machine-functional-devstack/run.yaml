@@ -6,58 +6,101 @@
     - install-devstack
     - config-golang
   tasks:
-    - name: Create Docker machine
-      shell:
-        cmd: |
-          set -ex
-          set -o pipefail
-          git clone https://github.com/sstephenson/bats.git
-          pushd bats
-          ./install.sh /usr/local
-          popd
-          apt-get install docker.io docker -y
-          docker version
+    - name: Run integration tests of docker machine aganist {{ cloud_name }}
+      block:
+        - name: Create Docker machine
+          shell:
+            cmd: |
+              set -ex
+              set -o pipefail
+              git clone https://github.com/sstephenson/bats.git
+              pushd bats
+              ./install.sh /usr/local
+              popd
+              apt-get install docker.io docker -y
+              docker version
 
-          curl -O http://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-disk1.img
-          openstack image create --file xenial-server-cloudimg-amd64-disk1.img --min-disk 1 --container-format bare \
-              --disk-format qcow2 "Ubuntu 16.04 Server 64bit"
+              curl -O http://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-disk1.img
+              openstack image create --file xenial-server-cloudimg-amd64-disk1.img --min-disk 1 --container-format bare \
+                  --disk-format qcow2 "Ubuntu 16.04 Server 64bit"
 
-          mkdir -p $GOPATH/src/github.com/docker/machine
-          cp -r '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}' $GOPATH/src/github.com/docker/
+              mkdir -p $GOPATH/src/github.com/docker/machine
+              cp -r '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}' $GOPATH/src/github.com/docker/
 
-          pushd $GOPATH/src/github.com/docker/machine
-          # Work around of issues 4542 and issues 4544
-          git remote add upstream https://github.com/docker/machine
-          git config --global user.email 'zuul@openlab.com'
-          git config --global user.name 'openlab'
-          git fetch upstream refs/pull/4543/head:pr4543
-          git fetch upstream refs/pull/4545/head:pr4545
-          git cherry-pick pr4545
-          git cherry-pick pr4543
-          make build
-          cp ./bin/docker-machine /usr/local/bin/
-          docker-machine version
+              pushd $GOPATH/src/github.com/docker/machine
+              # Work around of issues 4542 and issues 4544
+              git remote add upstream https://github.com/docker/machine
+              git config --global user.email 'zuul@openlab.com'
+              git config --global user.name 'openlab'
+              git fetch upstream refs/pull/4543/head:pr4543
+              git fetch upstream refs/pull/4545/head:pr4545
+              git cherry-pick pr4545
+              git cherry-pick pr4543
+              make build
+              cp ./bin/docker-machine /usr/local/bin/
+              docker-machine version
 
-          export OS_FLAVOR_ID=11
-          export OS_IMAGE_NAME="Ubuntu 16.04 Server 64bit"
-          export OS_DOMAIN_ID=default
-          export OS_SSH_USER=ubuntu
-          export OS_NETWORK_NAME=private
-          export OS_FLOATINGIP_POOL=public
-          if [ "{{ global_env.OS_BRANCH }}" == "stable/mitaka" ]; then
-              sg_cmd_prefix="openstack security group rule create --proto"
-          else
-              sg_cmd_prefix="openstack security group rule create --ingress --protocol"
-          fi
-          $sg_cmd_prefix tcp --dst-port 22 default
-          $sg_cmd_prefix tcp --dst-port 2376 default
-          $sg_cmd_prefix icmp default
+              export OS_FLAVOR_ID=11
+              export OS_IMAGE_NAME="Ubuntu 16.04 Server 64bit"
+              export OS_DOMAIN_ID=default
+              export OS_SSH_USER=ubuntu
+              export OS_NETWORK_NAME=private
+              export OS_FLOATINGIP_POOL=public
+              if [ "{{ global_env.OS_BRANCH }}" == "stable/mitaka" ]; then
+                  sg_cmd_prefix="openstack security group rule create --proto"
+              else
+                  sg_cmd_prefix="openstack security group rule create --ingress --protocol"
+              fi
+              $sg_cmd_prefix tcp --dst-port 22 default
+              $sg_cmd_prefix tcp --dst-port 2376 default
+              $sg_cmd_prefix icmp default
 
-          neutron subnet-update --dns-nameserver 8.8.8.8 private-subnet
-          openstack flavor create --vcpus 1 --ram 1024 --disk 10 --id 11 docker-machine-test
+              neutron subnet-update --dns-nameserver 8.8.8.8 private-subnet
+              openstack flavor create --vcpus 1 --ram 1024 --disk 10 --id 11 docker-machine-test
 
-          DEBUG=true VERBOSE=true DRIVER=openstack make test-integration test/integration/core
-          popd
-        executable: /bin/bash
-        chdir: '{{ ansible_user_dir }}/workspace'
-      environment: '{{ global_env }}'
+              export DRIVER=openstack
+              export DEBUG=true
+              export VERBOSE=true
+              export BASE_TEST_DIR=$(realpath test/integration)
+              export MACHINE_ROOT="$BASE_TEST_DIR/../.."
+              export MACHINE_STORAGE_PATH="/tmp/machine-bats-test-$DRIVER"
+              export MACHINE_BIN_NAME=docker-machine
+              export BATS_LOG="$MACHINE_ROOT/bats.log"
+              export B2D_LOCATION=~/.docker/machine/cache/boot2docker.iso
+              export SHARED_NAME="bats-$DRIVER-test-shared-$(date +%s)"
+              export MACHINE_BUGSNAG_API_TOKEN=no-report
+
+              function machine() {
+                  "$MACHINE_ROOT"/bin/"$MACHINE_BIN_NAME" "$@"
+              }
+              export -f machine
+              #  engine-options env_shell inspect_format regenerate-certs scp ssh-backends
+              bats_tests="core-commands engine-options"
+              set +e
+              EXIT_STATUS=0
+              for tests in ${bats_tests};do
+                  bats test/integration/core/${tests}.bats
+                  if [[ $? -ne 0 ]]; then
+                      EXIT_STATUS=1
+                  fi
+              done
+              set -e
+              popd
+              exit  ${EXIT_STATUS}
+            executable: /bin/bash
+          environment: '{{ global_env }}'
+
+      always:
+        - name: Cleanup resources
+          shell: |
+            set -ex
+            export DRIVER=openstack
+            export MACHINE_STORAGE_PATH="/tmp/machine-bats-test-$DRIVER"
+            for machine_name in $(docker-machine ls -q); do
+                fip=$(docker-machine ip $machine_name)
+                docker-machine rm -f $machine_name
+                openstack floating ip delete $fip
+            done
+          args:
+            executable: /bin/bash
+          environment: '{{ global_env }}'
