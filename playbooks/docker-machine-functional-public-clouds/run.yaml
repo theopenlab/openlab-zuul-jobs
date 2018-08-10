@@ -57,7 +57,8 @@
               }
               export -f machine
 
-              bats_tests="core-commands crashreport engine-options env_shell inspect_format regenerate-certs scp ssh-backends"
+              #  engine-options env_shell inspect_format regenerate-certs scp ssh-backends
+              bats_tests="core-commands crashreport"
               set +e
               EXIT_STATUS=0
               for tests in ${bats_tests};do
