@@ -53,7 +53,7 @@
           $sg_cmd_prefix tcp --dst-port 2376 default
           $sg_cmd_prefix icmp defaul
           neutron subnet-update --dns-nameserver 8.8.8.8 private-subnet
-          openstack flavor create --vcpus 1 --ram 1024 --disk 10 --id 11 docker-machine-tes
+          openstack flavor create --vcpus 1 --ram 1024 --disk 10 --id 11 docker-machine-test
           export DRIVER=openstack
           export DEBUG=true
           export VERBOSE=true
@@ -64,7 +64,7 @@
           export BATS_LOG="$MACHINE_ROOT/bats.log"
           export B2D_LOCATION=~/.docker/machine/cache/boot2docker.iso
           export SHARED_NAME="bats-$DRIVER-test-shared-$(date +%s)"
-          export MACHINE_BUGSNAG_API_TOKEN=no-repor
+          export MACHINE_BUGSNAG_API_TOKEN=no-report
           function machine() {
               "$MACHINE_ROOT"/bin/"$MACHINE_BIN_NAME" "$@"
           }
