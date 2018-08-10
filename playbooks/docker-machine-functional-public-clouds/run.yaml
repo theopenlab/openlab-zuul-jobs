@@ -75,7 +75,7 @@
               EXIT_STATUS=0
               for tests in ${bats_tests};do
                   echo "=> test/integration/core/${tests}.bats"
-                  bats test/integration/core/${tests}.bats
+                  env bats test/integration/core/${tests}.bats
                   [ $? -ne 0 ] && EXIT_STATUS=1
               done
               set -e
