@@ -57,7 +57,7 @@
           export DRIVER=openstack
           export DEBUG=true
           export VERBOSE=true
-          export BASE_TEST_DIR='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/test/integration'
+          export BASE_TEST_DIR="$(pwd)/test/integration"
           export MACHINE_ROOT="$BASE_TEST_DIR/../.."
           export MACHINE_STORAGE_PATH="/tmp/machine-bats-test-$DRIVER"
           export MACHINE_BIN_NAME=docker-machine
