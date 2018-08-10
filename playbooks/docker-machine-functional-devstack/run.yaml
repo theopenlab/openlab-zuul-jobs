@@ -79,9 +79,7 @@
               EXIT_STATUS=0
               for tests in ${bats_tests};do
                   bats test/integration/core/${tests}.bats
-                  if [[ $? -ne 0 ]]; then
-                      EXIT_STATUS=1
-                  fi
+                  [[ $? -ne 0 ]] && EXIT_STATUS=1
               done
               set -e
               popd

@@ -68,15 +68,13 @@
               }
               export -f machine
 
-              #  engine-options env_shell inspect_format regenerate-certs scp ssh-backends
-              bats_tests="core-commands engine-options"
+              #   engine-options engine-options env_shell inspect_format regenerate-certs scp ssh-backends
+              bats_tests="core-commands"
               set +e
               EXIT_STATUS=0
               for tests in ${bats_tests};do
-                  bats test/integration/core/${tests}.bats
-                  if [[ $? -ne 0 ]]; then
-                      EXIT_STATUS=1
-                  fi
+                  DEBUG=true VERBOSE=true bats test/integration/core/${tests}.bats
+                  [[ $? -ne 0 ]] && EXIT_STATUS=1
               done
               set -e
               popd
