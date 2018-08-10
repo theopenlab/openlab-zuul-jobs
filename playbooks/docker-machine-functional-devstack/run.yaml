@@ -51,7 +51,7 @@
           fi
           $sg_cmd_prefix tcp --dst-port 22 default
           $sg_cmd_prefix tcp --dst-port 2376 default
-          $sg_cmd_prefix icmp defaul
+          $sg_cmd_prefix icmp default
           neutron subnet-update --dns-nameserver 8.8.8.8 private-subnet
           openstack flavor create --vcpus 1 --ram 1024 --disk 10 --id 11 docker-machine-test
           export DRIVER=openstack
