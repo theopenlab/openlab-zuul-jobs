@@ -70,14 +70,14 @@
                   "$MACHINE_ROOT"/bin/"$MACHINE_BIN_NAME" "$@"
               }
               export -f machine
+              EXIT_STATUS=0
               bats_tests="core-commands engine-options env_shell inspect_format regenerate-certs scp ssh-backends"
-              bats test/integration/core/core-commands.bats
-              bats test/integration/core/engine-options.bats
-              bats test/integration/core/env_shell.bats
-              bats test/integration/core/inspect_format.bats
-              bats test/integration/core/regenerate-certs.bats
-              bats test/integration/core/scp.bats
-              bats test/integration/core/ssh-backends.bats
+              for tests in ${bats_tests};do
+                  echo "=> test/integration/core/${tests}.bats"
+                  set +e
+                  bats test/integration/core/${tests}.bats || EXIT_STATUS=1
+                  set -e
+              done
               popd
               exit  ${EXIT_STATUS}
             executable: /bin/bash

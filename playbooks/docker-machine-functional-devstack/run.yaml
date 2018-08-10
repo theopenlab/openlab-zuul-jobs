@@ -74,8 +74,7 @@
           for tests in ${bats_tests};do
               echo "=> test/integration/core/${tests}.bats"
               set +e
-              bats test/integration/core/${tests}.bats
-              [ $? -ne 0 ] && EXIT_STATUS=1
+              bats test/integration/core/${tests}.bats || EXIT_STATUS=1
               set -e
           done
           popd
