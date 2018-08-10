@@ -23,6 +23,15 @@
               mkdir -p $GOPATH/src/github.com/docker/machine
               cp -r '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}' $GOPATH/src/github.com/docker/
               pushd $GOPATH/src/github.com/docker/machine
+
+              # Work around of issues 4542 and issues 4544
+              git config --global user.email 'zuul@openlab.com'
+              git config --global user.name 'openlab'
+              git fetch origin refs/pull/4543/head:pr4543
+              git fetch origin refs/pull/4545/head:pr4545
+              git cherry-pick pr4545
+              git cherry-pick pr4543
+
               make build
               cp ./bin/docker-machine /usr/local/bin/
               docker-machine version
@@ -68,8 +77,8 @@
                   fi
               done
               set -e
-              exit  ${EXIT_STATUS}
               popd
+              exit  ${EXIT_STATUS}
             executable: /bin/bash
           environment: '{{ global_env }}'
 
