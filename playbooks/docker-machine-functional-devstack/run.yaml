@@ -51,6 +51,8 @@
           neutron subnet-update --dns-nameserver 8.8.8.8 private-subnet
           openstack flavor create --vcpus 1 --ram 1024 --disk 10 --id 11 docker-machine-tes
           export DRIVER=openstack
+          export DEBUG=true
+          export VERBOSE=true
           export BASE_TEST_DIR=$(realpath test/integration)
           export MACHINE_ROOT="$BASE_TEST_DIR/../.."
           export MACHINE_STORAGE_PATH="/tmp/machine-bats-test-$DRIVER"
@@ -67,7 +69,7 @@
           set +e
           EXIT_STATUS=0
           for tests in ${bats_tests};do
-              DEBUG=true VERBOSE=true bats test/integration/core/${tests}.bats
+              bats test/integration/core/${tests}.bats
               [[ $? -ne 0 ]] && EXIT_STATUS=1
           done
           set -e
