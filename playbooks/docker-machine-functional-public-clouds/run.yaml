@@ -71,6 +71,7 @@
               bats_tests="core-commands engine-options"
               set +e
               EXIT_STATUS=0
+              sleep 7200
               for tests in ${bats_tests};do
                   bats test/integration/core/${tests}.bats
                   if [[ $? -ne 0 ]]; then
