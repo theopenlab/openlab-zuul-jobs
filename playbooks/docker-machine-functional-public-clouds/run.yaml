@@ -67,9 +67,8 @@
                   "$MACHINE_ROOT"/bin/"$MACHINE_BIN_NAME" "$@"
               }
               export -f machine
-
-              #   engine-options engine-options env_shell inspect_format regenerate-certs scp ssh-backends
-              bats_tests="core-commands"
+              # env_shell inspect_format regenerate-certs scp ssh-backends
+              bats_tests="core-commands engine-options"
               set +e
               EXIT_STATUS=0
               for tests in ${bats_tests};do
