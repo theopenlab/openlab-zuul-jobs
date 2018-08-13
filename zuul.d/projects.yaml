@@ -37,6 +37,10 @@
             branches: stable-2.6
         - openstacksdk-ansible-stable-2.6-functional-orange:
             branches: stable-2.6
+        - openstacksdk-ansible-stable-2.6-functional-telefonica:
+            branches: stable-2.6
+        - openstacksdk-ansible-stable-2.6-functional-huaweicloud:
+            branches: stable-2.6
         - openstacksdk-ansible-stable-2.6-functional-devstack:
             branches: stable-2.6
         - openstacksdk-ansible-stable-2.6-functional-devstack-queens:
