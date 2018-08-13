@@ -559,6 +559,54 @@
     nodeset: ubuntu-trusty
 
 - job:
+    name: docker-machine-0.15.0-functional-devstack-newton
+    parent: init-test
+    description: |
+      Test image building functionality of Docker machine of 0.15.0 version against
+      devstack of Mitaka.
+    run: playbooks/docker-machine-functional-devstack/run.yaml
+    vars:
+      global_env:
+        OS_BRANCH: stable/newton
+    override-checkout: v0.15.0
+
+- job:
+    name: docker-machine-0.15.0-functional-devstack-ocata
+    parent: init-test
+    description: |
+      Test image building functionality of Docker machine of 0.15.0 version against
+      devstack of Mitaka.
+    run: playbooks/docker-machine-functional-devstack/run.yaml
+    vars:
+      global_env:
+        OS_BRANCH: stable/ocata
+    override-checkout: v0.15.0
+
+- job:
+    name: docker-machine-0.15.0-functional-devstack-pike
+    parent: init-test
+    description: |
+      Test image building functionality of Docker machine of 0.15.0 version against
+      devstack of Mitaka.
+    run: playbooks/docker-machine-functional-devstack/run.yaml
+    vars:
+      global_env:
+        OS_BRANCH: stable/pike
+    override-checkout: v0.15.0
+
+- job:
+    name: docker-machine-0.15.0-functional-devstack-queens
+    parent: init-test
+    description: |
+      Test image building functionality of Docker machine of 0.15.0 version against
+      devstack of Mitaka.
+    run: playbooks/docker-machine-functional-devstack/run.yaml
+    vars:
+      global_env:
+        OS_BRANCH: stable/queens
+    override-checkout: v0.15.0
+
+- job:
     name: docker-machine-0.15.0-functional-opentelekomcloud
     parent: init-test
     description: |
