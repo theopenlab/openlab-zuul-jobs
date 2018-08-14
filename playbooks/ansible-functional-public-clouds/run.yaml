@@ -38,12 +38,6 @@
     - name: Install dependencies
       pip: name=python-openstackclient
 
-    # workaround bug introduced by https://review.openstack.org/#/c/568698/
-    - name: Install python-glanceclient 2.11.0 (workaruond)
-      pip:
-        name: python-glanceclient
-        version: 2.11.0
-
     - name: modify run.yml to allow ignoring errors per test case
       lineinfile:
         path: "{{ sdk_ansible_tests_dirs[os_sdk] }}/run.yml"
