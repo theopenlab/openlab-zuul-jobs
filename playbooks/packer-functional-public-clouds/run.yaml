@@ -10,7 +10,6 @@
           set -ex
           set -o pipefail
           pip install python-openstackclient
-          pip install python-glanceclient==2.11.0
           flavor=$(openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column VCPUs | head -n 1 | awk '{print $1}')
           network=$(openstack network show openlab-jobs-net -f value -c id)
           src_img_name=$(openstack image list |grep -Eo "cirros.*0.4.0.*-disk")
