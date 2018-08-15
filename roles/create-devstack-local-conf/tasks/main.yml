@@ -23,6 +23,11 @@
     executable: /bin/bash
   when:
     - global_env.OS_BRANCH != 'stable/mitaka'
+    - global_env.OS_BRANCH != 'stable/newton'
+    - global_env.OS_BRANCH != 'stable/ocata'
+    - global_env.OS_BRANCH != 'stable/pike'
+    - '"fwaas-v1" not in enable_services'
+    - '"fwaas-v2" not in enable_services'
 
 
 # Populate local conf with specific branch
@@ -97,6 +102,10 @@
       enable_plugin neutron-lbaas https://git.openstack.org/openstack/neutron-lbaas
       enable_plugin octavia https://git.openstack.org/openstack/octavia
       enable_plugin barbican https://git.openstack.org/openstack/barbican
+      # Avoid to confict with vm fixed ip in some public cloud
+      OCTAVIA_MGMT_SUBNET=192.168.10.0/24
+      OCTAVIA_MGMT_SUBNET_START=192.168.10.2
+      OCTAVIA_MGMT_SUBNET_END=192.168.10.200
       EOF
     executable: /bin/bash
   when:
@@ -111,6 +120,10 @@
       enable_service octavia,o-cw,o-hm,o-hk,o-api
       enable_plugin octavia https://git.openstack.org/openstack/octavia
       enable_plugin barbican https://git.openstack.org/openstack/barbican
+      # Avoid to confict with vm fixed ip in some public cloud
+      OCTAVIA_MGMT_SUBNET=192.168.10.0/24
+      OCTAVIA_MGMT_SUBNET_START=192.168.10.2
+      OCTAVIA_MGMT_SUBNET_END=192.168.10.200
       EOF
     executable: /bin/bash
   when:
@@ -122,8 +135,7 @@
       set -e
       set -x
       cat << EOF >> /tmp/dg-local.conf
-      disable_service neutron-agent neutron-api neutron-dhcp neutron-l3 neutron-metadata-agent neutron-metering
-      enable_service q-agt q-svc q-dhcp q-l3 q-meta q-metering q-fwaas-v1
+      enable_service q-fwaas-v1
       enable_plugin neutron-fwaas https://git.openstack.org/openstack/neutron-fwaas
       EOF
     executable: /bin/bash
@@ -136,8 +148,7 @@
       set -e
       set -x
       cat << EOF >> /tmp/dg-local.conf
-      disable_service neutron-agent neutron-api neutron-dhcp neutron-l3 neutron-metadata-agent neutron-metering
-      enable_service q-agt q-svc q-dhcp q-l3 q-meta q-metering q-fwaas-v2
+      enable_service q-fwaas-v2
       enable_plugin neutron-fwaas https://git.openstack.org/openstack/neutron-fwaas
       EOF
     executable: /bin/bash
