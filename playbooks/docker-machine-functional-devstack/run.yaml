@@ -40,12 +40,12 @@
           export OS_SSH_USER=ubuntu
           export OS_NETWORK_NAME=private
           export OS_FLOATINGIP_POOL=public
+          export OS_DOMAIN_ID=default
 
           project_id=$(openstack token issue -f value -c project_id)
           sg_id=$(openstack security group list | grep default | grep $project_id | head -n 1 | awk '{print $2}')
           if [ "{{ global_env.OS_BRANCH }}" == "stable/mitaka" ]; then
               sg_cmd_prefix="openstack security group rule create --proto"
-              export OS_DOMAIN_ID=default
           else
               sg_cmd_prefix="openstack security group rule create --ingress --protocol"
           fi
