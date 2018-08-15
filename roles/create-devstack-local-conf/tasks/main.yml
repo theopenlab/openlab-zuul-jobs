@@ -31,7 +31,7 @@
 
 
 # Populate local conf with specific branch
-- name: create devstack local conf on stable/mitaka branch
+- name: create devstack local conf on stable/mitaka or stable/newton branch
   shell:
     cmd: |
       set -e
