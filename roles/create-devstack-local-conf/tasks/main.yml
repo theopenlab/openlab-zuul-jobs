@@ -45,7 +45,8 @@
       EOF
     executable: /bin/bash
   when:
-    - global_env.OS_BRANCH == 'stable/mitaka'
+    global_env.OS_BRANCH == 'stable/mitaka' or
+    global_env.OS_BRANCH == 'stable/newton'
 
 
 # Populate local conf with specific service
