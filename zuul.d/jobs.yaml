@@ -294,6 +294,15 @@
       - vexxhost_credentials
 
 - job:
+    name: cloud-provider-openstack-acceptance-test-manila-provisioner
+    parent: cloud-provider-openstack-test
+    description: |
+      Run Manila provisioner acceptance tests of cloud-provider-openstack
+    run: playbooks/cloud-provider-openstack-acceptance-test-manila-provisioner/run.yaml
+    post-run: playbooks/cloud-provider-openstack-acceptance-test-manila-provisioner/post.yaml
+    nodeset: ubuntu-xenial
+
+- job:
     name: cloud-provider-openstack-acceptance-test-lb-octavia
     parent: cloud-provider-openstack-test
     description: |
