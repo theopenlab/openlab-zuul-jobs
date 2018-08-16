@@ -610,7 +610,7 @@
     name: cloud-provider-openstack-acceptance-test-manila-provisioner
     description: |
       Commenting "/test cloud-provider-openstack-acceptance-test-manila-provisioner" enter this pipeline to run
-      the tests job of Kubernetes+OpenStack Cinder standalone scenarios and receive an initial
+      the tests job of Kubernetes+OpenStack Manila scenarios and receive an initial
       +/-1 Verified vote.
     manager: independent
     trigger:
