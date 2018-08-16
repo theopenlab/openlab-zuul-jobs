@@ -4,11 +4,11 @@
     - config-golang
     - install-k8s
     - clone-devstack-gate-to-workspace
-    - create-devstack-local-conf
-    - role: install-devstack
+    - role: create-devstack-local-conf
       enable_services:
         - 'manila'
         - 'ceph'
+    - install-devstack
   tasks:
     - name: Run Manila provisioner acceptance tests
       shell:
