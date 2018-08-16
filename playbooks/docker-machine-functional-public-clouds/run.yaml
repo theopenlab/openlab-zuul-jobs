@@ -4,55 +4,90 @@
     - export-cloud-openrc
     - config-golang
   tasks:
-    - name: Create Docker machine
-      shell:
-        cmd: |
-          set -ex
-          set -o pipefail
-          git clone https://github.com/sstephenson/bats.git
-          pushd bats
-          ./install.sh /usr/local
-          popd
+    - name: Run integration tests of docker machine aganist {{ cloud_name }}
+      block:
+        - name: Run docker machine intetration tests
+          shell:
+            cmd: |
+              set -ex
+              pip install python-openstackclient
+              git clone https://github.com/sstephenson/bats.git
+              pushd bats
+              ./install.sh /usr/local
+              popd
+              apt-get update
+              apt-get install apt-transport-https ca-certificates
+              wget -qO- https://get.docker.com/ | sh
 
-          # install Docker
-          apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D || true
-          apt-key adv --keyserver hkp://pgp.mit.edu:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D || true
-          apt-add-repository 'deb http://apt.dockerproject.org/repo ubuntu-xenial main'
-          apt-get update
-          apt-cache policy docker-engine
-          apt-get install -y docker-engine=1.12.6-0~ubuntu-xenial
-          cat /lib/systemd/system/docker.service
-          sed -r -i "s|(ExecStart)=(.+)|\1=\2 --iptables=false|" /lib/systemd/system/docker.service
-          cat /lib/systemd/system/docker.service
-          systemctl daemon-reload
-          systemctl restart docker
-          ifconfig -a
+              mkdir -p $GOPATH/src/github.com/docker/machine
+              cp -r '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}' $GOPATH/src/github.com/docker/
+              pushd $GOPATH/src/github.com/docker/machine
 
-          mkdir -p $GOPATH/src/github.com/docker/machine
-          cp -r '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}' $GOPATH/src/github.com/docker/
-          pushd $GOPATH/src/github.com/docker/machine
-          make build
-          cp ./bin/docker-machine /usr/local/bin/
-          docker-machine version
-          popd
+              # Work around of issues 4542 and issues 4544
+              git remote add upstream https://github.com/docker/machine
+              git config --global user.email 'zuul@openlab.com'
+              git config --global user.name 'openlab'
+              git fetch upstream refs/pull/4543/head:pr4543
+              git fetch upstream refs/pull/4545/head:pr4545
+              git cherry-pick pr4545
+              git cherry-pick pr4543
 
-          pip install python-openstackclient
-          pip install python-glanceclient==2.11.0
-          # Select a flavor have 2048M memory and 2 vCPU at least
-          export OS_FLAVOR_ID=$(openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column \
-              VCPUs | awk '{if($2>=2048 && $3>=2){print $1}}' | head -n 1)
-          export OS_IMAGE_NAME="Ubuntu 16.04 Server 64bit"
-          export OS_TENANT_ID=$(openstack token issue -f value -c project_id)
-          export OS_NETWORK_NAME=openlab-jobs-net
-          export OS_FLOATINGIP_POOL="admin_external_net"
-          export OS_SECURITY_GROUPS="openlab-jobs-sg"
-          export OS_SSH_USER="{{ ssh_user | default('ubuntu') }}"
+              make build
+              cp ./bin/docker-machine /usr/local/bin/
+              docker-machine version
+              popd
 
-          # NOTE: We do not need AZ environment variable, so unset in case it has been set in cloud openrc
-          unset OS_AVAILABILITY_ZONE
-          pushd $GOPATH/src/github.com/docker/machine
-          DEBUG=true VERBOSE=true DRIVER=openstack make test-integration test/integration/core/
-          popd
-        executable: /bin/bash
-        chdir: '{{ ansible_user_dir }}/workspace'
-      environment: '{{ global_env }}'
+              # Select a flavor have 2048M memory and 2 vCPU at least
+              export OS_FLAVOR_ID=$(openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column \
+                  VCPUs | awk '{if($2>=2048 && $3>=2){print $1}}' | head -n 1)
+              export OS_IMAGE_NAME="Ubuntu 16.04 Server 64bit"
+              export OS_TENANT_ID=$(openstack token issue -f value -c project_id)
+              export OS_NETWORK_NAME=openlab-jobs-net
+              export OS_FLOATINGIP_POOL="admin_external_net"
+              export OS_SECURITY_GROUPS="openlab-jobs-sg"
+              export OS_SSH_USER="{{ ssh_user | default('ubuntu') }}"
+              unset OS_AVAILABILITY_ZONE
+
+              pushd $GOPATH/src/github.com/docker/machine
+
+              export DRIVER=openstack
+              export DEBUG=true
+              export VERBOSE=true
+              export BASE_TEST_DIR=$(realpath test/integration)
+              export MACHINE_ROOT="$BASE_TEST_DIR/../.."
+              export MACHINE_STORAGE_PATH="/tmp/machine-bats-test-$DRIVER"
+              export MACHINE_BIN_NAME=docker-machine
+              export BATS_LOG="$MACHINE_ROOT/bats.log"
+              export B2D_LOCATION=~/.docker/machine/cache/boot2docker.iso
+              export SHARED_NAME="bats-$DRIVER-test-shared-$(date +%s)"
+              export MACHINE_BUGSNAG_API_TOKEN=no-report
+
+              function machine() {
+                  "$MACHINE_ROOT"/bin/"$MACHINE_BIN_NAME" "--debug $@"
+              }
+              export -f machine
+              EXIT_STATUS=0
+              bats_tests="core-commands engine-options env_shell inspect_format regenerate-certs scp ssh-backends"
+              for tests in ${bats_tests};do
+                  echo "=> test/integration/core/${tests}.bats"
+                  bats test/integration/core/${tests}.bats || EXIT_STATUS=1
+              done
+              popd
+              exit  ${EXIT_STATUS}
+            executable: /bin/bash
+          environment: '{{ global_env }}'
+
+      always:
+        - name: Cleanup resources
+          shell: |
+            set -ex
+            export DRIVER=openstack
+            export MACHINE_STORAGE_PATH="/tmp/machine-bats-test-$DRIVER"
+            for machine_name in $(docker-machine ls -q); do
+                fip=$(docker-machine ip $machine_name)
+                docker-machine rm -f $machine_name
+                openstack floating ip delete $fip
+            done
+          args:
+            executable: /bin/bash
+          environment: '{{ global_env }}'

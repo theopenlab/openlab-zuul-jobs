@@ -1,0 +1,81 @@
+- hosts: all
+  become: yes
+  roles:
+    - clone-devstack-gate-to-workspace
+    - create-devstack-local-conf
+    - install-devstack
+    - config-golang
+  tasks:
+    - name: Run Integration tests of Docker machine against devstack
+      shell:
+        cmd: |
+          set -ex
+          git clone https://github.com/sstephenson/bats.git
+          pushd bats
+          ./install.sh /usr/local
+          popd
+          apt-get update
+          apt-get install apt-transport-https ca-certificates
+          wget -qO- https://get.docker.com/ | sh
+
+          curl -O http://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-disk1.img
+          openstack image create --file xenial-server-cloudimg-amd64-disk1.img --min-disk 1 --container-format bare \
+              --disk-format qcow2 "Ubuntu 16.04 Server 64bit"
+          mkdir -p $GOPATH/src/github.com/docker/machine
+          cp -r '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}' $GOPATH/src/github.com/docker
+          pushd $GOPATH/src/github.com/docker/machine
+          # Work around of issues 4542 and issues 4544
+          git remote add upstream https://github.com/docker/machine
+          git config --global user.email 'zuul@openlab.com'
+          git config --global user.name 'openlab'
+          git fetch upstream refs/pull/4543/head:pr4543
+          git fetch upstream refs/pull/4545/head:pr4545
+          git cherry-pick pr4545
+          git cherry-pick pr4543
+          make build
+          cp ./bin/docker-machine /usr/local/bin/
+          docker-machine version
+          export OS_FLAVOR_ID=11
+          export OS_IMAGE_NAME="Ubuntu 16.04 Server 64bit"
+          export OS_SSH_USER=ubuntu
+          export OS_NETWORK_NAME=private
+          export OS_FLOATINGIP_POOL=public
+          export OS_DOMAIN_ID=default
+
+          project_id=$(openstack token issue -f value -c project_id)
+          sg_id=$(openstack security group list | grep default | grep $project_id | head -n 1 | awk '{print $2}')
+          if [ "{{ global_env.OS_BRANCH }}" == "stable/mitaka" ]; then
+              sg_cmd_prefix="openstack security group rule create --proto"
+          else
+              sg_cmd_prefix="openstack security group rule create --ingress --protocol"
+          fi
+          $sg_cmd_prefix tcp --dst-port 22 $sg_id
+          $sg_cmd_prefix tcp --dst-port 2376 $sg_id
+          $sg_cmd_prefix icmp $sg_id
+          neutron subnet-update --dns-nameserver 8.8.8.8 private-subnet
+          openstack flavor create --vcpus 1 --ram 1024 --disk 10 --id 11 docker-machine-test
+          export DRIVER=openstack
+          export DEBUG=true
+          export VERBOSE=true
+          export BASE_TEST_DIR="$(pwd)/test/integration"
+          export MACHINE_ROOT="$BASE_TEST_DIR/../.."
+          export MACHINE_STORAGE_PATH="/tmp/machine-bats-test-$DRIVER"
+          export MACHINE_BIN_NAME=docker-machine
+          export BATS_LOG="$MACHINE_ROOT/bats.log"
+          export B2D_LOCATION=~/.docker/machine/cache/boot2docker.iso
+          export SHARED_NAME="bats-$DRIVER-test-shared-$(date +%s)"
+          export MACHINE_BUGSNAG_API_TOKEN=no-report
+          function machine() {
+              "$MACHINE_ROOT"/bin/"$MACHINE_BIN_NAME" "--debug $@"
+          }
+          export -f machine
+          bats_tests="core-commands engine-options env_shell inspect_format regenerate-certs scp ssh-backends"
+          EXIT_STATUS=0
+          for tests in ${bats_tests};do
+              echo "=> test/integration/core/${tests}.bats"
+              bats test/integration/core/${tests}.bats || EXIT_STATUS=1
+          done
+          popd
+          exit  ${EXIT_STATUS}
+        executable: /bin/bash
+      environment: '{{ global_env }}'

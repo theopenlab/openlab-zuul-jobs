@@ -716,3 +716,64 @@
     override-checkout: v0.15.0
     secrets:
       - huaweicloud_credentials
+
+- job:
+    name: docker-machine-0.15.0-functional-devstack-mitaka
+    parent: init-test
+    description: |
+      Test image building functionality of Docker machine of 0.15.0 version against
+      devstack of Mitaka.
+    run: playbooks/docker-machine-functional-devstack/run.yaml
+    vars:
+      global_env:
+        OS_BRANCH: stable/mitaka
+    override-checkout: v0.15.0
+    nodeset: ubuntu-trusty
+
+- job:
+    name: docker-machine-0.15.0-functional-devstack-newton
+    parent: init-test
+    description: |
+      Test image building functionality of Docker machine of 0.15.0 version against
+      devstack of Newton.
+    run: playbooks/docker-machine-functional-devstack/run.yaml
+    vars:
+      global_env:
+        OS_BRANCH: stable/newton
+    override-checkout: v0.15.0
+
+- job:
+    name: docker-machine-0.15.0-functional-devstack-ocata
+    parent: init-test
+    description: |
+      Test image building functionality of Docker machine of 0.15.0 version against
+      devstack of Ocata.
+    run: playbooks/docker-machine-functional-devstack/run.yaml
+    vars:
+      global_env:
+        OS_BRANCH: stable/ocata
+    override-checkout: v0.15.0
+
+- job:
+    name: docker-machine-0.15.0-functional-devstack-pike
+    parent: init-test
+    description: |
+      Test image building functionality of Docker machine of 0.15.0 version against
+      devstack of Pike.
+    run: playbooks/docker-machine-functional-devstack/run.yaml
+    vars:
+      global_env:
+        OS_BRANCH: stable/pike
+    override-checkout: v0.15.0
+
+- job:
+    name: docker-machine-0.15.0-functional-devstack-queens
+    parent: init-test
+    description: |
+      Test image building functionality of Docker machine of 0.15.0 version against
+      devstack of Queens.
+    run: playbooks/docker-machine-functional-devstack/run.yaml
+    vars:
+      global_env:
+        OS_BRANCH: stable/queens
+    override-checkout: v0.15.0
