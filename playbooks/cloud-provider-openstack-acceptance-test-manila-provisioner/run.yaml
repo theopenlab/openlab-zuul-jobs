@@ -1,0 +1,95 @@
+- hosts: all
+  become: yes
+  roles:
+    - config-golang
+    - install-k8s
+    - clone-devstack-gate-to-workspace
+    - role: create-devstack-local-conf
+      enable_services:
+        - 'manila'
+        - 'ceph'
+    - install-devstack
+  tasks:
+    - name: Run Manila provisioner acceptance tests
+      shell:
+        cmd: |
+          set -x
+          set -e
+          set -o pipefail
+
+          # Build manila-provisioner binary
+          make manila-provisioner
+
+          export API_HOST_IP=$(ip route get 1.1.1.1 | awk '{print $7}')
+          export KUBELET_HOST="0.0.0.0"
+          export ALLOW_SECURITY_CONTEXT=true
+          export ENABLE_CRI=false
+          export ENABLE_HOSTPATH_PROVISIONER=true
+          export ENABLE_SINGLE_CA_SIGNER=true
+          export KUBE_ENABLE_CLUSTER_DNS=false
+          export LOG_LEVEL=4
+
+          # location of where the kubernetes processes log their output
+          mkdir -p '{{ k8s_log_dir }}'
+          export LOG_DIR='{{ k8s_log_dir }}'
+          # We need this for one of the conformance tests
+          export ALLOW_PRIVILEGED=true
+          # Just kick off all the processes and drop down to the command line
+          export ENABLE_DAEMON=true
+          export HOSTNAME_OVERRIDE=127.0.0.1
+          export MAX_TIME_FOR_URL_API_SERVER=5
+
+          nohup ./manila-provisioner --provisioner=manila-provisioner --kubeconfig /var/run/kubernetes/admin.kubeconfig > "$LOG_DIR/manila-provisioner.log" 2>&1 &
+
+          # set up the config we need for kubectl to work
+          '{{ kubectl }}' config set-cluster local --server=https://localhost:6443 --certificate-authority=/var/run/kubernetes/server-ca.crt
+          '{{ kubectl }}' config set-credentials myself --client-key=/var/run/kubernetes/client-admin.key --client-certificate=/var/run/kubernetes/client-admin.crt
+          '{{ kubectl }}' config set-context local --cluster=local --user=myself
+          '{{ kubectl }}' config use-context local
+          # Hack for RBAC for all for the new cloud-controller process, we need to do better than this
+          '{{ kubectl }}' create clusterrolebinding --user system:serviceaccount:kube-system:default kube-system-cluster-admin-1 --clusterrole cluster-admin
+          '{{ kubectl }}' create clusterrolebinding --user system:serviceaccount:kube-system:pvl-controller kube-system-cluster-admin-2 --clusterrole cluster-admin
+          '{{ kubectl }}' create clusterrolebinding --user system:serviceaccount:kube-system:cloud-node-controller kube-system-cluster-admin-3 --clusterrole cluster-admin
+          '{{ kubectl }}' create clusterrolebinding --user system:serviceaccount:kube-system:cloud-controller-manager kube-system-cluster-admin-4 --clusterrole cluster-admin
+          '{{ kubectl }}' create clusterrolebinding --user system:serviceaccount:kube-system:shared-informers kube-system-cluster-admin-5 --clusterrole cluster-admin
+          '{{ kubectl }}' create clusterrolebinding --user system:kube-controller-manager  kube-system-cluster-admin-6 --clusterrole cluster-admin
+
+          # OpenStack credentials for manila-provisioner
+          '{{ kubectl }}' create secret generic manila-provisioner-secret --from-literal=os-authURL=$OS_AUTH_URL --from-literal=os-domainName=$OS_USER_DOMAIN_NAME --from-literal=os-userName=$OS_USERNAME --from-literal=os-password=$OS_PASSWORD --from-literal=os-projectID=$OS_PROJECT_ID --from-literal=os-region=$OS_REGION_NAME
+
+          # Create StorageClass
+          cat <<EOF | '{{ kubectl }}' create -f -
+          apiVersion: storage.k8s.io/v1beta1
+          kind: StorageClass
+          metadata:
+            name: manila-cephfs-share
+          provisioner: manila-provisioner
+          parameters:
+            osSecretName: manila-provisioner-secret
+            protocol: CEPHFS
+            backend: cephfs
+          EOF
+
+          # Create a PVC for a CephFS share and a test pod that mounts it
+          '{{ kubectl }}' create -f examples/manila-provisioner/cephfs/user-deploy/pvc.yaml
+          '{{ kubectl }}' create -f examples/manila-provisioner/cephfs/user-deploy/pod.yaml
+
+          # Check for status
+          if timeout 300 bash -c '
+              while :
+              do
+                  [[ $({{ kubectl }} describe pods web | awk "/^Status:/ {print \$2}") == Running ]] && break
+                  sleep 1
+              done
+              '
+          then
+              echo 'Run test successful'
+          else
+              echo 'Run test failed'
+              '{{ kubectl }}' describe pod manila-cephfs-pod
+              '{{ kubectl }}' describe pvc manila-cephfs-pvc
+              exit 1
+          fi
+        executable: /bin/bash
+        chdir: '{{ k8s_os_provider_src_dir }}'
+      environment: '{{ global_env }}'
