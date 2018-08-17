@@ -665,6 +665,7 @@
       - zhongjun2/cf-huaweicloud-validator
     secrets:
       - huaweicloud_credentials
+    nodeset: ubuntu-xenial-huaweicloud
 
 - job:
     name: bosh-acceptance-test-huaweicloud

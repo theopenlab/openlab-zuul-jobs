@@ -1,0 +1,13 @@
+- hosts: all
+  become: yes
+  roles:
+    - role: export-cloud-openrc
+      vars:
+        cloud_name: 'huaweicloud'
+  tasks:
+    - name: Install mysql packages
+      shell: |
+        apt-get install -y mariadb-server mariadb-client python-pymysql libmysqlclient-dev
+
+      args:
+        executable: /bin/bash
