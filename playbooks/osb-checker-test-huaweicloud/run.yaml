@@ -9,6 +9,7 @@
     - name: Running test cases of osb-checker against huaweicloud
       shell:
         cmd: |
+          set -ex
           apt-get install -y mariadb-server mariadb-client python-pymysql libmysqlclient-dev
           cat << EOF | mysql -sfu root
           CREATE USER 'broker'@'localhost' IDENTIFIED BY 'password';
@@ -17,6 +18,7 @@
           FLUSH PRIVILEGES;
           EOF
           go get github.com/huaweicloud/huaweicloud-service-broker
+          set +x
           pushd $GOPATH/src/github.com/huaweicloud/huaweicloud-service-broker
           python -c "
           import json
@@ -35,6 +37,8 @@
           json.dump(cfg, open('config.json', 'w+'), separators=(',',': '), indent=4)
           "
           popd
+          set -x
+          sleep 7200
 
         executable: /bin/bash
       environment: '{{ global_env }}'
