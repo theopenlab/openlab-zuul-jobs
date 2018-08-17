@@ -60,6 +60,8 @@
       OS_REGION_NAME: '{{ huaweicloud_credentials.region_name}}'
       OS_TENANT_NAME: '{{ huaweicloud_credentials.project_name }}'
       OS_USERNAME: '{{ huaweicloud_credentials.user_name }}'
+      OS_ACCESS_KEY: '{{ huaweicloud_credentials.access_key }}'
+      OS_SECRET_KEY: '{{ huaweicloud_credentials.secret_key }}'
   no_log: yes
   when: cloud_name == 'huaweicloud'
 

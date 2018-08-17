@@ -1,13 +1,40 @@
 - hosts: all
   become: yes
   roles:
+    - config-golang
     - role: export-cloud-openrc
       vars:
         cloud_name: 'huaweicloud'
   tasks:
-    - name: Install mysql packages
-      shell: |
-        apt-get install -y mariadb-server mariadb-client python-pymysql libmysqlclient-dev
+    - name: Running test cases of osb-checker against huaweicloud
+      shell:
+        cmd: |
+          apt-get install -y mariadb-server mariadb-client python-pymysql libmysqlclient-dev
+          cat << EOF | mysql -sfu root
+          CREATE USER 'broker'@'localhost' IDENTIFIED BY 'password';
+          GRANT ALL PRIVILEGES ON broker.* TO 'broker'@'localhost' WITH GRANT OPTION;
+          CREATE DATABASE IF NOT EXISTS broker;
+          FLUSH PRIVILEGES;
+          EOF
+          go get github.com/huaweicloud/huaweicloud-service-broker
+          pushd $GOPATH/src/github.com/huaweicloud/huaweicloud-service-broker
+          python -c "
+          import json
+          from collections import OrderedDict
+          cfg = json.load(open('config.json', 'r'), object_pairs_hook=OrderedDict)
+          cfg['back_database']['database_username'] = 'broker'
+          cfg['back_database']['database_password'] = 'password'
+          cfg['cloud_credentials']['auth_url']='$OS_AUTH_URL'
+          cfg['cloud_credentials']['user_name']='$OS_USERNAME'
+          cfg['cloud_credentials']['password']='$OS_PASSWORD'
+          cfg['cloud_credentials']['domain_name']='$OS_DOMAIN_NAME'
+          cfg['cloud_credentials']['tenant_name']='$OS_TENANT_NAME'
+          cfg['cloud_credentials']['region']='$OS_REGION_NAME'
+          cfg['cloud_credentials']['access_key']='$OS_ACCESS_KEY'
+          cfg['cloud_credentials']['secret_key']='$OS_SECRET_KEY'
+          json.dump(cfg, open('config.json', 'w+'), separators=(',',': '), indent=4)
+          "
+          popd
 
-      args:
         executable: /bin/bash
+      environment: '{{ global_env }}'
