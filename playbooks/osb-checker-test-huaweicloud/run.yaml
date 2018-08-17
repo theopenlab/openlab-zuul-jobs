@@ -17,9 +17,10 @@
           CREATE DATABASE IF NOT EXISTS broker;
           FLUSH PRIVILEGES;
           EOF
-          go get github.com/huaweicloud/huaweicloud-service-broker
-          set +x
+          mkdir -p $GOPATH/src/github.com/huaweicloud/huaweicloud-service-broker
+          cp -r '{{ zuul.project.src_dir }}' $GOPATH/src/github.com/huaweicloud/huaweicloud-service-broker
           pushd $GOPATH/src/github.com/huaweicloud/huaweicloud-service-broker
+          set +x
           python -c "
           import json
           from collections import OrderedDict
@@ -36,8 +37,13 @@
           cfg['cloud_credentials']['secret_key']='$OS_SECRET_KEY'
           json.dump(cfg, open('config.json', 'w+'), separators=(',',': '), indent=4)
           "
-          popd
           set -x
+          go get ./...
+          go install
+          popd
+          nohup huaweicloud-service-broker -config=$GOPATH/src/github.com/huaweicloud/huaweicloud-service-broker/config.json \
+              -port=3000 2>&1 &
+
           sleep 7200
 
         executable: /bin/bash
