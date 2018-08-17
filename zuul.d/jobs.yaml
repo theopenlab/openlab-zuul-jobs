@@ -676,3 +676,4 @@
       - liu-sheng/bosh-acceptance-tests
     secrets:
       - huaweicloud_credentials
+    nodeset: ubuntu-xenial-huaweicloud
