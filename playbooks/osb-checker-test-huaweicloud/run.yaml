@@ -17,8 +17,8 @@
           CREATE DATABASE IF NOT EXISTS broker;
           FLUSH PRIVILEGES;
           EOF
-          mkdir -p $GOPATH/src/github.com/huaweicloud/huaweicloud-service-broker
-          cp -r '{{ zuul.project.src_dir }}' $GOPATH/src/github.com/huaweicloud/huaweicloud-service-broker
+          mkdir -p $GOPATH/src/github.com/huaweicloud
+          cp -r '{{ zuul.project.src_dir }}' $GOPATH/src/github.com/huaweicloud/
           pushd $GOPATH/src/github.com/huaweicloud/huaweicloud-service-broker
           set +x
           python -c "
