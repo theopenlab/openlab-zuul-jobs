@@ -63,7 +63,7 @@
               export MACHINE_BUGSNAG_API_TOKEN=no-report
 
               function machine() {
-                  "$MACHINE_ROOT"/bin/"$MACHINE_BIN_NAME" "--debug $@"
+                  "$MACHINE_ROOT"/bin/"$MACHINE_BIN_NAME" "--debug" "$@"
               }
               export -f machine
               EXIT_STATUS=0

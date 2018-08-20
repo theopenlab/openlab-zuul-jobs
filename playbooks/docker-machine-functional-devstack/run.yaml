@@ -66,7 +66,7 @@
           export SHARED_NAME="bats-$DRIVER-test-shared-$(date +%s)"
           export MACHINE_BUGSNAG_API_TOKEN=no-report
           function machine() {
-              "$MACHINE_ROOT"/bin/"$MACHINE_BIN_NAME" "--debug $@"
+              "$MACHINE_ROOT"/bin/"$MACHINE_BIN_NAME" "--debug" "$@"
           }
           export -f machine
           bats_tests="core-commands engine-options env_shell inspect_format regenerate-certs scp ssh-backends"
