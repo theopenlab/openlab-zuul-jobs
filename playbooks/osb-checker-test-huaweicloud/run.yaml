@@ -43,7 +43,6 @@
           popd
           curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
           apt-get install -y nodejs
-          ln -s /usr/bin/nodejs /usr/bin/node
           nohup huaweicloud-service-broker -config=$GOPATH/src/github.com/huaweicloud/huaweicloud-service-broker/config.json \
               -port=3000 2>&1 &
 
