@@ -308,16 +308,55 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-flexvolume-cinder/run.yaml
     nodeset: ubuntu-xenial
 
-
 - job:
-    name: cf-openstack-validator-acceptance-test
+    name: cf-openstack-validator-acceptance-test-newton
     parent: init-test
     description: |
-      This job validation tests of cf-openstack-validator aganist devstack
+      This job validation tests of cf-openstack-validator aganist newton devstack
     run: playbooks/cf-openstack-validator-acceptance-test/run.yaml
     vars:
       global_env:
         OS_BRANCH: stable/newton
+
+- job:
+    name: cf-openstack-validator-acceptance-test-mitaka
+    parent: init-test
+    description: |
+      This job validation tests of cf-openstack-validator aganist mitaka devstack
+    run: playbooks/cf-openstack-validator-acceptance-test/run.yaml
+    vars:
+      global_env:
+        OS_BRANCH: stable/mitaka
+
+- job:
+    name: cf-openstack-validator-acceptance-test-ocata
+    parent: init-test
+    description: |
+      This job validation tests of cf-openstack-validator aganist ocata devstack
+    run: playbooks/cf-openstack-validator-acceptance-test/run.yaml
+    vars:
+      global_env:
+        OS_BRANCH: stable/ocata
+
+- job:
+    name: cf-openstack-validator-acceptance-test-pike
+    parent: init-test
+    description: |
+      This job validation tests of cf-openstack-validator aganist pike devstack
+    run: playbooks/cf-openstack-validator-acceptance-test/run.yaml
+    vars:
+      global_env:
+        OS_BRANCH: stable/pike
+
+- job:
+    name: cf-openstack-validator-acceptance-test-queens
+    parent: init-test
+    description: |
+      This job validation tests of cf-openstack-validator aganist pike devstack
+    run: playbooks/cf-openstack-validator-acceptance-test/run.yaml
+    vars:
+      global_env:
+        OS_BRANCH: stable/queens
 
 - job:
     name: bosh-openstack-cpi-release-acceptance-test
