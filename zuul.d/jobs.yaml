@@ -327,6 +327,7 @@
     vars:
       global_env:
         OS_BRANCH: stable/mitaka
+    nodeset: ubuntu-trusty
 
 - job:
     name: cf-openstack-validator-acceptance-test-ocata
