@@ -5,14 +5,32 @@
     - role: export-cloud-openrc
       vars:
         cloud_name: 'huaweicloud'
+  vars:
+    os_auth_url: {{ global_env.OS_AUTH_URL }}
+    os_username: {{ global_env.OS_USERNAME }}
+    os_password: {{ global_env.OS_PASSWORD }}
+    os_domain_name: {{ global_env.OS_DOMAIN_NAME }}
+    os_tenant_name: {{ global_env.OS_TENANT_NAME }}
+    os_region_name: {{ global_env.OS_REGION_NAME }}
+    access_key: {{ global_env.OS_ACCESS_KEY }}
+    secret_key: {{ global_env.OS_SECRET_KEY }}
+    db_username: broker
+    db_password: password
+    broker_username: username
+    broker_password: password
+
   tasks:
-    - name: Configure apache zuul status pages
+    - name: Config huaweicloud service broker config
       become: yes
       template:
         dest: "{{ ansible_user_dir }}/src/github.com/huaweicloud/huaweicloud-service-broker/config.json"
         src: "huaweicloud-service-broker-config.json.j2"
-      vars:
-        "{{ global_env }}"
+
+    - name: Config osb checker testing config
+      become: yes
+      template:
+        dest: "{{ ansible_user_dir }}/src/github.com/openservicebrokerapi/osb-checker/2.13/tests/test/configs/config_openstack.json"
+        src: "osb-checker-config-openstack.json.j2"
 
     - name: Running test cases of osb-checker against huaweicloud
       shell:

@@ -1,26 +1,26 @@
 {
     "broker_config": {
         "log_level": "DEBUG",
-        "username": "username",
-        "password": "password"
+        "username": {{ broker_username }},
+        "password": {{ broker_password }},
     },
     "back_database": {
         "database_type": "mysql",
         "database_host": "127.0.0.1",
         "database_port": "3306",
         "database_name": "broker",
-        "database_username": "******",
-        "database_password": "******"
+        "database_username": {{ db_username }},
+        "database_password": {{ db_password }}
     },
     "cloud_credentials": {
-        "auth_url": {{ OS_AUTH_URL }},
-        "user_name": {{ OS_USERNAME }},
-        "password": {{ OS_PASSWORD }},
-        "domain_name": {{ OS_DOMAIN_NAME }},
-        "tenant_name": {{ OS_TENANT_NAME }},
-        "region": {{ OS_REGION_NAME }},
-        "access_key": {{ OS_ACCESS_KEY }},
-        "secret_key": {{ OS_SECRET_KEY }}
+        "auth_url": {{ os_auth_url }},
+        "user_name": {{ os_username }},
+        "password": {{ os_password }},
+        "domain_name": {{ os_domain_name }},
+        "tenant_name": {{ os_tenant_name }},
+        "region": {{ os_region_name }},
+        "access_key": {{ os_access_key }},
+        "secret_key": {{ os_secret_key }}
     },
     "catalog": {
         "services": [
