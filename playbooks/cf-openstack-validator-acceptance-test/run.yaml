@@ -28,7 +28,7 @@
           apt-get install python-software-properties -y
           apt-add-repository ppa:brightbox/ruby-ng -y
           apt-get update
-          apt-get install ruby
+          apt-get install ruby -y
           ruby -v
 
           source /opt/stack/new/devstack/openrc admin admin

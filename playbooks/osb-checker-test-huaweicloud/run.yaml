@@ -46,6 +46,12 @@
           nohup huaweicloud-service-broker -config=$GOPATH/src/github.com/huaweicloud/huaweicloud-service-broker/config.json \
               -port=3000 2>&1 &
 
+          pushd $GOPATH/src/github.com/openservicebrokerapi/osb-checker/2.13/tests/
+          npm install
+          npm test
+
+          popd
+
           sleep 7200
 
         executable: /bin/bash
