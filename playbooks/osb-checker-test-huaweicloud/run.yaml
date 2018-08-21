@@ -11,6 +11,7 @@
       template:
         dest: "{{ ansible_user_dir }}/src/github.com/huaweicloud/huaweicloud-service-broker/config.json"
         src: "huaweicloud-service-broker-config.json.j2"
+      environment: '{{ global_env }}'
 
     - name: Running test cases of osb-checker against huaweicloud
       shell:
