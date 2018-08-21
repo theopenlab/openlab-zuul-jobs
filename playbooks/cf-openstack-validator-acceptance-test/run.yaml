@@ -71,6 +71,6 @@
           # Install dependencies
           sudo gem install bundler
           bundle install
-          ./validate --stemcell bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz --config validator.yml
+          ./validate --stemcell bosh-openstack-qemu-ubuntu-trusty-go_agent.tgz --config validator.yml --tag cpi_api
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
