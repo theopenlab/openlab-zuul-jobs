@@ -13,6 +13,7 @@
           OS_USER_DOMAIN_ID=default
           OS_PROJECT_DOMAIN_ID=default
           VOLUME_BACKING_FILE_SIZE=62000M
+          KEYSTONE_USE_MOD_WSGI=False
           EOF
         executable: /bin/bash
   roles:
@@ -23,6 +24,12 @@
       shell:
         cmd: |
           set -x
+
+          apt-get install python-software-properties -y
+          apt-add-repository ppa:brightbox/ruby-ng -y
+          apt-get update
+          apt-get install ruby
+          ruby -v
 
           source /opt/stack/new/devstack/openrc admin admin
           instance_type=m1.cf
