@@ -6,6 +6,12 @@
       vars:
         cloud_name: 'huaweicloud'
   tasks:
+    - name: Configure apache zuul status pages
+      become: yes
+      template:
+        dest: "{{ ansible_user_dir }}/src/github.com/huaweicloud/huaweicloud-service-broker/config.json"
+        src: "huaweicloud-service-broker-config.json.j2"
+
     - name: Running test cases of osb-checker against huaweicloud
       shell:
         cmd: |
@@ -17,27 +23,10 @@
           CREATE DATABASE IF NOT EXISTS broker;
           FLUSH PRIVILEGES;
           EOF
+          sleep 7200
           mkdir -p $GOPATH/src/github.com/huaweicloud
           cp -r '{{ zuul.project.src_dir }}' $GOPATH/src/github.com/huaweicloud/
           pushd $GOPATH/src/github.com/huaweicloud/huaweicloud-service-broker
-          set +x
-          python -c "
-          import json
-          from collections import OrderedDict
-          cfg = json.load(open('config.json', 'r'), object_pairs_hook=OrderedDict)
-          cfg['back_database']['database_username'] = 'broker'
-          cfg['back_database']['database_password'] = 'password'
-          cfg['cloud_credentials']['auth_url']='$OS_AUTH_URL'
-          cfg['cloud_credentials']['user_name']='$OS_USERNAME'
-          cfg['cloud_credentials']['password']='$OS_PASSWORD'
-          cfg['cloud_credentials']['domain_name']='$OS_DOMAIN_NAME'
-          cfg['cloud_credentials']['tenant_name']='$OS_TENANT_NAME'
-          cfg['cloud_credentials']['region']='$OS_REGION_NAME'
-          cfg['cloud_credentials']['access_key']='$OS_ACCESS_KEY'
-          cfg['cloud_credentials']['secret_key']='$OS_SECRET_KEY'
-          json.dump(cfg, open('config.json', 'w+'), separators=(',',': '), indent=4)
-          "
-          set -x
           go get ./...
           go install
           popd
