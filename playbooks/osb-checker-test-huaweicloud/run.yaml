@@ -12,8 +12,8 @@
     os_domain_name: '{{ global_env.OS_DOMAIN_NAME }}'
     os_tenant_name: '{{ global_env.OS_TENANT_NAME }}'
     os_region_name: '{{ global_env.OS_REGION_NAME }}'
-    access_key: '{{ global_env.OS_ACCESS_KEY }}'
-    secret_key: '{{ global_env.OS_SECRET_KEY }}'
+    os_access_key: '{{ global_env.OS_ACCESS_KEY }}'
+    os_secret_key: '{{ global_env.OS_SECRET_KEY }}'
     db_username: broker
     db_password: password
     broker_username: username
