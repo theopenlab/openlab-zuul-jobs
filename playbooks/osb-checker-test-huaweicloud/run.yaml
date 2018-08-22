@@ -6,14 +6,14 @@
       vars:
         cloud_name: 'huaweicloud'
   vars:
-    os_auth_url: {{ global_env.OS_AUTH_URL }}
-    os_username: {{ global_env.OS_USERNAME }}
-    os_password: {{ global_env.OS_PASSWORD }}
-    os_domain_name: {{ global_env.OS_DOMAIN_NAME }}
-    os_tenant_name: {{ global_env.OS_TENANT_NAME }}
-    os_region_name: {{ global_env.OS_REGION_NAME }}
-    access_key: {{ global_env.OS_ACCESS_KEY }}
-    secret_key: {{ global_env.OS_SECRET_KEY }}
+    os_auth_url: '{{ global_env.OS_AUTH_URL }}'
+    os_username: '{{ global_env.OS_USERNAME }}'
+    os_password: '{{ global_env.OS_PASSWORD }}'
+    os_domain_name: '{{ global_env.OS_DOMAIN_NAME }}'
+    os_tenant_name: '{{ global_env.OS_TENANT_NAME }}'
+    os_region_name: '{{ global_env.OS_REGION_NAME }}'
+    access_key: '{{ global_env.OS_ACCESS_KEY }}'
+    secret_key: '{{ global_env.OS_SECRET_KEY }}'
     db_username: broker
     db_password: password
     broker_username: username
