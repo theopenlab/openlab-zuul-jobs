@@ -43,7 +43,6 @@
           CREATE DATABASE IF NOT EXISTS broker;
           FLUSH PRIVILEGES;
           EOF
-          sleep 7200
           mkdir -p $GOPATH/src/github.com/huaweicloud
           cp -r '{{ zuul.project.src_dir }}' $GOPATH/src/github.com/huaweicloud/
           pushd $GOPATH/src/github.com/huaweicloud/huaweicloud-service-broker
@@ -52,6 +51,7 @@
           popd
           curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
           apt-get install -y nodejs
+          sleep 7200
           nohup huaweicloud-service-broker -config=$GOPATH/src/github.com/huaweicloud/huaweicloud-service-broker/config.json \
               -port=3000 2>&1 &
 

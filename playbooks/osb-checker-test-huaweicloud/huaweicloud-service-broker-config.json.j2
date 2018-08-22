@@ -1,26 +1,26 @@
 {
     "broker_config": {
         "log_level": "DEBUG",
-        "username": {{ broker_username }},
-        "password": {{ broker_password }},
+        "username": "{{ broker_username }}",
+        "password": "{{ broker_password }}",
     },
     "back_database": {
         "database_type": "mysql",
         "database_host": "127.0.0.1",
         "database_port": "3306",
         "database_name": "broker",
-        "database_username": {{ db_username }},
-        "database_password": {{ db_password }}
+        "database_username": "{{ db_username }}",
+        "database_password": "{{ db_password }}"
     },
     "cloud_credentials": {
-        "auth_url": {{ os_auth_url }},
-        "user_name": {{ os_username }},
-        "password": {{ os_password }},
-        "domain_name": {{ os_domain_name }},
-        "tenant_name": {{ os_tenant_name }},
-        "region": {{ os_region_name }},
-        "access_key": {{ os_access_key }},
-        "secret_key": {{ os_secret_key }}
+        "auth_url": "{{ os_auth_url }}",
+        "user_name": "{{ os_username }}",
+        "password": "{{ os_password }}",
+        "domain_name": "{{ os_domain_name }}",
+        "tenant_name": "{{ os_tenant_name }}",
+        "region": "{{ os_region_name }}",
+        "access_key": "{{ os_access_key }}",
+        "secret_key": "{{ os_secret_key }"}
     },
     "catalog": {
         "services": [
@@ -54,11 +54,11 @@
                                 "speccode": "dcs.single_node",
                                 "charging_type": "Hourly",
                                 "capacity": 2,
-                                "vpc_id": "2c1fe4bd-ebad-44ca-ae9d-e94e63847b75",
-                                "subnet_id": "dc8632e2-d9ff-41b1-aa0c-d455557314a0",
-                                "security_group_id": "c6f05de2-9534-493a-ae83-444792ce9ab5",
+                                "vpc_id": "d9271807-b320-4609-aac9-f7f5b2d85830",
+                                "subnet_id": "26f3ea59-6e89-4517-85dd-cdff08183482",
+                                "security_group_id": "4d0bf110-c753-4b09-a5a8-72c4d462352d",
                                 "availability_zones": [
-                                    "cn-north-1a"
+                                    "ap-southeast-1a"
                                 ]
                             }
                         }
@@ -74,12 +74,11 @@
                                 "speccode": "dcs.master_standby",
                                 "charging_type": "Hourly",
                                 "capacity": 2,
-                                "vpc_id": "2c1fe4bd-ebad-44ca-ae9d-e94e63847b75",
-                                "subnet_id": "dc8632e2-d9ff-41b1-aa0c-d455557314a0",
-                                "security_group_id": "c6f05de2-9534-493a-ae83-444792ce9ab5",
+                                "vpc_id": "d9271807-b320-4609-aac9-f7f5b2d85830",
+                                "subnet_id": "26f3ea59-6e89-4517-85dd-cdff08183482",
+                                "security_group_id": "4d0bf110-c753-4b09-a5a8-72c4d462352d",
                                 "availability_zones": [
-                                    "cn-north-1a",
-                                    "cn-north-1b"
+                                    "ap-southeast-1a"
                                 ]
                             }
                         }
@@ -95,12 +94,11 @@
                                 "speccode": "dcs.cluster",
                                 "charging_type": "Hourly",
                                 "capacity": 64,
-                                "vpc_id": "2c1fe4bd-ebad-44ca-ae9d-e94e63847b75",
-                                "subnet_id": "dc8632e2-d9ff-41b1-aa0c-d455557314a0",
-                                "security_group_id": "c6f05de2-9534-493a-ae83-444792ce9ab5",
+                                "vpc_id": "d9271807-b320-4609-aac9-f7f5b2d85830",
+                                "subnet_id": "26f3ea59-6e89-4517-85dd-cdff08183482",
+                                "security_group_id": "4d0bf110-c753-4b09-a5a8-72c4d462352d",
                                 "availability_zones": [
-                                    "cn-north-1a",
-                                    "cn-north-1b"
+                                    "ap-southeast-1a"
                                 ]
                             }
                         }
