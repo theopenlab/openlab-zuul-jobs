@@ -23,7 +23,7 @@
     - name: Config huaweicloud service broker config
       become: yes
       template:
-        dest: "{{ ansible_user_dir }}/src/github.com/huaweicloud/huaweicloud-service-broker/config.json"
+        dest: "{{ zuul.project.src_dir }}/config.json"
         src: "huaweicloud-service-broker-config.json.j2"
 
     - name: Config osb checker testing config
