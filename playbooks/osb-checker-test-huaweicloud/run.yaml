@@ -1,10 +1,64 @@
 - hosts: all
   become: yes
+  roles:
+    - config-golang
+    - role: export-cloud-openrc
+      vars:
+        cloud_name: 'huaweicloud'
+  vars:
+    os_auth_url: '{{ global_env.OS_AUTH_URL }}'
+    os_username: '{{ global_env.OS_USERNAME }}'
+    os_password: '{{ global_env.OS_PASSWORD }}'
+    os_domain_name: '{{ global_env.OS_DOMAIN_NAME }}'
+    os_tenant_name: '{{ global_env.OS_TENANT_NAME }}'
+    os_region_name: '{{ global_env.OS_REGION_NAME }}'
+    os_access_key: '{{ global_env.OS_ACCESS_KEY }}'
+    os_secret_key: '{{ global_env.OS_SECRET_KEY }}'
+    db_username: broker
+    db_password: password
+    broker_username: username
+    broker_password: password
+
   tasks:
-    - name: Run ansible zuul job check tests for openlab-zuul-jobs
+    - name: Config huaweicloud service broker config
+      become: yes
+      template:
+        dest: "{{ zuul.project.src_dir }}/config.json"
+        src: "huaweicloud-service-broker-config.json.j2"
+
+    - name: Config osb checker testing config
+      become: yes
+      template:
+        dest: "{{ ansible_user_dir }}/src/github.com/openservicebrokerapi/osb-checker/2.13/tests/test/configs/config_openstack.json"
+        src: "osb-checker-config-openstack.json.j2"
+
+    - name: Running test cases of osb-checker against huaweicloud
       shell:
         cmd: |
-          set -e
-          echo "hello"
+          set -ex
+          apt-get install -y mariadb-server mariadb-client python-pymysql libmysqlclient-dev
+          cat << EOF | mysql -sfu root
+          CREATE USER 'broker'@'localhost' IDENTIFIED BY 'password';
+          GRANT ALL PRIVILEGES ON broker.* TO 'broker'@'localhost' WITH GRANT OPTION;
+          CREATE DATABASE IF NOT EXISTS broker;
+          FLUSH PRIVILEGES;
+          EOF
+          mkdir -p $GOPATH/src/github.com/huaweicloud
+          cp -r '{{ zuul.project.src_dir }}' $GOPATH/src/github.com/huaweicloud/
+          pushd $GOPATH/src/github.com/huaweicloud/huaweicloud-service-broker
+          go get ./...
+          go install
+          popd
+          curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
+          apt-get install -y nodejs
+          node -v
+          nohup huaweicloud-service-broker -config=$GOPATH/src/github.com/huaweicloud/huaweicloud-service-broker/config.json \
+              -port=3000 2>&1 &
+
+          pushd $GOPATH/src/github.com/openservicebrokerapi/osb-checker/2.13/tests/
+          sed -i 's/config_mock.json/config_openstack.json/g' test/test.js
+          npm install
+          npm test
+          popd
         executable: /bin/bash
-        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
