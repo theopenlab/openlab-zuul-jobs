@@ -235,6 +235,7 @@
     run: playbooks/cloud-provider-openstack-format/run.yaml
     vars:
       k8s_os_provider_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack'
+    nodeset: ubuntu-xenial-ut
 
 - job:
     name: cloud-provider-openstack-acceptance-test-k8s-cinder
