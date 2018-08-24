@@ -10,8 +10,8 @@
     os_username: '{{ global_env.OS_USERNAME }}'
     os_password: '{{ global_env.OS_PASSWORD }}'
     os_domain_name: '{{ global_env.OS_DOMAIN_NAME }}'
-    os_tenant_name: '{{ global_env.OS_TENANT_NAME }}'
-    os_region_name: '{{ global_env.OS_REGION_NAME }}'
+    os_tenant_name: cn-north-1
+    os_region_name: cn-north-1
     os_access_key: '{{ global_env.OS_ACCESS_KEY }}'
     os_secret_key: '{{ global_env.OS_SECRET_KEY }}'
     db_username: broker
@@ -58,7 +58,6 @@
           pushd $GOPATH/src/github.com/openservicebrokerapi/osb-checker/2.13/tests/
           sed -i 's/config_mock.json/config_openstack.json/g' test/test.js
           npm install
-          sleep 7200
           npm test
           popd
         executable: /bin/bash
