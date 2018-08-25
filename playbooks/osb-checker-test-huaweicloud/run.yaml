@@ -18,33 +18,30 @@
 
     - name: Set variables for broker testing configurations
       set_fact:
-        broker_cfg_vars:
-          os_auth_url: '{{ global_env.OS_AUTH_URL }}'
-          os_username: '{{ global_env.OS_USERNAME }}'
-          os_password: '{{ global_env.OS_PASSWORD }}'
-          os_domain_name: '{{ global_env.OS_DOMAIN_NAME }}'
-          os_tenant_name: '{{ global_env.OS_TENANT_NAME }}'
-          os_region_name: '{{ global_env.OS_REGION_NAME }}'
-          os_access_key: '{{ global_env.OS_ACCESS_KEY }}'
-          os_secret_key: '{{ global_env.OS_SECRET_KEY }}'
-          db_username: broker
-          db_password: password
-          broker_username: username
-          broker_password: password
+        os_auth_url: '{{ global_env.OS_AUTH_URL }}'
+        os_username: '{{ global_env.OS_USERNAME }}'
+        os_password: '{{ global_env.OS_PASSWORD }}'
+        os_domain_name: '{{ global_env.OS_DOMAIN_NAME }}'
+        os_tenant_name: '{{ global_env.OS_TENANT_NAME }}'
+        os_region_name: '{{ global_env.OS_REGION_NAME }}'
+        os_access_key: '{{ global_env.OS_ACCESS_KEY }}'
+        os_secret_key: '{{ global_env.OS_SECRET_KEY }}'
+        db_username: broker
+        db_password: password
+        broker_username: username
+        broker_password: password
 
     - name: Config huaweicloud service broker config
       become: yes
       template:
         dest: "{{ zuul.project.src_dir }}/config.json"
         src: "huaweicloud-service-broker-config.json.j2"
-      args: '{{ broker_cfg_vars }}'
 
     - name: Config osb checker testing config
       become: yes
       template:
         dest: "{{ ansible_user_dir }}/src/github.com/openservicebrokerapi/osb-checker/2.13/tests/test/configs/config_openstack.json"
         src: "osb-checker-config-openstack.json.j2"
-      args: '{{ broker_cfg_vars }}'
 
     - name: Running test cases of osb-checker against huaweicloud
       shell:
