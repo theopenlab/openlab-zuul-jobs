@@ -6,34 +6,34 @@
     "authentication": "basic",
     "provisions": [
         {
-            "instance_id": "",
+            "instance_id": ",
             "body": {
-                "plan_id": "fc1b0ebf-aabf-4ab1-87e9-83544a5902e8",
-                "service_id": "275f3e0b-86fd-4303-946c-171374d29150",
+                "plan_id": "df0312bf-8189-4482-826e-2370a7f4d805",
+                "service_id": "94e8ffdf-bf9c-422f-b73c-776a3ca69f35",
                 "parameters": {
-                    "name": "testrdsmysql",
-                    "database_password": "Mysql1234!"
+                    "bucket_name": "obsstandard",
+                    "bucket_policy": "public-read-write"
                 },
                 "organization_guid": "organization_id",
                 "space_guid": "space_id"
             },
             "scenario": "new",
-            "notes": "RDS MySQL Service",
+            "notes": "Object Storage Service",
             "async": true
         }
     ],
     "updates": [
         {
-            "instance_id": "",
+            "instance_id": ",
             "body": {
-                "service_id": "275f3e0b-86fd-4303-946c-171374d29150",
-                "plan_id": "fc1b0ebf-aabf-4ab1-87e9-83544a5902e8",
+                "service_id": "94e8ffdf-bf9c-422f-b73c-776a3ca69f35",
+                "plan_id": "df0312bf-8189-4482-826e-2370a7f4d805",
                 "parameters": {
-                    "volume_size": 400
+                    "bucket_name": "obsstandard-updated"
                 },
                 "previous_values": {
-                    "plan_id": "fc1b0ebf-aabf-4ab1-87e9-83544a5902e8",
-                    "service_id": "275f3e0b-86fd-4303-946c-171374d29150",
+                    "plan_id": "df0312bf-8189-4482-826e-2370a7f4d805",
+                    "service_id": "94e8ffdf-bf9c-422f-b73c-776a3ca69f35",
                     "organization_id": "organization_id",
                     "space_id": "space_id"
                 }
@@ -45,16 +45,16 @@
     "bindings": [
         {
             "body": {
-                "service_id":"275f3e0b-86fd-4303-946c-171374d29150",
-                "plan_id":"fc1b0ebf-aabf-4ab1-87e9-83544a5902e8"
+                "service_id": "94e8ffdf-bf9c-422f-b73c-776a3ca69f35",
+                "plan_id": "df0312bf-8189-4482-826e-2370a7f4d805"
             },
             "async": true,
             "scenario": "new"
         },
         {
             "body": {
-                "service_id":"275f3e0b-86fd-4303-946c-171374d29150",
-                "plan_id":"fc1b0ebf-aabf-4ab1-87e9-83544a5902e8"
+                "service_id": "94e8ffdf-bf9c-422f-b73c-776a3ca69f35",
+                "plan_id": "df0312bf-8189-4482-826e-2370a7f4d805"
             },
             "async": true,
             "scenario": "delete"

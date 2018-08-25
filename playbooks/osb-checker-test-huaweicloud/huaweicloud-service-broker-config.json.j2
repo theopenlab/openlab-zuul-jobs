@@ -54,11 +54,11 @@
                                 "speccode": "dcs.single_node",
                                 "charging_type": "Hourly",
                                 "capacity": 2,
-                                "vpc_id": "93c029db-e70b-40dc-b3b8-80d4e2ff132d",
-                                "subnet_id": "65ad13da-8c0a-4737-9fbd-84ecf6c18552",
-                                "security_group_id": "e18c06ca-fcac-46ed-a272-b014633678bf",
+                                "vpc_id": "{{ vpc_id }}",
+                                "subnet_id": "{{ subnet_id }}",
+                                "security_group_id": "{{ security_group_id }}",
                                 "availability_zones": [
-                                    "ap-southeast-1a"
+                                    "{{ availability_zone }}"
                                 ]
                             }
                         }
@@ -74,11 +74,11 @@
                                 "speccode": "dcs.master_standby",
                                 "charging_type": "Hourly",
                                 "capacity": 2,
-                                "vpc_id": "93c029db-e70b-40dc-b3b8-80d4e2ff132d",
-                                "subnet_id": "65ad13da-8c0a-4737-9fbd-84ecf6c18552",
-                                "security_group_id": "e18c06ca-fcac-46ed-a272-b014633678bf",
+                                "vpc_id": "{{ vpc_id }}",
+                                "subnet_id": "{{ subnet_id }}",
+                                "security_group_id": "{{ security_group_id }}",
                                 "availability_zones": [
-                                    "ap-southeast-1a"
+                                    "{{ availability_zone }}"
                                 ]
                             }
                         }
@@ -94,11 +94,11 @@
                                 "speccode": "dcs.cluster",
                                 "charging_type": "Hourly",
                                 "capacity": 64,
-                                "vpc_id": "93c029db-e70b-40dc-b3b8-80d4e2ff132d",
-                                "subnet_id": "65ad13da-8c0a-4737-9fbd-84ecf6c18552",
-                                "security_group_id": "e18c06ca-fcac-46ed-a272-b014633678bf",
+                                "vpc_id": "{{ vpc_id }}",
+                                "subnet_id": "{{ subnet_id }}",
+                                "security_group_id": "{{ security_group_id }}",
                                 "availability_zones": [
-                                    "ap-southeast-1a"
+                                    "{{ availability_zone }}"
                                 ]
                             }
                         }
@@ -134,11 +134,11 @@
                                 "speccode": "dcs.memcached.single_node",
                                 "charging_type": "Hourly",
                                 "capacity": 2,
-                                "vpc_id": "93c029db-e70b-40dc-b3b8-80d4e2ff132d",
-                                "subnet_id": "65ad13da-8c0a-4737-9fbd-84ecf6c18552",
-                                "security_group_id": "e18c06ca-fcac-46ed-a272-b014633678bf",
+                                "vpc_id": "{{ vpc_id }}",
+                                "subnet_id": "{{ subnet_id }}",
+                                "security_group_id": "{{ security_group_id }}",
                                 "availability_zones": [
-                                    "ap-southeast-1a"
+                                    "{{ availability_zone }}"
                                 ]
                             }
                         }
@@ -153,11 +153,11 @@
                                 "speccode": "dcs.memcached.master_standby",
                                 "charging_type": "Hourly",
                                 "capacity": 2,
-                                "vpc_id": "93c029db-e70b-40dc-b3b8-80d4e2ff132d",
-                                "subnet_id": "65ad13da-8c0a-4737-9fbd-84ecf6c18552",
-                                "security_group_id": "e18c06ca-fcac-46ed-a272-b014633678bf",
+                                "vpc_id": "{{ vpc_id }}",
+                                "subnet_id": "{{ subnet_id }}",
+                                "security_group_id": "{{ security_group_id }}",
                                 "availability_zones": [
-                                    "ap-southeast-1a"
+                                    "{{ availability_zone }}"
                                 ]
                             }
                         }
@@ -193,11 +193,11 @@
                                 "speccode": "dcs.imdg.single_node",
                                 "charging_type": "Hourly",
                                 "capacity": 2,
-                                "vpc_id": "93c029db-e70b-40dc-b3b8-80d4e2ff132d",
-                                "subnet_id": "65ad13da-8c0a-4737-9fbd-84ecf6c18552",
-                                "security_group_id": "e18c06ca-fcac-46ed-a272-b014633678bf",
+                                "vpc_id": "{{ vpc_id }}",
+                                "subnet_id": "{{ subnet_id }}",
+                                "security_group_id": "{{ security_group_id }}",
                                 "availability_zones": [
-                                    "ap-southeast-1a"
+                                    "{{ availability_zone }}"
                                 ]
                             }
                         }
@@ -212,11 +212,11 @@
                                 "speccode": "dcs.imdg.cluster",
                                 "charging_type": "Hourly",
                                 "capacity": 16,
-                                "vpc_id": "93c029db-e70b-40dc-b3b8-80d4e2ff132d",
-                                "subnet_id": "65ad13da-8c0a-4737-9fbd-84ecf6c18552",
-                                "security_group_id": "e18c06ca-fcac-46ed-a272-b014633678bf",
+                                "vpc_id": "{{ vpc_id }}",
+                                "subnet_id": "{{ subnet_id }}",
+                                "security_group_id": "{{ security_group_id }}",
                                 "availability_zones": [
-                                    "ap-southeast-1a"
+                                    "{{ availability_zone }}"
                                 ]
                             }
                         }
@@ -375,11 +375,11 @@
                                 "engine_version": "3.7.0",
                                 "speccode": "dms.instance.rabbitmq.single.2u4g",
                                 "charging_type": "Hourly",
-                                "vpc_id": "93c029db-e70b-40dc-b3b8-80d4e2ff132d",
-                                "subnet_id": "65ad13da-8c0a-4737-9fbd-84ecf6c18552",
-                                "security_group_id": "e18c06ca-fcac-46ed-a272-b014633678bf",
+                                "vpc_id": "{{ vpc_id }}",
+                                "subnet_id": "{{ subnet_id }}",
+                                "security_group_id": "{{ security_group_id }}",
                                 "availability_zones": [
-                                    "ap-southeast-1a"
+                                    "{{ availability_zone }}"
                                 ]
                             }
                         }
@@ -394,11 +394,11 @@
                                 "engine_version": "3.7.0",
                                 "speccode": "dms.instance.rabbitmq.cluster.2u4g.2",
                                 "charging_type": "Hourly",
-                                "vpc_id": "93c029db-e70b-40dc-b3b8-80d4e2ff132d",
-                                "subnet_id": "65ad13da-8c0a-4737-9fbd-84ecf6c18552",
-                                "security_group_id": "e18c06ca-fcac-46ed-a272-b014633678bf",
+                                "vpc_id": "{{ vpc_id }}",
+                                "subnet_id": "{{ subnet_id }}",
+                                "security_group_id": "{{ security_group_id }}",
                                 "availability_zones": [
-                                    "ap-southeast-1a"
+                                    "{{ availability_zone }}"
                                 ]
                             }
                         }
@@ -488,10 +488,10 @@
                                 "speccode": "rds.mysql.s1.xlarge",
                                 "volume_type": "COMMON",
                                 "volume_size": 100,
-                                "availability_zone": "ap-southeast-1a",
-                                "vpc_id": "93c029db-e70b-40dc-b3b8-80d4e2ff132d",
-                                "subnet_id": "65ad13da-8c0a-4737-9fbd-84ecf6c18552",
-                                "security_group_id": "e18c06ca-fcac-46ed-a272-b014633678bf",
+                                "availability_zone": "{{ availability_zone }}",
+                                "vpc_id": "{{ vpc_id }}",
+                                "subnet_id": "{{ subnet_id }}",
+                                "security_group_id": "{{ security_group_id }}",
                                 "database_username": "root"
                             }
                         }
@@ -507,10 +507,10 @@
                                 "speccode": "rds.mysql.s1.xlarge",
                                 "volume_type": "COMMON",
                                 "volume_size": 100,
-                                "availability_zone": "ap-southeast-1a",
-                                "vpc_id": "93c029db-e70b-40dc-b3b8-80d4e2ff132d",
-                                "subnet_id": "65ad13da-8c0a-4737-9fbd-84ecf6c18552",
-                                "security_group_id": "e18c06ca-fcac-46ed-a272-b014633678bf",
+                                "availability_zone": "{{ availability_zone }}",
+                                "vpc_id": "{{ vpc_id }}",
+                                "subnet_id": "{{ subnet_id }}",
+                                "security_group_id": "{{ security_group_id }}",
                                 "database_username": "root"
                             }
                         }
@@ -547,10 +547,10 @@
                                 "speccode": "rds.mssql.2014.se.c3.xlarge.4",
                                 "volume_type": "COMMON",
                                 "volume_size": 100,
-                                "availability_zone": "ap-southeast-1a",
-                                "vpc_id": "93c029db-e70b-40dc-b3b8-80d4e2ff132d",
-                                "subnet_id": "65ad13da-8c0a-4737-9fbd-84ecf6c18552",
-                                "security_group_id": "e18c06ca-fcac-46ed-a272-b014633678bf",
+                                "availability_zone": "{{ availability_zone }}",
+                                "vpc_id": "{{ vpc_id }}",
+                                "subnet_id": "{{ subnet_id }}",
+                                "security_group_id": "{{ security_group_id }}",
                                 "database_username": "rdsuser"
                             }
                         }
@@ -566,10 +566,10 @@
                                 "speccode": "rds.mssql.2014.se.c3.xlarge.4",
                                 "volume_type": "COMMON",
                                 "volume_size": 100,
-                                "availability_zone": "ap-southeast-1a",
-                                "vpc_id": "93c029db-e70b-40dc-b3b8-80d4e2ff132d",
-                                "subnet_id": "65ad13da-8c0a-4737-9fbd-84ecf6c18552",
-                                "security_group_id": "e18c06ca-fcac-46ed-a272-b014633678bf",
+                                "availability_zone": "{{ availability_zone }}",
+                                "vpc_id": "{{ vpc_id }}",
+                                "subnet_id": "{{ subnet_id }}",
+                                "security_group_id": "{{ security_group_id }}",
                                 "database_username": "rdsuser"
                             }
                         }
@@ -585,10 +585,10 @@
                                 "speccode": "rds.mssql.ee.c3.xlarge.4",
                                 "volume_type": "COMMON",
                                 "volume_size": 100,
-                                "availability_zone": "ap-southeast-1a",
-                                "vpc_id": "93c029db-e70b-40dc-b3b8-80d4e2ff132d",
-                                "subnet_id": "65ad13da-8c0a-4737-9fbd-84ecf6c18552",
-                                "security_group_id": "e18c06ca-fcac-46ed-a272-b014633678bf",
+                                "availability_zone": "{{ availability_zone }}",
+                                "vpc_id": "{{ vpc_id }}",
+                                "subnet_id": "{{ subnet_id }}",
+                                "security_group_id": "{{ security_group_id }}",
                                 "database_username": "rdsuser"
                             }
                         }
@@ -604,10 +604,10 @@
                                 "speccode": "rds.mssql.se.c3.xlarge.4",
                                 "volume_type": "COMMON",
                                 "volume_size": 100,
-                                "availability_zone": "ap-southeast-1a",
-                                "vpc_id": "93c029db-e70b-40dc-b3b8-80d4e2ff132d",
-                                "subnet_id": "65ad13da-8c0a-4737-9fbd-84ecf6c18552",
-                                "security_group_id": "e18c06ca-fcac-46ed-a272-b014633678bf",
+                                "availability_zone": "{{ availability_zone }}",
+                                "vpc_id": "{{ vpc_id }}",
+                                "subnet_id": "{{ subnet_id }}",
+                                "security_group_id": "{{ security_group_id }}",
                                 "database_username": "rdsuser"
                             }
                         }
@@ -623,10 +623,10 @@
                                 "speccode": "rds.mssql.ee.c3.xlarge.4",
                                 "volume_type": "COMMON",
                                 "volume_size": 100,
-                                "availability_zone": "ap-southeast-1a",
-                                "vpc_id": "93c029db-e70b-40dc-b3b8-80d4e2ff132d",
-                                "subnet_id": "65ad13da-8c0a-4737-9fbd-84ecf6c18552",
-                                "security_group_id": "e18c06ca-fcac-46ed-a272-b014633678bf",
+                                "availability_zone": "{{ availability_zone }}",
+                                "vpc_id": "{{ vpc_id }}",
+                                "subnet_id": "{{ subnet_id }}",
+                                "security_group_id": "{{ security_group_id }}",
                                 "database_username": "rdsuser"
                             }
                         }
@@ -663,10 +663,10 @@
                                 "speccode": "rds.pg.s1.xlarge",
                                 "volume_type": "COMMON",
                                 "volume_size": 100,
-                                "availability_zone": "ap-southeast-1a",
-                                "vpc_id": "93c029db-e70b-40dc-b3b8-80d4e2ff132d",
-                                "subnet_id": "65ad13da-8c0a-4737-9fbd-84ecf6c18552",
-                                "security_group_id": "e18c06ca-fcac-46ed-a272-b014633678bf",
+                                "availability_zone": "{{ availability_zone }}",
+                                "vpc_id": "{{ vpc_id }}",
+                                "subnet_id": "{{ subnet_id }}",
+                                "security_group_id": "{{ security_group_id }}",
                                 "database_username": "root"
                             }
                         }
@@ -682,10 +682,10 @@
                                 "speccode": "rds.pg.s1.xlarge",
                                 "volume_type": "COMMON",
                                 "volume_size": 100,
-                                "availability_zone": "ap-southeast-1a",
-                                "vpc_id": "93c029db-e70b-40dc-b3b8-80d4e2ff132d",
-                                "subnet_id": "65ad13da-8c0a-4737-9fbd-84ecf6c18552",
-                                "security_group_id": "e18c06ca-fcac-46ed-a272-b014633678bf",
+                                "availability_zone": "{{ availability_zone }}",
+                                "vpc_id": "{{ vpc_id }}",
+                                "subnet_id": "{{ subnet_id }}",
+                                "security_group_id": "{{ security_group_id }}",
                                 "database_username": "root"
                             }
                         }
@@ -701,10 +701,10 @@
                                 "speccode": "rds.pg.s1.xlarge",
                                 "volume_type": "COMMON",
                                 "volume_size": 100,
-                                "availability_zone": "ap-southeast-1a",
-                                "vpc_id": "93c029db-e70b-40dc-b3b8-80d4e2ff132d",
-                                "subnet_id": "65ad13da-8c0a-4737-9fbd-84ecf6c18552",
-                                "security_group_id": "e18c06ca-fcac-46ed-a272-b014633678bf",
+                                "availability_zone": "{{ availability_zone }}",
+                                "vpc_id": "{{ vpc_id }}",
+                                "subnet_id": "{{ subnet_id }}",
+                                "security_group_id": "{{ security_group_id }}",
                                 "database_username": "root"
                             }
                         }
