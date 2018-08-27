@@ -144,6 +144,7 @@
               cp '{{ ansible_user_dir }}/bosh' /usr/local/bin/bosh
               sed -i -e "s/net_id/subnet_id/g" ./templates/openstack.yml.erb
               bundle exec rspec spec --tag core
+              sleep 7200
               popd
 
             executable: /bin/bash
