@@ -29,6 +29,7 @@
                       "source_image_name": "$src_img_name",
                       "ssh_username": "cirros",
                       "networks": ["$network"],
+                      "security_groups": ["openlab-jobs-sg"],
                       "floating_ip_pool": "admin_external_net"
                   }
               ],
