@@ -8,7 +8,9 @@
       enable_services:
         - 'manila'
         - 'ceph'
-    - install-devstack
+    - role: install-devstack
+      environment:
+        PROJECTS: 'openstack/devstack-plugin-ceph'
   tasks:
     - name: Run Manila provisioner acceptance tests
       shell:
