@@ -75,7 +75,6 @@
           pushd $GOPATH/src/github.com/openservicebrokerapi/osb-checker/2.13/tests/
           sed -i 's/config_mock.json/config_openstack.json/g' test/test.js
           npm install
-          sleep 7200
           npm test
           popd
         executable: /bin/bash
