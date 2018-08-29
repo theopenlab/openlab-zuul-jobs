@@ -10,7 +10,6 @@
         cmd: |
           set -x
           set -e
-          set -o pipefail
 
           # Cloud provider specific variables
           NET_ID="134ca339-24dc-44f5-ae6a-cf0404216ed2"
