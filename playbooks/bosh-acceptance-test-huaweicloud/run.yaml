@@ -149,6 +149,10 @@
             executable: /bin/bash
             chdir: '{{ ansible_user_dir }}'
           environment: '{{ global_env }}'
+          register: testing_output
+          failed_when:
+            - "testing_output.rc != 0"
+            - "'0 failures' not in testing_output.stdout"
 
       always:
         - name: Cleanup resources
