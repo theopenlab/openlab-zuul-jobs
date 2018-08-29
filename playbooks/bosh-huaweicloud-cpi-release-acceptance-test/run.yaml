@@ -77,6 +77,7 @@
             bundle update fog-huaweicloud
             bundle install
             ./validate -s bosh-stemcell-1.0-huaweicloud-xen-ubuntu-trusty-go_agent.tgz -c validator.yml -r bosh-huaweicloud-cpi.tgz
+            exit $?
           args:
             executable: /bin/bash
             chdir: '{{ ansible_user_dir }}/src/github.com/zhongjun2/cf-huaweicloud-validator'
