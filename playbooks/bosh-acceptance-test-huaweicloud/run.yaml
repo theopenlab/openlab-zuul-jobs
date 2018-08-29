@@ -152,7 +152,7 @@
           register: testing_output
           failed_when:
             - "testing_output.rc != 0"
-            - "'0 failures' not in testing_output.stdout"
+            - "' 0 failures' not in testing_output.stdout"
 
       always:
         - name: Cleanup resources
