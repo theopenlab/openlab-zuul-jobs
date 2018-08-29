@@ -11,7 +11,7 @@
                 "plan_id": "df0312bf-8189-4482-826e-2370a7f4d805",
                 "service_id": "94e8ffdf-bf9c-422f-b73c-776a3ca69f35",
                 "parameters": {
-                    "bucket_name": "obsstandard",
+                    "bucket_name": "osb-checker-obs-{{ name_uuid }}",
                     "bucket_policy": "public-read-write"
                 },
                 "organization_guid": "organization_id",
@@ -19,6 +19,24 @@
             },
             "scenario": "new",
             "notes": "Object Storage Service",
+            "async": true
+        },
+        {
+            "instance_id": "",
+            "body": {
+                "plan_id": "d54d393b-f5ce-4eb7-86be-49da00606368",
+                "service_id": "45d162e1-cf1e-455c-beff-cc0765d9a377",
+                "parameters": {
+                    "username": "username",
+                    "password": "Password1234!",
+                    "name": "osb-checker-dcs-redis-{{ name_uuid }}",
+                    "description": "Redis Single Node Test"
+                },
+                "organization_guid": "organization_id",
+                "space_guid": "space_id"
+            },
+            "scenario": "new",
+            "notes": "Distributed Cache Service for Redis",
             "async": true
         }
     ],
@@ -41,6 +59,27 @@
             },
             "scenario": "update",
             "async": true
+        },
+        {
+            "instance_id": "",
+            "body": {
+                "service_id": "45d162e1-cf1e-455c-beff-cc0765d9a377",
+                "plan_id": "d54d393b-f5ce-4eb7-86be-49da00606368",
+                "parameters": {
+                    "name": "osb-checker-dcs-redis-updated-{{ name_uuid }}",
+                    "description": "Redis Single Node Test1",
+                    "old_password": "Password1234!",
+                    "new_password": "Password1234$"
+                },
+                "previous_values": {
+                    "plan_id": "d54d393b-f5ce-4eb7-86be-49da00606368",
+                    "service_id": "45d162e1-cf1e-455c-beff-cc0765d9a377",
+                    "organization_id": "organization_id",
+                    "space_id": "space_id"
+                }
+            },
+            "scenario": "update",
+            "async": true
         }
     ],
     "bindings": [
@@ -56,6 +95,22 @@
             "body": {
                 "service_id": "94e8ffdf-bf9c-422f-b73c-776a3ca69f35",
                 "plan_id": "df0312bf-8189-4482-826e-2370a7f4d805"
+            },
+            "async": true,
+            "scenario": "delete"
+        },
+        {
+            "body": {
+                "service_id": "45d162e1-cf1e-455c-beff-cc0765d9a377",
+                "plan_id": "d54d393b-f5ce-4eb7-86be-49da00606368"
+            },
+            "async": true,
+            "scenario": "new"
+        },
+        {
+            "body": {
+                "service_id": "45d162e1-cf1e-455c-beff-cc0765d9a377",
+                "plan_id": "d54d393b-f5ce-4eb7-86be-49da00606368"
             },
             "async": true,
             "scenario": "delete"

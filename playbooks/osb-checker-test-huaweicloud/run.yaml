@@ -35,6 +35,7 @@
         # NOTE: this subnet is should be queried from portal than openstack cli
         subnet_id: '776e76f4-41b7-4185-a54b-19d195894bb1'
         security_group_id: 'e18c06ca-fcac-46ed-a272-b014633678bf'
+        name_uuid: {{ zuul.build[:10] }}
 
     - name: Config huaweicloud service broker config
       become: yes
@@ -75,7 +76,6 @@
           pushd $GOPATH/src/github.com/openservicebrokerapi/osb-checker/2.13/tests/
           sed -i 's/config_mock.json/config_openstack.json/g' test/test.js
           npm install
-          sleep 7200
           npm test
           popd
         executable: /bin/bash
