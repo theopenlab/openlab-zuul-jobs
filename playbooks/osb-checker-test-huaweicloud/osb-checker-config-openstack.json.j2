@@ -54,6 +54,24 @@
             "scenario": "new",
             "notes": "RDS SQLServer Service",
             "async": true
+        },
+        {
+            "instance_id": "",
+            "body": {
+                "plan_id": "d0c150cb-6a2a-47aa-8937-9c55d4615e14",
+                "service_id": "fc0c6ad1-ff5a-499a-8598-fda9fb414fcb",
+                "parameters": {
+                    "username": "username",
+                    "password": "Password1234!",
+                    "name": "RabbitMQSingleNode",
+                    "description": "RabbitMQ Single Node Test"
+                },
+                "organization_guid": "organization_id",
+                "space_guid": "space_id"
+            },
+            "scenario": "new",
+            "notes": "Distributed Message Service for RabbitMQ",
+            "async": true
         }
     ],
     "updates": [
@@ -114,6 +132,26 @@
             },
             "scenario": "update",
             "async": true
+        },
+        {
+            "instance_id": "",
+            "body": {
+                "plan_id": "d0c150cb-6a2a-47aa-8937-9c55d4615e14",
+                "service_id": "fc0c6ad1-ff5a-499a-8598-fda9fb414fcb",
+                "parameters": {
+                    "name": "RabbitMQSingleNode1",
+                    "description": "RabbitMQ Single Node Test1"
+
+                },
+                "previous_values": {
+                    "plan_id": "d0c150cb-6a2a-47aa-8937-9c55d4615e14",
+                    "service_id": "fc0c6ad1-ff5a-499a-8598-fda9fb414fcb",
+                    "organization_id": "organization_id",
+                    "space_id": "space_id"
+                }
+            },
+            "scenario": "update",
+            "async": true
         }
     ],
     "bindings": [
@@ -161,6 +199,22 @@
             "body": {
                 "plan_id": "839f4458-309a-4e05-a069-807e950cf6da",
                 "service_id": "275f3e0b-86fd-4303-946c-171374d29150",
+            },
+            "async": true,
+            "scenario": "delete"
+        },
+        {
+            "body": {
+                "plan_id": "d0c150cb-6a2a-47aa-8937-9c55d4615e14",
+                "service_id": "fc0c6ad1-ff5a-499a-8598-fda9fb414fcb",
+            },
+            "async": true,
+            "scenario": "new"
+        },
+        {
+            "body": {
+                "plan_id": "d0c150cb-6a2a-47aa-8937-9c55d4615e14",
+                "service_id": "fc0c6ad1-ff5a-499a-8598-fda9fb414fcb",
             },
             "async": true,
             "scenario": "delete"
