@@ -38,6 +38,22 @@
             "scenario": "new",
             "notes": "Distributed Cache Service for Redis",
             "async": true
+        },
+        {
+            "instance_id": "",
+            "body": {
+                "plan_id": "839f4458-309a-4e05-a069-807e950cf6da",
+                "service_id": "275f3e0b-86fd-4303-946c-171374d29150",
+                "parameters": {
+                    "name": "osb-checker-rds-mysql-{{ name_uuid }}",
+                    "database_password": "Password1234!"
+                },
+                "organization_guid": "organization_id",
+                "space_guid": "space_id"
+            },
+            "scenario": "new",
+            "notes": "RDS SQLServer Service",
+            "async": true
         }
     ],
     "updates": [
@@ -80,6 +96,24 @@
             },
             "scenario": "update",
             "async": true
+        },
+        {
+            "instance_id": "",
+            "body": {
+                "plan_id": "839f4458-309a-4e05-a069-807e950cf6da",
+                "service_id": "275f3e0b-86fd-4303-946c-171374d29150",
+                "parameters": {
+                    "volume_size": 200,
+                },
+                "previous_values": {
+                    "plan_id": "839f4458-309a-4e05-a069-807e950cf6da",
+                    "service_id": "275f3e0b-86fd-4303-946c-171374d29150",
+                    "organization_id": "organization_id",
+                    "space_id": "space_id"
+                }
+            },
+            "scenario": "update",
+            "async": true
         }
     ],
     "bindings": [
@@ -111,6 +145,22 @@
             "body": {
                 "service_id": "45d162e1-cf1e-455c-beff-cc0765d9a377",
                 "plan_id": "d54d393b-f5ce-4eb7-86be-49da00606368"
+            },
+            "async": true,
+            "scenario": "delete"
+        },
+        {
+            "body": {
+                "plan_id": "839f4458-309a-4e05-a069-807e950cf6da",
+                "service_id": "275f3e0b-86fd-4303-946c-171374d29150",
+            },
+            "async": true,
+            "scenario": "new"
+        },
+        {
+            "body": {
+                "plan_id": "839f4458-309a-4e05-a069-807e950cf6da",
+                "service_id": "275f3e0b-86fd-4303-946c-171374d29150",
             },
             "async": true,
             "scenario": "delete"

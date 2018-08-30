@@ -14,7 +14,6 @@
           OS_AUTH_URL: 'https://iam.cn-north-1.myhwclouds.com'
           OS_REGION_NAME: 'cn-north-1'
           OS_TENANT_NAME: 'cn-north-1'
-          OS_REGION_NAME: 'cn-north-1'
 
     - name: Set variables for broker testing configurations
       set_fact:
