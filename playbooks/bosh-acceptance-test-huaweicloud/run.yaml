@@ -142,16 +142,13 @@
               bundle install
               cp '{{ ansible_user_dir }}/bosh' /usr/local/bin/bosh
               sed -i -e "s/net_id/subnet_id/g" ./templates/openstack.yml.erb
-              bundle exec rspec spec --tag core
-              exit $?
+              bundle exec rspec spec --tag core || true
               popd
-
             executable: /bin/bash
             chdir: '{{ ansible_user_dir }}'
           environment: '{{ global_env }}'
           register: testing_output
           failed_when:
-            - "testing_output.rc != 0"
             - "' 0 failures' not in testing_output.stdout"
             - "' 0 failures' not in testing_output.stderr"
 
