@@ -1,0 +1,192 @@
+- hosts: all
+  become: yes
+  roles:
+    - role: export-cloud-openrc
+      vars:
+        cloud_name: 'huaweicloud'
+  vars:
+    floating_ip: ''
+    bat_floating_ip: ''
+  tasks:
+    - name: Test bosh acceptance tests against huaweicloud
+      block:
+        - name: Install required packages
+          shell: |
+            set -ex
+            curl -Lo ./bosh https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-5.0.1-linux-amd64
+            chmod +x ./bosh && cp ./bosh /usr/local/bin/bosh
+            pip install python-openstackclient
+            pip install python-glanceclient==2.11.0
+            apt-get install -y build-essential zlibc zlib1g-dev ruby ruby-dev openssl libxslt-dev libxml2-dev \
+                libssl-dev libreadline6 libreadline6-dev libyaml-dev libsqlite3-dev sqlite3
+          args:
+            executable: /bin/bash
+
+        - name: Create floating ip
+          shell: |
+            openstack floating ip create admin_external_net -f value -c floating_ip_address
+          args:
+            executable: /bin/bash
+          environment: '{{ global_env }}'
+          register: floating_ip_adr
+
+        - name: Set floating ip variable
+          set_fact:
+            floating_ip: '{{ floating_ip_adr.stdout }}'
+
+        - name: Create bat floating ip
+          shell: |
+            openstack floating ip create admin_external_net -f value -c floating_ip_address
+          args:
+            executable: /bin/bash
+          environment: '{{ global_env }}'
+          register: bat_floating_ip_adr
+
+        - name: Set bat floating ip variable
+          set_fact:
+            bat_floating_ip: '{{ bat_floating_ip_adr.stdout }}'
+
+        - name: Install bosh and run bosh acceptance tests
+          shell:
+            cmd: |
+              set -xe
+
+              _port_id=$(openstack port create --network openlab-jobs-net bosh-port -f value -c id)
+              fixed_ip=$(openstack port show ${_port_id} -f value -c fixed_ips | grep -Eo '([0-9]+\.){3}[0-9]+')
+              openstack port delete ${_port_id}
+
+              mkdir bosh-1 && cd bosh-1
+              curl -O https://obs-bosh.obs.otc.t-systems.com/bosh-stemcell-1.0-huaweicloud-xen-ubuntu-trusty-go_agent.tgz
+              git clone https://github.com/zhongjun2/bosh-deployment.git
+              openstack keypair create bosh-acc-huaweicloud-"{{ zuul.build }}" > bosh-acc-huaweicloud.pem
+              chmod 0700 bosh-acc-huaweicloud.pem
+
+              set +x
+              cat << EOF >> vars.yml
+              ---
+              director_name: bosh-1
+              internal_cidr: $(openstack subnet show openlab-jobs-subnet -f value -c cidr)
+              internal_gw: $(openstack subnet show openlab-jobs-subnet -f value -c gateway_ip)
+              internal_ip: ${fixed_ip}
+              external_ip: "{{ floating_ip }}"
+              auth_url: ${OS_AUTH_URL}
+              az: ap-southeast-1a
+              default_key_name: "bosh-acc-huaweicloud-{{ zuul.build }}"
+              default_security_groups: [openlab-jobs-sg]
+              subnet_id: $(openstack network show openlab-jobs-net -f value -c id)
+              huaweicloud_password: ${OS_PASSWORD}
+              huaweicloud_username: ${OS_USERNAME}
+              huaweicloud_domain: ${OS_DOMAIN_NAME}
+              huaweicloud_project: ${OS_TENANT_NAME}
+              private_key: "{{ ansible_user_dir }}/bosh-1/bosh-acc-huaweicloud.pem"
+              region: ${OS_REGION_NAME}
+
+              EOF
+              set -x
+
+              bosh create-env bosh-deployment/bosh.yml \
+                  --state=state.json \
+                  --vars-store=creds.yml \
+                  -o bosh-deployment/huaweicloud/cpi.yml \
+                  -o bosh-deployment/external-ip-with-registry-not-recommended.yml \
+                  --vars-file=vars.yml  2>&1
+
+              bosh alias-env bosh-1 -e "{{ floating_ip }}" --ca-cert <(bosh int ./creds.yml --path /director_ssl/ca)
+              export BOSH_CLIENT=admin
+              export BOSH_CLIENT_SECRET=`bosh int ./creds.yml --path /admin_password`
+              export BOSH_ENVIRONMENT=bosh-1
+              export BOSH_GW_PRIVATE_KEY="{{ ansible_user_dir }}/bosh-1/bosh-acc-huaweicloud.pem"
+              bosh -e bosh-1 env
+
+              export BAT_STEMCELL="{{ ansible_user_dir }}/bosh-1/bosh-stemcell-1.0-huaweicloud-xen-ubuntu-trusty-go_agent.tgz"
+              export BAT_DEPLOYMENT_SPEC="{{ ansible_user_dir }}/bosh-1/bat.yml"
+              export BAT_BOSH_CLI=bosh
+              # export BAT_DNS_HOST=8.8.8.8
+              export BAT_DNS_HOST=100.125.1.250
+              export BAT_INFRASTRUCTURE=openstack
+              export BAT_NETWORKING=dynamic
+              export BAT_PRIVATE_KEY="{{ ansible_user_dir }}/bosh-1/bosh-acc-huaweicloud.pem"
+              export BOSH_OS_BATS=true
+
+              SMALL_FLAVOR=$(openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column \
+                  VCPUs | awk '{if($2>=1024 && $3>=1){print $1}}' | head -n 1)
+              MEDIUM_FLAVOR=$(openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column \
+                  VCPUs | awk '{if($2>=2048 && $3>=2){print $1}}' | head -n 1)
+              LARGE_FLAVOR=$(openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column \
+                  VCPUs | awk '{if($2>=8096 && $3>=8){print $1}}' | head -n 1)
+
+              cat << EOF >> bat.yml
+              ---
+              cpi: openstack
+              properties:
+                stemcell:
+                  name: bosh-huaweicloud-xen-ubuntu-trusty-go_agent
+                  version: latest
+                pool_size: 1
+                instances: 1
+                instance_type: ${SMALL_FLAVOR}
+                availability_zone: ap-southeast-1a
+                flavor_with_no_ephemeral_disk: ${MEDIUM_FLAVOR}
+                vip: "{{ bat_floating_ip }}"
+                networks:
+                - name: default
+                  type: dynamic
+                  cloud_properties:
+                    subnet_id: $(openstack network show openlab-jobs-net -f value -c id) # Network ID
+                    security_groups: [openlab-jobs-sg] # security groups assigned to deployed VMs
+                key_name: bosh-acc-huaweicloud-"{{ zuul.build }}" # (optional) SSH keypair name
+              EOF
+
+              pushd '{{ ansible_user_dir }}/src/github.com/liu-sheng/bosh-acceptance-tests'
+              gem install bundler
+              bundle install
+              cp '{{ ansible_user_dir }}/bosh' /usr/local/bin/bosh
+              sed -i -e "s/net_id/subnet_id/g" ./templates/openstack.yml.erb
+              set +e
+              bundle exec rspec spec --tag core || true
+              popd
+              exit 0
+            executable: /bin/bash
+            chdir: '{{ ansible_user_dir }}'
+          environment: '{{ global_env }}'
+          register: testing_output
+          failed_when:
+            - "' 0 failures' not in testing_output.stdout"
+            - "' 0 failures' not in testing_output.stderr"
+
+      always:
+        - name: Cleanup resources
+          shell: |
+            set -ex
+            cd bosh-1
+            export BOSH_CLIENT=admin
+            export BOSH_CLIENT_SECRET=`bosh int ./creds.yml --path /admin_password`
+            export BOSH_ENVIRONMENT=bosh-1
+            bosh -e bosh-1 clean-up --all --non-interactive
+            for vm_id in $(bosh -e bosh-1 vms --column="VM CID"); do
+                bosh -e bosh-1 -d bat --non-interactive delete-vm ${vm_id}
+            done
+            for vol_id in $(bosh -e bosh-1 disks --orphaned); do
+                bosh -e bosh-1 --non-interactive delete-disk ${vol_id}
+            done
+            for dep_name in $(bosh -e bosh-1 deployments --column="Name"); do
+                bosh -e bosh-1 --non-interactive delete-deployment -d ${dep_name}
+            done
+            for img_id in $(bosh -e bosh-1 ss --column=CID); do
+                img_name=$(openstack image show $img_id -f value -c name)
+                bosh -e bosh-1 --non-interactive delete-stemcell $img_name
+            done
+            bosh delete-env bosh-deployment/bosh.yml \
+                --state=state.json \
+                --vars-store=creds.yml \
+                -o bosh-deployment/huaweicloud/cpi.yml \
+                -o bosh-deployment/external-ip-with-registry-not-recommended.yml \
+                --vars-file=vars.yml || true
+
+            openstack floating ip delete "{{ floating_ip }}" || true
+            openstack floating ip delete "{{ bat_floating_ip }}" || true
+            openstack keypair delete bosh-acc-huaweicloud-"{{ zuul.build }}" || true
+          args:
+            executable: /bin/bash
+            chdir: '{{ ansible_user_dir }}'
+          environment: '{{ global_env }}'

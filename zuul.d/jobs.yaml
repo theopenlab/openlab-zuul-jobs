@@ -778,3 +778,27 @@
       global_env:
         OS_BRANCH: stable/queens
     override-checkout: v0.15.0
+
+- job:
+    name: bosh-huaweicloud-cpi-release-acceptance-test
+    parent: init-test
+    description: |
+      This job validation tests of bosh-huaweicloud-cpi-release aganist Huaweicloud
+    run: playbooks/bosh-huaweicloud-cpi-release-acceptance-test/run.yaml
+    required-projects:
+      - zhongjun2/cf-huaweicloud-validator
+    secrets:
+      - huaweicloud_credentials
+    nodeset: ubuntu-xenial-huaweicloud
+
+- job:
+    name: bosh-acceptance-test-huaweicloud
+    parent: init-test
+    description: |
+      This job run tests of bosh-acceptance-test aganist Huaweicloud
+    run: playbooks/bosh-acceptance-test-huaweicloud/run.yaml
+    required-projects:
+      - liu-sheng/bosh-acceptance-tests
+    secrets:
+      - huaweicloud_credentials
+    nodeset: ubuntu-xenial-huaweicloud
