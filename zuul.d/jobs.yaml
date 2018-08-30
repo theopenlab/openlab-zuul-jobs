@@ -780,6 +780,7 @@
     override-checkout: v0.15.0
 
 - job:
+
     name: bosh-huaweicloud-cpi-release-acceptance-test
     parent: init-test
     description: |
@@ -802,3 +803,15 @@
     secrets:
       - huaweicloud_credentials
     nodeset: ubuntu-xenial-huaweicloud
+
+- job:
+    name: osb-checker-test-huaweicloud
+    parent: init-test
+    description: |
+      This job run tests of osb-checker aganist Huaweicloud
+    run: playbooks/osb-checker-test-huaweicloud/run.yaml
+    required-projects:
+      - openservicebrokerapi/osb-checker
+    secrets:
+      - huaweicloud_credentials
+
