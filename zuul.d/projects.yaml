@@ -104,3 +104,9 @@
             branches: master
         - docker-machine-0.15.0-functional-devstack-queens:
             branches: master
+
+- project:
+    name: huaweicloud/huaweicloud-service-broker
+    check:
+      jobs:
+        - osb-checker-test-huaweicloud
