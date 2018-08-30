@@ -142,8 +142,10 @@
               bundle install
               cp '{{ ansible_user_dir }}/bosh' /usr/local/bin/bosh
               sed -i -e "s/net_id/subnet_id/g" ./templates/openstack.yml.erb
+              set +e
               bundle exec rspec spec --tag core || true
               popd
+              exit 0
             executable: /bin/bash
             chdir: '{{ ansible_user_dir }}'
           environment: '{{ global_env }}'
