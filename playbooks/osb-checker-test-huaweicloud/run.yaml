@@ -32,7 +32,7 @@
         availability_zone: 'cn-north-1a'
         vpc_id: '9f53516c-a5d1-4721-9c50-9f5eccceeda9'
         # NOTE: this subnet is should be queried from portal than openstack cli
-        subnet_id: 'fbefc198-03a2-491d-9705-62a84196caf3
+        subnet_id: 'fbefc198-03a2-491d-9705-62a84196caf3'
         security_group_id: 'e18c06ca-fcac-46ed-a272-b014633678bf'
         name_uuid: '{{ zuul.build[:10] }}'
 
