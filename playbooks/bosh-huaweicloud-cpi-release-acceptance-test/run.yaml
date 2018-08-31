@@ -1,0 +1,94 @@
+- hosts: all
+  become: yes
+  roles:
+    - role: export-cloud-openrc
+      vars:
+        cloud_name: 'huaweicloud'
+  vars:
+    floating_ip: ''
+  tasks:
+    - name: Run validation tests of cf-huaweicloud-validator aganist huaweicloud
+      block:
+        - name: Install required packages
+          shell: |
+            set -ex
+            curl -Lo ./bosh https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-3.0.1-linux-amd64
+            chmod +x ./bosh
+            mv ./bosh /usr/local/bin/bosh
+            pip install python-openstackclient
+            pip install python-glanceclient==2.11.0
+            apt-get install -y build-essential zlibc zlib1g-dev ruby ruby-dev openssl libxslt-dev libxml2-dev \
+                libssl-dev libreadline6 libreadline6-dev libyaml-dev libsqlite3-dev sqlite3
+            gem install bundler
+            bosh create-release --force --tarball bosh-huaweicloud-cpi.tgz
+            cp bosh-huaweicloud-cpi.tgz '{{ ansible_user_dir }}/src/github.com/zhongjun2/cf-huaweicloud-validator'
+          args:
+            executable: /bin/bash
+            chdir: '{{ zuul.project.src_dir }}'
+
+        - name: Create floating ip
+          shell: |
+            openstack floating ip create admin_external_net -f value -c floating_ip_address
+          args:
+            executable: /bin/bash
+          environment: '{{ global_env }}'
+          register: floating_ip_adr
+
+        - name: Set floating ip variable
+          set_fact:
+            floating_ip: '{{ floating_ip_adr.stdout }}'
+
+        - name: Run validation tests of cf-huaweicloud-validator
+          shell: |
+            set -ex
+            # Populate validator.yml
+            openstack keypair create cf-huaweicloud-validator-"{{ zuul.build }}" > cf-validator.rsa_id
+            _port_id=$(openstack port create --network openlab-jobs-net cf-huaweicloud-validator-port -f value -c id)
+            STATIC_IP=$(openstack port show ${_port_id} -f value -c fixed_ips | grep -Eo '([0-9]+\.){3}[0-9]+')
+            openstack port delete ${_port_id}
+            # the network id of huawecloud is corressponding to subnet id of openstack
+            SUBNET_ID=$(openstack network show openlab-jobs-net -f value -c id)
+            INSTANCE_TYPE=$(openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column \
+                VCPUs | awk '{if($2>=2048 && $3>=2){print $1}}' | head -n 1)
+            chmod 0600 cf-validator.rsa_id
+
+            cp validator.template.yml validator.yml
+            set +x
+            sed -i "/auth_url/ s|<replace-me>|$OS_AUTH_URL|" validator.yml
+            sed -i "/username/ s|<replace-me>|$OS_USERNAME|" validator.yml
+            sed -i "/password/ s|<replace-me>|$OS_PASSWORD|" validator.yml
+            sed -i "/domain/ s|<replace-me>|$OS_DOMAIN_NAME|" validator.yml
+            sed -i "/project/ s|<replace-me>|$OS_PROJECT_NAME|" validator.yml
+            set -x
+
+            sed -i "/subnet_id/ s|<replace-me>|$SUBNET_ID|" validator.yml
+            sed -i "/floating_ip/ s|<replace-me>|{{ floating_ip }}|" validator.yml
+            sed -i "/static_ip/ s|<replace-me>|$STATIC_IP|" validator.yml
+            sed -i "/instance_type/ s|<replace-me>|$INSTANCE_TYPE|" validator.yml
+            sed -i "/use_external_ip/ s|false|true|" validator.yml
+            sed -i "/default_security_groups/ s|\[default\]|\[openlab-jobs-sg\]|" validator.yml
+            sed -i "/default_key_name/ s|cf-validator|cf-huaweicloud-validator-{{ zuul.build }}|" validator.yml
+
+            mkdir -p '{{ ansible_user_dir }}/workspace/logs/'
+            mkdir -p ~/.cf-openstack-validator/logs
+            ln -s ~/.cf-openstack-validator/logs '{{ ansible_user_dir }}/workspace/logs/cpi-logs'
+            curl -O https://obs-bosh.obs.otc.t-systems.com/bosh-stemcell-1.0-huaweicloud-xen-ubuntu-trusty-go_agent.tgz
+            chmod +x validate
+            bundle update fog-huaweicloud
+            bundle install
+            ./validate -s bosh-stemcell-1.0-huaweicloud-xen-ubuntu-trusty-go_agent.tgz -c validator.yml -r bosh-huaweicloud-cpi.tgz
+            exit $?
+          args:
+            executable: /bin/bash
+            chdir: '{{ ansible_user_dir }}/src/github.com/zhongjun2/cf-huaweicloud-validator'
+          environment: '{{ global_env }}'
+
+      always:
+        - name: Cleanup resources
+          shell: |
+            set -ex
+            openstack floating ip delete "{{ floating_ip }}" || true
+            openstack keypair delete cf-huaweicloud-validator-"{{ zuul.build }}" || true
+          args:
+            executable: /bin/bash
+          environment: '{{ global_env }}'
