@@ -33,7 +33,7 @@
         vpc_id: 'd9271807-b320-4609-aac9-f7f5b2d85830'
         # NOTE: this subnet is should be queried from portal than openstack cli
         subnet_id: '26f3ea59-6e89-4517-85dd-cdff08183482'
-        security_group_id: '4d0bf110-c753-4b09-a5a8-72c4d462352d'
+        security_group_id: 'e18c06ca-fcac-46ed-a272-b014633678bf'
         name_uuid: '{{ zuul.build[:10] }}'
 
     - name: Config huaweicloud service broker config
