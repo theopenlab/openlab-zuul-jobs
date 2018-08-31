@@ -79,7 +79,6 @@
             huaweicloud_project: ${OS_TENANT_NAME}
             private_key: "{{ ansible_user_dir }}/bosh-1/bosh-acc-huaweicloud.pem"
             region: ${OS_REGION_NAME}
-
             EOF
             set -x
 
