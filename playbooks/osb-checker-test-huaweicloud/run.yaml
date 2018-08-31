@@ -30,9 +30,9 @@
         broker_username: username
         broker_password: password
         availability_zone: 'cn-north-1a'
-        vpc_id: 'd9271807-b320-4609-aac9-f7f5b2d85830'
+        vpc_id: '9f53516c-a5d1-4721-9c50-9f5eccceeda9'
         # NOTE: this subnet is should be queried from portal than openstack cli
-        subnet_id: '26f3ea59-6e89-4517-85dd-cdff08183482'
+        subnet_id: 'fbefc198-03a2-491d-9705-62a84196caf3
         security_group_id: 'e18c06ca-fcac-46ed-a272-b014633678bf'
         name_uuid: '{{ zuul.build[:10] }}'
 
