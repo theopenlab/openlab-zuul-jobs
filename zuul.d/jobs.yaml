@@ -358,7 +358,7 @@
       using git devel branch version of ansible.
     run: playbooks/ansible-functional-devstack/run.yaml
     required-projects:
-      - name: ansible/ansible
+      - name: theopenlab/ansible
         override-checkout: devel
       - openstack/openstacksdk
     vars:
@@ -372,7 +372,7 @@
       using git stable-2.6 branch version of ansible.
     run: playbooks/ansible-functional-devstack/run.yaml
     required-projects:
-      - name: ansible/ansible
+      - name: theopenlab/ansible
         override-checkout: stable-2.6
       - openstack/openstacksdk
     vars:
@@ -386,7 +386,7 @@
       using git stable-2.6 branch version of ansible.
     run: playbooks/ansible-functional-devstack/run.yaml
     required-projects:
-      - name: ansible/ansible
+      - name: theopenlab/ansible
         override-checkout: stable-2.6
       - openstack/openstacksdk
     vars:
@@ -402,7 +402,7 @@
       using git stable-2.6 branch version of ansible.
     run: playbooks/ansible-functional-devstack/run.yaml
     required-projects:
-      - name: ansible/ansible
+      - name: theopenlab/ansible
         override-checkout: stable-2.6
       - openstack/openstacksdk
     vars:
@@ -418,7 +418,7 @@
       using git stable-2.6 branch version of ansible.
     run: playbooks/ansible-functional-devstack/run.yaml
     required-projects:
-      - name: ansible/ansible
+      - name: theopenlab/ansible
         override-checkout: stable-2.6
       - openstack/openstacksdk
     vars:
@@ -434,7 +434,7 @@
       using git stable-2.6 branch version of ansible.
     run: playbooks/ansible-functional-devstack/run.yaml
     required-projects:
-      - name: ansible/ansible
+      - name: theopenlab/ansible
         override-checkout: stable-2.6
       - openstack/openstacksdk
     vars:
@@ -450,7 +450,7 @@
       using git stable-2.6 branch version of ansible.
     run: playbooks/ansible-functional-devstack/run.yaml
     required-projects:
-      - name: ansible/ansible
+      - name: theopenlab/ansible
         override-checkout: stable-2.6
       - openstack/openstacksdk
     vars:
@@ -467,7 +467,7 @@
       using git stable-2.5 branch version of ansible.
     run: playbooks/ansible-functional-devstack/run.yaml
     required-projects:
-      - name: ansible/ansible
+      - name: theopenlab/ansible
         override-checkout: stable-2.5
       - openstack-infra/shade
     vars:
@@ -481,7 +481,7 @@
       using git stable-2.6 branch version of ansible.
     run: playbooks/ansible-functional-public-clouds/run.yaml
     required-projects:
-      - name: ansible/ansible
+      - name: theopenlab/ansible
         override-checkout: stable-2.6
       - openstack/openstacksdk
     vars:
@@ -500,7 +500,7 @@
       using git stable-2.6 branch version of ansible.
     run: playbooks/ansible-functional-public-clouds/run.yaml
     required-projects:
-      - name: ansible/ansible
+      - name: theopenlab/ansible
         override-checkout: stable-2.6
       - openstack/openstacksdk
     vars:
@@ -519,7 +519,7 @@
       using git stable-2.6 branch version of ansible.
     run: playbooks/ansible-functional-public-clouds/run.yaml
     required-projects:
-      - name: ansible/ansible
+      - name: theopenlab/ansible
         override-checkout: stable-2.6
       - openstack/openstacksdk
     vars:
@@ -538,7 +538,7 @@
       using git stable-2.6 branch version of ansible.
     run: playbooks/ansible-functional-public-clouds/run.yaml
     required-projects:
-      - name: ansible/ansible
+      - name: theopenlab/ansible
         override-checkout: stable-2.6
       - openstack/openstacksdk
     vars:

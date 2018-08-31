@@ -4,7 +4,7 @@
         - openlab-zuul-jobs-check
 
 - project:
-    name: ansible/ansible
+    name: theopenlab/ansible
     check:
       jobs:
         - openstacksdk-ansible-devel-functional-devstack:
