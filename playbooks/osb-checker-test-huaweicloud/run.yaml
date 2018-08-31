@@ -59,12 +59,8 @@
           CREATE DATABASE IF NOT EXISTS broker;
           FLUSH PRIVILEGES;
           EOF
-          mkdir -p $GOPATH/src/github.com/huaweicloud
-          cp -r '{{ zuul.project.src_dir }}' $GOPATH/src/github.com/huaweicloud/
-          pushd $GOPATH/src/github.com/huaweicloud/huaweicloud-service-broker
           go get ./...
           go install
-          popd
           curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
           apt-get install -y nodejs
           node -v
@@ -78,4 +74,5 @@
           npm test
           popd
         executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ global_env }}'
