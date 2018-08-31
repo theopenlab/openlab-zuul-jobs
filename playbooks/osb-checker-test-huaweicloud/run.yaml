@@ -6,6 +6,8 @@
       vars:
         cloud_name: 'huaweicloud'
   tasks:
+    # NOTE: These 4 services(DCS, DMS, OBS, RDS) are only available in cn-north-1 region
+    # now. We can remove the task when these services are on-line in HongKong region.
     - name: Change global_env to use cn-north-1 region
       set_fact:
         global_env: "{{ global_env | combine(cn_region_vars) }}"
@@ -52,6 +54,7 @@
       shell:
         cmd: |
           set -ex
+          # Install and config mysql that is depended by huaweicloud-service-broker
           apt-get install -y mariadb-server mariadb-client python-pymysql libmysqlclient-dev
           cat << EOF | mysql -sfu root
           CREATE USER 'broker'@'localhost' IDENTIFIED BY 'password';
@@ -59,23 +62,28 @@
           CREATE DATABASE IF NOT EXISTS broker;
           FLUSH PRIVILEGES;
           EOF
-          mkdir -p $GOPATH/src/github.com/huaweicloud
-          cp -r '{{ zuul.project.src_dir }}' $GOPATH/src/github.com/huaweicloud/
-          pushd $GOPATH/src/github.com/huaweicloud/huaweicloud-service-broker
+
+          # Install huaweicloud/huaweicloud-service-broker
           go get ./...
           go install
-          popd
+
+          # Install and launch nodejs
           curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
           apt-get install -y nodejs
           node -v
+
+          # Launching huaweicloud service broker implementation.
           nohup huaweicloud-service-broker -config=$GOPATH/src/github.com/huaweicloud/huaweicloud-service-broker/config.json \
               -port=3000 2>&1 &
 
           sleep 5
+
+          # openservicebrokerapi/osb-checker is required project. Run tests
           pushd $GOPATH/src/github.com/openservicebrokerapi/osb-checker/2.13/tests/
           sed -i 's/config_mock.json/config_openstack.json/g' test/test.js
           npm install
           npm test
           popd
         executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ global_env }}'
