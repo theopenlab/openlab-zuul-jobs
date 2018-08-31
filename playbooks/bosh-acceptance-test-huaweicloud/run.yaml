@@ -46,7 +46,7 @@
           set_fact:
             bat_floating_ip: '{{ bat_floating_ip_adr.stdout }}'
 
-        - name: Install and deploy bosh
+        - name: Deploy bosh and prepare for testing
           shell:
             cmd: |
               set -xe
@@ -98,22 +98,10 @@
               export BOSH_GW_PRIVATE_KEY="{{ ansible_user_dir }}/bosh-1/bosh-acc-huaweicloud.pem"
               bosh -e bosh-1 env
 
-              export BAT_STEMCELL="{{ ansible_user_dir }}/bosh-1/bosh-stemcell-1.0-huaweicloud-xen-ubuntu-trusty-go_agent.tgz"
-              export BAT_DEPLOYMENT_SPEC="{{ ansible_user_dir }}/bosh-1/bat.yml"
-              export BAT_BOSH_CLI=bosh
-              # export BAT_DNS_HOST=8.8.8.8
-              export BAT_DNS_HOST=100.125.1.250
-              export BAT_INFRASTRUCTURE=openstack
-              export BAT_NETWORKING=dynamic
-              export BAT_PRIVATE_KEY="{{ ansible_user_dir }}/bosh-1/bosh-acc-huaweicloud.pem"
-              export BOSH_OS_BATS=true
-
               SMALL_FLAVOR=$(openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column \
                   VCPUs | awk '{if($2>=1024 && $3>=1){print $1}}' | head -n 1)
               MEDIUM_FLAVOR=$(openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column \
                   VCPUs | awk '{if($2>=2048 && $3>=2){print $1}}' | head -n 1)
-              LARGE_FLAVOR=$(openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column \
-                  VCPUs | awk '{if($2>=8096 && $3>=8){print $1}}' | head -n 1)
 
               cat << EOF >> bat.yml
               ---
@@ -143,6 +131,22 @@
         - name: Run bosh acceptance tests
           shell: |
             set -ex
+            cd bosh-1
+            export BOSH_CLIENT=admin
+            export BOSH_CLIENT_SECRET=`bosh int ./creds.yml --path /admin_password`
+            export BOSH_ENVIRONMENT=bosh-1
+            export BOSH_GW_PRIVATE_KEY="{{ ansible_user_dir }}/bosh-1/bosh-acc-huaweicloud.pem"
+
+            export BAT_STEMCELL="{{ ansible_user_dir }}/bosh-1/bosh-stemcell-1.0-huaweicloud-xen-ubuntu-trusty-go_agent.tgz"
+            export BAT_DEPLOYMENT_SPEC="{{ ansible_user_dir }}/bosh-1/bat.yml"
+            export BAT_BOSH_CLI=bosh
+            # export BAT_DNS_HOST=8.8.8.8
+            export BAT_DNS_HOST=100.125.1.250
+            export BAT_INFRASTRUCTURE=openstack
+            export BAT_NETWORKING=dynamic
+            export BAT_PRIVATE_KEY="{{ ansible_user_dir }}/bosh-1/bosh-acc-huaweicloud.pem"
+            export BOSH_OS_BATS=true
+
             pushd '{{ ansible_user_dir }}/src/github.com/liu-sheng/bosh-acceptance-tests'
             gem install bundler
             bundle install
@@ -152,6 +156,7 @@
             popd
           args:
             executable: /bin/bash
+            chdir: '{{ ansible_user_dir }}'
           environment: '{{ global_env }}'
 
       always:
