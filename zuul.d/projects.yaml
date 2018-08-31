@@ -106,6 +106,14 @@
             branches: master
 
 - project:
+
+    name: zhongjun2/bosh-huaweicloud-cpi-release
+    check:
+      jobs:
+        - bosh-huaweicloud-cpi-release-acceptance-test
+        - bosh-acceptance-test-huaweicloud
+
+- project:
     name: huaweicloud/huaweicloud-service-broker
     check:
       jobs:
