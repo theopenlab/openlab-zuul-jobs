@@ -83,6 +83,7 @@
 
               EOF
               set -x
+              sleep 7200
 
               bosh create-env bosh-deployment/bosh.yml \
                   --state=state.json \
