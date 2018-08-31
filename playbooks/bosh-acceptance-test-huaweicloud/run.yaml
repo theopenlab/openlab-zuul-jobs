@@ -160,8 +160,8 @@
           environment: '{{ global_env }}'
           register: testing_output
           failed_when:
-            - "' 0 failures' not in testing_output.stdout"
-            - "' 0 failures' not in testing_output.stderr"
+             "'0 failures' not in testing_output.stdout" and
+             "'0 failures' not in testing_output.stderr"
 
       always:
         - name: Cleanup resources
