@@ -111,6 +111,8 @@
     check:
       jobs:
         - bosh-huaweicloud-cpi-release-acceptance-test
+    check-generic-cloud:
+      jobs:
         - bosh-acceptance-test-huaweicloud
 
 - project:
