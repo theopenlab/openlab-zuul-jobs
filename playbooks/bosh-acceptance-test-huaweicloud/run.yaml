@@ -159,15 +159,6 @@
             chdir: '{{ ansible_user_dir }}'
           environment: '{{ global_env }}'
           register: testing_output
-          ignore_errors: yes
-
-        - debug: msg="return code {{ testing_output.rc }}"
-        - debug: msg="stderr {{ testing_output.stderr[-100:] }}"
-        - debug: msg="stdout {{ testing_output.stdout[-100:] }}"
-        - debug: msg="stderr_lines {{ testing_output.stderr_lines[-100:] }}"
-        - debug: msg="stdout_lines {{ testing_output.stdout_lines[-100:] }}"
-        - debug: msg="results {{ testing_output.results[-100:] }}"
-        - debug: msg="msg {{ testing_output.msg[-100:] }}"
 
       always:
         - name: Cleanup resources
