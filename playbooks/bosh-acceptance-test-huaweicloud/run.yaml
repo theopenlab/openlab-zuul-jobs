@@ -158,7 +158,6 @@
             executable: /bin/bash
             chdir: '{{ ansible_user_dir }}'
           environment: '{{ global_env }}'
-          register: testing_output
 
       always:
         - name: Cleanup resources
