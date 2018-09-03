@@ -69,7 +69,7 @@
         executable: /bin/bash
       environment: '{{ global_env }}'
 
-    - name: Config osb checker for checking huaweicloud "{{ item }}" service
+    - name: Config osb checker for checking huaweicloud services
       become: yes
       template:
         dest: "{{ ansible_user_dir }}/src/github.com/openservicebrokerapi/osb-checker/2.13/tests/test/configs/config_huaweicloud_{{ item }}.json"
@@ -78,7 +78,7 @@
         - obs
         - dcs
 
-    - name: Running obs-checker for huaweicloud "{{ item }}" service
+    - name: Running obs-checker for huaweicloud service
       shell:
         cmd: |
           set -ex
@@ -89,8 +89,14 @@
           popd
         executable: /bin/bash
       register: result
-      failed_when: result.rc != 0
+      ignore_errors: true
       environment: '{{ global_env }}'
       with_items:
         - obs
         - dcs
+
+  - name: Check if osb checker failed
+    debug:
+      msg: "{{ item }} checked failed"
+    failed_when: item is failed
+    with_items: "{{ result.results }}"
