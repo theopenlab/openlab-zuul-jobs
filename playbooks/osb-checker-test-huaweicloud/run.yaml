@@ -90,7 +90,6 @@
       args:
         executable: /bin/bash
       register: result
-      ignore_errors: true
       environment: '{{ global_env }}'
       with_items:
         - obs
