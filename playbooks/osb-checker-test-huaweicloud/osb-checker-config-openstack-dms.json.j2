@@ -1,0 +1,222 @@
+{
+    "url": "http://localhost:3000",
+    "apiVersion": "2.13",
+    "user": "{{ broker_username }}",
+    "password": "{{ broker_password }}",
+    "authentication": "basic",
+    "provisions": [
+        {
+            "instance_id": "",
+            "body": {
+                "plan_id": "df0312bf-8189-4482-826e-2370a7f4d805",
+                "service_id": "94e8ffdf-bf9c-422f-b73c-776a3ca69f35",
+                "parameters": {
+                    "bucket_name": "osb-checker-obs-{{ name_uuid }}",
+                    "bucket_policy": "public-read-write"
+                },
+                "organization_guid": "organization_id",
+                "space_guid": "space_id"
+            },
+            "scenario": "new",
+            "notes": "Object Storage Service",
+            "async": false
+        },
+        {
+            "instance_id": "",
+            "body": {
+                "plan_id": "d54d393b-f5ce-4eb7-86be-49da00606368",
+                "service_id": "45d162e1-cf1e-455c-beff-cc0765d9a377",
+                "parameters": {
+                    "username": "username",
+                    "password": "Password1234!",
+                    "name": "osb-checker-dcs-redis-{{ name_uuid }}",
+                    "description": "Redis Single Node Test"
+                },
+                "organization_guid": "organization_id",
+                "space_guid": "space_id"
+            },
+            "scenario": "new",
+            "notes": "Distributed Cache Service for Redis",
+            "async": true
+        },
+        {
+            "instance_id": "",
+            "body": {
+                "plan_id": "839f4458-309a-4e05-a069-807e950cf6da",
+                "service_id": "275f3e0b-86fd-4303-946c-171374d29150",
+                "parameters": {
+                    "name": "osb-checker-rds-mysql-{{ name_uuid }}",
+                    "database_password": "Password1234!"
+                },
+                "organization_guid": "organization_id",
+                "space_guid": "space_id"
+            },
+            "scenario": "new",
+            "notes": "RDS SQLServer Service",
+            "async": true
+        },
+        {
+            "instance_id": "",
+            "body": {
+                "plan_id": "d0c150cb-6a2a-47aa-8937-9c55d4615e14",
+                "service_id": "fc0c6ad1-ff5a-499a-8598-fda9fb414fcb",
+                "parameters": {
+                    "username": "username",
+                    "password": "Password1234!",
+                    "name": "RabbitMQSingleNode",
+                    "description": "RabbitMQ Single Node Test"
+                },
+                "organization_guid": "organization_id",
+                "space_guid": "space_id"
+            },
+            "scenario": "new",
+            "notes": "Distributed Message Service for RabbitMQ",
+            "async": true
+        }
+    ],
+    "updates": [
+        {
+            "instance_id": "",
+            "body": {
+                "service_id": "94e8ffdf-bf9c-422f-b73c-776a3ca69f35",
+                "plan_id": "df0312bf-8189-4482-826e-2370a7f4d805",
+                "parameters": {
+                    "bucket_policy": "private",
+                    "status": "Enabled"
+                },
+                "previous_values": {
+                    "plan_id": "df0312bf-8189-4482-826e-2370a7f4d805",
+                    "service_id": "94e8ffdf-bf9c-422f-b73c-776a3ca69f35",
+                    "organization_id": "organization_id",
+                    "space_id": "space_id"
+                }
+            },
+            "scenario": "update",
+            "async": false
+        },
+        {
+            "instance_id": "",
+            "body": {
+                "service_id": "45d162e1-cf1e-455c-beff-cc0765d9a377",
+                "plan_id": "d54d393b-f5ce-4eb7-86be-49da00606368",
+                "parameters": {
+                    "name": "osb-checker-dcs-redis-updated-{{ name_uuid }}",
+                    "description": "Redis Single Node Test1",
+                    "old_password": "Password1234!",
+                    "new_password": "Password1234$"
+                },
+                "previous_values": {
+                    "plan_id": "d54d393b-f5ce-4eb7-86be-49da00606368",
+                    "service_id": "45d162e1-cf1e-455c-beff-cc0765d9a377",
+                    "organization_id": "organization_id",
+                    "space_id": "space_id"
+                }
+            },
+            "scenario": "update",
+            "async": true
+        },
+        {
+            "instance_id": "",
+            "body": {
+                "plan_id": "839f4458-309a-4e05-a069-807e950cf6da",
+                "service_id": "275f3e0b-86fd-4303-946c-171374d29150",
+                "parameters": {
+                    "volume_size": 200
+                },
+                "previous_values": {
+                    "plan_id": "839f4458-309a-4e05-a069-807e950cf6da",
+                    "service_id": "275f3e0b-86fd-4303-946c-171374d29150",
+                    "organization_id": "organization_id",
+                    "space_id": "space_id"
+                }
+            },
+            "scenario": "update",
+            "async": true
+        },
+        {
+            "instance_id": "",
+            "body": {
+                "plan_id": "d0c150cb-6a2a-47aa-8937-9c55d4615e14",
+                "service_id": "fc0c6ad1-ff5a-499a-8598-fda9fb414fcb",
+                "parameters": {
+                    "name": "RabbitMQSingleNode1",
+                    "description": "RabbitMQ Single Node Test1"
+                },
+                "previous_values": {
+                    "plan_id": "d0c150cb-6a2a-47aa-8937-9c55d4615e14",
+                    "service_id": "fc0c6ad1-ff5a-499a-8598-fda9fb414fcb",
+                    "organization_id": "organization_id",
+                    "space_id": "space_id"
+                }
+            },
+            "scenario": "update",
+            "async": true
+        }
+    ],
+    "bindings": [
+        {
+            "body": {
+                "service_id": "94e8ffdf-bf9c-422f-b73c-776a3ca69f35",
+                "plan_id": "df0312bf-8189-4482-826e-2370a7f4d805"
+            },
+            "async": false,
+            "scenario": "new"
+        },
+        {
+            "body": {
+                "service_id": "94e8ffdf-bf9c-422f-b73c-776a3ca69f35",
+                "plan_id": "df0312bf-8189-4482-826e-2370a7f4d805"
+            },
+            "async": false,
+            "scenario": "delete"
+        },
+        {
+            "body": {
+                "service_id": "45d162e1-cf1e-455c-beff-cc0765d9a377",
+                "plan_id": "d54d393b-f5ce-4eb7-86be-49da00606368"
+            },
+            "async": true,
+            "scenario": "new"
+        },
+        {
+            "body": {
+                "service_id": "45d162e1-cf1e-455c-beff-cc0765d9a377",
+                "plan_id": "d54d393b-f5ce-4eb7-86be-49da00606368"
+            },
+            "async": true,
+            "scenario": "delete"
+        },
+        {
+            "body": {
+                "plan_id": "839f4458-309a-4e05-a069-807e950cf6da",
+                "service_id": "275f3e0b-86fd-4303-946c-171374d29150"
+            },
+            "async": true,
+            "scenario": "new"
+        },
+        {
+            "body": {
+                "plan_id": "839f4458-309a-4e05-a069-807e950cf6da",
+                "service_id": "275f3e0b-86fd-4303-946c-171374d29150"
+            },
+            "async": true,
+            "scenario": "delete"
+        },
+        {
+            "body": {
+                "plan_id": "d0c150cb-6a2a-47aa-8937-9c55d4615e14",
+                "service_id": "fc0c6ad1-ff5a-499a-8598-fda9fb414fcb"
+            },
+            "async": true,
+            "scenario": "new"
+        },
+        {
+            "body": {
+                "plan_id": "d0c150cb-6a2a-47aa-8937-9c55d4615e14",
+                "service_id": "fc0c6ad1-ff5a-499a-8598-fda9fb414fcb"
+            },
+            "async": true,
+            "scenario": "delete"
+        }
+    ]
+}

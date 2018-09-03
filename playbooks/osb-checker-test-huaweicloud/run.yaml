@@ -51,6 +51,8 @@
       with_items:
         - obs
         - dcs
+        - rds
+        - dms
 
     - name: Running obs-checker for huaweicloud services
       shell:
@@ -77,14 +79,15 @@
           sleep 5
           pushd $GOPATH/src/github.com/openservicebrokerapi/osb-checker/2.13/tests/
           npm install
-          for service in obs dcs; do
+          for service in obs dcs rds dms; do
           set +x
           echo "#########################################################################"
           echo "Runing osb-checker against huaweicloud ${service} service...."
           sed -i "s/config_mock.json/config_huaweicloud_${service}.json/g" test/test.js
-          npm test
+          npm test || exitcode=$?
           set -x
           done
           popd
+          exit $exitcode
         executable: /bin/bash
       environment: '{{ global_env }}'
