@@ -79,7 +79,7 @@
         - dcs
 
     - name: Running obs-checker for huaweicloud service
-      shell:
+      shell: |
         set -ex
         pushd $GOPATH/src/github.com/openservicebrokerapi/osb-checker/2.13/tests/
         sed -i 's/config_mock.json/config_huaweicloud_{{ item }}.json/g' test/test.js
