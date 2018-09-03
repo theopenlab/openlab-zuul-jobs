@@ -95,8 +95,8 @@
         - obs
         - dcs
 
-  - name: Check if osb checker failed
-    debug:
-      msg: "{{ item }} checked failed"
-    failed_when: item is failed
-    with_items: "{{ result.results }}"
+    - name: Check if osb checker failed
+      debug:
+        msg: "{{ item }} checked failed"
+      failed_when: item is failed
+      with_items: "{{ result.results }}"
