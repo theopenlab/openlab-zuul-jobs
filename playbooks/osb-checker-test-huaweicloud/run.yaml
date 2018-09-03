@@ -76,18 +76,18 @@
           node -v
           nohup huaweicloud-service-broker -config=$GOPATH/src/github.com/huaweicloud/huaweicloud-service-broker/config.json \
               -port=3000 2>&1 &
-          sleep 5
+          sleep 20
           pushd $GOPATH/src/github.com/openservicebrokerapi/osb-checker/2.13/tests/
           npm install
-          for service in obs dcs rds dms; do
           set +x
+          for service in obs dcs rds dms; do
           echo "#########################################################################"
           echo "Runing osb-checker against huaweicloud ${service} service...."
           sed -i "s/config_mock.json/config_huaweicloud_${service}.json/g" test/test.js
           npm test || exitcode=$?
-          set -x
           done
           popd
+          set -x
           exit $exitcode
         executable: /bin/bash
       environment: '{{ global_env }}'
