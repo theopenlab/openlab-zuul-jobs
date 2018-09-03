@@ -32,25 +32,31 @@
         broker_username: username
         broker_password: password
         availability_zone: 'cn-north-1a'
-        vpc_id: '93c029db-e70b-40dc-b3b8-80d4e2ff132d'
+        vpc_id: '9f53516c-a5d1-4721-9c50-9f5eccceeda9'
         # NOTE: this subnet is should be queried from portal than openstack cli
-        subnet_id: '776e76f4-41b7-4185-a54b-19d195894bb1'
+        subnet_id: 'fbefc198-03a2-491d-9705-62a84196caf3'
         security_group_id: 'e18c06ca-fcac-46ed-a272-b014633678bf'
         name_uuid: '{{ zuul.build[:10] }}'
 
-    - name: Config huaweicloud service broker config
+
+    - name: Customize huaweicloud-service-broker config for huaweicloud services
       become: yes
       template:
         dest: "{{ zuul.project.src_dir }}/config.json"
         src: "huaweicloud-service-broker-config.json.j2"
 
-    - name: Config osb checker testing config
+    - name: Config osb checker for checking huaweicloud services
       become: yes
       template:
-        dest: "{{ ansible_user_dir }}/src/github.com/openservicebrokerapi/osb-checker/2.13/tests/test/configs/config_openstack.json"
-        src: "osb-checker-config-openstack.json.j2"
+        dest: "{{ ansible_user_dir }}/src/github.com/openservicebrokerapi/osb-checker/2.13/tests/test/configs/config_huaweicloud_{{ item }}.json"
+        src: "osb-checker-config-huaweicloud-{{ item }}.json.j2"
+      with_items:
+        - obs
+        - dcs
+        - rds
+        - dms
 
-    - name: Running test cases of osb-checker against huaweicloud
+    - name: Running obs-checker for huaweicloud services
       shell:
         cmd: |
           set -ex
@@ -75,15 +81,21 @@
           # Launching huaweicloud service broker implementation.
           nohup huaweicloud-service-broker -config=$GOPATH/src/github.com/huaweicloud/huaweicloud-service-broker/config.json \
               -port=3000 2>&1 &
-
-          sleep 5
+          sleep 20
 
           # openservicebrokerapi/osb-checker is required project. Run tests
           pushd $GOPATH/src/github.com/openservicebrokerapi/osb-checker/2.13/tests/
-          sed -i 's/config_mock.json/config_openstack.json/g' test/test.js
           npm install
-          npm test
+          set +x
+          for service in obs dcs rds dms; do
+          echo "#########################################################################"
+          echo "Runing osb-checker against huaweicloud ${service} service...."
+          sed -i "s/config_mock.json/config_huaweicloud_${service}.json/g" test/test.js
+          npm test || exitcode=$?
+          done
           popd
+          set -x
+          exit $exitcode
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ global_env }}'
