@@ -65,6 +65,7 @@
           node -v
           nohup huaweicloud-service-broker -config=$GOPATH/src/github.com/huaweicloud/huaweicloud-service-broker/config.json \
               -port=3000 2>&1 &
+          sleep 7200
           sleep 5
         executable: /bin/bash
       environment: '{{ global_env }}'
