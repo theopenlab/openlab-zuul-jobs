@@ -41,7 +41,7 @@
       become: yes
       template:
         dest: "{{ zuul.project.src_dir }}/config.json"
-        src: "huaweicloud-service-broker-config-obs.json.j2"
+        src: "huaweicloud-service-broker-config.json.j2"
 
     - name: Setup and run huaweicloud-service-broker service
       shell:
