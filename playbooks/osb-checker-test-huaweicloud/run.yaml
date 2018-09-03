@@ -97,6 +97,7 @@
 
     - name: Check if osb checker failed
       debug:
-        msg: "{{ item.item }} checked failed"
+        msg: "{{ item.item }} service checked failed"
       failed_when: item is failed
       with_items: "{{ result.results }}"
+      no_log: yes
