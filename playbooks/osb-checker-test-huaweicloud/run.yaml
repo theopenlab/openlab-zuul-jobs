@@ -64,7 +64,7 @@
           apt-get install -y nodejs
           node -v
           setsid huaweicloud-service-broker -config=$GOPATH/src/github.com/huaweicloud/huaweicloud-service-broker/config.json \
-              -port=3000 </dev/zero &>/dev/null &
+              -port=3000 2>&1 &
           sleep 5
         executable: /bin/bash
       environment: '{{ global_env }}'
