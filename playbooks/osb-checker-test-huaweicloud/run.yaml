@@ -65,11 +65,11 @@
           node -v
           nohup huaweicloud-service-broker -config=$GOPATH/src/github.com/huaweicloud/huaweicloud-service-broker/config.json \
               -port=3000 2>&1 &
-
+          sleep 5
         executable: /bin/bash
       environment: '{{ global_env }}'
 
-    - name: Config osb checker for checking huaweicloud {{ item }} service
+    - name: Config osb checker for checking huaweicloud "{{ item }}" service
       become: yes
       template:
         dest: "{{ ansible_user_dir }}/src/github.com/openservicebrokerapi/osb-checker/2.13/tests/test/configs/config_huaweicloud_{{ item }}.json"
@@ -78,7 +78,7 @@
         - obs
         - dcs
 
-    - name: Running obs-checker for huaweicloud {{ item }} service
+    - name: Running obs-checker for huaweicloud "{{ item }}" service
       shell:
         cmd: |
           set -ex
@@ -88,6 +88,8 @@
           npm test
           popd
         executable: /bin/bash
+      register: result
+      failed_when: result.rc != 0
       environment: '{{ global_env }}'
       with_items:
         - obs
