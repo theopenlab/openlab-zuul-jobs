@@ -80,13 +80,14 @@
 
     - name: Running obs-checker for huaweicloud service
       shell:
-        cmd: |
-          set -ex
-          pushd $GOPATH/src/github.com/openservicebrokerapi/osb-checker/2.13/tests/
-          sed -i 's/config_mock.json/config_huaweicloud_{{ item }}.json/g' test/test.js
-          npm install
-          npm test
-          popd
+        set -ex
+        pushd $GOPATH/src/github.com/openservicebrokerapi/osb-checker/2.13/tests/
+        sed -i 's/config_mock.json/config_huaweicloud_{{ item }}.json/g' test/test.js
+        npm install
+        sleep 7200
+        npm test
+        popd
+      args:
         executable: /bin/bash
       register: result
       ignore_errors: true
