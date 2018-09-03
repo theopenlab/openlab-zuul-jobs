@@ -43,7 +43,16 @@
         dest: "{{ zuul.project.src_dir }}/config.json"
         src: "huaweicloud-service-broker-config.json.j2"
 
-    - name: Setup and run huaweicloud-service-broker service
+    - name: Config osb checker for checking huaweicloud services
+      become: yes
+      template:
+        dest: "{{ ansible_user_dir }}/src/github.com/openservicebrokerapi/osb-checker/2.13/tests/test/configs/config_huaweicloud_{{ item }}.json"
+        src: "osb-checker-config-huaweicloud-{{ item }}.json.j2"
+      with_items:
+        - obs
+        - dcs
+
+    - name: Running obs-checker for huaweicloud services
       shell:
         cmd: |
           set -ex
@@ -63,41 +72,17 @@
           curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
           apt-get install -y nodejs
           node -v
-          setsid huaweicloud-service-broker -config=$GOPATH/src/github.com/huaweicloud/huaweicloud-service-broker/config.json \
+          nohup huaweicloud-service-broker -config=$GOPATH/src/github.com/huaweicloud/huaweicloud-service-broker/config.json \
               -port=3000 2>&1 &
           sleep 5
+          pushd $GOPATH/src/github.com/openservicebrokerapi/osb-checker/2.13/tests/
+          npm install
+          for service in obs dcs; do
+          echo "#########################################################################"
+          echo "Runing osb-checker against huaweicloud ${service} service...."
+          sed -i 's/config_mock.json/config_huaweicloud_${service}.json/g' test/test.js
+          npm test
+          done
+          popd
         executable: /bin/bash
       environment: '{{ global_env }}'
-
-    - name: Config osb checker for checking huaweicloud services
-      become: yes
-      template:
-        dest: "{{ ansible_user_dir }}/src/github.com/openservicebrokerapi/osb-checker/2.13/tests/test/configs/config_huaweicloud_{{ item }}.json"
-        src: "osb-checker-config-huaweicloud-{{ item }}.json.j2"
-      with_items:
-        - obs
-        - dcs
-
-    - name: Running obs-checker for huaweicloud service
-      shell: |
-        set -ex
-        pushd $GOPATH/src/github.com/openservicebrokerapi/osb-checker/2.13/tests/
-        sed -i 's/config_mock.json/config_huaweicloud_{{ item }}.json/g' test/test.js
-        npm install
-        sleep 7200
-        npm test
-        popd
-      args:
-        executable: /bin/bash
-      register: result
-      environment: '{{ global_env }}'
-      with_items:
-        - obs
-        - dcs
-
-    - name: Check if osb checker failed
-      debug:
-        msg: "{{ item.item }} service checked failed"
-      failed_when: item is failed
-      with_items: "{{ result.results }}"
-      no_log: yes
