@@ -80,7 +80,7 @@
           for service in obs dcs; do
           echo "#########################################################################"
           echo "Runing osb-checker against huaweicloud ${service} service...."
-          sed -i 's/config_mock.json/config_huaweicloud_${service}.json/g' test/test.js
+          sed -i "s/config_mock.json/config_huaweicloud_${service}.json/g" test/test.js
           npm test
           done
           popd
