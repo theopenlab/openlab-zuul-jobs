@@ -36,19 +36,14 @@
         security_group_id: 'e18c06ca-fcac-46ed-a272-b014633678bf'
         name_uuid: '{{ zuul.build[:10] }}'
 
-    - name: Config huaweicloud service broker config
+
+    - name: Customize huaweicloud-service-broker config for huaweicloud services
       become: yes
       template:
         dest: "{{ zuul.project.src_dir }}/config.json"
-        src: "huaweicloud-service-broker-config.json.j2"
+        src: "huaweicloud-service-broker-config-obs.json.j2"
 
-    - name: Config osb checker testing config
-      become: yes
-      template:
-        dest: "{{ ansible_user_dir }}/src/github.com/openservicebrokerapi/osb-checker/2.13/tests/test/configs/config_openstack.json"
-        src: "osb-checker-config-openstack.json.j2"
-
-    - name: Running test cases of osb-checker against huaweicloud
+    - name: Setup and run huaweicloud-service-broker service
       shell:
         cmd: |
           set -ex
@@ -71,11 +66,29 @@
           nohup huaweicloud-service-broker -config=$GOPATH/src/github.com/huaweicloud/huaweicloud-service-broker/config.json \
               -port=3000 2>&1 &
 
-          sleep 5
+        executable: /bin/bash
+      environment: '{{ global_env }}'
+
+    - name: Config osb checker for checking huaweicloud {{ item }} service
+      become: yes
+      template:
+        dest: "{{ ansible_user_dir }}/src/github.com/openservicebrokerapi/osb-checker/2.13/tests/test/configs/config_huaweicloud_{{ item }}.json"
+        src: "osb-checker-config-huaweicloud-{{ item }}.json.j2"
+      with_items:
+        - obs
+        - dcs
+
+    - name: Running obs-checker for huaweicloud {{ item }} service
+      shell:
+        cmd: |
+          set -ex
           pushd $GOPATH/src/github.com/openservicebrokerapi/osb-checker/2.13/tests/
-          sed -i 's/config_mock.json/config_openstack.json/g' test/test.js
+          sed -i 's/config_mock.json/config_huaweicloud_{{ item }}.json/g' test/test.js
           npm install
           npm test
           popd
         executable: /bin/bash
       environment: '{{ global_env }}'
+      with_items:
+        - obs
+        - dcs
