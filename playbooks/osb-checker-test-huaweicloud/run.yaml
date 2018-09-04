@@ -87,6 +87,7 @@
           sleep 20
           pushd $GOPATH/src/github.com/openservicebrokerapi/osb-checker/2.13/tests/
           npm install
+          npm install --save figures
           npm install --global mocha
           set +x
           checker_cfg=config_mock.json
