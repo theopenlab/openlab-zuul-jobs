@@ -95,8 +95,7 @@
               echo "#########################################################################"
               echo "Runing osb-checker against huaweicloud ${service} service...."
               sed -i "s/${checker_cfg}/config_huaweicloud_${service}.json/g" test/test.js
-              sleep 7200
-              mocha -t 200000 test/test.js || exitcode=$?
+              mocha -t 200000 test/test.js --reporter doc  >> "{{ ansible_user_dir }}/workspace/test_results.html" || exitcode=$?
               checker_cfg=config_huaweicloud_${service}.json
           done
           popd
