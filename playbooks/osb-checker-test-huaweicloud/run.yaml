@@ -85,6 +85,7 @@
               echo "#########################################################################"
               echo "Runing osb-checker against huaweicloud ${service} service...."
               sed -i "s/${checker_cfg}/config_huaweicloud_${service}.json/g" test/test.js
+              mocha -t 200000 test/test.js
               npm test || exitcode=$?
               checker_cfg=config_huaweicloud_${service}.json
           done
