@@ -86,13 +86,14 @@
           # openservicebrokerapi/osb-checker is required project. Run tests
           pushd $GOPATH/src/github.com/openservicebrokerapi/osb-checker/2.13/tests/
           npm install
+          npm install --global mocha
           set +x
           checker_cfg=config_mock.json
           for service in obs dcs rds dms; do
               echo "#########################################################################"
               echo "Runing osb-checker against huaweicloud ${service} service...."
               sed -i "s/${checker_cfg}/config_huaweicloud_${service}.json/g" test/test.js
-              npm test || exitcode=$?
+              mocha -t 200000 test/test.js || exitcode=$?
               checker_cfg=config_huaweicloud_${service}.json
           done
           popd
