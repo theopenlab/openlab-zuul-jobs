@@ -68,6 +68,14 @@
           mkdir -p $GOPATH/src/github.com/huaweicloud
           cp -r '{{ zuul.project.src_dir }}' $GOPATH/src/github.com/huaweicloud/
           pushd $GOPATH/src/github.com/huaweicloud/huaweicloud-service-broker
+
+          # workaround for debuging
+          git remote add upstream https://github.com/huaweicloud/huaweicloud-service-broker
+          git config --global user.email 'zuul@openlab.com'
+          git config --global user.name 'openlab'
+          git fetch upstream refs/pull/46/head:pr46
+          git cherry-pick pr46
+
           go get ./...
           go install
           popd
