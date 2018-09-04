@@ -87,11 +87,13 @@
           pushd $GOPATH/src/github.com/openservicebrokerapi/osb-checker/2.13/tests/
           npm install
           set +x
+          checker_cfg=config_mock.json
           for service in obs dcs rds dms; do
-          echo "#########################################################################"
-          echo "Runing osb-checker against huaweicloud ${service} service...."
-          sed -i "s/config_mock.json/config_huaweicloud_${service}.json/g" test/test.js
-          npm test || exitcode=$?
+              echo "#########################################################################"
+              echo "Runing osb-checker against huaweicloud ${service} service...."
+              sed -i "s/${checker_cfg}/config_huaweicloud_${service}.json/g" test/test.js
+              npm test || exitcode=$?
+              checker_cfg=config_huaweicloud_${service}.json
           done
           popd
           set -x
