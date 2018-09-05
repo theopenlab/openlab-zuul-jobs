@@ -91,6 +91,7 @@
           npm install --global mocha
           set +x
           checker_cfg=config_mock.json
+          mkdir -p "{{ ansible_user_dir }}/workspace/test_results/"
           for service in obs dcs rds dms; do
               echo "#########################################################################"
               echo "Runing osb-checker against huaweicloud ${service} service...."
