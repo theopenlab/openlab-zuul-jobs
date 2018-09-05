@@ -87,7 +87,7 @@
           sleep 20
           pushd $GOPATH/src/github.com/openservicebrokerapi/osb-checker/2.13/tests/
           npm install
-          npm install --save figures
+          npm install --save-dev mocha-simple-html-reporter
           npm install --global mocha
           set +x
           checker_cfg=config_mock.json
@@ -95,7 +95,7 @@
               echo "#########################################################################"
               echo "Runing osb-checker against huaweicloud ${service} service...."
               sed -i "s/${checker_cfg}/config_huaweicloud_${service}.json/g" test/test.js
-              mocha -t 200000 test/test.js --reporter doc  >> "{{ ansible_user_dir }}/workspace/test_results.html" || exitcode=$?
+              mocha -t 200000 test/test.js --reporter mocha-simple-html-reporter --reporter-options output="{{ ansible_user_dir }}/workspace/test_results.html" || exitcode=$?
               checker_cfg=config_huaweicloud_${service}.json
           done
           popd
