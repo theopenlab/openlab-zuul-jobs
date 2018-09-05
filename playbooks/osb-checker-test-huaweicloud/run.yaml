@@ -35,8 +35,8 @@
         subnet_id: 'fbefc198-03a2-491d-9705-62a84196caf3'
         security_group_id: 'e18c06ca-fcac-46ed-a272-b014633678bf'
         name_uuid: '{{ zuul.build[:10] }}'
-        instance_id: '{{ zuul.build | to_uuid }}'
-        binding_id: '{{ zuul.build | to_uuid }}'
+        instance_id: 'obs_instance_id_{{ zuul.build[:10] }}'
+        binding_id: 'obs_binding_id_{{ zuul.build[:10] }}'
 
     - name: Customize huaweicloud-service-broker config for huaweicloud services
       become: yes
