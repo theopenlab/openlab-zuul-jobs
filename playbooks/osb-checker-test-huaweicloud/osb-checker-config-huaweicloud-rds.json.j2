@@ -6,7 +6,7 @@
     "authentication": "basic",
     "provisions": [
         {
-            "instance_id": "",
+            "instance_id": "rds-instance-id-{{ name_uuid }}",
             "body": {
                 "plan_id": "839f4458-309a-4e05-a069-807e950cf6da",
                 "service_id": "275f3e0b-86fd-4303-946c-171374d29150",
@@ -24,7 +24,7 @@
     ],
     "updates": [
         {
-            "instance_id": "",
+            "instance_id": "rds-instance-id-{{ name_uuid }}",
             "body": {
                 "plan_id": "839f4458-309a-4e05-a069-807e950cf6da",
                 "service_id": "275f3e0b-86fd-4303-946c-171374d29150",
@@ -44,6 +44,8 @@
     ],
     "bindings": [
         {
+            "instance_id": "rds-instance-id-{{ name_uuid }}",
+            "binding_id": "rds-binding-id-{{ name_uuid }}",
             "body": {
                 "plan_id": "839f4458-309a-4e05-a069-807e950cf6da",
                 "service_id": "275f3e0b-86fd-4303-946c-171374d29150"
@@ -52,6 +54,8 @@
             "scenario": "new"
         },
         {
+            "instance_id": "rds-instance-id-{{ name_uuid }}",
+            "binding_id": "rds-binding-id-{{ name_uuid }}",
             "body": {
                 "plan_id": "839f4458-309a-4e05-a069-807e950cf6da",
                 "service_id": "275f3e0b-86fd-4303-946c-171374d29150"

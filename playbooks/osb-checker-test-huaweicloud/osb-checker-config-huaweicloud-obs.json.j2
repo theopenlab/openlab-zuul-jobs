@@ -6,7 +6,7 @@
     "authentication": "basic",
     "provisions": [
         {
-            "instance_id": "{{ instance_id }}",
+            "instance_id": "obs-instance-id-{{ name_uuid }}",
             "body": {
                 "plan_id": "df0312bf-8189-4482-826e-2370a7f4d805",
                 "service_id": "94e8ffdf-bf9c-422f-b73c-776a3ca69f35",
@@ -24,7 +24,7 @@
     ],
     "updates": [
         {
-            "instance_id": "{{ instance_id }}",
+            "instance_id": "obs-instance-id-{{ name_uuid }}",
             "body": {
                 "service_id": "94e8ffdf-bf9c-422f-b73c-776a3ca69f35",
                 "plan_id": "df0312bf-8189-4482-826e-2370a7f4d805",
@@ -45,8 +45,8 @@
     ],
     "bindings": [
         {
-            "instance_id": "{{ instance_id }}",
-            "binding_id": "{{ binding_id }}",
+            "instance_id": "obs-instance-id-{{ name_uuid }}",
+            "binding_id": "obs-binding-id-{{ name_uuid }}",
             "body": {
                 "service_id": "94e8ffdf-bf9c-422f-b73c-776a3ca69f35",
                 "plan_id": "df0312bf-8189-4482-826e-2370a7f4d805"
@@ -55,8 +55,8 @@
             "scenario": "new"
         },
         {
-            "instance_id": "{{ instance_id }}",
-            "binding_id": "{{ binding_id }}",
+            "instance_id": "obs-instance-id-{{ name_uuid }}",
+            "binding_id": "obs-binding-id-{{ name_uuid }}",
             "body": {
                 "service_id": "94e8ffdf-bf9c-422f-b73c-776a3ca69f35",
                 "plan_id": "df0312bf-8189-4482-826e-2370a7f4d805"

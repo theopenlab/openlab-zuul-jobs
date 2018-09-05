@@ -6,7 +6,7 @@
     "authentication": "basic",
     "provisions": [
         {
-            "instance_id": "",
+            "instance_id": "dms-instance-id-{{ name_uuid }}",
             "body": {
                 "plan_id": "d0c150cb-6a2a-47aa-8937-9c55d4615e14",
                 "service_id": "fc0c6ad1-ff5a-499a-8598-fda9fb414fcb",
@@ -26,7 +26,7 @@
     ],
     "updates": [
         {
-            "instance_id": "",
+            "instance_id": "dms-instance-id-{{ name_uuid }}",
             "body": {
                 "plan_id": "d0c150cb-6a2a-47aa-8937-9c55d4615e14",
                 "service_id": "fc0c6ad1-ff5a-499a-8598-fda9fb414fcb",
@@ -47,6 +47,8 @@
     ],
     "bindings": [
         {
+            "instance_id": "dms-instance-id-{{ name_uuid }}",
+            "binding_id": "dms-binding-id-{{ name_uuid }}",
             "body": {
                 "plan_id": "d0c150cb-6a2a-47aa-8937-9c55d4615e14",
                 "service_id": "fc0c6ad1-ff5a-499a-8598-fda9fb414fcb"
@@ -55,6 +57,8 @@
             "scenario": "new"
         },
         {
+            "instance_id": "dms-instance-id-{{ name_uuid }}",
+            "binding_id": "dms-binding-id-{{ name_uuid }}",
             "body": {
                 "plan_id": "d0c150cb-6a2a-47aa-8937-9c55d4615e14",
                 "service_id": "fc0c6ad1-ff5a-499a-8598-fda9fb414fcb"
