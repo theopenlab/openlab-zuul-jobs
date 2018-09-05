@@ -10,6 +10,7 @@
         - 'ceph'
     - role: install-devstack
       environment:
+        OVERRIDE_ENABLED_SERVICES: 'dstat,g-api,g-reg,key,mysql,n-api,n-api-meta,n-cauth,n-cond,n-cpu,n-novnc,n-obj,n-sch,placement-api,q-agt,q-dhcp,q-l3,q-meta,q-metering,q-svc,rabbit'
         PROJECTS: 'openstack/devstack-plugin-ceph'
   tasks:
     - name: Run Manila provisioner acceptance tests
