@@ -6,7 +6,7 @@
     "authentication": "basic",
     "provisions": [
         {
-            "instance_id": "",
+            "instance_id": "dcs-instance-id-{{ name_uuid }}",
             "body": {
                 "plan_id": "d54d393b-f5ce-4eb7-86be-49da00606368",
                 "service_id": "45d162e1-cf1e-455c-beff-cc0765d9a377",
@@ -26,7 +26,7 @@
     ],
     "updates": [
         {
-            "instance_id": "",
+            "instance_id": "dcs-instance-id-{{ name_uuid }}",
             "body": {
                 "service_id": "45d162e1-cf1e-455c-beff-cc0765d9a377",
                 "plan_id": "d54d393b-f5ce-4eb7-86be-49da00606368",
@@ -49,6 +49,8 @@
     ],
     "bindings": [
         {
+            "instance_id": "dcs-instance-id-{{ name_uuid }}",
+            "binding_id": "dcs-binding-id-{{ name_uuid }}",
             "body": {
                 "service_id": "45d162e1-cf1e-455c-beff-cc0765d9a377",
                 "plan_id": "d54d393b-f5ce-4eb7-86be-49da00606368"
@@ -57,6 +59,8 @@
             "scenario": "new"
         },
         {
+            "instance_id": "dcs-instance-id-{{ name_uuid }}",
+            "binding_id": "dcs-binding-id-{{ name_uuid }}",
             "body": {
                 "service_id": "45d162e1-cf1e-455c-beff-cc0765d9a377",
                 "plan_id": "d54d393b-f5ce-4eb7-86be-49da00606368"
