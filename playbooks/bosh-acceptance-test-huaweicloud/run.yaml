@@ -58,7 +58,9 @@
               mkdir bosh-1 && cd bosh-1
               curl -O https://obs-bosh.obs.otc.t-systems.com/bosh-stemcell-1.0-huaweicloud-xen-ubuntu-trusty-go_agent.tgz
               git clone https://github.com/huaweicloud/bosh-deployment.git
+              cd bosh-deployment
               git checkout go_to_preversion
+              cd ..
               openstack keypair create bosh-acc-huaweicloud-"{{ zuul.build }}" > bosh-acc-huaweicloud.pem
               chmod 0700 bosh-acc-huaweicloud.pem
 
