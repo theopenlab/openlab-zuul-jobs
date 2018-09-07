@@ -118,14 +118,18 @@
         export BOSH_OS_BATS=true
 
         pushd '{{ ansible_user_dir }}/src/github.com/liu-sheng/bosh-acceptance-tests'
+        # Work around of issues 4542 and issues 4544
+        git remote add upstream https://github.com/cloudfoundry/bosh-acceptance-tests
+        git config --global user.email 'zuul@openlab.com'
+        git config --global user.name 'openlab'
+        git fetch upstream refs/pull/43/head:pr43
+        git cherry-pick pr43
+
         gem install bundler
         bundle install
         cp '{{ ansible_user_dir }}/bosh' /usr/local/bin/bosh
-        # sed -i -e "s/net_id/subnet_id/g" ./templates/openstack.yml.erb
-        # bundle exec rspec spec --tag core
-        sleep 7200
-        echo "Fuck the openlab"
-        sleep 180
+        sed -i "s/\bnet_id\b/subnet_id/g" templates/openstack.yml.erb
+        rspec spec --tag core
         popd
       args:
         executable: /bin/bash
