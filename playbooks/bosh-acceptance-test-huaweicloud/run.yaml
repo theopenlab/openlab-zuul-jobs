@@ -124,6 +124,7 @@
         # sed -i -e "s/net_id/subnet_id/g" ./templates/openstack.yml.erb
         # bundle exec rspec spec --tag core
         echo "Fuck the openlab"
+        sleep 180
         popd
       args:
         executable: /bin/bash
