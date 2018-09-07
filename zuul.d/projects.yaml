@@ -71,6 +71,7 @@
     check:
       jobs:
         - bosh-acceptance-test-huaweicloud
+        - bosh-huaweicloud-cpi-release-acceptance-test
 
 - project:
     name: liu-sheng/huaweicloud-service-broker
