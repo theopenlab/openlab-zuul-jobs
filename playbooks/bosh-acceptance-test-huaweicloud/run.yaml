@@ -4,7 +4,7 @@
     - role: export-cloud-openrc
       vars:
         cloud_name: 'huaweicloud'
-
+  tasks:
     - name: Deploy bosh and prepare for testing
       shell:
         cmd: |
