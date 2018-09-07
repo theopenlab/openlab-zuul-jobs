@@ -118,7 +118,7 @@
         export BOSH_OS_BATS=true
 
         pushd '{{ ansible_user_dir }}/src/github.com/liu-sheng/bosh-acceptance-tests'
-        # Work around of issues 4542 and issues 4544
+        # Work around
         git remote add upstream https://github.com/cloudfoundry/bosh-acceptance-tests
         git config --global user.email 'zuul@openlab.com'
         git config --global user.name 'openlab'
