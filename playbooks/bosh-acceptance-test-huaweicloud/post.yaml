@@ -26,6 +26,9 @@
             img_name=$(openstack image show $img_id -f value -c name)
             bosh -e bosh-1 --non-interactive delete-stemcell $img_name
         done
+        floating_ip=$(cat vars.yaml |grep external_ip |grep -Eo '([0-9]+\.){3}[0-9]+')
+        bat_floating_ip=$(cat bat.yml |grep vip |grep -Eo '([0-9]+\.){3}[0-9]+')
+
         bosh delete-env bosh-deployment/bosh.yml \
             --state=state.json \
             --vars-store=creds.yml \
@@ -33,8 +36,6 @@
             -o bosh-deployment/external-ip-with-registry-not-recommended.yml \
             --vars-file=vars.yml || true
 
-        floating_ip=$(cat vars.yaml |grep external_ip |grep -Eo '([0-9]+\.){3}[0-9]+')
-        bat_floating_ip=$(cat bat.yml |grep vip |grep -Eo '([0-9]+\.){3}[0-9]+')
         openstack floating ip delete ${floating_ip} || true
         openstack floating ip delete ${bat_floating_ip} || true
         openstack keypair delete bosh-acc-huaweicloud-"{{ zuul.build }}" || true
