@@ -26,7 +26,7 @@
             img_name=$(openstack image show $img_id -f value -c name)
             bosh -e bosh-1 --non-interactive delete-stemcell $img_name
         done
-        floating_ip=$(cat vars.yaml |grep external_ip |grep -Eo '([0-9]+\.){3}[0-9]+')
+        floating_ip=$(cat vars.yml |grep external_ip |grep -Eo '([0-9]+\.){3}[0-9]+')
         bat_floating_ip=$(cat bat.yml |grep vip |grep -Eo '([0-9]+\.){3}[0-9]+')
 
         bosh delete-env bosh-deployment/bosh.yml \
