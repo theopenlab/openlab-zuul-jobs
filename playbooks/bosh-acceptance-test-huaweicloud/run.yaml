@@ -10,7 +10,8 @@
         cmd: |
           set -xe
           curl -Lo ./bosh https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-5.0.1-linux-amd64
-          chmod +x ./bosh && cp ./bosh /usr/local/bin/bosh
+          chmod +x ./bosh
+          cp ./bosh /usr/local/bin/bosh
           pip install python-openstackclient
           apt-get install -y build-essential zlibc zlib1g-dev ruby ruby-dev openssl libxslt-dev libxml2-dev \
               libssl-dev libreadline6 libreadline6-dev libyaml-dev libsqlite3-dev sqlite3
@@ -22,7 +23,8 @@
           floating_ip=$(openstack floating ip create admin_external_net -f value -c floating_ip_address)
           bat_floating_ip=$(openstack floating ip create admin_external_net -f value -c floating_ip_address)
 
-          mkdir bosh-1 && cd bosh-1
+          mkdir bosh-1
+          cd bosh-1
           curl -O https://obs-bosh.obs.otc.t-systems.com/bosh-stemcell-1.0-huaweicloud-xen-ubuntu-trusty-go_agent.tgz
           git clone https://github.com/huaweicloud/bosh-deployment.git
           cd bosh-deployment
