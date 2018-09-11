@@ -329,6 +329,7 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-flexvolume-cinder/run.yaml
     nodeset: ubuntu-xenial
 
+# ansible jobs
 - job:
     name: openstacksdk-ansible-devel-functional-devstack
     parent: init-test
@@ -528,6 +529,7 @@
     secrets:
       - huaweicloud_credentials
 
+# packer jobs
 - job:
     name: packer-1.2.5-functional-opentelekomcloud
     parent: init-test
@@ -648,6 +650,7 @@
         OS_BRANCH: stable/mitaka
     nodeset: ubuntu-trusty
 
+# docker machine jobs
 - job:
     name: docker-machine-0.15.0-functional-opentelekomcloud
     parent: init-test
@@ -758,8 +761,8 @@
         OS_BRANCH: stable/queens
     override-checkout: v0.15.0
 
+# bosh huaweicloud cpi jobs
 - job:
-
     name: bosh-huaweicloud-cpi-release-acceptance-test
     parent: init-test
     description: |
@@ -783,6 +786,7 @@
       - huaweicloud_credentials
     nodeset: ubuntu-xenial-huaweicloud
 
+# open service broker checker jobs
 - job:
     name: osb-checker-test-huaweicloud
     parent: init-test
@@ -793,4 +797,3 @@
       - openservicebrokerapi/osb-checker
     secrets:
       - huaweicloud_credentials
-
