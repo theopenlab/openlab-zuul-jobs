@@ -103,6 +103,11 @@
       shell: |
         set -ex
         cd bosh-1
+        pidfile=bosh-acc.pid
+        if [ -f "$pidfile" ] && kill -0 `cat $pidfile` 2>/dev/null; then
+            exit 0
+        fi
+        echo $$ > $pidfile
         export BOSH_CLIENT=admin
         export BOSH_CLIENT_SECRET=`bosh int ./creds.yml --path /admin_password`
         export BOSH_ENVIRONMENT=bosh-1
