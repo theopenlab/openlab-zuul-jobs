@@ -53,7 +53,8 @@
 
           EOF
           set -x
-
+          echo "PPID of task1-0: $PPID"
+          echo "PID of task1-0: $$"
           bosh create-env bosh-deployment/bosh.yml \
               --state=state.json \
               --vars-store=creds.yml \
@@ -67,6 +68,8 @@
           export BOSH_ENVIRONMENT=bosh-1
           export BOSH_GW_PRIVATE_KEY="{{ ansible_user_dir }}/bosh-1/bosh-acc-huaweicloud.pem"
           bosh -e bosh-1 env
+          echo "PPID of task1-1: $PPID"
+          echo "PID of task1-1: $$"
 
           SMALL_FLAVOR=$(openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column \
               VCPUs | awk '{if($2>=1024 && $3>=1){print $1}}' | head -n 1)
@@ -106,7 +109,8 @@
         export BOSH_CLIENT_SECRET=`bosh int ./creds.yml --path /admin_password`
         export BOSH_ENVIRONMENT=bosh-1
         export BOSH_GW_PRIVATE_KEY="{{ ansible_user_dir }}/bosh-1/bosh-acc-huaweicloud.pem"
-
+        echo "PPID of task2-0: $PPID"
+        echo "PID of task2-0: $$"
         export BAT_STEMCELL="{{ ansible_user_dir }}/bosh-1/bosh-stemcell-1.0-huaweicloud-xen-ubuntu-trusty-go_agent.tgz"
         export BAT_DEPLOYMENT_SPEC="{{ ansible_user_dir }}/bosh-1/bat.yml"
         export BAT_BOSH_CLI=bosh
@@ -123,6 +127,8 @@
         cp '{{ ansible_user_dir }}/bosh' /usr/local/bin/bosh
         sed -i "s/\bnet_id\b/subnet_id/g" templates/openstack.yml.erb
         rspec spec --tag core
+        echo "PPID of task2-1: $PPID"
+        echo "PID of task2-1: $$"
         popd
       args:
         executable: /bin/bash
