@@ -9,7 +9,6 @@
       shell:
         cmd: |
           set -xe
-          [ -f "bosh-deploy-flag" ] && exit 0 || touch bosh-deploy-flag
           curl -Lo ./bosh https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli-5.0.1-linux-amd64
           chmod +x ./bosh
           cp ./bosh /usr/local/bin/bosh
