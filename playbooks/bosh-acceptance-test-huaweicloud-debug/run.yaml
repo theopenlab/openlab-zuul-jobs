@@ -100,33 +100,31 @@
       environment: '{{ global_env }}'
 
     - name: Run bosh acceptance tests
-      shell: |
-        set -ex
-        cd bosh-1
-        [ -f "bosh-acc-run-flag" ] && exit 0 || touch bosh-acc-run-flag
-        export BOSH_CLIENT=admin
-        export BOSH_CLIENT_SECRET=`bosh int ./creds.yml --path /admin_password`
-        export BOSH_ENVIRONMENT=bosh-1
-        export BOSH_GW_PRIVATE_KEY="{{ ansible_user_dir }}/bosh-1/bosh-acc-huaweicloud.pem"
-        export BAT_STEMCELL="{{ ansible_user_dir }}/bosh-1/bosh-stemcell-1.0-huaweicloud-xen-ubuntu-trusty-go_agent.tgz"
-        export BAT_DEPLOYMENT_SPEC="{{ ansible_user_dir }}/bosh-1/bat.yml"
-        export BAT_BOSH_CLI=bosh
-        # export BAT_DNS_HOST=8.8.8.8
-        export BAT_DNS_HOST=100.125.1.250
-        export BAT_INFRASTRUCTURE=openstack
-        export BAT_NETWORKING=dynamic
-        export BAT_PRIVATE_KEY="{{ ansible_user_dir }}/bosh-1/bosh-acc-huaweicloud.pem"
-        export BOSH_OS_BATS=true
+      shell:
+        cmd: |
+          set -ex
+          cd bosh-1
+          export BOSH_CLIENT=admin
+          export BOSH_CLIENT_SECRET=`bosh int ./creds.yml --path /admin_password`
+          export BOSH_ENVIRONMENT=bosh-1
+          export BOSH_GW_PRIVATE_KEY="{{ ansible_user_dir }}/bosh-1/bosh-acc-huaweicloud.pem"
+          export BAT_STEMCELL="{{ ansible_user_dir }}/bosh-1/bosh-stemcell-1.0-huaweicloud-xen-ubuntu-trusty-go_agent.tgz"
+          export BAT_DEPLOYMENT_SPEC="{{ ansible_user_dir }}/bosh-1/bat.yml"
+          export BAT_BOSH_CLI=bosh
+          # export BAT_DNS_HOST=8.8.8.8
+          export BAT_DNS_HOST=100.125.1.250
+          export BAT_INFRASTRUCTURE=openstack
+          export BAT_NETWORKING=dynamic
+          export BAT_PRIVATE_KEY="{{ ansible_user_dir }}/bosh-1/bosh-acc-huaweicloud.pem"
+          export BOSH_OS_BATS=true
 
-        pushd '{{ ansible_user_dir }}/src/github.com/liu-sheng/bosh-acceptance-tests'
-        gem install bundler
-        bundle install
-        cp '{{ ansible_user_dir }}/bosh' /usr/local/bin/bosh
-        sed -i "s/\bnet_id\b/subnet_id/g" templates/openstack.yml.erb
-        rspec spec --tag core
-        popd
-      args:
+          pushd '{{ ansible_user_dir }}/src/github.com/liu-sheng/bosh-acceptance-tests'
+          gem install bundler
+          bundle install
+          cp '{{ ansible_user_dir }}/bosh' /usr/local/bin/bosh
+          sed -i "s/\bnet_id\b/subnet_id/g" templates/openstack.yml.erb
+          rspec spec --tag core
+          popd
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}'
       environment: '{{ global_env }}'
-
