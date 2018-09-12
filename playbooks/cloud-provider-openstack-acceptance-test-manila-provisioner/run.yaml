@@ -64,7 +64,7 @@
           '{{ kubectl }}' create clusterrolebinding --user system:kube-controller-manager  kube-system-cluster-admin-6 --clusterrole cluster-admin
 
           # OpenStack credentials for manila-provisioner
-          '{{ kubectl }}' create secret generic manila-provisioner-secret --from-literal=os-authURL=$OS_AUTH_URL --from-literal=os-domainName=$OS_USER_DOMAIN_NAME --from-literal=os-userName=$OS_USERNAME --from-literal=os-password=$OS_PASSWORD --from-literal=os-projectID=$OS_PROJECT_ID --from-literal=os-region=$OS_REGION_NAME
+          '{{ kubectl }}' create secret generic manila-provisioner-secret --from-literal=os-authURL=$OS_AUTH_URL --from-literal=os-domainID=$OS_USER_DOMAIN_ID --from-literal=os-userName=$OS_USERNAME --from-literal=os-password=$OS_PASSWORD --from-literal=os-projectName=$OS_PROJECT_NAME --from-literal=os-region=$OS_REGION_NAME
 
           # Create StorageClass
           cat <<EOF | '{{ kubectl }}' create -f -
