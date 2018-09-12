@@ -725,8 +725,8 @@
     parent: init-test
     description: |
       This job run tests of bosh-acceptance-test aganist Huaweicloud
-    run: playbooks/bosh-acceptance-test-huaweicloud/run.yaml
-    post-run: playbooks/bosh-acceptance-test-huaweicloud/post.yaml
+    run: playbooks/bosh-acceptance-test-huaweicloud-debug/run.yaml
+    post-run: playbooks/bosh-acceptance-test-huaweicloud-debug/post.yaml
     required-projects:
       - liu-sheng/bosh-acceptance-tests
     secrets:
