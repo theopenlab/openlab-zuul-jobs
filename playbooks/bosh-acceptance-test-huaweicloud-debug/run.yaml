@@ -125,6 +125,7 @@
           sed -i "s/\bnet_id\b/subnet_id/g" templates/openstack.yml.erb
           rspec spec --tag core
           popd
+          sleep 7200
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}'
       environment: '{{ global_env }}'
