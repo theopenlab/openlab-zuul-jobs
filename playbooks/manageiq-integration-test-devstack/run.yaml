@@ -1,0 +1,13 @@
+- hosts: all
+  become: yes
+  roles:
+    - clone-devstack-gate-to-workspace
+    - create-devstack-local-conf
+    - install-devstack
+  tasks:
+    - name: Run Integration tests of Docker machine against devstack
+      shell:
+        cmd: |
+          set -ex
+        executable: /bin/bash
+      environment: '{{ global_env }}'
