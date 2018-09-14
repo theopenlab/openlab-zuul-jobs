@@ -9,5 +9,6 @@
       shell:
         cmd: |
           set -ex
+          sleep 7200
         executable: /bin/bash
       environment: '{{ global_env }}'
