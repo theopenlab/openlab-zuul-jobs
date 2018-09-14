@@ -9,6 +9,7 @@
       shell:
         cmd: |
           set -ex
+          # python -m cfme.scripting.quickstar
           sleep 7200
         executable: /bin/bash
       environment: '{{ global_env }}'
