@@ -762,6 +762,7 @@
     override-checkout: v0.15.0
 
 # bosh huaweicloud cpi jobs
+#NOTES: Should be updated when switch to official project
 - job:
     name: bosh-huaweicloud-cpi-release-acceptance-test
     parent: init-test

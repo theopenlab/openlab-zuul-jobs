@@ -105,8 +105,8 @@
         - docker-machine-0.15.0-functional-devstack-queens:
             branches: master
 
+#NOTES: Should be updated when switch to official project
 - project:
-
     name: zhongjun2/bosh-huaweicloud-cpi-release
     check:
       jobs:
@@ -117,6 +117,6 @@
 
 - project:
     name: huaweicloud/huaweicloud-service-broker
-    check:
+    check-generic-cloud:
       jobs:
         - osb-checker-test-huaweicloud
