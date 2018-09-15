@@ -102,4 +102,4 @@
     name: h00130372/integration_tests
     check:
       jobs:
-      - manageiq-integration-test-devstack
+        - manageiq-integration-test-devstack
