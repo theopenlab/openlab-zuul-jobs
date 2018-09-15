@@ -9,7 +9,11 @@
       shell:
         cmd: |
           set -ex
-          # python -m cfme.scripting.quickstar
+          apt-get install -y libcurl4-openssl-dev
+          pip install -e .
+          rename 's/\.template$//' ./conf/*.template
+          python -m cfme.scripting.quickstart
+          . ../cfme_venv/bin/activate
           sleep 7200
         executable: /bin/bash
       environment: '{{ global_env }}'
