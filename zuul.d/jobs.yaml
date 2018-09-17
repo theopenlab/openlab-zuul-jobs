@@ -752,3 +752,4 @@
     run: playbooks/manageiq-integration-test-devstack/run.yaml
     required-projects:
       - liu-sheng/integration_tests
+      - liu-sheng/manageiq-providers-openstack
