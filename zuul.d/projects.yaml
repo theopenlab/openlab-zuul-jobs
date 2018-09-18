@@ -43,6 +43,8 @@
             branches: stable-2.6
         - openstacksdk-ansible-stable-2.6-functional-devstack:
             branches: stable-2.6
+        - openstacksdk-ansible-stable-2.6-functional-devstack-rocky:
+            branches: stable-2.6    
         - openstacksdk-ansible-stable-2.6-functional-devstack-queens:
             branches: stable-2.6
         - openstacksdk-ansible-stable-2.6-functional-devstack-pike:
