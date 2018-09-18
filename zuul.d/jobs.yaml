@@ -620,6 +620,17 @@
       packer_version: 1.2.5
 
 - job:
+    name: packer-1.2.5-functional-devstack-rocky
+    parent: init-test
+    description: |
+      Test image building functionality of Packer of version 1.2.5 against rocky devstack.
+    run: playbooks/packer-functional-devstack/run.yaml
+    vars:
+      packer_version: 1.2.5
+      global_env:
+        OS_BRANCH: stable/rocky
+
+- job:
     name: packer-1.2.5-functional-devstack-queens
     parent: init-test
     description: |
