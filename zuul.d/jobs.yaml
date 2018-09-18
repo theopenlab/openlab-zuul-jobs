@@ -61,6 +61,15 @@
     run: playbooks/terraform-provider-openstack-acceptance-test/run.yaml
 
 - job:
+    name: terraform-provider-openstack-acceptance-test-rocky
+    parent: terraform-provider-openstack-acceptance-test
+    description: |
+      Run terraform provider openstack acceptance test on rocky branch
+    vars:
+      global_env:
+        OS_BRANCH: stable/rocky
+
+- job:
     name: terraform-provider-openstack-acceptance-test-queens
     parent: terraform-provider-openstack-acceptance-test
     description: |
