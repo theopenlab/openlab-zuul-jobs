@@ -78,6 +78,7 @@
           provisioner: manila-provisioner
           parameters:
             osSecretName: manila-provisioner-secret
+            type: cephfstype
             protocol: CEPHFS
             backend: cephfs
           EOF
