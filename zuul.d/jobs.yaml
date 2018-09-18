@@ -368,6 +368,22 @@
       os_sdk: openstacksdk
 
 - job:
+    name: openstacksdk-ansible-stable-2.6-functional-devstack-rocky
+    parent: init-test
+    description: |
+      Run openstacksdk ansible functional tests against a rocky devstack
+      using git stable-2.6 branch version of ansible.
+    run: playbooks/ansible-functional-devstack/run.yaml
+    required-projects:
+      - name: theopenlab/ansible
+        override-checkout: stable-2.6
+      - openstack/openstacksdk
+    vars:
+      os_sdk: openstacksdk
+      global_env:
+        OS_BRANCH: stable/rocky
+
+- job:
     name: openstacksdk-ansible-stable-2.6-functional-devstack-queens
     parent: init-test
     description: |
