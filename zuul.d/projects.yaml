@@ -70,6 +70,8 @@
             branches: master
         - packer-1.2.5-functional-devstack:
             branches: master
+        - packer-1.2.5-functional-devstack-rocky:
+            branches: master
         - packer-1.2.5-functional-devstack-queens:
             branches: master
         - packer-1.2.5-functional-devstack-pike:
