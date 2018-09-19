@@ -750,6 +750,5 @@
     description: |
       This job run integration tests of ManageIQ aganist Devstack
     run: playbooks/manageiq-integration-test-devstack/run.yaml
-#    required-projects:
-#      - liu-sheng/integration_tests
-#      - liu-sheng/manageiq-providers-openstack
+    required-projects:
+       - liu-sheng/integration_tests
