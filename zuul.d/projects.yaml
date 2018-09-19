@@ -108,7 +108,8 @@
             branches: master
         - docker-machine-0.15.0-functional-devstack-queens:
             branches: master
-
+        - docker-machine-0.15.0-functional-devstack-rocky:
+            branches: master
 #NOTES: Should be updated when switch to official project
 - project:
     name: zhongjun2/bosh-huaweicloud-cpi-release

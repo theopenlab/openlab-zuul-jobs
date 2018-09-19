@@ -797,6 +797,18 @@
         OS_BRANCH: stable/queens
     override-checkout: v0.15.0
 
+- job:
+    name: docker-machine-0.15.0-functional-devstack-rocky
+    parent: init-test
+    description: |
+      Test image building functionality of Docker machine of 0.15.0 version against
+      devstack of Rocky.
+    run: playbooks/docker-machine-functional-devstack/run.yaml
+    vars:
+      global_env:
+        OS_BRANCH: stable/rocky
+    override-checkout: v0.15.0
+
 # bosh huaweicloud cpi jobs
 #NOTES: Should be updated when switch to official project
 - job:
