@@ -61,6 +61,15 @@
     run: playbooks/terraform-provider-openstack-acceptance-test/run.yaml
 
 - job:
+    name: terraform-provider-openstack-acceptance-test-rocky
+    parent: terraform-provider-openstack-acceptance-test
+    description: |
+      Run terraform provider openstack acceptance test on rocky branch
+    vars:
+      global_env:
+        OS_BRANCH: stable/rocky
+
+- job:
     name: terraform-provider-openstack-acceptance-test-queens
     parent: terraform-provider-openstack-acceptance-test
     description: |
@@ -359,6 +368,22 @@
       os_sdk: openstacksdk
 
 - job:
+    name: openstacksdk-ansible-stable-2.6-functional-devstack-rocky
+    parent: init-test
+    description: |
+      Run openstacksdk ansible functional tests against a rocky devstack
+      using git stable-2.6 branch version of ansible.
+    run: playbooks/ansible-functional-devstack/run.yaml
+    required-projects:
+      - name: theopenlab/ansible
+        override-checkout: stable-2.6
+      - openstack/openstacksdk
+    vars:
+      os_sdk: openstacksdk
+      global_env:
+        OS_BRANCH: stable/rocky
+
+- job:
     name: openstacksdk-ansible-stable-2.6-functional-devstack-queens
     parent: init-test
     description: |
@@ -595,6 +620,17 @@
       packer_version: 1.2.5
 
 - job:
+    name: packer-1.2.5-functional-devstack-rocky
+    parent: init-test
+    description: |
+      Test image building functionality of Packer of version 1.2.5 against rocky devstack.
+    run: playbooks/packer-functional-devstack/run.yaml
+    vars:
+      packer_version: 1.2.5
+      global_env:
+        OS_BRANCH: stable/rocky
+
+- job:
     name: packer-1.2.5-functional-devstack-queens
     parent: init-test
     description: |
@@ -759,6 +795,18 @@
     vars:
       global_env:
         OS_BRANCH: stable/queens
+    override-checkout: v0.15.0
+
+- job:
+    name: docker-machine-0.15.0-functional-devstack-rocky
+    parent: init-test
+    description: |
+      Test image building functionality of Docker machine of 0.15.0 version against
+      devstack of Rocky.
+    run: playbooks/docker-machine-functional-devstack/run.yaml
+    vars:
+      global_env:
+        OS_BRANCH: stable/rocky
     override-checkout: v0.15.0
 
 # bosh huaweicloud cpi jobs

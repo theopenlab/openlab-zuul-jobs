@@ -43,6 +43,8 @@
             branches: stable-2.6
         - openstacksdk-ansible-stable-2.6-functional-devstack:
             branches: stable-2.6
+        - openstacksdk-ansible-stable-2.6-functional-devstack-rocky:
+            branches: stable-2.6    
         - openstacksdk-ansible-stable-2.6-functional-devstack-queens:
             branches: stable-2.6
         - openstacksdk-ansible-stable-2.6-functional-devstack-pike:
@@ -67,6 +69,8 @@
         - packer-1.2.5-functional-huaweicloud:
             branches: master
         - packer-1.2.5-functional-devstack:
+            branches: master
+        - packer-1.2.5-functional-devstack-rocky:
             branches: master
         - packer-1.2.5-functional-devstack-queens:
             branches: master
@@ -104,7 +108,8 @@
             branches: master
         - docker-machine-0.15.0-functional-devstack-queens:
             branches: master
-
+        - docker-machine-0.15.0-functional-devstack-rocky:
+            branches: master
 #NOTES: Should be updated when switch to official project
 - project:
     name: zhongjun2/bosh-huaweicloud-cpi-release
