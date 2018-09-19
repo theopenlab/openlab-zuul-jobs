@@ -9,13 +9,5 @@
       shell:
         cmd: |
           set -ex
-          pushd "{{ ansible_user_dir }}/src/github.com/liu-sheng/integration_tests"
-          apt-get install -y libcurl4-openssl-dev
-          pip install -e .
-          rename 's/\.template$//' ./conf/*.template
-          python -m cfme.scripting.quickstart
-          . ../cfme_venv/bin/activate
-          sleep 7200
-          popd
         executable: /bin/bash
       environment: '{{ global_env }}'
