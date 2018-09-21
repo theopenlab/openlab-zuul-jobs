@@ -83,7 +83,6 @@
 - project:
     name: liu-sheng/huaweicloud-service-broker
     check:
-      debug: True
       jobs:
         - osb-checker-test-huaweicloud
 
