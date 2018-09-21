@@ -4,6 +4,8 @@
     "user": "{{ broker_username }}",
     "password": "{{ broker_password }}",
     "authentication": "basic",
+    "polling_interval": 3,
+    "max_polling_duration": 100,
     "provisions": [
         {
             "instance_id": "obs-instance-id-{{ name_uuid }}",
