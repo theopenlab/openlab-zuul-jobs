@@ -77,14 +77,14 @@
               -port=3000 2>&1 &
           sleep 20
 
-          pushd $GOPATH/src/github.com/openservicebrokerapi/osb-checker/
+          # pushd $GOPATH/src/github.com/openservicebrokerapi/osb-checker/
           # Work around of pr47
-          git remote add upstream https://github.com/openservicebrokerapi/osb-checker
-          git config --global user.email 'zuul@openlab.com'
-          git config --global user.name 'openlab'
-          git fetch upstream refs/pull/47/head:pr47
-          git cherry-pick pr47
-          popd
+          # git remote add upstream https://github.com/openservicebrokerapi/osb-checker
+          # git config --global user.email 'zuul@openlab.com'
+          # git config --global user.name 'openlab'
+          # git fetch upstream refs/pull/47/head:pr47
+          # git cherry-pick pr47
+          # popd
 
           pushd $GOPATH/src/github.com/openservicebrokerapi/osb-checker/2.13/tests/
           npm install
