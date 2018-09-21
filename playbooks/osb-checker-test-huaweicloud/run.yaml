@@ -36,6 +36,20 @@
         security_group_id: 'e18c06ca-fcac-46ed-a272-b014633678bf'
         name_uuid: '{{ zuul.build[:10] }}'
 
+    - name: Workaround of pr47
+      shell:
+        cmd: |
+          set -ex
+          pushd $GOPATH/src/github.com/openservicebrokerapi/osb-checker/
+          git remote add upstream https://github.com/openservicebrokerapi/osb-checker
+          git config --global user.email 'zuul@openlab.com'
+          git config --global user.name 'openlab'
+          git fetch upstream refs/pull/47/head:pr47
+          git cherry-pick pr47
+          popd
+        executable: /bin/bash
+      environment: '{{ global_env }}'
+
     - name: Customize huaweicloud-service-broker config for huaweicloud services
       become: yes
       template:
@@ -76,15 +90,6 @@
           nohup huaweicloud-service-broker -config=$GOPATH/src/github.com/huaweicloud/huaweicloud-service-broker/config.json \
               -port=3000 2>&1 &
           sleep 20
-
-          # pushd $GOPATH/src/github.com/openservicebrokerapi/osb-checker/
-          # Work around of pr47
-          # git remote add upstream https://github.com/openservicebrokerapi/osb-checker
-          # git config --global user.email 'zuul@openlab.com'
-          # git config --global user.name 'openlab'
-          # git fetch upstream refs/pull/47/head:pr47
-          # git cherry-pick pr47
-          # popd
 
           pushd $GOPATH/src/github.com/openservicebrokerapi/osb-checker/2.13/tests/
           npm install
