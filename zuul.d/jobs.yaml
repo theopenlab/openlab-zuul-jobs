@@ -285,6 +285,14 @@
       k8s_version: 'release-1.11'
 
 - job:
+    name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.12
+    parent: cloud-provider-openstack-acceptance-test-e2e-conformance
+    description: |
+      Run Kubernetes E2E Conformance tests against Kubernetes v1.12
+    vars:
+      k8s_version: 'release-1.12'
+
+- job:
     name: cloud-provider-openstack-acceptance-test-standalone-cinder
     parent: cloud-provider-openstack-test
     description: |
