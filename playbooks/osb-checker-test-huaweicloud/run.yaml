@@ -45,7 +45,7 @@
           git config --global user.email 'zuul@openlab.com'
           git config --global user.name 'openlab'
           git fetch upstream refs/pull/47/head:pr47
-          git cherry-pick pr47
+          git checkout pr47
           popd
         executable: /bin/bash
       environment: '{{ global_env }}'
