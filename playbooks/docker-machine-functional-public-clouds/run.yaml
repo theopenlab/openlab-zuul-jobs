@@ -77,7 +77,8 @@
             for machine_name in $(docker-machine ls -q); do
                 fip=$(docker-machine ip $machine_name)
                 docker-machine rm -f $machine_name
-                openstack floating ip delete $fip
+                openstack server delete $machine_name || true
+                openstack floating ip delete $fip || true
             done
           args:
             executable: /bin/bash
