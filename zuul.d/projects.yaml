@@ -57,11 +57,11 @@
     name: liu-sheng/machine
     check:
       jobs:
-        # - docker-machine-0.15.0-functional-devstack-mitaka
+        - docker-machine-0.15.0-functional-devstack-mitaka
         # - docker-machine-0.15.0-functional-devstack-newton
         # - docker-machine-0.15.0-functional-devstack-pike
         # - docker-machine-0.15.0-functional-devstack-ocata
-        - docker-machine-0.15.0-functional-devstack-queens
+        # - docker-machine-0.15.0-functional-devstack-queens
         #- docker-machine-0.15.0-functional-huaweicloud
         #- docker-machine-0.15.0-functional-opentelekomcloud
         #- docker-machine-0.15.0-functional-orange
