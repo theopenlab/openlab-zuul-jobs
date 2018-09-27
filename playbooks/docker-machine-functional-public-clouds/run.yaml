@@ -22,6 +22,9 @@
               mkdir -p $GOPATH/src/github.com/docker/machine
               cp -r '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}' $GOPATH/src/github.com/docker/
               pushd $GOPATH/src/github.com/docker/machine
+              git cherry-pick 9ec6729
+              git cherry-pick 7909ee3
+
               make build
               cp ./bin/docker-machine /usr/local/bin/
               docker-machine version
@@ -76,7 +79,11 @@
             for machine_name in $(docker-machine ls -q); do
                 fip=$(docker-machine ip $machine_name)
                 docker-machine rm -f $machine_name
-                openstack floating ip delete $fip
+                openstack server delete $machine_name || true
+                openstack floating ip delete $fip || true
+                for key in $(openstack keypair list -f value -c Name |grep $machine_name); do
+                    openstack keypair delete $key || true
+                done
             done
           args:
             executable: /bin/bash
