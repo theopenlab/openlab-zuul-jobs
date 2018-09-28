@@ -1,21 +1,38 @@
 - hosts: all
   become: yes
+  pre_tasks:
+    - name: Prepare local conf for cf validation tests
+      shell:
+        cmd: |
+          set -e
+          set -x
+          cat << EOF >> /tmp/dg-local.conf
+          [[local|localrc]]
+          NETWORK_GATEWAY=10.0.0.1
+          KEYSTONE_USE_MOD_WSGI="False"
+          NOVA_USE_MOD_WSGI="False"
+          SWIFT_USE_MOD_WSGI="False"
+          HEAT_USE_MOD_WSGI="False"
+          CINDER_USE_MOD_WSGI="False"
+          EOF
+        executable: /bin/bash
   roles:
     - clone-devstack-gate-to-workspace
-    - create-devstack-local-conf
     - install-devstack
   tasks:
     - name: Run Integration tests of Docker machine against devstack
       shell:
         cmd: |
           set -ex
+          source /opt/stack/devstack/openrc admin admin
+          openstack catlog list
           pushd "{{ ansible_user_dir }}/src/github.com/liu-sheng/integration_tests"
           apt-get install -y libcurl4-openssl-dev
           pip install -e .
           rename 's/\.template$//' ./conf/*.template
           python -m cfme.scripting.quickstart
           . ../cfme_venv/bin/activate
-          sleep 7200
+          # sleep 7200
           popd
         executable: /bin/bash
       environment: '{{ global_env }}'
