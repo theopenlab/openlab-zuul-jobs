@@ -25,6 +25,7 @@
       shell:
         cmd: |
           set -ex
+          sleep 7200
           # Install Packages
           apt install -y memcached                        # Memcached for the session store
           apt install -y postgresql libpq-dev             # PostgreSQL Database server and to build 'pg' Gem
