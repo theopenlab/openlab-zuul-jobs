@@ -26,20 +26,20 @@
         cmd: |
           set -ex
           # Install Packages
-          apt install memcached                        # Memcached for the session store
-          apt install postgresql libpq-dev             # PostgreSQL Database server and to build 'pg' Gem
-          apt install bzip2 libffi-dev libreadline-dev # For rbenv install 2.3.1 (might not be needed with other Ruby setups)
-          apt install libxml2-dev libxslt-dev patch    # For Nokogiri Gem
-          apt install libsqlite-dev libsqlite3-dev     # For sqlite3 Gem
-          apt install nodejs nodejs-legacy npm         # For ExecJS Gem, bower, npm, yarn, webpack..
-          apt install g++                              # For unf Gem
-          apt install libcurl4-gnutls-dev              # For Curb
-          apt install cmake
+          apt install -y memcached                        # Memcached for the session store
+          apt install -y postgresql libpq-dev             # PostgreSQL Database server and to build 'pg' Gem
+          apt install -y bzip2 libffi-dev libreadline-dev # For rbenv install 2.3.1 (might not be needed with other Ruby setups)
+          apt install -y libxml2-dev libxslt-dev patch    # For Nokogiri Gem
+          apt install -y libsqlite-dev libsqlite3-dev     # For sqlite3 Gem
+          apt install -y nodejs nodejs-legacy npm         # For ExecJS Gem, bower, npm, yarn, webpack..
+          apt install -y g++                              # For unf Gem
+          apt install -y libcurl4-gnutls-dev              # For Curb
+          apt install -y cmake
 
           # Install nodejs
           echo 'deb http://ftp.debian.org/debian/ experimental main non-free contrib' | sudo tee /etc/apt/sources.list.d/experimental.list
           apt update
-          apt install nodejs nodejs-legacy npm
+          apt install -y nodejs nodejs-legacy npm
 
           # Ubuntu fix for failing Bundler
           apt remove libssl-dev
