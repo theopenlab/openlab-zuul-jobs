@@ -25,15 +25,46 @@
       shell:
         cmd: |
           set -ex
-          sleep 7200
-          openstack catlog list
-          pushd "{{ ansible_user_dir }}/src/github.com/liu-sheng/integration_tests"
-          apt-get install -y libcurl4-openssl-dev
-          pip install -e .
-          rename 's/\.template$//' ./conf/*.template
-          python -m cfme.scripting.quickstart
-          . ../cfme_venv/bin/activate
-          # sleep 7200
-          popd
+          # Install Packages
+          apt install memcached                        # Memcached for the session store
+          apt install postgresql libpq-dev             # PostgreSQL Database server and to build 'pg' Gem
+          apt install bzip2 libffi-dev libreadline-dev # For rbenv install 2.3.1 (might not be needed with other Ruby setups)
+          apt install libxml2-dev libxslt-dev patch    # For Nokogiri Gem
+          apt install libsqlite-dev libsqlite3-dev     # For sqlite3 Gem
+          apt install nodejs nodejs-legacy npm         # For ExecJS Gem, bower, npm, yarn, webpack..
+          apt install g++                              # For unf Gem
+          apt install libcurl4-gnutls-dev              # For Curb
+          apt install cmake
+
+          # Install nodejs
+          echo 'deb http://ftp.debian.org/debian/ experimental main non-free contrib' | sudo tee /etc/apt/sources.list.d/experimental.list
+          apt update
+          apt install nodejs nodejs-legacy npm
+
+          # Ubuntu fix for failing Bundler
+          apt remove libssl-dev
+          wget http://ftp.cz.debian.org/debian/pool/main/o/openssl1.0/libssl1.0-dev_1.0.2l-2_amd64.deb
+          wget http://ftp.cz.debian.org/debian/pool/main/o/openssl1.0/libssl1.0.2_1.0.2l-2_amd64.deb
+          dpkg -i libssl1.0-dev_1.0.2l-2_amd64.deb libssl1.0.2_1.0.2l-2_amd64.deb
+
+          # Enable Memcached
+          systemctl enable memcached
+          systemctl start memcached
+
+          # Configure PostgreSQL
+          grep -q '^local\s' /etc/postgresql/9.5/main/pg_hba.conf || echo "local all all trust" | sudo tee -a /etc/postgresql/9.5/main/pg_hba.conf
+          sed -i.bak 's/\(^local\s*\w*\s*\w*\s*\)\(peer$\)/\1trust/' /etc/postgresql/9.5/main/pg_hba.conf
+          systemctl restart postgresql
+          su postgres -c "psql -c \"CREATE ROLE root SUPERUSER LOGIN PASSWORD 'smartvm'\""
+
+          # Prepare openstack_environments.yml
+          cat << EOF >> openstack_environments.yml
+          ---
+          - test_env_1:
+              ip: $(ip route get 1.1.1.1 | awk '{print $7}')
+              password: secretadmin
+              user: admin
+          EOF
+          bundle exec rake vcr:rerecord
         executable: /bin/bash
       environment: '{{ global_env }}'
