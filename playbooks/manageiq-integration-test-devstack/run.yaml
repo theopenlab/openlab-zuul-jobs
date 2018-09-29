@@ -24,7 +24,7 @@
       shell:
         cmd: |
           set -ex
-          source /opt/stack/devstack/openrc admin admin
+          sleep 7200
           openstack catlog list
           pushd "{{ ansible_user_dir }}/src/github.com/liu-sheng/integration_tests"
           apt-get install -y libcurl4-openssl-dev
