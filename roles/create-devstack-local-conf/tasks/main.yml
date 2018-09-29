@@ -31,7 +31,7 @@
 
 
 # Populate local conf with specific branch
-- name: create devstack local conf on stable/mitaka or stable/newton branch
+- name: create devstack local conf on stable/mitaka branch
   shell:
     cmd: |
       set -e
@@ -187,7 +187,8 @@
       ENABLE_CEPH_GLANCE=False
       ENABLE_CEPH_C_BAK=False
       ENABLE_CEPH_NOVA=False
-      ENABLE_CEPH_MANILA=False
+      ENABLE_CEPH_MANILA=True
+      MANILA_CEPH_DRIVER=cephfsnative
       EOF
     executable: /bin/bash
   when:
