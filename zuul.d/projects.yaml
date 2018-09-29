@@ -93,13 +93,7 @@
         - osb-checker-test-huaweicloud
 
 - project:
-    name: liu-sheng/manageiq
+    name: liu-sheng/manageiq-providers-openstack
     check:
       jobs:
-        - manageiq-integration-test-devstack
-
-- project:
-    name: h00130372/integration_tests
-    check:
-      jobs:
-        - manageiq-integration-test-devstack
+        - manageiq-providers-openstack-test-devstack
