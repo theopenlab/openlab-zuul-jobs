@@ -10,6 +10,11 @@
           [[local|localrc]]
           NETWORK_GATEWAY=10.0.0.1
           ENABLE_HTTPD_MOD_WSGI_SERVICES="False"
+          KEYSTONE_USE_MOD_WSGI="False"
+          NOVA_USE_MOD_WSGI="False"
+          SWIFT_USE_MOD_WSGI="False"
+          HEAT_USE_MOD_WSGI="False"
+          CINDER_USE_MOD_WSGI="False"
           EOF
         executable: /bin/bash
   roles:
