@@ -25,7 +25,6 @@
       shell:
         cmd: |
           set -ex
-          sleep 7200
           # Install Packages
           apt install -y memcached                        # Memcached for the session store
           apt install -y postgresql libpq-dev             # PostgreSQL Database server and to build 'pg' Gem
@@ -38,25 +37,28 @@
           apt install -y cmake
 
           # Install nodejs
-          echo 'deb http://ftp.debian.org/debian/ experimental main non-free contrib' | sudo tee /etc/apt/sources.list.d/experimental.list
-          apt update
-          apt install -y nodejs nodejs-legacy npm
-
-          # Ubuntu fix for failing Bundler
-          apt remove libssl-dev
-          wget http://ftp.cz.debian.org/debian/pool/main/o/openssl1.0/libssl1.0-dev_1.0.2l-2_amd64.deb
-          wget http://ftp.cz.debian.org/debian/pool/main/o/openssl1.0/libssl1.0.2_1.0.2l-2_amd64.deb
-          dpkg -i libssl1.0-dev_1.0.2l-2_amd64.deb libssl1.0.2_1.0.2l-2_amd64.deb
+          curl -sL https://deb.nodesource.com/setup_10.x | sudo bash -
+          curl -sL https://deb.nodesource.com/setup_8.x | sudo bash -
+          apt-get install -y nodejs
 
           # Enable Memcached
           systemctl enable memcached
           systemctl start memcached
+
+          # Install Ruby
+          apt-get install -y build-essential zlibc zlib1g-dev ruby ruby-dev openssl libxslt-dev libxml2-dev \
+              libssl-dev libreadline6 libreadline6-dev libyaml-dev libsqlite3-dev sqlite3
 
           # Configure PostgreSQL
           grep -q '^local\s' /etc/postgresql/9.5/main/pg_hba.conf || echo "local all all trust" | sudo tee -a /etc/postgresql/9.5/main/pg_hba.conf
           sed -i.bak 's/\(^local\s*\w*\s*\w*\s*\)\(peer$\)/\1trust/' /etc/postgresql/9.5/main/pg_hba.conf
           systemctl restart postgresql
           su postgres -c "psql -c \"CREATE ROLE root SUPERUSER LOGIN PASSWORD 'smartvm'\""
+
+          # Ubuntu fix for failing Bundler
+          wget http://ftp.cz.debian.org/debian/pool/main/o/openssl1.0/libssl1.0-dev_1.0.2o-1_amd64.deb
+          wget http://ftp.cz.debian.org/debian/pool/main/o/openssl1.0/libssl1.0.2_1.0.2o-1_amd64.deb
+          dpkg -i libssl1.0-dev_1.0.2o-1_amd64.deb libssl1.0.2_1.0.2o-1_amd64.deb
 
           # Prepare openstack_environments.yml
           cat << EOF >> openstack_environments.yml
@@ -66,7 +68,9 @@
               password: secretadmin
               user: admin
           EOF
+          bin/setup
           bundle exec rake vcr:rerecord
+          bundle exec rake
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ global_env }}'
