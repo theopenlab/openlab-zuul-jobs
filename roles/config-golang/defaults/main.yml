@@ -1,4 +1,4 @@
 ---
-go_version: '1.10.2'
+go_version: '1.11.1'
 go_tarball: 'go{{ go_version }}.linux-amd64.tar.gz'
 go_download_location: 'https://storage.googleapis.com/golang/{{ go_tarball }}'
