@@ -1,0 +1,31 @@
+- hosts: all
+  roles:
+    - config-golang
+    - role: export-cloud-openrc
+      vars:
+        cloud_name: 'vexxhost'
+    - install-k8s
+  become: yes
+  tasks:
+    - name: Run image build and publish for cluster-api-provider-openstack
+      shell:
+        cmd: |
+          docker login -u {{dockerhub.username}} -p {{dockerhub.password}}
+          export REGISTRY=docker.io/k8scloudprovider
+          export VERSION=latest
+
+          set -x
+          set -e
+          set -o pipefail
+
+          if [ '{{ zuul.pipeline }}' != 'periodic' ]; then
+              exit 0;
+          fi
+
+          make images 2>&1 | tee $LOG_DIR/image-build-upload.log
+
+          docker push ${REGISTRY}/openstack-cluster-api-controller:${VERSION} | tee $LOG_DIR/image-build-upload.log
+
+        executable: /bin/bash
+        chdir: '{{ k8s_cluster_api_provider_os_src_dir }}'
+      environment: '{{ global_env }}'

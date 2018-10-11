@@ -110,6 +110,14 @@
             branches: master
         - docker-machine-0.15.0-functional-devstack-rocky:
             branches: master
+
+- project:
+    name: kubernetes-sigs/cluster-api-provider-openstack
+    periodic:
+      jobs:
+        - cluster-api-provider-openstack-image-build:
+            branches: master
+
 #NOTES: Should be updated when switch to official project
 - project:
     name: zhongjun2/bosh-huaweicloud-cpi-release

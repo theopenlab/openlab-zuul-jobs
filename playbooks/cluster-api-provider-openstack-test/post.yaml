@@ -1,0 +1,28 @@
+- hosts: all
+  become: yes
+  roles:
+    - role: export-cloud-openrc
+      vars:
+        cloud_name: 'vexxhost'
+  tasks:
+    - name: Clean up resources for kubernetes tests
+      shell:
+        cmd: |
+          set -x
+          pip install -U python-openstackclient
+
+          if [ -d /mnt/config/openstack ]; then
+              server_id=$(python -c "import json;print json.load(open('/mnt/config/openstack/latest/meta_data.json', 'r'))['uuid']")
+          else
+              server_id=$(curl http://169.254.169.254/openstack/latest/meta_data.json | python -c "import sys, json; print json.load(sys.stdin)['uuid']")
+          fi
+          pv_name=$('{{ kubectl }}' get pv | sed '1d' | awk '{print $1}')
+          volume_id=$(openstack volume list | awk "/$pv_name/ {print \$2}")
+          if [[ -n "$volume_id" ]]; then
+              openstack server remove volume "$server_id" "$volume_id"
+              openstack volume delete "$volume_id"
+          fi
+        executable: /bin/bash
+        chdir: '{{ k8s_cluster_api_provider_os_src_dir }}'
+      environment: '{{ global_env }}'
+      ignore_errors: yes
