@@ -346,6 +346,34 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-flexvolume-cinder/run.yaml
     nodeset: ubuntu-xenial
 
+# Kubernetes cluster-api-provider-openstack jobs
+- job:
+    name: cloud-provider-openstack-test
+    parent: golang-test
+    description: |
+      Base job for all types of cluster-api-provider-openstack test jobs
+    pre-run: playbooks/cluster-api-provider-openstack-test/pre.yaml
+    post-run: playbooks/cluster-api-provider-openstack-test/post.yaml
+    nodeset: ubuntu-xenial-vexxhost
+    secrets:
+      - vexxhost_credentials
+    vars:
+      k8s_cluster_api_provider_os_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cluster-api-provider-openstack'
+      k8s_src_dir: '{{ ansible_user_dir }}/src/k8s.io/kubernetes'
+      k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
+      kubectl: '{{ ansible_user_dir }}/src/k8s.io/kubernetes/cluster/kubectl.sh'
+
+- job:
+    name: cluster-api-provider-openstack-image-build
+    parent: cloud-provider-openstack-test
+    description: |
+      Run the image build and publish jobs
+    run: playbooks/cluster-api-provider-openstack-image-build/run.yaml
+    secrets:
+      - vexxhost_credentials
+      - gcp_account
+      - dockerhub
+
 # ansible jobs
 - job:
     name: openstacksdk-ansible-devel-functional-devstack
