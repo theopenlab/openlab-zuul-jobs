@@ -1,4 +1,0 @@
-- hosts: all
-  become: yes
-  roles:
-    - move-k8s-repo-to-k8s-specific-dir

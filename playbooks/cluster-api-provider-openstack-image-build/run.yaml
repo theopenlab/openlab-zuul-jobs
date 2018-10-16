@@ -1,10 +1,6 @@
 - hosts: all
   roles:
     - config-golang
-    - role: export-cloud-openrc
-      vars:
-        cloud_name: 'vexxhost'
-    - install-k8s
   become: yes
   tasks:
     - name: Run image build and publish for cluster-api-provider-openstack
