@@ -1,6 +1,7 @@
 - hosts: all
   roles:
     - config-golang
+    - install-k8s
   become: yes
   tasks:
     - name: Run image build and publish for cluster-api-provider-openstack
