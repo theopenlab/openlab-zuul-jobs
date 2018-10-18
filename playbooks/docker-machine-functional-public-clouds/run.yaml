@@ -80,13 +80,11 @@
             export DRIVER=openstack
             export MACHINE_STORAGE_PATH="/tmp/machine-bats-test-$DRIVER"
             for machine_name in $(docker-machine ls -q); do
-                fip=$(docker-machine ip $machine_name)
+                fip=$(docker-machine ip $machine_name) || true
                 docker-machine rm -f $machine_name
                 openstack server delete $machine_name || true
                 openstack floating ip delete $fip || true
-                for key in $(openstack keypair list -f value -c Name |grep $machine_name); do
-                    openstack keypair delete $key || true
-                done
+                openstack keypair delete `openstack keypair list -f value -c Name |grep $machine_name` || true
             done
           args:
             executable: /bin/bash
