@@ -7,6 +7,16 @@
     executable: /bin/bash
   ignore_errors: yes
 
+- name: Enable legacy identity service endpoint format
+  shell:
+    cmd: |
+      # workaround for bug https://review.openstack.org/#/c/606789
+      sed -i '/"Running gate_hook"/ a\
+          sed -i "/KEYSTONE_SERVICE_URI=/ s|/identity|:5000|" /opt/stack/new/devstack/lib/keystone' '{{ ansible_user_dir }}/workspace/devstack-gate/devstack-vm-gate-wrap.sh'
+    executable: /bin/bash
+  when:
+    - DISABLE_HTTPD_MOD_WSGI == true
+
 - name: Install libpcre3-dev
   shell: |
     apt install libpcre3-dev -y
