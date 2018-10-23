@@ -932,3 +932,47 @@
     vars:
       global_env:
         OS_BRANCH: stable/rocky
+
+- job:
+    name: manageiq-providers-openstack-test-huaweicloud
+    parent: init-test
+    description: |
+      This job run tests of manageiq-providers-openstack aganist HuaweiCloud.
+    run: playbooks/manageiq-providers-openstack-test-public-clouds/run.yaml
+    vars:
+      cloud_name: huaweicloud
+    secrets:
+      - huaweicloud_credentials
+
+- job:
+    name: manageiq-providers-openstack-test-opentelekomcloud
+    parent: init-test
+    description: |
+      This job run tests of manageiq-providers-openstack aganist OpenTelekomCloud.
+    run: playbooks/manageiq-providers-openstack-test-public-clouds/run.yaml
+    vars:
+      cloud_name: opentelekomcloud
+    secrets:
+      - opentelekomcloud_credentials
+
+- job:
+    name: manageiq-providers-openstack-test-orange
+    parent: init-test
+    description: |
+      This job run tests of manageiq-providers-openstack aganist Orange Cloud.
+    run: playbooks/manageiq-providers-openstack-test-public-clouds/run.yaml
+    vars:
+      cloud_name: orange
+    secrets:
+      - orange_credentials
+
+- job:
+    name: manageiq-providers-openstack-test-telefonica
+    parent: init-test
+    description: |
+      This job run tests of manageiq-providers-openstack aganist Telefonica Cloud.
+    run: playbooks/manageiq-providers-openstack-test-public-clouds/run.yaml
+    vars:
+      cloud_name: telefonica
+    secrets:
+      - telefonica_credentials

@@ -145,3 +145,9 @@
         - manageiq-providers-openstack-test-devstack-pike
         - manageiq-providers-openstack-test-devstack-queens
         - manageiq-providers-openstack-test-devstack-rocky
+    check-generic-cloud:
+      jobs:
+        - manageiq-providers-openstack-test-huaweicloud
+        - manageiq-providers-openstack-test-opentelekomcloud
+        - manageiq-providers-openstack-test-orange
+        - manageiq-providers-openstack-test-telefonica
