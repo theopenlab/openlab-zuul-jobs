@@ -133,3 +133,13 @@
     check-generic-cloud:
       jobs:
         - osb-checker-test-huaweicloud
+
+- project:
+    name: theopenlab/manageiq-providers-openstack
+    check-generic-cloud:
+      jobs:
+        - manageiq-providers-openstack-test-huaweicloud
+        - manageiq-providers-openstack-test-opentelekomcloud
+        - manageiq-providers-openstack-test-orange
+        - manageiq-providers-openstack-test-telefonica
+
