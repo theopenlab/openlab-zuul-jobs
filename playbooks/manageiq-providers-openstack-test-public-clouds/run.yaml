@@ -61,13 +61,11 @@
           bin/setup
           bundle install
           cp openstack_environments.yml spec/manageiq/
-
-          pushd spec/manageiq/
-          sed -i "/admin_role =/ s|:domain_id => domain_id||"  spec/tools/environment_builders/openstack/services/identity/builder/keystone_v3.rb
-          ln -s $(realpath ../../spec/models/manageiq/providers/openstack) spec/models/manageiq/providers/openstack
-          bundle install
-          bundle exec rake db:setup
-          popd
+          set +x
+          sed -i "/setup_ems/ s|admin|$OS_USERNAME|" spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_liberty_keystone_v3_spec.rb
+          sed -i "/setup_ems/ s|5000|433|" spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_liberty_keystone_v3_spec.rb
+          sed -i "/setup_ems/ s|default|$OS_DOMAIN_ID|" spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_liberty_keystone_v3_spec.rb
+          set -x
 
           rm spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_havana_errors_spec.rb
           rm spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_liberty_spec.rb
