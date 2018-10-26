@@ -15,7 +15,7 @@
           sed -i "/KEYSTONE_SERVICE_URI=/ s|/identity|:5000|" /opt/stack/new/devstack/lib/keystone' '{{ ansible_user_dir }}/workspace/devstack-gate/devstack-vm-gate-wrap.sh'
     executable: /bin/bash
   when:
-    - DISABLE_HTTPD_MOD_WSGI == true
+    - DISABLE_HTTPD_MOD_WSGI|default(false)|bool == true
 
 - name: Install libpcre3-dev
   shell: |
