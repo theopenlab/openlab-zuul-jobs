@@ -143,3 +143,12 @@
         - manageiq-providers-openstack-test-orange
         - manageiq-providers-openstack-test-telefonica
 
+    periodic:
+      jobs:
+        - manageiq-providers-openstack-test-devstack-master
+        - manageiq-providers-openstack-test-devstack-mitaka
+        - manageiq-providers-openstack-test-devstack-newton
+        - manageiq-providers-openstack-test-devstack-ocata
+        - manageiq-providers-openstack-test-devstack-pike
+        - manageiq-providers-openstack-test-devstack-queens
+        - manageiq-providers-openstack-test-devstack-rocky

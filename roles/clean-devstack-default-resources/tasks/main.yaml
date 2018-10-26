@@ -1,0 +1,18 @@
+- name: Clean devstack default resources
+  shell:
+    cmd: |
+      set -e
+      set -x
+      source /opt/stack/new/devstack/openrc admin admin
+      openstack volume type delete lvmdriver-1
+      openstack project delete demo alt_demo
+      openstack router unset router1 --external-gateway
+      for subnet in $(openstack subnet list -f value -c Name);do
+          openstack router remove subnet router1 $subnet
+          openstack subnet delete $subnet
+      done
+      openstack network delete private public
+      openstack router delete router1
+      # Need to delete the flavors except flavors with ID: 1, 2, 3, 4, 5.
+      openstack flavor delete `openstack flavor list -f value -c ID --sort-column ID | tail -n +6` || true
+    executable: /bin/bash
