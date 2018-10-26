@@ -1,0 +1,75 @@
+- hosts: all
+  become: yes
+  roles:
+    - export-cloud-openrc
+  tasks:
+    - name: Run Integration tests of manageiq-providers-openstack against aganist {{ cloud_name }}
+      shell:
+        cmd: |
+          set -ex
+          # Install Packages
+          apt install -y memcached                        # Memcached for the session store
+          apt install -y postgresql libpq-dev             # PostgreSQL Database server and to build 'pg' Gem
+          apt install -y bzip2 libffi-dev libreadline-dev # For rbenv install 2.3.1 (might not be needed with other Ruby setups)
+          apt install -y libxml2-dev libxslt-dev patch    # For Nokogiri Gem
+          apt install -y libsqlite-dev libsqlite3-dev     # For sqlite3 Gem
+          apt install -y nodejs nodejs-legacy npm         # For ExecJS Gem, bower, npm, yarn, webpack..
+          apt install -y g++                              # For unf Gem
+          apt install -y libcurl4-gnutls-dev              # For Curb
+          apt install -y cmake
+          apt install -y pkg-config
+
+          # Install nodejs
+          curl -sL https://deb.nodesource.com/setup_10.x | sudo bash -
+          curl -sL https://deb.nodesource.com/setup_8.x | sudo bash -
+          apt-get install -y nodejs
+
+          # Enable Memcached
+          systemctl enable memcached
+          systemctl start memcached
+
+          # Install Ruby
+          apt-get install -y build-essential zlibc zlib1g-dev ruby ruby-dev openssl libxslt-dev libxml2-dev \
+              libssl-dev libreadline6 libreadline6-dev libyaml-dev libsqlite3-dev sqlite3
+
+          # Configure PostgreSQL
+          grep -q '^local\s' /etc/postgresql/*/main/pg_hba.conf || echo "local all all trust" | sudo tee -a /etc/postgresql/9.5/main/pg_hba.conf
+          sed -i.bak 's/\(^local\s*\w*\s*\w*\s*\)\(peer$\)/\1trust/' /etc/postgresql/*/main/pg_hba.conf
+          systemctl restart postgresql
+          su postgres -c "psql -c \"CREATE ROLE root SUPERUSER LOGIN PASSWORD 'smartvm'\""
+
+          # Ubuntu fix for failing Bundler
+          wget http://ftp.cz.debian.org/debian/pool/main/o/openssl1.0/libssl1.0-dev_1.0.2o-1_amd64.deb
+          wget http://ftp.cz.debian.org/debian/pool/main/o/openssl1.0/libssl1.0.2_1.0.2o-1_amd64.deb
+          apt remove -y libssl-dev
+          dpkg -i libssl1.0-dev_1.0.2o-1_amd64.deb libssl1.0.2_1.0.2o-1_amd64.deb
+
+          apt-get install -y postgresql python-psycopg2 libpq-dev
+
+          set +x
+          # Prepare openstack_environments.yml
+          auth_netloc=$(python -c "import urlparse;print urlparse.urlparse('$OS_AUTH_URL').netloc")
+          cat << EOF >> openstack_environments.yml
+          ---
+          - liberty_keystone_v3:
+              ip: $auth_netloc
+              password: $OS_PASSWORD
+              user: $OS_USERNAME
+          EOF
+          set -x
+
+          bin/setup
+          bundle install
+          cp openstack_environments.yml spec/manageiq/
+          set +x
+          sed -i "/setup_ems/ s|admin|$OS_USERNAME|" spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_liberty_keystone_v3_spec.rb
+          sed -i "/setup_ems/ s|5000|433|" spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_liberty_keystone_v3_spec.rb
+          sed -i "/setup_ems/ s|default|$OS_DOMAIN_ID|" spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_liberty_keystone_v3_spec.rb
+          set -x
+
+          rm spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_havana_errors_spec.rb
+          rm spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_liberty_spec.rb
+          bundle exec rake vcr:rerecord
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'

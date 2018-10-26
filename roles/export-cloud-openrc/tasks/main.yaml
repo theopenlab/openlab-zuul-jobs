@@ -15,6 +15,7 @@
       OS_ACCESS_KEY: '{{ opentelekomcloud_credentials.access_key }}'
       OS_SECRET_KEY: '{{ opentelekomcloud_credentials.secret_key }}'
       OS_AVAILABILITY_ZONE: '{{ opentelekomcloud_credentials.availability_zone }}'
+      OS_DOMAIN_ID: '{{ opentelekomcloud_credentials.domain_id }}'
   no_log: yes
   when: cloud_name == 'opentelekomcloud'
 
@@ -33,6 +34,7 @@
       OS_ACCESS_KEY: '{{ orange_credentials.access_key }}'
       OS_SECRET_KEY: '{{ orange_credentials.secret_key }}'
       OS_AVAILABILITY_ZONE: '{{ orange_credentials.availability_zone }}'
+      OS_DOMAIN_ID: '{{ orange_credentials.domain_id }}'
   no_log: yes
   when: cloud_name == 'orange'
 
@@ -48,6 +50,7 @@
       OS_REGION_NAME: '{{ telefonica_credentials.region_name}}'
       OS_TENANT_NAME: '{{ telefonica_credentials.project_name }}'
       OS_USERNAME: '{{ telefonica_credentials.user_name }}'
+      OS_DOMAIN_ID: '{{ telefonica_credentials.domain_id }}'
   no_log: yes
   when: cloud_name == 'telefonica'
 
@@ -65,6 +68,7 @@
       OS_USERNAME: '{{ huaweicloud_credentials.user_name }}'
       OS_ACCESS_KEY: '{{ huaweicloud_credentials.access_key }}'
       OS_SECRET_KEY: '{{ huaweicloud_credentials.secret_key }}'
+      OS_DOMAIN_ID: '{{ huaweicloud_credentials.domain_id }}'
   no_log: yes
   when: cloud_name == 'huaweicloud'
 
