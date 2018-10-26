@@ -864,3 +864,71 @@
       - openservicebrokerapi/osb-checker
     secrets:
       - huaweicloud_credentials
+
+- job:
+    name: manageiq-providers-openstack-test-devstack-master
+    parent: init-test
+    description: |
+      This job run tests of manageiq-providers-openstack aganist Devstack of master.
+    run: playbooks/manageiq-providers-openstack-test-devstack/run.yaml
+
+- job:
+    name: manageiq-providers-openstack-test-devstack-mitaka
+    parent: init-test
+    description: |
+      This job run tests of manageiq-providers-openstack aganist devstack of Mitaka.
+    run: playbooks/manageiq-providers-openstack-test-devstack/run.yaml
+    vars:
+      global_env:
+        OS_BRANCH: stable/mitaka
+    nodeset: ubuntu-trusty
+
+- job:
+    name: manageiq-providers-openstack-test-devstack-newton
+    parent: init-test
+    description: |
+      This job run tests of manageiq-providers-openstack aganist devstack of Newton.
+    run: playbooks/manageiq-providers-openstack-test-devstack/run.yaml
+    vars:
+      global_env:
+        OS_BRANCH: stable/newton
+
+- job:
+    name: manageiq-providers-openstack-test-devstack-ocata
+    parent: init-test
+    description: |
+      This job run tests of manageiq-providers-openstack aganist devstack of Ocata.
+    run: playbooks/manageiq-providers-openstack-test-devstack/run.yaml
+    vars:
+      global_env:
+        OS_BRANCH: stable/ocata
+
+- job:
+    name: manageiq-providers-openstack-test-devstack-pike
+    parent: init-test
+    description: |
+      This job run tests of manageiq-providers-openstack aganist devstack of Pike.
+    run: playbooks/manageiq-providers-openstack-test-devstack/run.yaml
+    vars:
+      global_env:
+        OS_BRANCH: stable/pike
+
+- job:
+    name: manageiq-providers-openstack-test-devstack-queens
+    parent: init-test
+    description: |
+      This job run tests of manageiq-providers-openstack aganist devstack of Queens.
+    run: playbooks/manageiq-providers-openstack-test-devstack/run.yaml
+    vars:
+      global_env:
+        OS_BRANCH: stable/queens
+
+- job:
+    name: manageiq-providers-openstack-test-devstack-rocky
+    parent: init-test
+    description: |
+      This job run tests of manageiq-providers-openstack aganist devstack of Rocky.
+    run: playbooks/manageiq-providers-openstack-test-devstack/run.yaml
+    vars:
+      global_env:
+        OS_BRANCH: stable/rocky

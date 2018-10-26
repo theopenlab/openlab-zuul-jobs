@@ -10,6 +10,35 @@
       EOF
     executable: /bin/bash
 
+- name: Disable httpd_mod_wsgi services
+  shell:
+    cmd: |
+      cat << EOF >> /tmp/dg-local.conf
+      ENABLE_HTTPD_MOD_WSGI_SERVICES="False"
+      KEYSTONE_USE_MOD_WSGI="False"
+      NOVA_USE_MOD_WSGI="False"
+      SWIFT_USE_MOD_WSGI="False"
+      HEAT_USE_MOD_WSGI="False"
+      CINDER_USE_MOD_WSGI="False"
+      WSGI_MODE="mod_wsgi"
+      EOF
+    executable: /bin/bash
+  when:
+    - DISABLE_HTTPD_MOD_WSGI == true
+
+# Populate local conf with heat service enabled
+- name: create devstack local conf with Heat enabled
+  shell:
+    cmd: |
+      set -e
+      set -x
+      cat << EOF >> /tmp/dg-local.conf
+      enable_plugin heat git://git.openstack.org/openstack/heat
+      EOF
+    executable: /bin/bash
+  when:
+    - '"heat" in enable_services'
+
 # Use neutron-* services to replace q-* services except Mitaka
 - name: enable neutron services by new services names
   shell:
