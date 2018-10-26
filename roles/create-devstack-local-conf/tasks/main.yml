@@ -24,7 +24,7 @@
       EOF
     executable: /bin/bash
   when:
-    - DISABLE_HTTPD_MOD_WSGI == true
+    - DISABLE_HTTPD_MOD_WSGI|default(false)|bool == true
 
 # Populate local conf with heat service enabled
 - name: create devstack local conf with Heat enabled
