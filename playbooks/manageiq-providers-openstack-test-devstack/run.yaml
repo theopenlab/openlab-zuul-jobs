@@ -46,8 +46,8 @@
           su postgres -c "psql -c \"CREATE ROLE root SUPERUSER LOGIN PASSWORD 'smartvm'\""
 
           # Ubuntu fix for failing Bundler
-          wget http://ftp.cz.debian.org/debian/pool/main/o/openssl1.0/libssl1.0-dev_1.0.2o-1_amd64.deb
-          wget http://ftp.cz.debian.org/debian/pool/main/o/openssl1.0/libssl1.0.2_1.0.2o-1_amd64.deb
+          wget -t 10 -T 2 http://ftp.cz.debian.org/debian/pool/main/o/openssl1.0/libssl1.0-dev_1.0.2o-1_amd64.deb
+          wget -t 10 -T 2 http://ftp.cz.debian.org/debian/pool/main/o/openssl1.0/libssl1.0.2_1.0.2o-1_amd64.deb
           apt remove -y libssl-dev
           dpkg -i libssl1.0-dev_1.0.2o-1_amd64.deb libssl1.0.2_1.0.2o-1_amd64.deb
 
@@ -65,9 +65,16 @@
           openstack role create heat_stack_owner
           openstack role create SwiftOperator
 
-          sed -i "/flat_networks/ s|public|public,public_net_0,public_net_1,public_net_2,public_net_3,public_net_4,public_net_5|" /etc/neutron/plugins/ml2/ml2_conf.ini
-          sed -i "/filter_validation = / a filter_validation = false" /etc/neutron/neutron.conf
-          service devstack@neutron-* restart
+          if [ "{{ global_env.OS_BRANCH }}" == "stable/mitaka" ]; then
+              sed -i "/flat_networks/ a flat_networks = public,public_net_0,public_net_1,public_net_2,public_net_3,public_net_4,public_net_5" /etc/neutron/plugins/ml2/ml2_conf.ini
+              killall neutron-server
+              nohup /usr/bin/python /usr/local/bin/neutron-server --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini 2>&1 &
+          else
+              sed -i "/flat_networks/ s|public|public,public_net_0,public_net_1,public_net_2,public_net_3,public_net_4,public_net_5|" /etc/neutron/plugins/ml2/ml2_conf.ini
+              sed -i "/filter_validation = / a filter_validation = false" /etc/neutron/neutron.conf
+              service devstack@neutron-* restart
+          fi
+
           bin/setup
           bundle install
           cp openstack_environments.yml spec/manageiq/
