@@ -39,7 +39,7 @@
   when:
     - '"heat" in enable_services'
 
-# Use neutron-* services to replace q-* services except Mitaka
+# Use neutron-* services to replace q-* services except Mitaka, Newton, Ocata and Pike
 - name: enable neutron services by new services names
   shell:
     cmd: |
@@ -58,6 +58,23 @@
     - '"fwaas-v1" not in enable_services'
     - '"fwaas-v2" not in enable_services'
 
+- name: enable neutron non-default extension by name neutron-ext
+  shell:
+    cmd: |
+      set -e
+      set -x
+      # From Queens
+      insert_service='enable_service neutron-trunk'
+      if [[ "{{ global_env.OS_BRANCH }}" == "stable/mitaka" || \
+            "{{ global_env.OS_BRANCH }}" == "stable/newton" || \
+            "{{ global_env.OS_BRANCH }}" == "stable/ocata" || \
+            "{{ global_env.OS_BRANCH }}" == "stable/pike" ]]; then
+          insert_service='enable_service q-trunk'
+      fi
+      echo ${insert_service} >> /tmp/dg-local.conf
+    executable: /bin/bash
+  when:
+  - '"neutron-ext" in enable_services'
 
 # Populate local conf with specific branch
 - name: create devstack local conf on stable/mitaka branch
