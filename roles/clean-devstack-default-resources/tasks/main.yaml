@@ -4,15 +4,18 @@
       set -e
       set -x
       source /opt/stack/new/devstack/openrc admin admin
+      export OS_DOMAIN_NAME=Default
       openstack volume type delete lvmdriver-1
       openstack project delete demo alt_demo
-      openstack router unset router1 --external-gateway
-      for subnet in $(openstack subnet list -f value -c Name);do
-          openstack router remove subnet router1 $subnet
-          openstack subnet delete $subnet
-      done
+      neutron router-gateway-clear router1
+      neutron router-interface-delete router1 ipv6-private-subnet
+      neutron router-interface-delete router1 private-subnet
+      neutron router-delete router1
+      openstack port delete `neutron port-list -f value -c id` || true
+      openstack subnet delete ipv6-public-subnet
+      openstack subnet delete ipv6-private-subnet
+      openstack subnet delete public-subnet
+      openstack subnet delete private-subnet
       openstack network delete private public
-      openstack router delete router1
-      # Need to delete the flavors except flavors with ID: 1, 2, 3, 4, 5.
       openstack flavor delete `openstack flavor list -f value -c ID --sort-column ID | tail -n +6` || true
     executable: /bin/bash
