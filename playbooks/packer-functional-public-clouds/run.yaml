@@ -9,6 +9,7 @@
         cmd: |
           set -ex
           set -o pipefail
+          unset OS_DOMAIN_ID
           pip install python-openstackclient
           # Using second smallest flavor, because first one might cause testing failed.
           # See https://github.com/theopenlab/openlab/issues/80

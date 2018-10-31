@@ -10,6 +10,7 @@
           shell:
             cmd: |
               set -ex
+              unset OS_DOMAIN_ID
               pip install python-openstackclient
               git clone https://github.com/sstephenson/bats.git
               pushd bats
