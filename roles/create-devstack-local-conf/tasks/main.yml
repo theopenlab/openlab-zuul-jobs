@@ -7,6 +7,7 @@
       cat << EOF >> /tmp/dg-local.conf
       [[local|localrc]]
       NETWORK_GATEWAY=10.0.0.1
+      enable_plugin neutron git://git.openstack.org/openstack/neutron
       EOF
     executable: /bin/bash
 
@@ -64,12 +65,12 @@
       set -e
       set -x
       # From Queens
-      insert_service='enable_service neutron-trunk'
+      insert_service='enable_service neutron-trunk neutron-qos'
       if [[ "{{ global_env.OS_BRANCH }}" == "stable/mitaka" || \
             "{{ global_env.OS_BRANCH }}" == "stable/newton" || \
             "{{ global_env.OS_BRANCH }}" == "stable/ocata" || \
             "{{ global_env.OS_BRANCH }}" == "stable/pike" ]]; then
-          insert_service='enable_service q-trunk'
+          insert_service='enable_service q-trunk q-qos'
       fi
       echo ${insert_service} >> /tmp/dg-local.conf
     executable: /bin/bash
