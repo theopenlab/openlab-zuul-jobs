@@ -17,5 +17,14 @@
       openstack subnet delete public-subnet
       openstack subnet delete private-subnet
       openstack network delete private public
-      openstack flavor delete `openstack flavor list -f value -c ID --sort-column ID | tail -n +6` || true
+      flavor_white_list="'m1.tiny' 'm1.small' 'm1.medium' 'm1.large' 'm1.xlarge'"
+      for flavor_name in `openstack flavor list -f value -c Name`
+      do
+          if [[ "${flavor_white_list}" =~ "${flavor_name}" ]]; then
+              echo "keep flavor ${flavor_name}"
+          else
+              echo "delete flavor ${flavor_name}"
+              openstack flavor delete "${flavor_name}"
+          fi
+      done
     executable: /bin/bash
