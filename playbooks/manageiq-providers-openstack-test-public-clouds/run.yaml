@@ -65,6 +65,8 @@
           sed -i "/setup_ems/ s|admin|$OS_USERNAME|" spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_liberty_keystone_v3_spec.rb
           sed -i "/setup_ems/ s|5000|433|" spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_liberty_keystone_v3_spec.rb
           sed -i "/setup_ems/ s|default|$OS_DOMAIN_ID|" spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_liberty_keystone_v3_spec.rb
+          #NOTES: public cloud apply SSL for API, so enable it to test
+          sed -i "/security_protocol/ s|no_ssl|ssl|" spec/models/manageiq/providers/openstack/cloud_manager/refresh_spec_helpers.rb
           set -x
 
           rm spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_havana_errors_spec.rb
