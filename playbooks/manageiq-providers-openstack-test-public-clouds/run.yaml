@@ -24,10 +24,6 @@
           curl -sL https://deb.nodesource.com/setup_8.x | sudo bash -
           apt-get install -y nodejs
 
-          # Enable Memcached
-          systemctl enable memcached
-          systemctl start memcached
-
           # Install Ruby
           apt-get install -y build-essential zlibc zlib1g-dev ruby ruby-dev openssl libxslt-dev libxml2-dev \
               libssl-dev libreadline6 libreadline6-dev libyaml-dev libsqlite3-dev sqlite3
@@ -60,17 +56,19 @@
 
           bin/setup
           bundle install
-          cp openstack_environments.yml spec/manageiq/
+
           set +x
           sed -i "/setup_ems/ s|admin|$OS_USERNAME|" spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_liberty_keystone_v3_spec.rb
-          sed -i "/setup_ems/ s|5000|433|" spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_liberty_keystone_v3_spec.rb
+          sed -i "/setup_ems/ s|5000|443|" spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_liberty_keystone_v3_spec.rb
           sed -i "/setup_ems/ s|default|$OS_DOMAIN_ID|" spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_liberty_keystone_v3_spec.rb
           #NOTES: public cloud apply SSL for API, so enable it to test
           sed -i "/security_protocol/ s|no_ssl|ssl|" spec/models/manageiq/providers/openstack/cloud_manager/refresh_spec_helpers.rb
           set -x
 
+          #NOTES: Only run liberty+ and keystone v3 cases
           rm spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_havana_errors_spec.rb
           rm spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_liberty_spec.rb
+
           bundle exec rake vcr:rerecord
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
