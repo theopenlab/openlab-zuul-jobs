@@ -11,7 +11,7 @@
 - name: Download nosetests.xslt
   get_url:
     url: '{{ nosetests_xslt_location }}'
-    dest: '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}'
+    dest: '{{ ansible_user_dir }}'
 
 - name: Format golang test results XML to HTML
   shell:
@@ -19,6 +19,6 @@
       set -e
       set -x
       apt-get install --yes xsltproc
-      xsltproc nosetests.xslt $TEST_RESULTS_XML > $TEST_RESULTS_HTML || true
+      xsltproc '{{ ansible_user_dir }}/nosetests.xslt' $TEST_RESULTS_XML > $TEST_RESULTS_HTML || true
     executable: /bin/bash
   environment: '{{ global_env }}'
