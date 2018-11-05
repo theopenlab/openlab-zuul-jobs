@@ -1,0 +1,2 @@
+---
+nosetests_xslt_location: 'https://raw.githubusercontent.com/theopenlab/openlab-zuul-jobs/master/tools/nosetests.xslt'
