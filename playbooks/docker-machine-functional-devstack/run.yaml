@@ -1,5 +1,8 @@
 - hosts: all
   become: yes
+  vars:
+    #NOTES: docker-machine don't support OpenStack version discovery, so enable legacy endpoint format.
+    DISABLE_HTTPD_MOD_WSGI: true
   roles:
     - clone-devstack-gate-to-workspace
     - create-devstack-local-conf
