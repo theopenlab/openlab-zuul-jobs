@@ -5,6 +5,10 @@
       set -x
       source /opt/stack/new/devstack/openrc admin admin
       export OS_DOMAIN_NAME=Default
+      if [ "{{ global_env.OS_BRANCH }}" == "master" ]; then
+          # NOTE: workaround for issue #theopenlab/openlab/issues/101
+          pip install "openstacksdk==0.17.2"
+      fi
       openstack volume type delete lvmdriver-1
       openstack project delete demo alt_demo
       neutron router-gateway-clear router1
