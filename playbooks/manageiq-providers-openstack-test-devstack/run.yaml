@@ -11,13 +11,50 @@
     - install-devstack
     - clean-devstack-default-resources
   tasks:
+    - name: Install specifc packages and config Neutron for Ubuntu 14.04
+      shell:
+        cmd: |
+          set -ex
+          apt-get -y install software-properties-common
+          apt-add-repository ppa:brightbox/ruby-ng -y
+          echo "deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main 9.5" >> /etc/apt/sources.list.d/pgdg.list
+          curl -4 -O https://www.postgresql.org/media/keys/ACCC4CF8.asc
+          apt-key add ACCC4CF8.asc
+          apt-get -o Acquire::ForceIPv4=true update -y
+          apt-get -o Acquire::ForceIPv4=true install postgresql-9.5 -y
+          psql --version
+          apt-get install ruby2.3 ruby2.3-dev -y
+          ruby -v
+          sed -i "/flat_networks/ a flat_networks = public,public_net_0,public_net_1,public_net_2,public_net_3,public_net_4,public_net_5" /etc/neutron/plugins/ml2/ml2_conf.ini
+          killall neutron-server
+          nohup /usr/bin/python /usr/local/bin/neutron-server --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini > /dev/null 2>&1 &
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      when:
+        - global_env.OS_BRANCH == 'stable/mitaka'
+
+    - name: Install specifc packages and config Neutron for Ubuntu 16.04
+      shell:
+        cmd: |
+          set -ex
+          # Install Ruby
+          apt-get install -y build-essential zlibc zlib1g-dev ruby ruby-dev openssl libxslt-dev libxml2-dev \
+              libssl-dev libreadline6 libreadline6-dev libyaml-dev libsqlite3-dev sqlite3
+          apt-get install -y postgresql
+          sed -i "/flat_networks/ s|public|public,public_net_0,public_net_1,public_net_2,public_net_3,public_net_4,public_net_5|" /etc/neutron/plugins/ml2/ml2_conf.ini
+          sed -i "/filter_validation = / a filter_validation = false" /etc/neutron/neutron.conf
+          service devstack@neutron-* restart
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      when:
+        - global_env.OS_BRANCH != 'stable/mitaka'
+
     - name: Run Integration tests of manageiq-providers-openstack against devstack
       shell:
         cmd: |
           set -ex
           # Install Packages
           apt install -y memcached                        # Memcached for the session store
-          apt install -y postgresql libpq-dev             # PostgreSQL Database server and to build 'pg' Gem
           apt install -y bzip2 libffi-dev libreadline-dev # For rbenv install 2.3.1 (might not be needed with other Ruby setups)
           apt install -y libxml2-dev libxslt-dev patch    # For Nokogiri Gem
           apt install -y libsqlite-dev libsqlite3-dev     # For sqlite3 Gem
@@ -32,10 +69,6 @@
           curl -sL https://deb.nodesource.com/setup_8.x | sudo bash -
           apt-get install -y nodejs
 
-          # Install Ruby
-          apt-get install -y build-essential zlibc zlib1g-dev ruby ruby-dev openssl libxslt-dev libxml2-dev \
-              libssl-dev libreadline6 libreadline6-dev libyaml-dev libsqlite3-dev sqlite3
-
           # Configure PostgreSQL
           grep -q '^local\s' /etc/postgresql/*/main/pg_hba.conf || echo "local all all trust" | sudo tee -a /etc/postgresql/9.5/main/pg_hba.conf
           sed -i.bak 's/\(^local\s*\w*\s*\w*\s*\)\(peer$\)/\1trust/' /etc/postgresql/*/main/pg_hba.conf
@@ -47,8 +80,7 @@
           wget -t 10 -T 2 http://ftp.debian.org/debian/pool/main/o/openssl1.0/libssl1.0.2_1.0.2o-1_amd64.deb
           apt remove -y libssl-dev
           dpkg -i libssl1.0-dev_1.0.2o-1_amd64.deb libssl1.0.2_1.0.2o-1_amd64.deb
-
-          apt-get install -y postgresql python-psycopg2 libpq-dev
+          apt-get install -y python-psycopg2 libpq-dev
 
           # Prepare openstack_environments.yml
           my_ip=$(ip route get 1.1.1.1 | awk '{print $7}')
@@ -62,16 +94,6 @@
           openstack role create heat_stack_owner
           openstack role create SwiftOperator
 
-          if [ "{{ global_env.OS_BRANCH }}" == "stable/mitaka" ]; then
-              sed -i "/flat_networks/ a flat_networks = public,public_net_0,public_net_1,public_net_2,public_net_3,public_net_4,public_net_5" /etc/neutron/plugins/ml2/ml2_conf.ini
-              killall neutron-server
-              nohup /usr/bin/python /usr/local/bin/neutron-server --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini 2>&1 &
-          else
-              sed -i "/flat_networks/ s|public|public,public_net_0,public_net_1,public_net_2,public_net_3,public_net_4,public_net_5|" /etc/neutron/plugins/ml2/ml2_conf.ini
-              sed -i "/filter_validation = / a filter_validation = false" /etc/neutron/neutron.conf
-              service devstack@neutron-* restart
-          fi
-
           bin/setup
           bundle install
           cp openstack_environments.yml spec/manageiq/
@@ -79,7 +101,7 @@
           #NOTES: Build ManageIQ environment for devstack
           pushd spec/manageiq/
           sed -i "/admin_role =/ s|:domain_id => domain_id||"  spec/tools/environment_builders/openstack/services/identity/builder/keystone_v3.rb
-          ln -s $(realpath ../../spec/models/manageiq/providers/openstack) spec/models/manageiq/providers/openstack
+          ln -s $(readlink -f ../../spec/models/manageiq/providers/openstack) spec/models/manageiq/providers/openstack
           bundle install
           bundle exec rake db:setup
           bundle exec rails r spec/tools/environment_builders/openstack.rb
@@ -88,7 +110,6 @@
           #NOTES: Only run liberty+ and keystone v3 cases
           rm spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_havana_errors_spec.rb
           rm spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_liberty_spec.rb
-
           bundle exec rake vcr:rerecord
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'

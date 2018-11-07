@@ -34,6 +34,7 @@
       set -e
       set -x
       cat << EOF >> /tmp/dg-local.conf
+      enable_service heat,h-api,h-api-cfn,h-api-cw,h-eng
       enable_plugin heat git://git.openstack.org/openstack/heat
       EOF
     executable: /bin/bash
