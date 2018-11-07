@@ -40,7 +40,7 @@
           # Install Ruby
           apt-get install -y build-essential zlibc zlib1g-dev ruby ruby-dev openssl libxslt-dev libxml2-dev \
               libssl-dev libreadline6 libreadline6-dev libyaml-dev libsqlite3-dev sqlite3
-          apt-get install -y postgresql python-psycopg2 libpq-dev
+          apt-get install -y postgresql
           sed -i "/flat_networks/ s|public|public,public_net_0,public_net_1,public_net_2,public_net_3,public_net_4,public_net_5|" /etc/neutron/plugins/ml2/ml2_conf.ini
           sed -i "/filter_validation = / a filter_validation = false" /etc/neutron/neutron.conf
           service devstack@neutron-* restart
