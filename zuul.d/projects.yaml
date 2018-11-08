@@ -118,15 +118,12 @@
         - cluster-api-provider-openstack-image-build:
             branches: master
 
-#NOTES: Should be updated when switch to official project
 - project:
-    name: zhongjun2/bosh-huaweicloud-cpi-release
-    check:
-      jobs:
-        - bosh-huaweicloud-cpi-release-acceptance-test
+    name: cloudfoundry-incubator/bosh-huaweicloud-cpi-release
     check-generic-cloud:
       jobs:
-        - bosh-acceptance-test-huaweicloud
+        - bosh-huaweicloud-cpi-release-validator-test-huaweicloud
+        - bosh-huaweicloud-cpi-release-acceptance-test-huaweicloud
 
 - project:
     name: huaweicloud/huaweicloud-service-broker
