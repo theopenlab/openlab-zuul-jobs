@@ -4,64 +4,57 @@
     "user": "{{ broker_username }}",
     "password": "{{ broker_password }}",
     "authentication": "basic",
-    "provisions": [
+    "pollingInterval": 10,
+    "maxPollingNum": 50,
+    "cases": [
         {
-            "instance_id": "rds-instance-id-{{ name_uuid }}",
-            "body": {
-                "plan_id": "839f4458-309a-4e05-a069-807e950cf6da",
-                "service_id": "275f3e0b-86fd-4303-946c-171374d29150",
-                "parameters": {
-                    "name": "osb-checker-rds-mysql-{{ name_uuid }}",
-                    "database_password": "Password1234!"
-                },
-                "organization_guid": "organization_id",
-                "space_guid": "space_id"
-            },
-            "scenario": "new",
-            "notes": "RDS SQLServer Service",
-            "async": true
-        }
-    ],
-    "updates": [
-        {
-            "instance_id": "rds-instance-id-{{ name_uuid }}",
-            "body": {
-                "plan_id": "839f4458-309a-4e05-a069-807e950cf6da",
-                "service_id": "275f3e0b-86fd-4303-946c-171374d29150",
-                "parameters": {
-                    "volume_size": 200
-                },
-                "previous_values": {
+            "name": "RDS SQLServer Service",
+            "service_id" :"275f3e0b-86fd-4303-946c-171374d29150",
+            "organization_guid": "organization_id",
+            "space_guid": "space_id",
+            "lifecycle": [
+                {
+                    "operation": "provision",
                     "plan_id": "839f4458-309a-4e05-a069-807e950cf6da",
-                    "service_id": "275f3e0b-86fd-4303-946c-171374d29150",
-                    "organization_id": "organization_id",
-                    "space_id": "space_id"
+                    "async": true,
+                    "parameters": {
+                        "name": "osb-checker-rds-mysql-{{ name_uuid }}",
+                        "database_password": "Password1234!"
+
+                    }
+                },
+                {
+                    "operation": "update",
+                    "plan_id": "839f4458-309a-4e05-a069-807e950cf6da",
+                    "async": true,
+                    "parameters": {
+                        "volume_size": 200
+                    }
+                },
+                {
+                    "operation": "bind",
+                    "parameters": {
+                        "service_id": "275f3e0b-86fd-4303-946c-171374d29150",
+                        "plan_id": "839f4458-309a-4e05-a069-807e950cf6da"
+                    }
+                },
+                {
+                    "operation": "unbind"
+                },
+                {
+                    "operation": "deprovision",
+                    "async": true
                 }
-            },
-            "scenario": "update",
-            "async": true
+            ]
         }
     ],
-    "bindings": [
-        {
-            "instance_id": "rds-instance-id-{{ name_uuid }}",
-            "binding_id": "rds-binding-id-{{ name_uuid }}",
-            "body": {
-                "plan_id": "839f4458-309a-4e05-a069-807e950cf6da",
-                "service_id": "275f3e0b-86fd-4303-946c-171374d29150"
-            },
-            "async": true,
-            "scenario": "new"
-        },
-        {
-            "instance_id": "rds-instance-id-{{ name_uuid }}",
-            "binding_id": "rds-binding-id-{{ name_uuid }}",
-            "body": {
-                "plan_id": "839f4458-309a-4e05-a069-807e950cf6da",
-                "service_id": "275f3e0b-86fd-4303-946c-171374d29150"
-            },
-            "async": true,
-            "scenario": "delete"
+    "conflictiveProvision": {
+        "service_id" :"275f3e0b-86fd-4303-946c-171374d29150",
+        "plan_id": "839f4458-309a-4e05-a069-807e950cf6da",
+        "async": true,
+        "parameters": {
+            "name": "osb-checker-rds-mysql-{{ name_uuid }}",
+            "database_password": "Password1234!"
         }
-    ]
+    }
 }
