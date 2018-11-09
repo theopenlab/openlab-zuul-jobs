@@ -828,13 +828,12 @@
     override-checkout: v0.15.0
 
 # bosh huaweicloud cpi jobs
-#NOTES: Should be updated when switch to official project
 - job:
-    name: bosh-huaweicloud-cpi-release-acceptance-test
+    name: bosh-huaweicloud-cpi-release-validator-test-huaweicloud
     parent: init-test
     description: |
       This job validation tests of bosh-huaweicloud-cpi-release aganist Huaweicloud
-    run: playbooks/bosh-huaweicloud-cpi-release-acceptance-test/run.yaml
+    run: playbooks/bosh-huaweicloud-cpi-release-validator-test-huaweicloud/run.yaml
     required-projects:
       - zhongjun2/cf-huaweicloud-validator
     secrets:
@@ -842,13 +841,14 @@
     nodeset: ubuntu-xenial-huaweicloud
 
 - job:
-    name: bosh-acceptance-test-huaweicloud
+    name: bosh-huaweicloud-cpi-release-acceptance-test-huaweicloud
     parent: init-test
     description: |
       This job run tests of bosh-acceptance-test aganist Huaweicloud
-    run: playbooks/bosh-acceptance-test-huaweicloud/run.yaml
+    run: playbooks/bosh-huaweicloud-cpi-release-acceptance-test-huaweicloud/run.yaml
+    post-run: playbooks/bosh-huaweicloud-cpi-release-acceptance-test-huaweicloud/post.yaml
     required-projects:
-      - liu-sheng/bosh-acceptance-tests
+      - cloudfoundry/bosh-acceptance-tests
     secrets:
       - huaweicloud_credentials
     nodeset: ubuntu-xenial-huaweicloud
