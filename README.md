@@ -30,4 +30,4 @@ Web page about OpenLab:
 
 Documentation about how to integrate OpenLab CI:
 
-    https://raw.githubusercontent.com/theopenlab/cicd-howto
+    https://docs.openlabtesting.org/publications/contributors/connect-to-openlab
