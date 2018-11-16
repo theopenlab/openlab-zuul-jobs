@@ -230,7 +230,7 @@
       set -e
       set -x
       cat << EOF >> /tmp/dg-local.conf
-      enable_plugin devstack-plugin-ceph https://git.openstack.org/openstack/devstack-plugin-ceph refs/changes/70/561370/3
+      enable_plugin devstack-plugin-ceph https://git.openstack.org/openstack/devstack-plugin-ceph
       ENABLE_CEPH_CINDER=True
       ENABLE_CEPH_GLANCE=False
       ENABLE_CEPH_C_BAK=False
