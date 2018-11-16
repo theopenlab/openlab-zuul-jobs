@@ -4,69 +4,64 @@
     "user": "{{ broker_username }}",
     "password": "{{ broker_password }}",
     "authentication": "basic",
-    "provisions": [
+    "pollingInterval": 10,
+    "maxPollingNum": 50,
+    "cases": [
         {
-            "instance_id": "dcs-instance-id-{{ name_uuid }}",
-            "body": {
-                "plan_id": "d54d393b-f5ce-4eb7-86be-49da00606368",
-                "service_id": "45d162e1-cf1e-455c-beff-cc0765d9a377",
-                "parameters": {
-                    "username": "username",
-                    "password": "Password1234!",
-                    "name": "osb-checker-dcs-redis-{{ name_uuid }}",
-                    "description": "Redis Single Node Test"
-                },
-                "organization_guid": "organization_id",
-                "space_guid": "space_id"
-            },
-            "scenario": "new",
-            "notes": "Distributed Cache Service for Redis",
-            "async": true
-        }
-    ],
-    "updates": [
-        {
-            "instance_id": "dcs-instance-id-{{ name_uuid }}",
-            "body": {
-                "service_id": "45d162e1-cf1e-455c-beff-cc0765d9a377",
-                "plan_id": "d54d393b-f5ce-4eb7-86be-49da00606368",
-                "parameters": {
-                    "name": "osb-checker-dcs-redis-updated-{{ name_uuid }}",
-                    "description": "Redis Single Node Test1",
-                    "old_password": "Password1234!",
-                    "new_password": "Password1234$"
-                },
-                "previous_values": {
+            "name": "Redis Single Node Test",
+            "service_id" :"45d162e1-cf1e-455c-beff-cc0765d9a377",
+            "organization_guid": "organization_id",
+            "space_guid": "space_id",
+            "lifecycle": [
+                {
+                    "operation": "provision",
                     "plan_id": "d54d393b-f5ce-4eb7-86be-49da00606368",
-                    "service_id": "45d162e1-cf1e-455c-beff-cc0765d9a377",
-                    "organization_id": "organization_id",
-                    "space_id": "space_id"
+                    "async": true,
+                    "parameters": {
+                        "username": "username",
+                        "password": "Password1234!",
+                        "name": "osb-checker-dcs-redis-{{ name_uuid }}",
+                        "description": "Redis Single Node Test"
+
+                    }
+                },
+                {
+                    "operation": "update",
+                    "plan_id": "d54d393b-f5ce-4eb7-86be-49da00606368",
+                    "async": true,
+                    "parameters": {
+                        "name": "osb-checker-dcs-redis-updated-{{ name_uuid }}",
+                        "description": "Redis Single Node Test1",
+                        "old_password": "Password1234!",
+                        "new_password": "Password1234$"
+                    }
+                },
+                {
+                    "operation": "bind",
+                    "parameters": {
+                        "service_id": "45d162e1-cf1e-455c-beff-cc0765d9a377",
+                        "plan_id": "d54d393b-f5ce-4eb7-86be-49da00606368"
+                    }
+                },
+                {
+                    "operation": "unbind"
+                },
+                {
+                    "operation": "deprovision",
+                    "async": true
                 }
-            },
-            "scenario": "update",
-            "async": true
+            ]
         }
     ],
-    "bindings": [
-        {
-            "instance_id": "dcs-instance-id-{{ name_uuid }}",
-            "binding_id": "dcs-binding-id-{{ name_uuid }}",
-            "body": {
-                "service_id": "45d162e1-cf1e-455c-beff-cc0765d9a377",
-                "plan_id": "d54d393b-f5ce-4eb7-86be-49da00606368"
-            },
-            "async": true,
-            "scenario": "new"
-        },
-        {
-            "instance_id": "dcs-instance-id-{{ name_uuid }}",
-            "binding_id": "dcs-binding-id-{{ name_uuid }}",
-            "body": {
-                "service_id": "45d162e1-cf1e-455c-beff-cc0765d9a377",
-                "plan_id": "d54d393b-f5ce-4eb7-86be-49da00606368"
-            },
-            "async": true,
-            "scenario": "delete"
+    "conflictiveProvision": {
+        "service_id" :"45d162e1-cf1e-455c-beff-cc0765d9a377",
+        "plan_id": "d54d393b-f5ce-4eb7-86be-49da00606368",
+        "async": true,
+        "parameters": {
+            "name": "osb-checker-dcs-redis-{{ name_uuid }}",
+            "username": "username",
+            "password": "Password1234!",
+            "description": "Redis Single Node Test"
         }
-    ]
+    }
 }
