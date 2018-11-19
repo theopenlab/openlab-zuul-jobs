@@ -38,7 +38,6 @@
         security_group_id: 'e18c06ca-fcac-46ed-a272-b014633678bf'
         name_uuid: '{{ zuul.build[:10] }}'
 
-
     - name: Customize huaweicloud-service-broker config for huaweicloud services
       become: yes
       template:
