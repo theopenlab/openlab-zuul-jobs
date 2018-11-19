@@ -36,15 +36,6 @@
           echo export OS_SHARE_NETWORK_ID=foobar >> openrc
           source openrc demo demo
           popd
-
-          # Run acc test
-          if [[ ! -d $GOPATH/src/github.com/terraform-providers/terraform-provider-openstack/ && -d $GOPATH/src/github.com/theopenlab/terraform-provider-openstack ]]; then
-              echo "Warning: this is a temporary workaround because this job is not triggered from official git repo."
-              mkdir -p $GOPATH/src/github.com/terraform-providers/
-              cp -r $GOPATH/src/github.com/theopenlab/terraform-provider-openstack  $GOPATH/src/github.com/terraform-providers/
-              cd $GOPATH/src/github.com/terraform-providers/terraform-provider-openstack
-          fi
-
           # Run the DNS test 100 testcases at a time
           export OS_DNS_ENVIRONMENT=1 # for Designate tests
           testcases=`go test ./openstack/ -v -list 'Acc'`
