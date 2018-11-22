@@ -37,8 +37,9 @@
             branches: stable-2.6
         - openstacksdk-ansible-stable-2.6-functional-orange:
             branches: stable-2.6
-        - openstacksdk-ansible-stable-2.6-functional-telefonica:
-            branches: stable-2.6
+#        NOTES: Telefonica account is disable
+#        - openstacksdk-ansible-stable-2.6-functional-telefonica:
+#            branches: stable-2.6
         - openstacksdk-ansible-stable-2.6-functional-huaweicloud:
             branches: stable-2.6
         - openstacksdk-ansible-stable-2.6-functional-devstack:
@@ -64,8 +65,9 @@
             branches: master
         - packer-1.2.5-functional-orange:
             branches: master
-        - packer-1.2.5-functional-telefonica:
-            branches: master
+#        NOTES: Telefonica account is disable
+#        - packer-1.2.5-functional-telefonica:
+#            branches: master
         - packer-1.2.5-functional-huaweicloud:
             branches: master
         - packer-1.2.5-functional-devstack:
@@ -94,8 +96,9 @@
             branches: master
         - docker-machine-0.15.0-functional-orange:
             branches: master
-        - docker-machine-0.15.0-functional-telefonica:
-            branches: master
+#        NOTES: Telefonica account is disable
+#        - docker-machine-0.15.0-functional-telefonica:
+#            branches: master
         - docker-machine-0.15.0-functional-huaweicloud:
             branches: master
         - docker-machine-0.15.0-functional-devstack-mitaka:
@@ -147,4 +150,5 @@
         - manageiq-providers-openstack-test-huaweicloud
         - manageiq-providers-openstack-test-opentelekomcloud
         - manageiq-providers-openstack-test-orange
-        - manageiq-providers-openstack-test-telefonica
+#        NOTES: Telefonica account is disable
+#        - manageiq-providers-openstack-test-telefonica
