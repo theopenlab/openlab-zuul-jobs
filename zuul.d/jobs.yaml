@@ -68,7 +68,6 @@
       global_env:
         OS_BRANCH: stable/queens
 
-
 - job:
     name: terraform-provider-openstack-acceptance-test-pike
     parent: terraform-provider-openstack-acceptance-test
