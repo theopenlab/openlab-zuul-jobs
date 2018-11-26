@@ -1,14 +1,24 @@
-- name: format golang test results to html
+- name: Format golang test results to XML
   shell:
     cmd: |
       set -e
       set -x
-
-      go get -u github.com/theopenlab/go2xunit
+      go get -u github.com/tebeka/go2xunit
       go2xunit -input $TEST_RESULTS_TXT -output $TEST_RESULTS_XML || true
+    executable: /bin/bash
+  environment: '{{ global_env }}'
 
+- name: Download nosetests.xslt
+  get_url:
+    url: '{{ nosetests_xslt_location }}'
+    dest: '{{ ansible_user_dir }}'
+
+- name: Format golang test results XML to HTML
+  shell:
+    cmd: |
+      set -e
+      set -x
       apt-get install --yes xsltproc
-      wget https://raw.githubusercontent.com/theopenlab/nosetest-xunit-xslt/master/nosetests.xslt
-      xsltproc nosetests.xslt $TEST_RESULTS_XML > $TEST_RESULTS_HTML || true
+      xsltproc '{{ ansible_user_dir }}/nosetests.xslt' $TEST_RESULTS_XML > $TEST_RESULTS_HTML || true
     executable: /bin/bash
   environment: '{{ global_env }}'

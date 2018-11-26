@@ -1,0 +1,38 @@
+- name: Clean devstack default resources
+  shell:
+    cmd: |
+      set -e
+      set -x
+      source /opt/stack/new/devstack/openrc admin admin
+      export OS_DOMAIN_NAME=Default
+      if echo "stable/mitaka stable/newton" | grep -w "{{ global_env.OS_BRANCH }}" &>/dev/null; then
+          neutron router-gateway-clear router1
+          neutron router-interface-delete router1 ipv6-private-subnet
+          neutron router-interface-delete router1 private-subnet
+          neutron router-delete router1
+          # NOTE: need to delete ports in Mitaka, but do not need in other releases
+          openstack port delete `neutron port-list -f value -c id` || true
+      else
+          openstack router unset router1 --external-gateway
+          openstack router remove subnet router1 ipv6-private-subnet
+          openstack router remove subnet router1 private-subnet
+          openstack router delete router1
+      fi
+      openstack subnet delete ipv6-public-subnet
+      openstack subnet delete ipv6-private-subnet
+      openstack subnet delete public-subnet
+      openstack subnet delete private-subnet
+      openstack network delete private public
+      openstack volume type delete lvmdriver-1
+      openstack project delete demo alt_demo
+      flavor_white_list="'m1.tiny' 'm1.small' 'm1.medium' 'm1.large' 'm1.xlarge'"
+      for flavor_name in `openstack flavor list -f value -c Name`
+      do
+          if [[ "${flavor_white_list}" =~ "${flavor_name}" ]]; then
+              echo "keep flavor ${flavor_name}"
+          else
+              echo "delete flavor ${flavor_name}"
+              openstack flavor delete "${flavor_name}"
+          fi
+      done
+    executable: /bin/bash

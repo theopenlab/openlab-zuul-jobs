@@ -2,6 +2,13 @@
   shell:
     cmd: |
       set -x
-      mkdir -p $(dirname '{{ k8s_repo_src_dir }}')
-      mv '{{ zuul.project.src_dir }}' '{{ k8s_repo_src_dir }}'
+      ## to path src/sigs.k8s.io/
+      if [[ '{{ zuul.project.src_dir }}' =~ 'kubernetes-sigs' ]]; then
+          mkdir -p $(dirname '{{ k8s_sigs_repo_src_dir }}')
+          mv '{{ zuul.project.src_dir }}' '{{ k8s_sigs_repo_src_dir }}'
+      ## to path src/k8s.io/
+      else
+          mkdir -p $(dirname '{{ k8s_repo_src_dir }}')
+          mv '{{ zuul.project.src_dir }}' '{{ k8s_repo_src_dir }}'
+      fi
     executable: /bin/bash
