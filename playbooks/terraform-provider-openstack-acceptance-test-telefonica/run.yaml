@@ -18,7 +18,7 @@
           export OS_POOL_NAME="admin_external_net"
           export OS_EXTGW_ID="$(openstack network show $OS_POOL_NAME -f value -c id)"
           export OS_IMAGE_NAME="Ubuntu 16.04 Server 64bit"
-          export OS_IMAGE_ID=69be1b33-e25c-4a59-9cf4-b307533e4763
+          export OS_IMAGE_ID="$(openstack image show $OS_IMAGE_NAME -f value -c id)"
           _NET_PREFIX="terraform-provider-telefonicaopencloud"
           export OS_NETWORK_NAME="$_NET_PREFIX-net"
           export OS_NETWORK_ID="$(openstack network show $OS_NETWORK_NAME -f value -c id)"

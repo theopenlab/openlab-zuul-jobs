@@ -134,6 +134,46 @@
       Run terraform provider openstack fwaas acceptance test on master branch
     run: playbooks/terraform-provider-openstack-acceptance-test-fwaas/run.yaml
 
+# terraform-provider-openstack acceptance tests with Telefonica cloud
+- job:
+    name: terraform-provider-openstack-acceptance-test-telefonica
+    parent: golang-test
+    description: |
+      Run acceptance tests of terraform-provider-openstack repo against telefonica cloud
+    run: playbooks/terraform-provider-openstack-acceptance-test-telefonica/run.yaml
+    secrets:
+      - telefonica_credentials
+
+# terraform-provider-openstack acceptance tests with Open Telekom cloud
+- job:
+    name: terraform-provider-openstack-acceptance-test-opentelekomcloud
+    parent: golang-test
+    description: |
+      Run acceptance tests of terraform-provider-openstack repo against opentelekomcloud
+    run: playbooks/terraform-provider-openstack-acceptance-test-opentelekomcloud/run.yaml
+    secrets:
+      - opentelekomcloud_credentials
+
+# terraform-provider-openstack acceptance tests with orange cloud
+- job:
+    name: terraform-provider-openstack-acceptance-test-orange
+    parent: golang-test
+    description: |
+      Run acceptance tests of terraform-provider-openstack repo against orange cloud
+    run: playbooks/terraform-provider-openstack-acceptance-test-orange/run.yaml
+    secrets:
+      - orange_credentials
+
+# terraform-provider-openstack acceptance tests with huawei cloud
+- job:
+    name: terraform-provider-openstack-acceptance-test-huaweicloud
+    parent: golang-test
+    description: |
+      Run acceptance tests of terraform-provider-openstack repo against huaweicloud
+    run: playbooks/terraform-provider-openstack-acceptance-test-huaweicloud/run.yaml
+    secrets:
+      - huaweicloud_credentials
+
 # Gophercloud acceptance tests with Telefonica cloud
 - job:
     name: gophercloud-acceptance-test-telefonica
