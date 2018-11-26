@@ -1,0 +1,46 @@
+- hosts: all
+  become: yes
+  roles:
+    - config-golang
+    - role: export-cloud-openrc
+      vars:
+        cloud_name: 'orange'
+  tasks:
+    - name: Run acceptance tests with terraform-provider-openstack against orange public cloud
+      shell:
+        cmd: |
+          apt-get install python-pip -y
+          pip install -U python-openstackclient
+
+          export OS_SHARE_NETWORK_ID="foobar"
+          export OS_FLAVOR_ID_RESIZE="t2.small"
+          export OS_FLAVOR_ID="t2.micro"
+          export OS_POOL_NAME="admin_external_net"
+          export OS_EXTGW_ID="$(openstack network show $OS_POOL_NAME -f value -c id)"
+          export OS_IMAGE_ID="111003ea-f047-4440-9084-28b433bb4dfb"
+
+          _NET_PREFIX="openlab-jobs"
+          export OS_NETWORK_NAME="$_NET_PREFIX-net"
+          export OS_NETWORK_ID="$(openstack network show $OS_NETWORK_NAME -f value -c id)"
+          if [ -z "$OS_NETWORK_ID" ]; then
+              export OS_NETWORK_ID="$(openstack network create $OS_NETWORK_NAME -f value -c id)"
+              openstack subnet create --network $OS_NETWORK_ID --subnet-range 172.16.10.0/24 $_NET_PREFIX-subnet
+          fi
+
+          export OS_VPC_ID="$(openstack router show $_NET_PREFIX-vpc -f value -c id)"
+          if [ -z "$OS_VPC_ID" ]; then
+              export OS_VPC_ID="$(openstack router create $_NET_PREFIX-vpc -f value -c id)"
+              openstack router add subnet $_NET_PREFIX-vpc $_NET_PREFIX-subnet
+          fi
+
+          set -e
+          set -o pipefail
+          set -x
+
+          # Run except the DNS/FW/LB test 100 testcases at a time
+          testcases=`go test ./openstack/ -v -list 'Acc'`
+          testcases=`echo "$testcases" | sed '$d' | grep -v -e FW -e LB`
+          echo "$testcases" | xargs -t -n100 sh -c 'TF_LOG=DEBUG TF_ACC=1 go test ./openstack -v -timeout 120m -run $(echo "$@" | tr " " "|")' argv0 2>&1 | tee $TEST_RESULTS_TXT
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
