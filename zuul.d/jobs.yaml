@@ -721,19 +721,6 @@
     nodeset: ubuntu-xenial-huaweicloud
 
 - job:
-    name: bosh-acceptance-test-huaweicloud-debug
-    parent: init-test
-    description: |
-      This job run tests of bosh-acceptance-test aganist Huaweicloud
-    run: playbooks/bosh-acceptance-test-huaweicloud-debug/run.yaml
-    post-run: playbooks/bosh-acceptance-test-huaweicloud-debug/post.yaml
-    required-projects:
-      - liu-sheng/bosh-acceptance-tests
-    secrets:
-      - huaweicloud_credentials
-    nodeset: ubuntu-xenial-huaweicloud
-
-- job:
     name: osb-checker-test-huaweicloud
     parent: init-test
     description: |

@@ -68,19 +68,6 @@
         #- docker-machine-0.15.0-functional-telefonica
 
 - project:
-    name: zhongjun2/bosh-huaweicloud-cpi-release
-    check:
-      jobs:
-        - bosh-acceptance-test-huaweicloud
-        - bosh-huaweicloud-cpi-release-acceptance-test
-
-- project:
-    name: liu-sheng/bosh-huaweicloud-cpi-release
-    check:
-      jobs:
-        - bosh-acceptance-test-huaweicloud-debug
-
-- project:
     name: liu-sheng/huaweicloud-service-broker
     check:
       jobs:
