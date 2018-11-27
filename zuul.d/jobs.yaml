@@ -777,3 +777,23 @@
       This job run tests of manageiq-providers-openstack aganist Devstack
     run: playbooks/manageiq-providers-openstack-test-devstack/run.yaml
 
+
+# terraform-provider-huaweicloud acceptance tests against FusionCloud
+- job:
+    name: terraform-provider-huaweicloud-acceptance-test-fusioncloud
+    parent: golang-test
+    description: |
+      Run acceptance tests of terraform-provider-huaweicloud repo against fusioncloud
+    run: playbooks/terraform-provider-huaweicloud-acceptance-test-fusioncloud/run.yaml
+    # secrets:
+    #   - fusioncloud_credentials
+
+# terraform-provider-openstack acceptance tests against FusionCloud
+- job:
+    name: terraform-provider-openstack-acceptance-test-fusioncloud
+    parent: golang-test
+    description: |
+      Run acceptance tests of terraform-provider-openstack repo against fusioncloud
+    run: playbooks/terraform-provider-openstack-acceptance-test-fusioncloud/run.yaml
+    # secrets:
+    #   - fusioncloud_credentials
