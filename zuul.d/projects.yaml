@@ -122,6 +122,19 @@
             branches: master
 
 - project:
+    name: terraform-providers/terraform-provider-openstack
+    periodic:
+      jobs:
+        - terraform-provider-openstack-acceptance-test-telefonica:
+            branches: master
+        - terraform-provider-openstack-acceptance-test-opentelekomcloud:
+            branches: master
+        - terraform-provider-openstack-acceptance-test-orange:
+            branches: master
+        - terraform-provider-openstack-acceptance-test-huaweicloud:
+            branches: master
+
+- project:
     name: cloudfoundry-incubator/bosh-huaweicloud-cpi-release
     check-generic-cloud:
       jobs:

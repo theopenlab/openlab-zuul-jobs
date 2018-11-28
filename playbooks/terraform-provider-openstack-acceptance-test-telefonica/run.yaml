@@ -1,0 +1,44 @@
+- hosts: all
+  become: yes
+  roles:
+    - config-golang
+    - role: export-cloud-openrc
+      vars:
+        cloud_name: 'telefonica'
+  tasks:
+    - name: Run acceptance tests with terraform-provider-openstack against telefonica public cloud
+      shell:
+        cmd: |
+          apt-get install python-pip -y
+          pip install -U python-openstackclient
+
+          openstack flavor create m1.acctest --id 99 --ram 512 --disk 5 --vcpu 1 --ephemeral 10
+          openstack flavor create m1.resize --id 98 --ram 512 --disk 6 --vcpu 1 --ephemeral 10
+          unset OS_DOMAIN_ID
+          export OS_SHARE_NETWORK_ID="foobar"
+          export OS_FLAVOR_ID_RESIZE='c2.medium'
+          export OS_FLAVOR_ID='c1.medium'
+          export OS_POOL_NAME="admin_external_net"
+          export OS_EXTGW_ID="$(openstack network show $OS_POOL_NAME -f value -c id)"
+          export OS_IMAGE_NAME="Ubuntu 16.04 Server 64bit"
+          export OS_IMAGE_ID="$(openstack image show $OS_IMAGE_NAME -f value -c id)"
+
+          # we pre-create 'openlab-jobs-net', 'openlab-jobs-subnet' and 'openlab-jobs-vpc' for ci jobs
+          export OS_NETWORK_NAME="openlab-jobs-net"
+          export OS_NETWORK_ID="391a966d-8ee7-422f-a200-641e1351ace4"
+          export OS_VPC_ID="25f2e2b2-6a2b-44d8-863a-52acdb1e266c"
+
+          export OS_SWIFT_ENVIRONMENT=1
+
+          # set -e
+          ret=0
+          set -o pipefail
+          set -x
+
+          # Run except the DNS/FW/LB test 100 testcases at a time
+          testcases=`go test ./openstack/ -v -list 'Acc'`
+          testcases=`echo "$testcases" | sed '$d' | grep -v -e FW -e LB`
+          echo "$testcases" | xargs -t -n100 sh -c 'TF_LOG=DEBUG TF_ACC=1 go test ./openstack -v -timeout 120m -run $(echo "$@" | tr " " "|")' argv0 2>&1 | tee $TEST_RESULTS_TXT
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
