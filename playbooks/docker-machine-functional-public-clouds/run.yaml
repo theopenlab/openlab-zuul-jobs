@@ -2,7 +2,7 @@
   become: yes
   roles:
     - export-cloud-openrc
-    - config-golang
+    - config-docker-machine
   tasks:
     - name: Run integration tests of docker machine aganist {{ cloud_name }}
       block:
@@ -10,42 +10,22 @@
           shell:
             cmd: |
               set -ex
-              unset OS_DOMAIN_ID
+
               pip install python-openstackclient
-              git clone https://github.com/sstephenson/bats.git
-              pushd bats
-              ./install.sh /usr/local
-              popd
-              apt-get update
-              apt-get install apt-transport-https ca-certificates
-              wget -qO- https://get.docker.com/ | sh
 
-              mkdir -p $GOPATH/src/github.com/docker/machine
-              cp -r '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}' $GOPATH/src/github.com/docker/
-              pushd $GOPATH/src/github.com/docker/machine
-              # NOTE: backport fix of PR 4543 and PR 4545
-              git config --global user.email 'zuul@openlab.com'
-              git config --global user.name 'openlab'
-              git cherry-pick 9ec6729
-              git cherry-pick 7909ee3
-
-              make build
-              cp ./bin/docker-machine /usr/local/bin/
-              docker-machine version
-              popd
-
+              pushd '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}'
               # Select a flavor have 2048M memory and 2 vCPU at least
               export OS_FLAVOR_ID=$(openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column \
                   VCPUs | awk '{if($2>=2048 && $3>=2){print $1}}' | head -n 1)
               export OS_IMAGE_NAME="Ubuntu 16.04 Server 64bit"
+              export OS_SSH_USER="{{ ssh_user | default('ubuntu') }}"
               export OS_TENANT_ID=$(openstack token issue -f value -c project_id)
               export OS_NETWORK_NAME=openlab-jobs-net
               export OS_FLOATINGIP_POOL="admin_external_net"
               export OS_SECURITY_GROUPS="openlab-jobs-sg"
-              export OS_SSH_USER="{{ ssh_user | default('ubuntu') }}"
-              unset OS_AVAILABILITY_ZONE
 
-              pushd $GOPATH/src/github.com/docker/machine
+              unset OS_AVAILABILITY_ZONE
+              unset OS_DOMAIN_ID
 
               export DRIVER=openstack
               export DEBUG=true
@@ -58,6 +38,12 @@
               export B2D_LOCATION=~/.docker/machine/cache/boot2docker.iso
               export SHARED_NAME="bats-$DRIVER-test-shared-$(date +%s)"
               export MACHINE_BUGSNAG_API_TOKEN=no-report
+
+              # Install bats
+              git clone https://github.com/sstephenson/bats.git '{{ ansible_user_dir }}/bats'
+              pushd '{{ ansible_user_dir }}/bats'
+              ./install.sh /usr/local
+              popd
 
               function machine() {
                   "$MACHINE_ROOT"/bin/"$MACHINE_BIN_NAME" "$@"
