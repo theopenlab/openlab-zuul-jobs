@@ -58,7 +58,7 @@
             branches: stable-2.6
 
 - project:
-    name: theopenlab/packer
+    name: hashicorp/packer
     periodic:
       jobs:
         - packer-1.2.5-functional-opentelekomcloud:
@@ -69,6 +69,8 @@
 #        - packer-1.2.5-functional-telefonica:
 #            branches: master
         - packer-1.2.5-functional-huaweicloud:
+            branches: master
+        - packer-master-functional-devstack:
             branches: master
         - packer-1.2.5-functional-devstack:
             branches: master
@@ -84,12 +86,9 @@
             branches: master
         - packer-1.2.5-functional-devstack-mitaka:
             branches: master
-    check:
-      jobs:
-        - packer-master-functional-devstack
 
 - project:
-    name: theopenlab/machine
+    name: docker/machine
     periodic:
       jobs:
         - docker-machine-0.15.0-functional-opentelekomcloud:
