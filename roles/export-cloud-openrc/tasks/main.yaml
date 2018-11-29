@@ -91,6 +91,22 @@
   no_log: no
   when: cloud_name == 'vexxhost'
 
+- name: Set fact for fusioncloud openrc
+  set_fact:
+    openrc:
+      OS_PASSWORD: '{{ fusioncloud_credentials.password }}'
+      OS_AUTH_TYPE: '{{ fusioncloud_credentials.auth_type }}'
+      OS_AUTH_URL: '{{ fusioncloud_credentials.auth_url }}'
+      OS_IDENTITY_API_VERSION: '{{ fusioncloud_credentials.identity_api_version }}'
+      OS_DOMAIN_NAME: '{{ fusioncloud_credentials.domain_name }}'
+      OS_PROJECT_NAME: '{{ fusioncloud_credentials.project_name}}'
+      OS_REGION_NAME: '{{ fusioncloud_credentials.region_name}}'
+      OS_TENANT_NAME: '{{ fusioncloud_credentials.project_name }}'
+      OS_USERNAME: '{{ fusioncloud_credentials.user_name }}'
+      OS_DOMAIN_ID: '{{ fusioncloud_credentials.domain_id }}'
+  no_log: no
+  when: cloud_name == 'fusioncloud'
+
 - name: Merge openrc into golang env
   set_fact:
     global_env: '{{ global_env | combine(openrc) }}'
