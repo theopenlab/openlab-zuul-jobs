@@ -32,6 +32,7 @@
           set -x
           apt-get install python-pip -y
           pip install -U python-openstackclient
+          shopt -s expand_aliases
           alias openstack="openstack --insecure"
 
           export OS_SHARE_NETWORK_ID="foobar"
