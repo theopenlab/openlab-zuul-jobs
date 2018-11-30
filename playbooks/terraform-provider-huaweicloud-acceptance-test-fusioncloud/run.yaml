@@ -35,6 +35,7 @@
           alias openstack="openstack --insecure"
           cat /etc/hosts
           export |grep OS_ |grep -v PASSWORD
+          sleep 7200
 
           export OS_SHARE_NETWORK_ID="foobar"
           export OS_FLAVOR_ID_RESIZE='rds.s1.medium'
