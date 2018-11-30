@@ -20,7 +20,7 @@
           export OS_POOL_NAME="admin_external_net"
           export OS_EXTGW_ID=`openstack network list -f value |grep admin_external_net | awk -F ' ' '{print $1}'`
           export OS_IMAGE_NAME="cirros-0.4.0-x86_64-disk"
-          export OS_IMAGE_ID=bb3faf74-55a2-427e-9d59-1e6d53bd6ca6
+          export OS_IMAGE_ID=$(openstack image show cirros-0.4.0-x86_64-disk -f value -c id)
           export OS_NETWORK_NAME="openlab-jobs-net"
           export OS_NETWORK_ID="$(openstack network show openlab-jobs-net -f value -c id)"
           export OS_VPC_ID="$(openstack router show openlab-jobs-vpc -f value -c id)"
