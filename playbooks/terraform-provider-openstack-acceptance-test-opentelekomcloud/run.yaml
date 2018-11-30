@@ -14,8 +14,6 @@
 
           set -o pipefail
           set -x
-          openstack flavor create m1.acctest --id 99 --ram 512 --disk 5 --vcpu 1 --ephemeral 10
-          openstack flavor create m1.resize --id 98 --ram 512 --disk 6 --vcpu 1 --ephemeral 10
           unset OS_DOMAIN_ID
           export OS_SHARE_NETWORK_ID="foobar"
           export OS_FLAVOR_ID_RESIZE='computev2-1'
@@ -27,8 +25,8 @@
 
           # we pre-create 'openlab-jobs-net', 'openlab-jobs-subnet' and 'openlab-jobs-vpc' for ci jobs
           export OS_NETWORK_NAME="openlab-jobs-net"
-          export OS_NETWORK_ID="205c893d-7363-4fa3-b2a0-5f36387e8a51"
-          export OS_VPC_ID="516afade-9fb1-4dd0-95df-8414b2ac8c27"
+          export OS_NETWORK_ID="$(openstack network show $OS_NETWORK_NAME -f value -c id)"
+          export OS_VPC_ID="$(openstack router show openlab-jobs-vpc -f value -c id)"
 
           export OS_SWIFT_ENVIRONMENT=1
 

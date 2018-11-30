@@ -12,8 +12,6 @@
           apt-get install python-pip -y
           pip install -U python-openstackclient
 
-          openstack flavor create m1.acctest --id 99 --ram 512 --disk 5 --vcpu 1 --ephemeral 10
-          openstack flavor create m1.resize --id 98 --ram 512 --disk 6 --vcpu 1 --ephemeral 10
           unset OS_DOMAIN_ID
           export OS_SHARE_NETWORK_ID="foobar"
           export OS_FLAVOR_ID_RESIZE='c2.medium'
@@ -25,8 +23,8 @@
 
           # we pre-create 'openlab-jobs-net', 'openlab-jobs-subnet' and 'openlab-jobs-vpc' for ci jobs
           export OS_NETWORK_NAME="openlab-jobs-net"
-          export OS_NETWORK_ID="391a966d-8ee7-422f-a200-641e1351ace4"
-          export OS_VPC_ID="25f2e2b2-6a2b-44d8-863a-52acdb1e266c"
+          export OS_NETWORK_ID="$(openstack network show $OS_NETWORK_NAME -f value -c id)"
+          export OS_VPC_ID="$(openstack router show openlab-jobs-vpc -f value -c id)"
 
           export OS_SWIFT_ENVIRONMENT=1
 
