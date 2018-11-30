@@ -104,6 +104,7 @@
       OS_TENANT_NAME: '{{ fusioncloud_credentials.project_name }}'
       OS_USERNAME: '{{ fusioncloud_credentials.user_name }}'
       OS_DOMAIN_ID: '{{ fusioncloud_credentials.domain_id }}'
+      OS_AVAILABILITY_ZONE: '{{ fusioncloud_credentials.availability_zone }}'
   no_log: no
   when: cloud_name == 'fusioncloud'
 
