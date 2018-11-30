@@ -105,6 +105,8 @@
       OS_USERNAME: '{{ fusioncloud_credentials.user_name }}'
       OS_DOMAIN_ID: '{{ fusioncloud_credentials.domain_id }}'
       OS_AVAILABILITY_ZONE: '{{ fusioncloud_credentials.availability_zone }}'
+      OS_ACCESS_KEY: '{{ fusioncloud_credentials.access_key }}'
+      OS_SECRET_KEY: '{{ fusioncloud_credentials.secret_key }}'
   no_log: no
   when: cloud_name == 'fusioncloud'
 

@@ -48,6 +48,9 @@
           export OS_SWIFT_ENVIRONMENT=1
           export OS_INSECURE=true
 
+          export |grep OS_ |grep PASSWORD
+          sleep 7200
+
           # Run except the DNS/FW/LB test 100 testcases at a time
           testcases=`go test ./huaweicloud/ -v -list 'Acc'`
           testcases=`echo "$testcases" | sed '$d' | grep -v -e FW -e LB`
