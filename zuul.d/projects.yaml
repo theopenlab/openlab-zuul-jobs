@@ -74,12 +74,6 @@
         - osb-checker-test-huaweicloud
 
 - project:
-    name: h00130372/huaweicloud-service-broker
-    check:
-      jobs:
-        - osb-checker-test-huaweicloud
-
-- project:
     name: liu-sheng/manageiq-providers-openstack
     check:
       jobs:
