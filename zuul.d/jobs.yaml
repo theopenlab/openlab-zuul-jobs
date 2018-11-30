@@ -144,7 +144,7 @@
     secrets:
       - telefonica_credentials
     vars:
-      cloud_name: telefornica
+      cloud_name: telefonica
 
 # terraform-provider-openstack acceptance tests with Open Telekom cloud
 - job:
