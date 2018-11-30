@@ -15,17 +15,17 @@
           set -o pipefail
           set -x
           export OS_SHARE_NETWORK_ID="foobar"
-          export OS_FLAVOR_ID_RESIZE='computev2-1'
-          export OS_FLAVOR_ID='computev1-1'
+          export OS_FLAVOR_ID_RESIZE='rds.s1.medium'
+          export OS_FLAVOR_ID='rds.c2.medium'
           export OS_POOL_NAME="admin_external_net"
           export OS_EXTGW_ID=`openstack network list -f value |grep admin_external_net | awk -F ' ' '{print $1}'`
-          # TODO
-          # export OS_IMAGE_NAME=Community_Ubuntu_16.04_TSI_latest
-          # export OS_IMAGE_ID=d6944a41-5ec7-44a4-970e-ce330da390d2
+          export OS_IMAGE_NAME="Ubuntu 16.04 server 64bit"
+          export OS_IMAGE_ID=bb3faf74-55a2-427e-9d59-1e6d53bd6ca6
           export OS_NETWORK_NAME="openlab-jobs-net"
           export OS_NETWORK_ID="$(openstack network show openlab-jobs-net -f value -c id)"
           export OS_VPC_ID="$(openstack router show openlab-jobs-vpc -f value -c id)"
           export OS_SWIFT_ENVIRONMENT=1
+          openstack OS_INSECURE=true
 
           # Run except the DNS/FW/LB test 100 testcases at a time
           testcases=`go test ./huaweicloud/ -v -list 'Acc'`

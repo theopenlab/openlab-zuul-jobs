@@ -84,3 +84,10 @@
     check:
       jobs:
         - manageiq-providers-openstack-test-devstack
+
+- project:
+    name: liu-sheng/terraform-provider-huaweicloud
+    check:
+      jobs:
+        - terraform-provider-huaweicloud-acceptance-test-fusioncloud
+        #- terraform-provider-openstack-acceptance-test-fusioncloud
