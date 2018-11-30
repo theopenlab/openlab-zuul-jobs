@@ -27,12 +27,13 @@
     - name: Run acceptance tests with terraform-provider-huaweicloud against fusioncloud
       shell:
         cmd: |
+          set -e
+          set -o pipefail
+          set -x
           apt-get install python-pip -y
           pip install -U python-openstackclient
           alias openstack="openstack --insecure"
 
-          set -o pipefail
-          set -x
           export OS_SHARE_NETWORK_ID="foobar"
           export OS_FLAVOR_ID_RESIZE='rds.s1.medium'
           export OS_FLAVOR_ID='rds.c2.medium'

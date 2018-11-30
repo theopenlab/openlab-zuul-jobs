@@ -27,6 +27,9 @@
     - name: Run acceptance tests with terraform-provider-openstack against fusioncloud
       shell:
         cmd: |
+          set -e
+          set -o pipefail
+          set -x
           apt-get install python-pip -y
           pip install -U python-openstackclient
           alias openstack="openstack --insecure"
@@ -43,10 +46,6 @@
           export OS_VPC_ID="$(openstack router show openlab-jobs-vpc -f value -c id)"
           export OS_SWIFT_ENVIRONMENT=1
           openstack OS_INSECURE=true
-
-          set -e
-          set -o pipefail
-          set -x
 
           # Run except the DNS/FW/LB test 100 testcases at a time
           testcases=`go test ./openstack/ -v -list 'Acc'`
