@@ -6,6 +6,24 @@
       vars:
         cloud_name: 'fusioncloud'
   tasks:
+    - name: workaround for fusioncloud domain name mapping
+      shell:
+        cmd: |
+          cat << EOF >> /etc/hosts
+
+          58.255.93.185 iam-apigateway-proxy.fusioncloud.huawei.com
+          58.255.93.185 iam-cache-proxy.fusioncloud.huawei.com
+          58.255.93.185 ecs.shenzhen-1.fusioncloud.huawei.com
+          58.255.93.185 evs.shenzhen-1.fusioncloud.huawei.com
+          58.255.93.185 vpc.shenzhen-1.fusioncloud.huawei.com
+          58.255.93.185 bms.shenzhen-1.fusioncloud.huawei.com
+          58.255.93.185 ccs.shenzhen-1.fusioncloud.huawei.com
+          58.255.93.185 as.shenzhen-1.fusioncloud.huawei.com
+          58.255.93.185 ims.shenzhen-1.fusioncloud.huawei.com
+          58.255.93.185 rts.shenzhen-1.fusioncloud.huawei.com
+          EOF
+        executable: /bin/bash
+
     - name: Run acceptance tests with terraform-provider-openstack against fusioncloud
       shell:
         cmd: |
