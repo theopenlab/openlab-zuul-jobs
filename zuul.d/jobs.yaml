@@ -785,8 +785,8 @@
     description: |
       Run acceptance tests of terraform-provider-huaweicloud repo against fusioncloud
     run: playbooks/terraform-provider-huaweicloud-acceptance-test-fusioncloud/run.yaml
-    # secrets:
-    #   - fusioncloud_credentials
+    secrets:
+      - fusioncloud_credentials
 
 # terraform-provider-openstack acceptance tests against FusionCloud
 - job:
@@ -795,5 +795,5 @@
     description: |
       Run acceptance tests of terraform-provider-openstack repo against fusioncloud
     run: playbooks/terraform-provider-openstack-acceptance-test-fusioncloud/run.yaml
-    # secrets:
-    #   - fusioncloud_credentials
+    secrets:
+      - fusioncloud_credentials
