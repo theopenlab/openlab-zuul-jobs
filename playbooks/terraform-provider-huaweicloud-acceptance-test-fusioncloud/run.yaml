@@ -11,6 +11,7 @@
         cmd: |
           apt-get install python-pip -y
           pip install -U python-openstackclient
+          alias openstack="openstack --insecure"
 
           set -o pipefail
           set -x

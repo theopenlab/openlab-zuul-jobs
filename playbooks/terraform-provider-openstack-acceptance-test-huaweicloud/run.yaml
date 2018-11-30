@@ -12,6 +12,7 @@
           apt-get install python-pip -y
           pip install -U python-openstackclient
 
+
           openstack flavor create m1.acctest --id 99 --ram 512 --disk 5 --vcpu 1 --ephemeral 10
           openstack flavor create m1.resize --id 98 --ram 512 --disk 6 --vcpu 1 --ephemeral 10
           unset OS_DOMAIN_ID

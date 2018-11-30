@@ -84,4 +84,9 @@
     check:
       jobs:
         - terraform-provider-huaweicloud-acceptance-test-fusioncloud
-        #- terraform-provider-openstack-acceptance-test-fusioncloud
+
+- project:
+    name: liu-sheng/terraform-provider-openstack
+    check:
+      jobs:
+        - terraform-provider-openstack-acceptance-test-fusioncloud

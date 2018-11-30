@@ -11,6 +11,7 @@
         cmd: |
           apt-get install python-pip -y
           pip install -U python-openstackclient
+          alias openstack="openstack --insecure"
 
           export OS_SHARE_NETWORK_ID="foobar"
           export OS_FLAVOR_ID_RESIZE='rds.s1.medium'
