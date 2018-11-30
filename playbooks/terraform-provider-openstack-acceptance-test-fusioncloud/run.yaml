@@ -45,7 +45,7 @@
           export OS_NETWORK_ID="$(openstack network show openlab-jobs-net -f value -c id)"
           export OS_VPC_ID="$(openstack router show openlab-jobs-vpc -f value -c id)"
           export OS_SWIFT_ENVIRONMENT=1
-          openstack OS_INSECURE=true
+          export OS_INSECURE=true
 
           # Run except the DNS/FW/LB test 100 testcases at a time
           testcases=`go test ./openstack/ -v -list 'Acc'`
