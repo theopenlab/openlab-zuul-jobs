@@ -45,7 +45,6 @@
           export OS_NETWORK_NAME="openlab-jobs-net"
           export OS_NETWORK_ID="$(openstack network show openlab-jobs-net -f value -c id)"
           export OS_VPC_ID="$(openstack router show openlab-jobs-vpc -f value -c id)"
-          export OS_SWIFT_ENVIRONMENT=1
           export OS_INSECURE=true
           # can only set one of OS_DOMAIN_ID and OS_DOMAIN_NAME
           unset OS_DOMAIN_ID
