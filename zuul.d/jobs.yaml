@@ -141,6 +141,7 @@
     description: |
       Run acceptance tests of terraform-provider-openstack repo against telefonica cloud
     run: playbooks/terraform-provider-openstack-acceptance-test-public-clouds/run.yaml
+    post-run: playbooks/terraform-provider-openstack-acceptance-test-public-clouds/post.yaml
     secrets:
       - telefonica_credentials
     vars:
@@ -153,6 +154,7 @@
     description: |
       Run acceptance tests of terraform-provider-openstack repo against opentelekomcloud
     run: playbooks/terraform-provider-openstack-acceptance-test-public-clouds/run.yaml
+    post-run: playbooks/terraform-provider-openstack-acceptance-test-public-clouds/post.yaml
     secrets:
       - opentelekomcloud_credentials
     vars:
@@ -165,6 +167,7 @@
     description: |
       Run acceptance tests of terraform-provider-openstack repo against orange cloud
     run: playbooks/terraform-provider-openstack-acceptance-test-public-clouds/run.yaml
+    post-run: playbooks/terraform-provider-openstack-acceptance-test-public-clouds/post.yaml
     secrets:
       - orange_credentials
     vars:
@@ -177,6 +180,7 @@
     description: |
       Run acceptance tests of terraform-provider-openstack repo against huaweicloud
     run: playbooks/terraform-provider-openstack-acceptance-test-public-clouds/run.yaml
+    post-run: playbooks/terraform-provider-openstack-acceptance-test-public-clouds/post.yaml
     secrets:
       - huaweicloud_credentials
     vars:
