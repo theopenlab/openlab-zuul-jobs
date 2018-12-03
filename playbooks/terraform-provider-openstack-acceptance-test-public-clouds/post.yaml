@@ -1,0 +1,57 @@
+- hosts: all
+  become: yes
+  tasks:
+    - name: Clean up resources for public clouds & terraform-provider-openstack acceptance tests
+      shell:
+        cmd: |
+          set -e
+          set -x
+          # clean up instances
+          for ins_id in `openstack server list -f value |grep instance_1 | awk -F ' ' '{print $1}'`
+          do
+              openstack server delete "${ins_id}"
+          done
+
+          # clean up keypairs
+          for kp_name in `openstack keypair list -f value |grep kp_1 | awk -F ' ' '{print $1}'`
+          do
+              openstack keypair delete "${kp_name}"
+          done
+
+          # clean up security groups
+          for sg_id in `openstack security group list -f value |grep -E 'security_group|security_group_1|security_group_2' | awk -F ' ' '{print $1}'`
+          do
+              openstack securiy group delete "${sg_id}"
+          done
+
+          # clean up images
+          for image_id in `openstack image list -f value |grep 'Rancher TerraformAccTest' | awk -F ' ' '{print $1}'`
+          do
+              openstack image delete "${image_id}"
+          done
+
+          # clean up volumes
+          for vol_id in `openstack volume list -f value |grep -E  'volume_1|volume_1-updated' | awk -F ' ' '{print $1}'`
+          do
+              openstack volume delete "${vol_id}"
+          done
+
+          # clean up ports
+          for port_id in `openstack port list -f value |grep port_1 | awk -F ' ' '{print $1}'`
+          do
+              openstack port delete "${port_id}"
+          done
+
+          # clean up subnets
+          for sub_id in `openstack subnet list -f value |grep subnet_1 | awk -F ' ' '{print $1}'`
+          do
+              openstack subnet delete "${sub_id}"
+          done
+
+          # clean up networks
+          for net_id in `openstack network list -f value |grep network_1 | awk -F ' ' '{print $1}'`
+          do
+              openstack network delete "${net_id}"
+          done
+        executable: /bin/bash
+      environment: '{{ global_env }}'
