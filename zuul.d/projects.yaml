@@ -83,7 +83,7 @@
     name: liu-sheng/terraform-provider-huaweicloud
     check:
       jobs:
-        - terraform-provider-huaweicloud-acceptance-test-fusioncloud
+        - terraform-provider-huaweicloud-v1.2.0-acceptance-test-fusioncloud
 
 - project:
     name: liu-sheng/terraform-provider-openstack
