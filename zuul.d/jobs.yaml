@@ -788,13 +788,14 @@
 
 # terraform-provider-huaweicloud acceptance tests against FusionCloud
 - job:
-    name: terraform-provider-huaweicloud-acceptance-test-fusioncloud
+    name: terraform-provider-huaweicloud-v1.2.0-acceptance-test-fusioncloud
     parent: golang-test
     description: |
       Run acceptance tests of terraform-provider-huaweicloud repo against fusioncloud
     run: playbooks/terraform-provider-huaweicloud-acceptance-test-fusioncloud/run.yaml
     secrets:
       - fusioncloud_credentials
+    override-checkout: v1.2.0
 
 # terraform-provider-openstack acceptance tests against FusionCloud
 - job:
@@ -805,3 +806,15 @@
     run: playbooks/terraform-provider-openstack-acceptance-test-fusioncloud/run.yaml
     secrets:
       - fusioncloud_credentials
+
+# OpenShift-Origin v3.11.0 test against Fusioncloud
+#- job:
+#    name: openshift-origin-v3.11.0-functional-test-fusioncloud
+#    parent: init-test
+#    description: |
+#      Run functional tests of openshift-origin repo of v3.11.0 release against fusioncloud
+#    run: playbooks/openshift-functional-test-devstack/run.yaml
+#    required-projects:
+#      - name: openshift/openshift-ansible
+#        override-checkout: v3.11.0
+#

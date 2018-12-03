@@ -47,8 +47,15 @@
           export OS_VPC_ID="$(openstack router show openlab-jobs-vpc -f value -c id)"
           export OS_SWIFT_ENVIRONMENT=1
           export OS_INSECURE=true
+          # can only set one of OS_DOMAIN_ID and OS_DOMAIN_NAME
+          unset OS_DOMAIN_ID
 
-          sleep 7200
+          # workaround
+          sed -i s/Sys-default/default/ huaweicloud/resource_huaweicloud_compute_instance_v2.go
+          sed -i '/if OS_ACCESS_KEY/,+2d' huaweicloud/provider_test.go
+          sed -i '/if OS_SECRET_KEY/,+2d' huaweicloud/provider_test.go
+          unset OS_ACCESS_KEY
+          unset OS_SECRET_KEY
 
           # Run except the DNS/FW/LB test 100 testcases at a time
           testcases=`go test ./huaweicloud/ -v -list 'Acc'`
