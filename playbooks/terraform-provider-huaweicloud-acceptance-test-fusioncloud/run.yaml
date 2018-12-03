@@ -54,6 +54,8 @@
           sed -i s/Sys-default/default/ huaweicloud/resource_huaweicloud_compute_instance_v2.go
           sed -i '/if OS_ACCESS_KEY/,+2d' huaweicloud/provider_test.go
           sed -i '/if OS_SECRET_KEY/,+2d' huaweicloud/provider_test.go
+          unset OS_ACCESS_KEY
+          unset OS_SECRET_KEY
 
           # Run except the DNS/FW/LB test 100 testcases at a time
           testcases=`go test ./huaweicloud/ -v -list 'Acc'`
