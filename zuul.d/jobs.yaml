@@ -817,8 +817,7 @@
 #    parent: init-test
 #    description: |
 #      Run functional tests of openshift-origin repo of v3.11.0 release against fusioncloud
-#    run: playbooks/openshift-functional-test-devstack/run.yaml
+#    run: playbooks/openshift-orgin-functional-test-fusioncloud/run.yaml
 #    required-projects:
 #      - name: openshift/openshift-ansible
 #        override-checkout: v3.11.0
-#
