@@ -58,11 +58,11 @@
 
           # Run except the DNS/FW/LB test 100 testcases at a time
           testcases=`go test ./huaweicloud/ -v -list 'Acc'`
-          testcases=`echo "$testcases" | sed '$d' | grep -v -e IAM -e Kms -e Rds -e Rts -e RTS -e S3 -e SFS -e SMN -e DNS -e ELB -e Nat -e TestAccProvider`
+          testcases=`echo "$testcases" | sed '$d' | grep -v -e IAM -e Kms -e Rds -e RDS -e S3 -e SFS -e SMN -e DNS -e ELB -e Nat -e TestAccProvider`
           # Add OS_DEBUG=1 TF_LOG=debug flags for debuging
           mkdir -p "{{ ansible_user_dir }}/workspace/test_results/"
 
-          echo "$testcases" | xargs -t -n100 sh -c 'OS_DEBUG=1 TF_LOG=info TF_LOG_PATH={{ ansible_user_dir }}/workspace/test_results/tf_acc.log TF_ACC=1 go test ./huaweicloud/ -v -timeout 120m -run $(echo "$@" | tr " " "|")' argv0 2>&1 | tee $TEST_RESULTS_TXT
+          echo "$testcases" | xargs -t -n100 sh -c 'OS_DEBUG=1 TF_LOG=debug TF_LOG_PATH={{ ansible_user_dir }}/workspace/test_results/tf_acc.log TF_ACC=1 go test ./huaweicloud/ -v -timeout 180m -run $(echo "$@" | tr " " "|")' argv0 2>&1 | tee $TEST_RESULTS_TXT
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ global_env }}'

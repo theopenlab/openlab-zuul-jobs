@@ -797,6 +797,7 @@
     description: |
       Run acceptance tests of terraform-provider-huaweicloud repo against fusioncloud
     run: playbooks/terraform-provider-huaweicloud-acceptance-test-fusioncloud/run.yaml
+    post-run: playbooks/terraform-provider-huaweicloud-acceptance-test-fusioncloud/post.yaml
     secrets:
       - fusioncloud_credentials
     override-checkout: v1.2.0
