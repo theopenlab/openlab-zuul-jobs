@@ -9,52 +9,57 @@
           set -e
           set -x
           # clean up instances
-          for ins_id in `openstack server list -f value -c ID -c Name |grep instance_1 | awk -F ' ' '{print $1}'`
+          for ins_id in `openstack server list --no-name-lookup -f value -c ID -c Name |grep -E ' instance_1$' | awk '{print $1}'`
           do
-              openstack server delete "${ins_id}"
+              openstack server delete "${ins_id}" || true
           done
 
           # clean up keypairs
-          for kp_name in `openstack keypair list -f value -c Name |grep kp_1 | awk -F ' ' '{print $1}'`
+          for kp_name in `openstack keypair list -f value -c Name |grep -E ' kp_1$' | awk '{print $1}'`
           do
-              openstack keypair delete "${kp_name}"
+              openstack keypair delete "${kp_name}" || true
           done
 
           # clean up security groups
-          for sg_id in `openstack security group list -f value -c ID -c Name |grep -E 'security_group|security_group_1|security_group_2' | awk -F ' ' '{print $1}'`
+          for sg_id in `openstack security group list -f value -c ID -c Name |grep -E ' (security_group|security_group_1|security_group_2|secgroup_1|secgroup_2)$' | awk '{print $1}'`
           do
-              openstack securiy group delete "${sg_id}"
+              openstack securiy group delete "${sg_id}" || true
           done
 
           # clean up images
-          for image_id in `openstack image list -f value -c ID -c Name |grep 'Rancher TerraformAccTest' | awk -F ' ' '{print $1}'`
+          for image_id in `openstack image list -f value -c ID -c Name |grep -E ' Rancher TerraformAccTest$' | awk '{print $1}'`
           do
-              openstack image delete "${image_id}"
+              openstack image delete "${image_id}" || true
           done
 
           # clean up volumes
-          for vol_id in `openstack volume list -f value -c ID -c Name |grep -E  'volume_1|volume_1-updated' | awk -F ' ' '{print $1}'`
+          for vol_id in `openstack volume list -f value -c ID -c Name |grep -E  ' (volume_1|volume_1-updated)$' | awk '{print $1}'`
           do
-              openstack volume delete "${vol_id}"
+              openstack volume delete "${vol_id}" || true
           done
 
           # clean up ports
-          for port_id in `openstack port list -f value -c ID -c Name |grep port_1 | awk -F ' ' '{print $1}'`
+          for port_id in `openstack port list -f value -c ID -c Name |grep -E ' port_1$' | awk '{print $1}'`
           do
-              openstack port delete "${port_id}"
+              openstack port delete "${port_id}" || true
           done
 
           # clean up subnets
-          for sub_id in `openstack subnet list -f value -c ID -c Name |grep subnet_1 | awk -F ' ' '{print $1}'`
+          for sub_id in `openstack subnet list -f value -c ID -c Name |grep -E ' subnet_1$' | awk '{print $1}'`
           do
-              openstack subnet delete "${sub_id}"
+              for port_id in `openstack port list -f value |grep "$sub_id" | awk '{print $1}'`
+              do
+                  openstack port delete "${port_id}" || true
+              done
+              openstack subnet delete "${sub_id}" || true
           done
 
           # clean up networks
-          for net_id in `openstack network list -f value -c ID -c Name |grep network_1 | awk -F ' ' '{print $1}'`
+          for net_id in `openstack network list -f value -c ID -c Name |grep -E ' network_1$' | awk '{print $1}'`
           do
-              openstack network delete "${net_id}"
+              openstack network delete "${net_id}" || true
           done
+
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ global_env }}'
