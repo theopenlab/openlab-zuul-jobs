@@ -15,7 +15,7 @@
           done
 
           # clean up keypairs
-          for kp_name in `openstack keypair list -f value -c Name |grep -E ' kp_1$' | awk '{print $1}'`
+          for kp_name in `openstack keypair list -f value -c Name |grep -E 'kp_1$' | awk '{print $1}'`
           do
               openstack keypair delete "${kp_name}" || true
           done
@@ -23,7 +23,7 @@
           # clean up security groups
           for sg_id in `openstack security group list -f value -c ID -c Name |grep -E ' (security_group|security_group_1|security_group_2|secgroup_1|secgroup_2)$' | awk '{print $1}'`
           do
-              openstack securiy group delete "${sg_id}" || true
+              openstack security group delete "${sg_id}" || true
           done
 
           # clean up images
