@@ -21,4 +21,5 @@
           openstack image delete `openstack image list -f value -c ID -c Name |grep CirrOS-tf |awk '{ print $1 }'` || true
           openstack keypair delete `openstack keypair list -f value -c Name |grep kp_1` || true
           openstack security group delete `openstack security group list -f value -c ID -c Name |grep -E 'sg_|secgroup_1' |awk '{ print $1 }'` || true
+        executable: /bin/bash
       environment: '{{ global_env }}'
