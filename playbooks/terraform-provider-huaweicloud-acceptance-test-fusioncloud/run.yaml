@@ -59,20 +59,17 @@
           unset OS_SECRET_KEY
 
           # Run test 100 testcases at a time
+          exitcode=0
           alltestcases=`go test ./huaweicloud/ -v -list 'Acc'`
           testcases=`echo "$alltestcases" | sed '$d' | grep -v -e Kms -e Rds -e RDS -e SFS -e SMN -e DNS -e ELB -e Nat -e Images`
           # Add OS_DEBUG=1 TF_LOG=debug flags for debuging
-          echo "$testcases" | xargs -t -n100 sh -c 'OS_DEBUG=1 TF_LOG=debug TF_ACC=1 go test ./huaweicloud/ -v -timeout 180m -run $(echo "$@" | tr " " "|")' argv0 2>&1 | tee $TEST_RESULTS_TXT
-          rc=$?
+          echo "$testcases" | xargs -t -n100 sh -c 'OS_DEBUG=1 TF_LOG=debug TF_ACC=1 go test ./huaweicloud/ -v -timeout 180m -run $(echo "$@" | tr " " "|")' argv0 2>&1 | tee $TEST_RESULTS_TXT || exitcode=$?
 
           # Run image tests in a separate process to avoid messy output
           imagetestcases=`echo "$alltestcases" | sed '$d' | grep Images`
-          echo "$imagetestcases" | xargs -t -n100 sh -c 'TF_LOG=debug TF_ACC=1 go test ./huaweicloud/ -v -timeout 180m -run $(echo "$@" | tr " " "|")' argv0 2>&1 | tee $TEST_RESULTS_TXT
-          image_rc=$?
+          echo "$imagetestcases" | xargs -t -n100 sh -c 'TF_LOG=debug TF_ACC=1 go test ./huaweicloud/ -v -timeout 180m -run $(echo "$@" | tr " " "|")' argv0 2>&1 | tee $TEST_RESULTS_TXT || exitcode=$?
 
-          if [[ $rc -ne 0 || $image_rc -ne 0 ]]; then
-              exit 1
-          fi
+          exit $exitcode
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ global_env }}'
