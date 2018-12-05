@@ -4,67 +4,56 @@
     "user": "{{ broker_username }}",
     "password": "{{ broker_password }}",
     "authentication": "basic",
-    "polling_interval": 3,
-    "max_polling_duration": 300,
-    "provisions": [
+    "cases": [
         {
-            "instance_id": "obs-instance-id-{{ name_uuid }}",
-            "body": {
-                "plan_id": "df0312bf-8189-4482-826e-2370a7f4d805",
-                "service_id": "94e8ffdf-bf9c-422f-b73c-776a3ca69f35",
-                "parameters": {
-                    "bucket_name": "osb-checker-obs-{{ name_uuid }}",
-                    "bucket_policy": "public-read-write"
-                },
-                "organization_guid": "organization_id",
-                "space_guid": "space_id"
-            },
-            "scenario": "new",
-            "notes": "Object Storage Service",
-            "async": false
-        }
-    ],
-    "updates": [
-        {
-            "instance_id": "obs-instance-id-{{ name_uuid }}",
-            "body": {
-                "service_id": "94e8ffdf-bf9c-422f-b73c-776a3ca69f35",
-                "plan_id": "df0312bf-8189-4482-826e-2370a7f4d805",
-                "parameters": {
-                    "bucket_policy": "private",
-                    "status": "Enabled"
-                },
-                "previous_values": {
+            "name": "Object Storage Service Test",
+            "service_id" :"94e8ffdf-bf9c-422f-b73c-776a3ca69f35",
+            "organization_guid": "organization_id",
+            "space_guid": "space_id",
+            "lifecycle": [
+                {
+                    "operation": "provision",
                     "plan_id": "df0312bf-8189-4482-826e-2370a7f4d805",
-                    "service_id": "94e8ffdf-bf9c-422f-b73c-776a3ca69f35",
-                    "organization_id": "organization_id",
-                    "space_id": "space_id"
+                    "async": false,
+                    "parameters": {
+                        "bucket_name": "osb-checker-obs-{{ name_uuid }}",
+                        "bucket_policy": "public-read-write"
+
+                    }
+                },
+                {
+                    "operation": "update",
+                    "plan_id": "df0312bf-8189-4482-826e-2370a7f4d805",
+                    "async": false,
+                    "parameters": {
+                        "bucket_policy": "private",
+                        "status": "Enabled"
+                    }
+                },
+                {
+                    "operation": "bind",
+                    "parameters": {
+                        "service_id": "94e8ffdf-bf9c-422f-b73c-776a3ca69f35",
+                        "plan_id": "df0312bf-8189-4482-826e-2370a7f4d805"
+                    }
+                },
+                {
+                    "operation": "unbind"
+                },
+                {
+                    "operation": "deprovision",
+                    "async": false
                 }
-            },
-            "scenario": "update",
-            "async": false
+            ]
         }
     ],
-    "bindings": [
-        {
-            "instance_id": "obs-instance-id-{{ name_uuid }}",
-            "binding_id": "obs-binding-id-{{ name_uuid }}",
-            "body": {
-                "service_id": "94e8ffdf-bf9c-422f-b73c-776a3ca69f35",
-                "plan_id": "df0312bf-8189-4482-826e-2370a7f4d805"
-            },
-            "async": false,
-            "scenario": "new"
-        },
-        {
-            "instance_id": "obs-instance-id-{{ name_uuid }}",
-            "binding_id": "obs-binding-id-{{ name_uuid }}",
-            "body": {
-                "service_id": "94e8ffdf-bf9c-422f-b73c-776a3ca69f35",
-                "plan_id": "df0312bf-8189-4482-826e-2370a7f4d805"
-            },
-            "async": false,
-            "scenario": "delete"
+    "conflictiveProvision": {
+        "service_id" :"94e8ffdf-bf9c-422f-b73c-776a3ca69f35",
+        "plan_id": "df0312bf-8189-4482-826e-2370a7f4d805",
+        "async": true,
+        "parameters": {
+            "bucket_name": "osb-checker-obs-{{ name_uuid }}",
+            "bucket_policy": "public-read-write"
         }
-    ]
+    }
 }
