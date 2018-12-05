@@ -2,24 +2,22 @@
   become: yes
   roles:
     - config-golang
-    - role: export-cloud-openrc
-      vars:
-        cloud_name: 'opentelekomcloud'
+    - export-cloud-openrc
   tasks:
-    - name: Run acceptance tests with terraform-provider-openstack against opentelekom public cloud
+    - name: Run acceptance tests with terraform-provider-openstack against {{ cloud_name }}
       shell:
         cmd: |
           apt-get install python-pip -y
           pip install -U python-openstackclient
 
+          set -e
           set -o pipefail
           set -x
-          openstack flavor create m1.acctest --id 99 --ram 512 --disk 5 --vcpu 1 --ephemeral 10
-          openstack flavor create m1.resize --id 98 --ram 512 --disk 6 --vcpu 1 --ephemeral 10
+
           unset OS_DOMAIN_ID
           export OS_SHARE_NETWORK_ID="foobar"
-          export OS_FLAVOR_ID_RESIZE='computev2-1'
-          export OS_FLAVOR_ID='computev1-1'
+          export OS_FLAVOR_ID=$(openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column VCPUs | head -n 1 | awk '{print $1}')
+          export OS_FLAVOR_ID_RESIZE=$(openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column VCPUs | awk '{if($2>=2048 && $3>=1){print $1}}' | head -n 1)
           export OS_POOL_NAME="admin_external_net"
           export OS_EXTGW_ID=`openstack network list -f value |grep admin_external_net | awk -F ' ' '{print $1}'`
           export OS_IMAGE_NAME="cirros-0.4.0-x86_64-disk"
@@ -27,15 +25,15 @@
 
           # we pre-create 'openlab-jobs-net', 'openlab-jobs-subnet' and 'openlab-jobs-vpc' for ci jobs
           export OS_NETWORK_NAME="openlab-jobs-net"
-          export OS_NETWORK_ID="205c893d-7363-4fa3-b2a0-5f36387e8a51"
-          export OS_VPC_ID="516afade-9fb1-4dd0-95df-8414b2ac8c27"
+          export OS_NETWORK_ID="$(openstack network show $OS_NETWORK_NAME -f value -c id)"
+          export OS_VPC_ID="$(openstack router show openlab-jobs-vpc -f value -c id)"
 
           export OS_SWIFT_ENVIRONMENT=1
 
           # Run except the DNS/FW/LB test 100 testcases at a time
           testcases=`go test ./openstack/ -v -list 'Acc'`
           testcases=`echo "$testcases" | sed '$d' | grep -v -e FW -e LB`
-          echo "$testcases" | xargs -t -n100 sh -c 'TF_LOG=DEBUG TF_ACC=1 go test ./openstack -v -timeout 120m -run $(echo "$@" | tr " " "|")' argv0 2>&1 | tee $TEST_RESULTS_TXT
+          echo "$testcases" | xargs -t -n100 sh -c 'TF_LOG=DEBUG OS_DEBUG=1 TF_ACC=1 go test ./openstack -v -timeout 120m -run $(echo "$@" | tr " " "|")' argv0 2>&1 | tee $TEST_RESULTS_TXT
 
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'

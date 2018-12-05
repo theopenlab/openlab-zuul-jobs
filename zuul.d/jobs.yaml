@@ -150,9 +150,12 @@
     parent: golang-test
     description: |
       Run acceptance tests of terraform-provider-openstack repo against telefonica cloud
-    run: playbooks/terraform-provider-openstack-acceptance-test-telefonica/run.yaml
+    run: playbooks/terraform-provider-openstack-acceptance-test-public-clouds/run.yaml
+    post-run: playbooks/terraform-provider-openstack-acceptance-test-public-clouds/post.yaml
     secrets:
       - telefonica_credentials
+    vars:
+      cloud_name: telefonica
 
 # terraform-provider-openstack acceptance tests with Open Telekom cloud
 - job:
@@ -160,9 +163,12 @@
     parent: golang-test
     description: |
       Run acceptance tests of terraform-provider-openstack repo against opentelekomcloud
-    run: playbooks/terraform-provider-openstack-acceptance-test-opentelekomcloud/run.yaml
+    run: playbooks/terraform-provider-openstack-acceptance-test-public-clouds/run.yaml
+    post-run: playbooks/terraform-provider-openstack-acceptance-test-public-clouds/post.yaml
     secrets:
       - opentelekomcloud_credentials
+    vars:
+      cloud_name: opentelekomcloud
 
 # terraform-provider-openstack acceptance tests with orange cloud
 - job:
@@ -170,9 +176,12 @@
     parent: golang-test
     description: |
       Run acceptance tests of terraform-provider-openstack repo against orange cloud
-    run: playbooks/terraform-provider-openstack-acceptance-test-orange/run.yaml
+    run: playbooks/terraform-provider-openstack-acceptance-test-public-clouds/run.yaml
+    post-run: playbooks/terraform-provider-openstack-acceptance-test-public-clouds/post.yaml
     secrets:
       - orange_credentials
+    vars:
+      cloud_name: orange
 
 # terraform-provider-openstack acceptance tests with huawei cloud
 - job:
@@ -180,9 +189,12 @@
     parent: golang-test
     description: |
       Run acceptance tests of terraform-provider-openstack repo against huaweicloud
-    run: playbooks/terraform-provider-openstack-acceptance-test-huaweicloud/run.yaml
+    run: playbooks/terraform-provider-openstack-acceptance-test-public-clouds/run.yaml
+    post-run: playbooks/terraform-provider-openstack-acceptance-test-public-clouds/post.yaml
     secrets:
       - huaweicloud_credentials
+    vars:
+      cloud_name: huaweicloud
 
 # Gophercloud acceptance tests with Telefonica cloud
 - job:
