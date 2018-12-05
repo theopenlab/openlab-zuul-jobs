@@ -1,0 +1,76 @@
+- hosts: all
+  become: yes
+  roles:
+    - config-golang
+    - role: export-cloud-openrc
+      vars:
+        cloud_name: 'fusioncloud'
+  tasks:
+    - name: workaround for fusioncloud domain name mapping
+      shell:
+        cmd: |
+          cat << EOF >> /etc/hosts
+
+          58.255.93.185 iam-apigateway-proxy.fusioncloud.huawei.com
+          58.255.93.185 iam-cache-proxy.fusioncloud.huawei.com
+          58.255.93.185 ecs.shenzhen-1.fusioncloud.huawei.com
+          58.255.93.185 evs.shenzhen-1.fusioncloud.huawei.com
+          58.255.93.185 vpc.shenzhen-1.fusioncloud.huawei.com
+          58.255.93.185 bms.shenzhen-1.fusioncloud.huawei.com
+          58.255.93.185 ccs.shenzhen-1.fusioncloud.huawei.com
+          58.255.93.185 as.shenzhen-1.fusioncloud.huawei.com
+          58.255.93.185 ims.shenzhen-1.fusioncloud.huawei.com
+          58.255.93.185 rts.shenzhen-1.fusioncloud.huawei.com
+          EOF
+        executable: /bin/bash
+
+    - name: Run acceptance tests with terraform-provider-huaweicloud against fusioncloud
+      shell:
+        cmd: |
+          set -e
+          set -o pipefail
+          set -x
+          apt-get install python-pip -y
+          pip install -U python-openstackclient
+          shopt -s expand_aliases
+          alias openstack="openstack --insecure"
+
+          export OS_SHARE_NETWORK_ID="foobar"
+          export OS_FLAVOR_ID_RESIZE='rds.s1.medium'
+          export OS_FLAVOR_ID='rds.c2.medium'
+          export OS_POOL_NAME="admin_external_net"
+          export OS_EXTGW_ID=`openstack network list -f value |grep admin_external_net | awk -F ' ' '{print $1}'`
+          export OS_IMAGE_NAME="cirros-0.4.0-x86_64-disk"
+          export OS_IMAGE_ID=$(openstack image show cirros-0.4.0-x86_64-disk -f value -c id)
+          export OS_NETWORK_NAME="openlab-jobs-net"
+          export OS_NETWORK_ID="$(openstack network show openlab-jobs-net -f value -c id)"
+          export OS_VPC_ID="$(openstack router show openlab-jobs-vpc -f value -c id)"
+          export OS_INSECURE=true
+          # can only set one of OS_DOMAIN_ID and OS_DOMAIN_NAME
+          unset OS_DOMAIN_ID
+          # Enable ULB(Neutron LB) tests
+          export OS_ULB_ENVIRONMENT=1
+
+          # workaround
+          sed -i s/Sys-default/default/ huaweicloud/resource_huaweicloud_compute_instance_v2.go
+          sed -i '/if OS_ACCESS_KEY/,+2d' huaweicloud/provider_test.go
+          sed -i '/if OS_SECRET_KEY/,+2d' huaweicloud/provider_test.go
+          unset OS_ACCESS_KEY
+          unset OS_SECRET_KEY
+
+          # Run test 100 testcases at a time
+          exitcode=0
+          alltestcases=`go test ./huaweicloud/ -v -list 'Acc'`
+          # skip the TestAccVpcPeeringConnectionV2DataSource_basic test, because it will raise a panic error and will break other tests running
+          testcases=`echo "$alltestcases" | sed '$d' | grep -v -e Kms -e Rds -e RDS -e SFS -e SMN -e DNS -e ELB -e Nat -e Images -e TestAccVpcPeering`
+          # Add OS_DEBUG=1 TF_LOG=debug flags for debuging
+          echo "$testcases" | xargs -t -n100 sh -c 'OS_DEBUG=1 TF_LOG=debug TF_ACC=1 go test ./huaweicloud/ -v -timeout 180m -run $(echo "$@" | tr " " "|")' argv0 2>&1 | tee -a $TEST_RESULTS_TXT || exitcode=$?
+
+          # Run image tests in a separate process to avoid messy output
+          imagetestcases=`echo "$alltestcases" | sed '$d' | grep Images`
+          echo "$imagetestcases" | xargs -t -n100 sh -c 'TF_LOG=debug TF_ACC=1 go test ./huaweicloud/ -v -timeout 180m -run $(echo "$@" | tr " " "|")' argv0 2>&1 | tee -a $TEST_RESULTS_TXT || exitcode=$?
+
+          exit $exitcode
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
