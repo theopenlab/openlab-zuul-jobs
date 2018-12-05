@@ -4,69 +4,62 @@
     "user": "{{ broker_username }}",
     "password": "{{ broker_password }}",
     "authentication": "basic",
-    "polling_interval": 3,
-    "max_polling_duration": 300,
-    "provisions": [
+    "pollingInterval": 10,
+    "maxPollingNum": 50,
+    "cases": [
         {
-            "instance_id": "dms-instance-id-{{ name_uuid }}",
-            "body": {
-                "plan_id": "d0c150cb-6a2a-47aa-8937-9c55d4615e14",
-                "service_id": "fc0c6ad1-ff5a-499a-8598-fda9fb414fcb",
-                "parameters": {
-                    "username": "username",
-                    "password": "Password1234!",
-                    "name": "osb-checker-dms-{{ name_uuid }}",
-                    "description": "RabbitMQ Single Node Test"
-                },
-                "organization_guid": "organization_id",
-                "space_guid": "space_id"
-            },
-            "scenario": "new",
-            "notes": "Distributed Message Service for RabbitMQ",
-            "async": true
-        }
-    ],
-    "updates": [
-        {
-            "instance_id": "dms-instance-id-{{ name_uuid }}",
-            "body": {
-                "plan_id": "d0c150cb-6a2a-47aa-8937-9c55d4615e14",
-                "service_id": "fc0c6ad1-ff5a-499a-8598-fda9fb414fcb",
-                "parameters": {
-                    "name": "osb-checker-obs-updated-{{ name_uuid }}",
-                    "description": "RabbitMQ Single Node Test1"
-                },
-                "previous_values": {
+            "name": "Distributed Message Service for RabbitMQ",
+            "service_id" :"fc0c6ad1-ff5a-499a-8598-fda9fb414fcb",
+            "organization_guid": "organization_id",
+            "space_guid": "space_id",
+            "lifecycle": [
+                {
+                    "operation": "provision",
                     "plan_id": "d0c150cb-6a2a-47aa-8937-9c55d4615e14",
-                    "service_id": "fc0c6ad1-ff5a-499a-8598-fda9fb414fcb",
-                    "organization_id": "organization_id",
-                    "space_id": "space_id"
+                    "async": true,
+                    "parameters": {
+                        "username": "username",
+                        "password": "Password1234!",
+                        "name": "osb-checker-dms-{{ name_uuid }}",
+                        "description": "RabbitMQ Single Node Test"
+
+                    }
+                },
+                {
+                    "operation": "update",
+                    "plan_id": "d0c150cb-6a2a-47aa-8937-9c55d4615e14",
+                    "async": true,
+                    "parameters": {
+                        "name": "osb-checker-dms-updated-{{ name_uuid }}",
+                        "description": "RabbitMQ Single Node Test1"
+                    }
+                },
+                {
+                    "operation": "bind",
+                    "parameters": {
+                        "service_id": "fc0c6ad1-ff5a-499a-8598-fda9fb414fcb",
+                        "plan_id": "d0c150cb-6a2a-47aa-8937-9c55d4615e14"
+                    }
+                },
+                {
+                    "operation": "unbind"
+                },
+                {
+                    "operation": "deprovision",
+                    "async": true
                 }
-            },
-            "scenario": "update",
-            "async": true
+            ]
         }
     ],
-    "bindings": [
-        {
-            "instance_id": "dms-instance-id-{{ name_uuid }}",
-            "binding_id": "dms-binding-id-{{ name_uuid }}",
-            "body": {
-                "plan_id": "d0c150cb-6a2a-47aa-8937-9c55d4615e14",
-                "service_id": "fc0c6ad1-ff5a-499a-8598-fda9fb414fcb"
-            },
-            "async": true,
-            "scenario": "new"
-        },
-        {
-            "instance_id": "dms-instance-id-{{ name_uuid }}",
-            "binding_id": "dms-binding-id-{{ name_uuid }}",
-            "body": {
-                "plan_id": "d0c150cb-6a2a-47aa-8937-9c55d4615e14",
-                "service_id": "fc0c6ad1-ff5a-499a-8598-fda9fb414fcb"
-            },
-            "async": true,
-            "scenario": "delete"
+    "conflictiveProvision": {
+        "service_id" :"fc0c6ad1-ff5a-499a-8598-fda9fb414fcb",
+        "plan_id": "d0c150cb-6a2a-47aa-8937-9c55d4615e14",
+        "async": true,
+        "parameters": {
+            "name": "osb-checker-dms-{{ name_uuid }}",
+            "username": "username",
+            "password": "Password1234!",
+            "description": "RabbitMQ Single Node Test"
         }
-    ]
+    }
 }
