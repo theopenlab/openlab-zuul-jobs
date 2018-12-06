@@ -31,11 +31,13 @@
           set -x
           pip install -U python-openstackclient
           sleep 7200
-          cd '{{ ansible_user_dir }}/src/github.com/huaweicloud/openshift-ansible'
-          pip install "ansible>=2.6.5,<2.7"
-          ansible --version
-          ansible-playbook -i inventory/hosts.localhost playbooks/prerequisites.yml
-          sleep 7200
+          sed -i "/use_external_ip/ s|v3.9|{{ openshift_release }}|" playbooks/openstack/huawei-inventory/group_vars/OSEv3.yml
+
+          . hack/install.sh
+          # pip install "ansible>=2.6.5,<2.7"
+          # ansible --version
+          # ansible-playbook -i inventory/hosts.localhost playbooks/prerequisites.yml
+          # sleep 7200
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/src/github.com/huaweicloud/openshift-ansible'
       environment: '{{ global_env }}'
