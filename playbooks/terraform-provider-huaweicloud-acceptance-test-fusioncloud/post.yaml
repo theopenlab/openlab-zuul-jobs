@@ -18,7 +18,7 @@
           openstack subnet delete `openstack subnet list -f value -c ID -c Name |grep -E 'tf_test_subnet|subnet_1' |awk '{ print $1 }'` || true
           openstack network delete `openstack network list -f value -c ID -c Name |grep network_1 |awk '{ print $1 }'` || true
           openstack router delete `openstack router list -f value -c ID -c Name |grep -E 'vpc_test|terraform-testacc-vpc-data-source' |awk '{ print $1 }'` || true
-          openstack image delete `openstack image list -f value -c ID -c Name |grep CirrOS-tf |awk '{ print $1 }'` || true
+          openstack image delete `openstack image list -f value -c ID -c Name |grep -E 'CirrOS-tf|Rancher TerraformAccTest' |awk '{ print $1 }'` || true
           openstack keypair delete `openstack keypair list -f value -c Name |grep kp_1` || true
           openstack security group delete `openstack security group list -f value -c ID -c Name |grep -E 'sg_|secgroup_1' |awk '{ print $1 }'` || true
         executable: /bin/bash
