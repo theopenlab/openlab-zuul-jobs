@@ -5,9 +5,14 @@
       vars:
         cloud_name: 'fusioncloud'
 
-    - name: Create keystonerc for openshift-ansible
+    - name: Run Openshift functional tests against fusioncloud
       shell:
         cmd: |
+          set -e
+          mkdir -p '{{ ansible_user_dir }}/src/github.com/huaweicloud/'
+          cd '{{ ansible_user_dir }}/src/github.com/huaweicloud/'
+          git clone http://github.com/huaweicloud/openshift-ansible
+          cd openshift-ansible
           cat << EOF >> keystonerc
           # set your own ENV in the file
           export OS_AUTH_URL={{ global_env.OS_AUTH_URL }}
@@ -21,18 +26,10 @@
           export OS_REGION_NAME={{ global_env.OS_REGION_NAME }}
           export OS_AVAILABILITY_ZONE={{ global_env.OS_AVAILABILITY_ZONE }}
           EOF
-        executable: /bin/bash
-        chdir: '{{ ansible_user_dir }}/src/github.com/huaweicloud/openshift-ansible'
-
-    - name: Run Openshift functional tests against fusioncloud
-      shell:
-        cmd: |
-          set -e
           set -x
           pip install -U python-openstackclient
           sleep 7200
           sed -i "/use_external_ip/ s|v3.9|{{ openshift_release }}|" playbooks/openstack/huawei-inventory/group_vars/OSEv3.yml
-
           . hack/install.sh
           # pip install "ansible>=2.6.5,<2.7"
           # ansible --version

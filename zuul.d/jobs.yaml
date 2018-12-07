@@ -820,8 +820,8 @@
     description: |
       Run functional tests of openshift-origin repo of v3.11.0 release against fusioncloud
     run: playbooks/openshift-orgin-functional-test-fusioncloud/run.yaml
-    required-projects:
-      - huaweicloud/openshift-ansible
+#    required-projects:
+#      - huaweicloud/openshift-ansible
     vars:
       openshift_release: v3.11.0
 #    nodeset: centos-7
