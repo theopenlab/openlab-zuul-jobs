@@ -86,7 +86,7 @@
         - terraform-provider-huaweicloud-v1.2.0-acceptance-test-fusioncloud
 
 - project:
-    name: liu-sheng/orgin
+    name: liu-sheng/origin
     check:
       jobs:
         - openshift-origin-v3.11.0-functional-test-fusioncloud
