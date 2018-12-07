@@ -41,3 +41,9 @@
     nodes:
       - name: ubuntu-xenial-huaweicloud
         label: ubuntu-xenial-huaweicloud
+
+- nodeset:
+    name: centos-7
+    nodes:
+      - name: centos-7
+        label: centos-7

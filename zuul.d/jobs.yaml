@@ -824,3 +824,4 @@
       - huaweicloud/openshift-ansible
     vars:
       openshift_release: v3.11.0
+    nodeset: centos-7
