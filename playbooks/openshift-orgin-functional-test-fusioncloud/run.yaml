@@ -5,6 +5,7 @@
       vars:
         cloud_name: 'fusioncloud'
 
+  tasks:
     - name: Run Openshift functional tests against fusioncloud
       shell:
         cmd: |
