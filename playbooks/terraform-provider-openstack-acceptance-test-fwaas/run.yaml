@@ -32,7 +32,6 @@
           echo export OS_POOL_NAME="public" >> openrc
           echo export OS_FLAVOR_ID=99 >> openrc
           echo export OS_FLAVOR_ID_RESIZE=98 >> openrc
-          echo export OS_SHARE_NETWORK_ID=foobar >> openrc
           source openrc demo demo
           popd
 

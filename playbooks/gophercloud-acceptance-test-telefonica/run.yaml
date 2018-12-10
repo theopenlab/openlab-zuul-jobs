@@ -12,7 +12,6 @@
           apt-get install python-pip -y
           pip install -U python-openstackclient
 
-          export OS_SHARE_NETWORK_ID="foobar"
           export OS_FLAVOR_ID_RESIZE=2
           export OS_FLAVOR_ID=1
           export OS_POOL_NAME="admin_external_net"
@@ -31,6 +30,7 @@
               export OS_NETWORK_ID="$(openstack network create $OS_NETWORK_NAME -f value -c id)"
               openstack subnet create --network $OS_NETWORK_ID --subnet-range 10.0.10.0/24 $_NET_PREFIX-subnet
           fi
+          export OS_SUBNET_ID="$(openstack subnet show $_NET_PREFIX-subnet -f value -c id)"
 
           export OS_VPC_ID="$(openstack router show $_NET_PREFIX-vpc -f value -c id)"
           if [ -z "$OS_VPC_ID" ]; then

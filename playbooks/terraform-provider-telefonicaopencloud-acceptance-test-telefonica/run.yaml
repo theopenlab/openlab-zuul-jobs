@@ -12,7 +12,6 @@
           apt-get install python-pip -y
           pip install -U python-openstackclient
 
-          export OS_SHARE_NETWORK_ID="foobar"
           export OS_FLAVOR_ID_RESIZE='c2.medium'
           export OS_FLAVOR_ID='c1.medium'
           export OS_POOL_NAME="admin_external_net"
