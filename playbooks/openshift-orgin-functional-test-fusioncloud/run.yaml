@@ -17,7 +17,7 @@
 
           git config --global user.email 'zuul@openlab.com'
           git config --global user.name 'openlab'
-          git fetch refs/pull/12/head:pr12
+          git fetch origin refs/pull/12/head:pr12
           git cherry-pick pr12
 
           cat << EOF > keystonerc
