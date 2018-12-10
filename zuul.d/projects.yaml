@@ -124,8 +124,9 @@
     name: terraform-providers/terraform-provider-openstack
     periodic:
       jobs:
-        - terraform-provider-openstack-acceptance-test-telefonica:
-            branches: master
+#        NOTES: Telefonica account is disable
+#        - terraform-provider-openstack-acceptance-test-telefonica:
+#            branches: master
         - terraform-provider-openstack-acceptance-test-opentelekomcloud:
             branches: master
         - terraform-provider-openstack-acceptance-test-orange:

@@ -15,7 +15,6 @@
           set -x
 
           unset OS_DOMAIN_ID
-          export OS_SHARE_NETWORK_ID="foobar"
           export OS_FLAVOR_ID=$(openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column VCPUs | head -n 1 | awk '{print $1}')
           export OS_FLAVOR_ID_RESIZE=$(openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column VCPUs | awk '{if($2>=2048 && $3>=1){print $1}}' | head -n 1)
           export OS_POOL_NAME="admin_external_net"
