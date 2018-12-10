@@ -14,7 +14,13 @@
           cd '{{ ansible_user_dir }}/src/github.com/huaweicloud/'
           git clone http://github.com/huaweicloud/openshift-ansible
           cd openshift-ansible
-          cat << EOF >> keystonerc
+
+          git config --global user.email 'zuul@openlab.com'
+          git config --global user.name 'openlab'
+          git fetch refs/pull/12/head:pr12
+          git cherry-pick pr12
+
+          cat << EOF > keystonerc
           # set your own ENV in the file
           export OS_AUTH_URL={{ global_env.OS_AUTH_URL }}
           export OS_USERNAME={{ global_env.OS_USERNAME }}
@@ -29,12 +35,15 @@
           EOF
           set -x
           pip install -U python-openstackclient
-          sleep 7200
+          shopt -s expand_aliases
+          alias openstack="openstack --insecure"
+          openstack keypair create openshift > openshift.pem
+          chmod 600 openshift.pem
           sed -i "/use_external_ip/ s|v3.9|{{ openshift_release }}|" playbooks/openstack/huawei-inventory/group_vars/OSEv3.yml
-          . hack/install.sh
-          # pip install "ansible>=2.6.5,<2.7"
-          # ansible --version
-          # ansible-playbook -i inventory/hosts.localhost playbooks/prerequisites.yml
-          # sleep 7200
+          . hack/install-ansible.sh
+          . hack/config-files.sh
+          sleep 7200
+          . hack/provision-install-openshift.sh
+
         executable: /bin/bash
       environment: '{{ global_env }}'

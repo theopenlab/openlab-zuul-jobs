@@ -820,6 +820,7 @@
     description: |
       Run functional tests of openshift-origin repo of v3.11.0 release against fusioncloud
     run: playbooks/openshift-orgin-functional-test-fusioncloud/run.yaml
+    post-run: playbooks/openshift-orgin-functional-test-fusioncloud/post.yaml
 #    required-projects:
 #      - huaweicloud/openshift-ansible
     vars:

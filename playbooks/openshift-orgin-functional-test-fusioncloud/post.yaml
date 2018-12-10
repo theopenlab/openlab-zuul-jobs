@@ -1,0 +1,17 @@
+- hosts: all
+  become: yes
+  roles:
+    - role: export-cloud-openrc
+      vars:
+        cloud_name: 'fusioncloud'
+  tasks:
+    - name: Clean up resources terraform-provider-huaweicloud against fusioncloud tests
+      shell:
+        cmd: |
+          set -e
+          set -x
+          shopt -s expand_aliases
+          alias openstack="openstack --insecure"
+          openstack keypair delete openshift || true
+        executable: /bin/bash
+      environment: '{{ global_env }}'
