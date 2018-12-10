@@ -107,7 +107,7 @@
       OS_AVAILABILITY_ZONE: '{{ fusioncloud_credentials.availability_zone }}'
       OS_ACCESS_KEY: '{{ fusioncloud_credentials.access_key }}'
       OS_SECRET_KEY: '{{ fusioncloud_credentials.secret_key }}'
-  no_log: no
+  no_log: yes
   when: cloud_name == 'fusioncloud'
 
 - name: Merge openrc into golang env
