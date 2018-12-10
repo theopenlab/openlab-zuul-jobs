@@ -35,7 +35,7 @@
       OS_SECRET_KEY: '{{ orange_credentials.secret_key }}'
       OS_AVAILABILITY_ZONE: '{{ orange_credentials.availability_zone }}'
       OS_DOMAIN_ID: '{{ orange_credentials.domain_id }}'
-  no_log: no
+  no_log: yes
   when: cloud_name == 'orange'
 
 - name: Set fact for telefonica openrc
@@ -51,7 +51,7 @@
       OS_TENANT_NAME: '{{ telefonica_credentials.project_name }}'
       OS_USERNAME: '{{ telefonica_credentials.user_name }}'
       OS_DOMAIN_ID: '{{ telefonica_credentials.domain_id }}'
-  no_log: no
+  no_log: yes
   when: cloud_name == 'telefonica'
 
 - name: Set fact for huaweicloud openrc
@@ -69,7 +69,7 @@
       OS_ACCESS_KEY: '{{ huaweicloud_credentials.access_key }}'
       OS_SECRET_KEY: '{{ huaweicloud_credentials.secret_key }}'
       OS_DOMAIN_ID: '{{ huaweicloud_credentials.domain_id }}'
-  no_log: no
+  no_log: yes
   when: cloud_name == 'huaweicloud'
 
 - name: Set fact for vexxhost openrc
@@ -88,7 +88,7 @@
       OS_PASSWORD: '{{ vexxhost_credentials.password }}'
       OS_REGION_NAME: '{{ vexxhost_credentials.region_name }}'
       OS_DOMAIN_NAME: '{{ vexxhost_credentials.user_domain_name }}'
-  no_log: no
+  no_log: yes
   when: cloud_name == 'vexxhost'
 
 - name: Set fact for fusioncloud openrc
@@ -107,10 +107,10 @@
       OS_AVAILABILITY_ZONE: '{{ fusioncloud_credentials.availability_zone }}'
       OS_ACCESS_KEY: '{{ fusioncloud_credentials.access_key }}'
       OS_SECRET_KEY: '{{ fusioncloud_credentials.secret_key }}'
-  no_log: no
+  no_log: yes
   when: cloud_name == 'fusioncloud'
 
 - name: Merge openrc into golang env
   set_fact:
     global_env: '{{ global_env | combine(openrc) }}'
-  no_log: no
+  no_log: yes
