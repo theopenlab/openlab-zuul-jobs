@@ -37,5 +37,4 @@
           # ansible-playbook -i inventory/hosts.localhost playbooks/prerequisites.yml
           # sleep 7200
         executable: /bin/bash
-        chdir: '{{ ansible_user_dir }}/src/github.com/huaweicloud/openshift-ansible'
       environment: '{{ global_env }}'
