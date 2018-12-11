@@ -827,4 +827,4 @@
       openshift_release: v3.11.0
     secrets:
       - fusioncloud_credentials
-    nodeset: centos-7
+    # nodeset: centos-7

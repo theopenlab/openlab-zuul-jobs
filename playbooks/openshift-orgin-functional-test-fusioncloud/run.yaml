@@ -34,13 +34,19 @@
           export OS_AVAILABILITY_ZONE={{ global_env.OS_AVAILABILITY_ZONE }}
           EOF
           set -x
-          pip install -U python-openstackclient
+          pip install ansible
+          pip install jinja2
+          pip install shade
+          pip install jmespath
+          pip install dnspython
+          pip install python-openstackclient
+          pip install python-heatclient
           shopt -s expand_aliases
           alias openstack="openstack --insecure"
+
           openstack keypair create openshift > openshift.pem
           chmod 600 openshift.pem
           sed -i "/use_external_ip/ s|v3.9|{{ openshift_release }}|" playbooks/openstack/huawei-inventory/group_vars/OSEv3.yml
-          . hack/install-ansible.sh
           . hack/config-files.sh
           sleep 7200
           . hack/provision-install-openshift.sh
