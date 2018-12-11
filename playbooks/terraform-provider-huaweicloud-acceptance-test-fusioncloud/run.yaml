@@ -61,13 +61,13 @@
           exitcode=0
           alltestcases=`go test ./huaweicloud/ -v -list 'Acc'`
           # skip the TestAccVpcPeeringConnectionV2DataSource_basic test, because it will raise a panic error and will break other tests running
-          testcases=`echo "$alltestcases" | sed '$d' | grep -v -e Kms -e Rds -e RDS -e SFS -e SMN -e DNS -e ELB -e Nat -e Images -e TestAccVpcPeering`
+          testcases=`echo "$alltestcases" | sed '$d' | grep -v -e Kms -e Rds -e RDS -e SFS -e SMN -e DNS -e ELB -e Nat -e Images -e TestAccVpcPeering -e TestAccVpcRouteIdsV2DataSource_basic`
           # Add OS_DEBUG=1 TF_LOG=debug flags for debuging
-          echo "$testcases" | xargs -t -n100 sh -c 'OS_DEBUG=1 TF_LOG=debug TF_ACC=1 go test ./huaweicloud/ -v -timeout 180m -run $(echo "$@" | tr " " "|")' argv0 2>&1 | tee -a $TEST_RESULTS_TXT || exitcode=$?
+          echo "$testcases" | xargs -t -n100 sh -c 'OS_DEBUG=1 TF_LOG=debug TF_ACC=1 go test ./huaweicloud/ -v -timeout 240m -run $(echo "$@" | tr " " "|")' argv0 2>&1 | tee -a $TEST_RESULTS_TXT || exitcode=$?
 
           # Run image tests in a separate process to avoid messy output
           imagetestcases=`echo "$alltestcases" | sed '$d' | grep Images`
-          echo "$imagetestcases" | xargs -t -n100 sh -c 'TF_LOG=debug TF_ACC=1 go test ./huaweicloud/ -v -timeout 180m -run $(echo "$@" | tr " " "|")' argv0 2>&1 | tee -a $TEST_RESULTS_TXT || exitcode=$?
+          echo "$imagetestcases" | xargs -t -n100 sh -c 'TF_LOG=debug TF_ACC=1 go test ./huaweicloud/ -v -timeout 240m -run $(echo "$@" | tr " " "|")' argv0 2>&1 | tee -a $TEST_RESULTS_TXT || exitcode=$?
 
           exit $exitcode
         executable: /bin/bash
