@@ -47,7 +47,7 @@
           openstack keypair create openshift > openshift.pem
           chmod 600 openshift.pem
           sed -i "/use_external_ip/ s|v3.9|{{ openshift_release }}|" playbooks/openstack/huawei-inventory/group_vars/OSEv3.yml
-          . hack/config-files.sh
+          . hack/configure-files.sh
           sleep 7200
           . hack/provision-install-openshift.sh
 
