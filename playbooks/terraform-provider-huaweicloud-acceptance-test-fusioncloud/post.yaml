@@ -17,7 +17,7 @@
           openstack port delete `openstack port list -f value -c ID -c Name |grep port_1 |awk '{ print $1 }'` || true
           openstack subnet delete `openstack subnet list -f value -c ID -c Name |grep -E 'tf_test_subnet|subnet_1|huaweicloud_subnet' |awk '{ print $1 }'` || true
           openstack network delete `openstack network list -f value -c ID -c Name |grep -E 'tf_test_network|network_1' |awk '{ print $1 }'` || true
-          openstack router delete `openstack router list -f value -c ID -c Name |grep -E 'test_vpc|vpc_test|vpc_test1|router_1|router_2|terraform-testacc-vpc-data-source' |awk '{ print $1 }'` || true
+          openstack router delete `openstack router list -f value -c ID -c Name |grep -E 'test_vpc|vpc_test|vpc_test1|router_1|router_2|terraform_provider_test|terraform_provider_test1|terraform-testacc-vpc-data-source' |awk '{ print $1 }'` || true
           openstack image delete `openstack image list -f value -c ID -c Name |grep -E 'CirrOS-tf|Rancher TerraformAccTest' |awk '{ print $1 }'` || true
           openstack keypair delete `openstack keypair list -f value -c Name |grep -E 'hth_key|kp_1'` || true
           openstack security group delete `openstack security group list -f value -c ID -c Name |grep -E 'sg_|secgroup_1' |awk '{ print $1 }'` || true

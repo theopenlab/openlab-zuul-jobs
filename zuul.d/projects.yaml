@@ -170,5 +170,5 @@
     name: terraform-providers/terraform-provider-huaweicloud
     periodic:
       jobs:
-        - terraform-provider-huaweicloud-v1.2.0-acceptance-test-fusioncloud:
+        - terraform-provider-huaweicloud-acceptance-test-fusioncloud:
             branches: master
