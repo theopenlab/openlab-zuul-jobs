@@ -1030,13 +1030,12 @@
 
 # terraform-provider-huaweicloud acceptance tests against FusionCloud
 - job:
-    name: terraform-provider-huaweicloud-v1.2.0-acceptance-test-fusioncloud
+    name: terraform-provider-huaweicloud-acceptance-test-fusioncloud
     parent: golang-test
     description: |
       Run acceptance tests of terraform-provider-huaweicloud repo against fusioncloud
     run: playbooks/terraform-provider-huaweicloud-acceptance-test-fusioncloud/run.yaml
     post-run: playbooks/terraform-provider-huaweicloud-acceptance-test-fusioncloud/post.yaml
-    timeout: 14400
+    timeout: 18000
     secrets:
       - fusioncloud_credentials
-    override-checkout: v1.2.0
