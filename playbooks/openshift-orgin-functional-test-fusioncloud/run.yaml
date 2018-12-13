@@ -32,6 +32,7 @@
           export OS_TENANT_NAME={{ global_env.OS_TENANT_NAME }}
           export OS_REGION_NAME={{ global_env.OS_REGION_NAME }}
           export OS_AVAILABILITY_ZONE={{ global_env.OS_AVAILABILITY_ZONE }}
+          export OS_INSECURE=true
           EOF
           set -x
           pip install ansible
@@ -41,15 +42,33 @@
           pip install dnspython
           pip install python-openstackclient
           pip install python-heatclient
-          shopt -s expand_aliases
-          alias openstack="openstack --insecure"
+          echo 'alias openstack="openstack --insecure"' >> /etc/profile.d/00-osc-alias.sh
+          source /etc/profile.d/00-osc-alias.sh
 
           openstack keypair create openshift > openshift.pem
-          chmod 600 openshift.pem
           sed -i "/use_external_ip/ s|v3.9|{{ openshift_release }}|" playbooks/openstack/huawei-inventory/group_vars/OSEv3.yml
           . hack/configure-files.sh
+          # Check prerequisites
+          ansible-playbook --user root \
+              -i playbooks/openstack/inventory.py \
+              -i playbooks/openstack/fusioncloud-inventory \
+              --private-key ./openshift.pem \
+              playbooks/openstack/openshift-cluster/prerequisites.yml
+
+          # Provision
+          sed -i s/openstack stack/openstack --insecure stack/ roles/openshift_openstack/tasks/provision.yml
+          ansible-playbook --user root \
+              -i playbooks/openstack/inventory.py \
+              -i playbooks/openstack/fusioncloud-inventory \
+              --private-key ./openshift.pem \
+              playbooks/openstack/openshift-cluster/provision.yml
           sleep 7200
-          . hack/provision-install-openshift.sh
+
+          #ansible-playbook --user root \
+          #    -i playbooks/openstack/inventory.py \
+          #    -i playbooks/openstack/fusioncloud-inventory \
+          #    --private-key ./openshift.pem \
+          #    playbooks/openstack/openshift-cluster/provision_install.yml
 
         executable: /bin/bash
       environment: '{{ global_env }}'
