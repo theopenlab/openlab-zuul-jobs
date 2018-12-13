@@ -17,8 +17,8 @@
           shopt -s expand_aliases
           alias openstack="openstack --insecure"
 
-          export OS_FLAVOR_ID_RESIZE='rds.s1.medium'
-          export OS_FLAVOR_ID='rds.c2.medium'
+          export OS_FLAVOR_ID='15c004fe-2f1d-435d-8ef5-d3643a277d0e' # 1U1G10G
+          export OS_FLAVOR_ID_RESIZE='f6b3e920-d8ab-4dab-9286-0300805bebb5' # 2C4G60G
           export OS_POOL_NAME="DemoCenter_extenalNet"
           export OS_EXTGW_ID=`openstack network list -f value |grep ${OS_POOL_NAME} | awk -F ' ' '{print $1}'`
           export OS_IMAGE_NAME="cirros-0.4.0-x86_64-disk"
