@@ -42,8 +42,8 @@
           pip install dnspython
           pip install python-openstackclient
           pip install python-heatclient
-          echo 'alias openstack="openstack --insecure"' >> /etc/profile.d/00-osc-alias.sh
-          source /etc/profile.d/00-osc-alias.sh
+          shopt -s expand_aliases
+          alias openstack="openstack --insecure"
 
           openstack keypair create openshift > openshift.pem
           sed -i "/use_external_ip/ s|v3.9|{{ openshift_release }}|" playbooks/openstack/huawei-inventory/group_vars/OSEv3.yml
