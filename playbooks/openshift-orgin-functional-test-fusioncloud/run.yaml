@@ -56,7 +56,6 @@
               playbooks/openstack/openshift-cluster/prerequisites.yml
 
           # Provision
-          sed -i s/openstack stack/openstack --insecure stack/ roles/openshift_openstack/tasks/provision.yml
           ansible-playbook --user root \
               -i playbooks/openstack/inventory.py \
               -i playbooks/openstack/fusioncloud-inventory \
