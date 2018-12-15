@@ -260,6 +260,11 @@
       Run Kubernetes openstack-cloud-controller-manager unit test in devstack instance
     run: playbooks/cloud-provider-openstack-unittest-nested/run.yaml
     nodeset: ubuntu-xenial
+    irrelevant-files:
+      - docs/.*
+      - .*\.md
+      - OWNERS
+      - SECURITY_CONTACTS
 
 # Kubernetes cloud-provider-openstack jobs
 - job:
@@ -270,6 +275,11 @@
     pre-run: playbooks/cloud-provider-openstack-test/pre.yaml
     post-run: playbooks/cloud-provider-openstack-test/post.yaml
     nodeset: ubuntu-xenial-vexxhost
+    irrelevant-files:
+      - docs/.*
+      - .*\.md
+      - OWNERS
+      - SECURITY_CONTACTS
     secrets:
       - vexxhost_credentials
     vars:
@@ -284,6 +294,11 @@
     description: |
       Run unit test of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-unittest/run.yaml
+    irrelevant-files:
+      - docs/.*
+      - .*\.md
+      - OWNERS
+      - SECURITY_CONTACTS
     secrets:
       - vexxhost_credentials
 
@@ -294,6 +309,11 @@
       Run gofmt and typo checking of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-format/run.yaml
     nodeset: ubuntu-xenial-ut
+    irrelevant-files:
+      - docs/.*
+      - .*\.md
+      - OWNERS
+      - SECURITY_CONTACTS
 
 - job:
     name: cloud-provider-openstack-acceptance-test-k8s-cinder
@@ -302,6 +322,11 @@
       Run cinder in-tree acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-k8s-cinder/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-k8s-cinder/post.yaml
+    irrelevant-files:
+      - docs/.*
+      - .*\.md
+      - OWNERS
+      - SECURITY_CONTACTS
     secrets:
       - vexxhost_credentials
 
@@ -312,6 +337,11 @@
       Run Kubernetes E2E Conformance tests against Kubernetes master
     run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/post.yaml
+    irrelevant-files:
+      - docs/.*
+      - .*\.md
+      - OWNERS
+      - SECURITY_CONTACTS
     secrets:
       - vexxhost_credentials
       - gcp_account
@@ -322,6 +352,11 @@
     parent: cloud-provider-openstack-acceptance-test-e2e-conformance
     description: |
       Run Kubernetes E2E Conformance tests against Kubernetes v1.10
+    irrelevant-files:
+      - docs/.*
+      - .*\.md
+      - OWNERS
+      - SECURITY_CONTACTS
     vars:
       k8s_version: 'release-1.10'
 
@@ -330,6 +365,11 @@
     parent: cloud-provider-openstack-acceptance-test-e2e-conformance
     description: |
       Run Kubernetes E2E Conformance tests against Kubernetes v1.11
+    irrelevant-files:
+      - docs/.*
+      - .*\.md
+      - OWNERS
+      - SECURITY_CONTACTS
     vars:
       k8s_version: 'release-1.11'
 
@@ -338,6 +378,11 @@
     parent: cloud-provider-openstack-acceptance-test-e2e-conformance
     description: |
       Run Kubernetes E2E Conformance tests against Kubernetes v1.12
+    irrelevant-files:
+      - docs/.*
+      - .*\.md
+      - OWNERS
+      - SECURITY_CONTACTS
     vars:
       k8s_version: 'release-1.12'
 
@@ -349,6 +394,11 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-standalone-cinder/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-standalone-cinder/post.yaml
     nodeset: ubuntu-xenial
+    irrelevant-files:
+      - docs/.*
+      - .*\.md
+      - OWNERS
+      - SECURITY_CONTACTS
 
 - job:
     name: cloud-provider-openstack-acceptance-test-csi-cinder
@@ -357,6 +407,11 @@
       Run cinder csi acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/post.yaml
+    irrelevant-files:
+      - docs/.*
+      - .*\.md
+      - OWNERS
+      - SECURITY_CONTACTS
     secrets:
       - vexxhost_credentials
 
@@ -368,6 +423,11 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-manila-provisioner/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-manila-provisioner/post.yaml
     nodeset: ubuntu-xenial
+    irrelevant-files:
+      - docs/.*
+      - .*\.md
+      - OWNERS
+      - SECURITY_CONTACTS
 
 - job:
     name: cloud-provider-openstack-acceptance-test-lb-octavia
@@ -376,6 +436,11 @@
       Run lb acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-lb-octavia/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-lb-octavia/post.yaml
+    irrelevant-files:
+      - docs/.*
+      - .*\.md
+      - OWNERS
+      - SECURITY_CONTACTS
     secrets:
       - vexxhost_credentials
 
@@ -386,6 +451,11 @@
       Run keystone auth acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-keystone-authentication-authorization/run.yaml
     nodeset: ubuntu-xenial
+    irrelevant-files:
+      - docs/.*
+      - .*\.md
+      - OWNERS
+      - SECURITY_CONTACTS
 
 - job:
     name: cloud-provider-openstack-acceptance-test-flexvolume-cinder
@@ -394,6 +464,11 @@
       Run cinder flexvolume acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-flexvolume-cinder/run.yaml
     nodeset: ubuntu-xenial
+    irrelevant-files:
+      - docs/.*
+      - .*\.md
+      - OWNERS
+      - SECURITY_CONTACTS
 
 - job:
     name: cluster-api-provider-openstack-image-build
