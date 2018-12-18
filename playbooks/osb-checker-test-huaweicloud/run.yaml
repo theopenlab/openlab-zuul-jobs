@@ -69,6 +69,9 @@
           EOF
 
           # Install huaweicloud/huaweicloud-service-broker
+          mkdir -p $GOPATH/src/github.com/huaweicloud/
+          cp -r '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}' $GOPATH/src/github.com/huaweicloud/
+          cd $GOPATH/src/github.com/huaweicloud/huaweicloud-service-broker
           go get ./...
           go install
 
