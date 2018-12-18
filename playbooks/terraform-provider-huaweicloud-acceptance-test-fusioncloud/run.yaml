@@ -6,6 +6,23 @@
       vars:
         cloud_name: 'fusioncloud'
   tasks:
+    - name: workaround for fusioncloud domain name mapping
+      shell:
+        cmd: |
+          cat << EOF >> /etc/hosts
+          58.255.93.185 iam-apigateway-proxy.fusioncloud.huawei.com
+          58.255.93.185 iam-cache-proxy.fusioncloud.huawei.com
+          58.255.93.185 ecs-api.fusioncloud.huawei.com
+          58.255.93.185 evs-api.fusioncloud.huawei.com
+          58.255.93.185 vpc-api.fusioncloud.huawei.com
+          58.255.93.185 bms-api.fusioncloud.huawei.com
+          58.255.93.185 ccs-api.fusioncloud.huawei.com
+          58.255.93.185 as-api.fusioncloud.huawei.com
+          58.255.93.185 ims-api.fusioncloud.huawei.com
+          58.255.93.185 rts-api.fusioncloud.huawei.com
+          EOF
+        executable: /bin/bash
+
     - name: Run acceptance tests with terraform-provider-huaweicloud against fusioncloud
       shell:
         cmd: |
