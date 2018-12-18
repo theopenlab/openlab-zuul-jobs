@@ -46,8 +46,9 @@
           alias openstack="openstack --insecure"
 
           openstack keypair create openshift > openshift.pem
-          sed -i "/use_external_ip/ s|v3.9|{{ openshift_release }}|" playbooks/openstack/huawei-inventory/group_vars/OSEv3.yml
+          # sed -i "/openshift_release/ s|v3.9|{{ openshift_release }}|" playbooks/openstack/fusioncloud-inventory/group_vars/OSEv3.yml
           . hack/configure-files.sh
+
           # Check prerequisites
           ansible-playbook --user root \
               -i playbooks/openstack/inventory.py \
@@ -61,13 +62,12 @@
               -i playbooks/openstack/fusioncloud-inventory \
               --private-key ./openshift.pem \
               playbooks/openstack/openshift-cluster/provision.yml
-          sleep 7200
 
-          #ansible-playbook --user root \
-          #    -i playbooks/openstack/inventory.py \
-          #    -i playbooks/openstack/fusioncloud-inventory \
-          #    --private-key ./openshift.pem \
-          #    playbooks/openstack/openshift-cluster/provision_install.yml
-
+          # Install openshift cluster
+          ansible-playbook --user root \
+              -i playbooks/openstack/inventory.py \
+              -i playbooks/openstack/fusioncloud-inventory \
+              --private-key ./openshift.pem \
+              playbooks/openstack/openshift-cluster/install.yml
         executable: /bin/bash
       environment: '{{ global_env }}'

@@ -87,6 +87,9 @@
           npm install
           npm install --save-dev mocha-simple-html-reporter
           npm install --global mocha
+          pushd $GOPATH/src/github.com/openservicebrokerapi/osb-checker/common/
+          npm install
+          popd
           set +x
           checker_cfg=config_mock.json
           mkdir -p "{{ ansible_user_dir }}/workspace/test_results/"
