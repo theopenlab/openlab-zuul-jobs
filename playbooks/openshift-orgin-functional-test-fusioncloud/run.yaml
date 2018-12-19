@@ -42,12 +42,14 @@
           pip install dnspython
           pip install python-openstackclient
           pip install python-heatclient
-          shopt -s expand_aliases
-          alias openstack="openstack --insecure"
+          # shopt -s expand_aliases
+          # alias openstack="openstack --insecure"
 
+          openstack keypair delete openshift || true
           openstack keypair create openshift > openshift.pem
           # sed -i "/openshift_release/ s|v3.9|{{ openshift_release }}|" playbooks/openstack/fusioncloud-inventory/group_vars/OSEv3.yml
-          . hack/configure-files.sh
+          chmod 400 ./openshift.pem
+          . ./keystonerc
 
           # Check prerequisites
           ansible-playbook --user root \

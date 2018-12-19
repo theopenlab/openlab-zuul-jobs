@@ -13,5 +13,6 @@
           shopt -s expand_aliases
           alias openstack="openstack --insecure"
           openstack keypair delete openshift || true
+          openstack stack delete --wait --yes openshift.example.com
         executable: /bin/bash
       environment: '{{ global_env }}'
