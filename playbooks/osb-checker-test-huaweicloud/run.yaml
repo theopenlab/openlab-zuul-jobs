@@ -83,6 +83,9 @@
           sleep 20
 
           # openservicebrokerapi/osb-checker is required project. Run tests
+          pushd $GOPATH/src/github.com/openservicebrokerapi/osb-checker/common/
+          npm install
+          popd
           pushd $GOPATH/src/github.com/openservicebrokerapi/osb-checker/2.13/tests/
           npm install
           npm install --save-dev mocha-simple-html-reporter
