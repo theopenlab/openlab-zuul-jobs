@@ -20,6 +20,7 @@
           58.255.93.185 as-api.fusioncloud.huawei.com
           58.255.93.185 ims-api.fusioncloud.huawei.com
           58.255.93.185 rts-api.fusioncloud.huawei.com
+          58.255.93.171 obs-api.fusioncloud.huawei.com
           EOF
         executable: /bin/bash
 
@@ -37,7 +38,7 @@
           export OS_FLAVOR_ID='0c324e05-f9d6-431c-8010-a33fcd4708e9' # 1U1G0G test01-jim
           export OS_FLAVOR_ID_RESIZE='67dfdda6-67da-42a6-8d48-c401959c06cc' # 2U2G0G test02-jim
           export OS_POOL_NAME="DemoCenter_extenalNet"
-          export OS_EXTGW_ID=`openstack network list -f value |grep ${OS_POOL_NAME} | awk -F ' ' '{print $1}'`
+          export OS_EXTGW_ID=`openstack network show dummy_external_network -f value -c id`
           export OS_IMAGE_NAME="cirros-0.4.0-x86_64-disk"
           export OS_IMAGE_ID=$(openstack image show ${OS_IMAGE_NAME} -f value -c id)
           export OS_NETWORK_NAME="openlab-jobs-net"
@@ -49,12 +50,8 @@
           # can only set one of OS_DOMAIN_ID and OS_DOMAIN_NAME
           unset OS_DOMAIN_ID
 
-          # workaround
+          # workaround, see terraform-providers/terraform-provider-huaweicloud#50
           sed -i s/Sys-default/default/ huaweicloud/resource_huaweicloud_compute_instance_v2.go
-          sed -i '/if OS_ACCESS_KEY/,+2d' huaweicloud/provider_test.go
-          sed -i '/if OS_SECRET_KEY/,+2d' huaweicloud/provider_test.go
-          unset OS_ACCESS_KEY
-          unset OS_SECRET_KEY
 
           # Run test 100 testcases at a time
           exitcode=0
