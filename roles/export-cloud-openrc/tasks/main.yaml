@@ -100,6 +100,7 @@
       OS_IDENTITY_API_VERSION: '{{ fusioncloud_credentials.identity_api_version }}'
       OS_DOMAIN_NAME: '{{ fusioncloud_credentials.domain_name }}'
       OS_PROJECT_NAME: '{{ fusioncloud_credentials.project_name}}'
+      OS_PROJECT_ID: '{{ fusioncloud_credentials.project_id}}'
       OS_REGION_NAME: '{{ fusioncloud_credentials.region_name}}'
       OS_TENANT_NAME: '{{ fusioncloud_credentials.project_name }}'
       OS_USERNAME: '{{ fusioncloud_credentials.user_name }}'
