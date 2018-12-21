@@ -94,14 +94,12 @@
           npm install
           popd
           set +x
-          checker_cfg=config_mock.json
           mkdir -p "{{ ansible_user_dir }}/workspace/test_results/"
           for service in obs dcs rds dms; do
               echo "#########################################################################"
               echo "Runing osb-checker against huaweicloud ${service} service...."
-              sed -i "s/${checker_cfg}/config_huaweicloud_${service}.json/g" test/test.js
+              export OSB_CHECKER_CONFIG_FILE="{{ ansible_user_dir }}/src/github.com/openservicebrokerapi/osb-checker/2.13/tests/test/configs/config_huaweicloud_${service}.json"
               mocha -t 200000 test/test.js --reporter mocha-simple-html-reporter --reporter-options output="{{ ansible_user_dir }}/workspace/test_results/${service}.html" || exitcode=$?
-              checker_cfg=config_huaweicloud_${service}.json
           done
           popd
           set -x
