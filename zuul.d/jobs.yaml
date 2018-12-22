@@ -828,3 +828,16 @@
     secrets:
       - fusioncloud_credentials
     # nodeset: centos-7
+
+- job:
+    name: openshift-origin-v3.9.0-functional-test-huaweicloud
+    parent: init-test
+    description: |
+      Run functional tests of openshift-origin repo of v3.9.0 release against huaweicloud
+    run: playbooks/openshift-orgin-functional-test-public-clouds/run.yaml
+    post-run: playbooks/openshift-orgin-functional-test-public-clouds/post.yaml
+    vars:
+      cloud_name: huaweicloud
+      openshift_release: v3.6
+    secrets:
+      - huaweicloud_credentials

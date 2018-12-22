@@ -89,4 +89,5 @@
     name: liu-sheng/origin
     check:
       jobs:
-        - openshift-origin-v3.11.0-functional-test-fusioncloud
+        #- openshift-origin-v3.11.0-functional-test-fusioncloud
+        - openshift-origin-v3.9.0-functional-test-huaweicloud

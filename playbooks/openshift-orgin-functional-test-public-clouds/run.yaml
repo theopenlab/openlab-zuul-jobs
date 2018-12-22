@@ -1,0 +1,72 @@
+- hosts: all
+  become: yes
+  roles:
+    - role: export-cloud-openrc
+  tasks:
+    - name: Run Openshift functional tests against {{ huaweicloud }}
+      shell:
+        cmd: |
+          set -e
+          mkdir -p '{{ ansible_user_dir }}/src/github.com/huaweicloud/'
+          cd '{{ ansible_user_dir }}/src/github.com/huaweicloud/'
+          git clone http://github.com/huaweicloud/openshift-ansible
+          cd openshift-ansible
+
+          # git config --global user.email 'zuul@openlab.com'
+          # git config --global user.name 'openlab'
+          # git fetch origin refs/pull/12/head:pr12
+          # git cherry-pick pr12
+
+          cat << EOF > keystonerc
+          # set your own ENV in the file
+          export OS_AUTH_URL={{ global_env.OS_AUTH_URL }}
+          export OS_USERNAME={{ global_env.OS_USERNAME }}
+          export OS_PASSWORD={{ global_env.OS_PASSWORD }}
+          export OS_IDENTITY_API_VERSION={{ global_env.OS_IDENTITY_API_VERSION }}
+          export OS_DOMAIN_NAME={{ global_env.OS_DOMAIN_NAME }}
+          export OS_USER_DOMAIN_NAME={{ global_env.OS_DOMAIN_NAME }}
+          export OS_PROJECT_DOMAIN_NAME={{ global_env.OS_DOMAIN_NAME }}
+          export OS_TENANT_NAME={{ global_env.OS_TENANT_NAME }}
+          export OS_REGION_NAME={{ global_env.OS_REGION_NAME }}
+          export OS_AVAILABILITY_ZONE={{ global_env.OS_AVAILABILITY_ZONE }}
+          EOF
+          set -x
+          pip install ansible
+          pip install jinja2
+          pip install shade
+          pip install jmespath
+          pip install dnspython
+          pip install python-openstackclient
+          pip install python-heatclient
+          # shopt -s expand_aliases
+          # alias openstack="openstack --insecure"
+
+          openstack keypair delete openshift || true
+          openstack keypair create openshift > openshift.pem
+          # sed -i "/openshift_release/ s|v3.9|{{ openshift_release }}|" playbooks/openstack/fusioncloud-inventory/group_vars/OSEv3.yml
+          chmod 400 ./openshift.pem
+          . ./keystonerc
+
+          # Check prerequisites
+          ansible-playbook --user root \
+              -i playbooks/openstack/inventory.py \
+              -i playbooks/openstack/huawei-inventory \
+              --private-key ./openshift.pem \
+              playbooks/openstack/openshift-cluster/prerequisites.yml
+
+          # Provision
+          ansible-playbook --user root \
+              -i playbooks/openstack/inventory.py \
+              -i playbooks/openstack/huawei-inventory \
+              --private-key ./openshift.pem \
+              playbooks/openstack/openshift-cluster/provision.yml
+
+          # Install openshift cluster
+          ansible-playbook --user root \
+              -i playbooks/openstack/inventory.py \
+              -i playbooks/openstack/huawei-inventory \
+              --private-key ./openshift.pem \
+              playbooks/openstack/openshift-cluster/install.yml
+          sleep 7200
+        executable: /bin/bash
+      environment: '{{ global_env }}'
