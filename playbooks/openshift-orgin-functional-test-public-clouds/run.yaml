@@ -28,7 +28,7 @@
           export OS_PROJECT_DOMAIN_NAME={{ global_env.OS_DOMAIN_NAME }}
           export OS_TENANT_NAME={{ global_env.OS_TENANT_NAME }}
           export OS_REGION_NAME={{ global_env.OS_REGION_NAME }}
-          export OS_AVAILABILITY_ZONE={{ global_env.OS_AVAILABILITY_ZONE }}
+          # export OS_AVAILABILITY_ZONE={{ global_env.OS_AVAILABILITY_ZONE }}
           EOF
           set -x
           pip install ansible
