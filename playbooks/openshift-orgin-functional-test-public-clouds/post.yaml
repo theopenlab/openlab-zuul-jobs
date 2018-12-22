@@ -1,18 +1,16 @@
 - hosts: all
   become: yes
+  vars:
+    job_uid: '{{ zuul.build[:10] }}'
   roles:
-    - role: export-cloud-openrc
-      vars:
-        cloud_name: 'fusioncloud'
-  tasks:
-    - name: Clean up resources terraform-provider-huaweicloud against fusioncloud tests
+    - export-cloud-openrc
+   tasks:
+    - name: Clean up resources of openshift cluster on {{ cloud_name }}
       shell:
         cmd: |
           set -e
           set -x
-          shopt -s expand_aliases
-          alias openstack="openstack --insecure"
-          openstack keypair delete openshift || true
-          openstack stack delete --wait --yes openshift.example.com
+          openstack stack delete --wait --yes "openshift-{{ job_uid }}.huaweicloud.com"
+          openstack keypair delete "openshift-{{ job_uid }}"
         executable: /bin/bash
       environment: '{{ global_env }}'

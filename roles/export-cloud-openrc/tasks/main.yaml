@@ -69,6 +69,7 @@
       OS_ACCESS_KEY: '{{ huaweicloud_credentials.access_key }}'
       OS_SECRET_KEY: '{{ huaweicloud_credentials.secret_key }}'
       OS_DOMAIN_ID: '{{ huaweicloud_credentials.domain_id }}'
+      OS_AVAILABILITY_ZONE: '{{ huaweicloud_credentials.availability_zone }}'
   no_log: yes
   when: cloud_name == 'huaweicloud'
 

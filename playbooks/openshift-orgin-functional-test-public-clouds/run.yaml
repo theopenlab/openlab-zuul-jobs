@@ -1,9 +1,11 @@
 - hosts: all
   become: yes
+  vars:
+    job_uid: '{{ zuul.build[:10] }}'
   roles:
-    - role: export-cloud-openrc
+    - export-cloud-openrc
   tasks:
-    - name: Run Openshift functional tests against {{ huaweicloud }}
+    - name: Run Openshift Origin functional tests against {{ cloud_name }}
       shell:
         cmd: |
           set -e
@@ -29,6 +31,7 @@
           export OS_TENANT_NAME={{ global_env.OS_TENANT_NAME }}
           export OS_REGION_NAME={{ global_env.OS_REGION_NAME }}
           EOF
+          source keystonerc
           set -x
           pip install ansible
           pip install jinja2
@@ -37,35 +40,41 @@
           pip install dnspython
           pip install python-openstackclient
           pip install python-heatclient
-          # shopt -s expand_aliases
-          # alias openstack="openstack --insecure"
 
-          openstack keypair delete openshift || true
-          openstack keypair create openshift > openshift.pem
-          # sed -i "/openshift_release/ s|v3.9|{{ openshift_release }}|" playbooks/openstack/fusioncloud-inventory/group_vars/OSEv3.yml
-          chmod 400 ./openshift.pem
-          . ./keystonerc
+          openstack keypair create "openshift-{{ job_uid }}" > "openshift-{{ job_uid }}.pem"
+          chmod 400 "openshift-{{ job_uid }}.pem"
+
+          cat << EOF > extra_vars.yml
+          ---
+          openshift_openstack_default_image_name: "CentOS 7.5 64bit"
+          openshift_openstack_clusterid: "openshift-{{ job_uid }}"
+          openshift_openstack_public_dns_domain: "huaweicloud.com"
+          openshift_openstack_keypair_name: "openshift-{{ job_uid }}"
+          openshift_release: "{{ openshift_release | default('v3.9') }}"
+          EOF
 
           # Check prerequisites
           ansible-playbook --user root \
               -i playbooks/openstack/inventory.py \
               -i playbooks/openstack/huawei-inventory \
-              --private-key ./openshift.pem \
-              playbooks/openstack/openshift-cluster/prerequisites.yml
+              --private-key "./openshift-{{ job_uid }}.pem" \
+              playbooks/openstack/openshift-cluster/prerequisites.yml \
+              -e @extra_vars.yml
 
           # Provision
           ansible-playbook --user root \
               -i playbooks/openstack/inventory.py \
               -i playbooks/openstack/huawei-inventory \
-              --private-key ./openshift.pem \
-              playbooks/openstack/openshift-cluster/provision.yml
+              --private-key "./openshift-{{ job_uid }}.pem" \
+              playbooks/openstack/openshift-cluster/provision.yml \
+              -e @extra_vars.yml
 
           # Install openshift cluster
           ansible-playbook --user root \
               -i playbooks/openstack/inventory.py \
               -i playbooks/openstack/huawei-inventory \
-              --private-key ./openshift.pem \
-              playbooks/openstack/openshift-cluster/install.yml
-          sleep 7200
+              --private-key "./openshift-{{ job_uid }}.pem"  \
+              playbooks/openstack/openshift-cluster/install.yml \
+              -e @extra_vars.yml
         executable: /bin/bash
       environment: '{{ global_env }}'
