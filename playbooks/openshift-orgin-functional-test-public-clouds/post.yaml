@@ -4,13 +4,13 @@
     job_uid: '{{ zuul.build[:10] }}'
   roles:
     - export-cloud-openrc
-   tasks:
+  tasks:
     - name: Clean up resources of openshift cluster on {{ cloud_name }}
       shell:
         cmd: |
           set -e
           set -x
-          openstack stack delete --wait --yes "openshift-{{ job_uid }}.huaweicloud.com"
-          openstack keypair delete "openshift-{{ job_uid }}"
+          openstack stack delete --wait --yes "openshift-{{ job_uid }}.huaweicloud.com" || true
+          openstack keypair delete "openshift-{{ job_uid }}" || true
         executable: /bin/bash
       environment: '{{ global_env }}'

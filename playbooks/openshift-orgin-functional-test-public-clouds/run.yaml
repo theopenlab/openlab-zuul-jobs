@@ -50,7 +50,7 @@
           openshift_openstack_clusterid: "openshift-{{ job_uid }}"
           openshift_openstack_public_dns_domain: "huaweicloud.com"
           openshift_openstack_keypair_name: "openshift-{{ job_uid }}"
-          openshift_release: "{{ openshift_release | default('v3.9') }}"
+          openshift_release: "{{ openshift_release | default('3.9') }}"
           EOF
 
           # Check prerequisites

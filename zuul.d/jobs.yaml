@@ -838,6 +838,5 @@
     post-run: playbooks/openshift-orgin-functional-test-public-clouds/post.yaml
     vars:
       cloud_name: huaweicloud
-      openshift_release: v3.6
     secrets:
       - huaweicloud_credentials
