@@ -836,6 +836,8 @@
       Run functional tests of openshift-origin repo of v3.9.0 release against huaweicloud
     run: playbooks/openshift-orgin-functional-test-public-clouds/run.yaml
     post-run: playbooks/openshift-orgin-functional-test-public-clouds/post.yaml
+    required-projects:
+      - huaweicloud/openshift-ansible
     vars:
       cloud_name: huaweicloud
     secrets:

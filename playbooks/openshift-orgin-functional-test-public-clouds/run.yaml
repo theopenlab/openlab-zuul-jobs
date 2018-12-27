@@ -5,14 +5,16 @@
   roles:
     - export-cloud-openrc
   tasks:
+    - name: Copy cluster testing playbook under openshift-ansible
+      become: yes
+      copy:
+        src: cluster-testing.yaml
+        dest: '{{ ansible_user_dir }}/src/github.com/huaweicloud/openshift-ansible/cluster-testing.yaml'
+
     - name: Run Openshift Origin functional tests against {{ cloud_name }}
       shell:
         cmd: |
           set -xe
-          mkdir -p '{{ ansible_user_dir }}/src/github.com/huaweicloud/'
-          cd '{{ ansible_user_dir }}/src/github.com/huaweicloud/'
-          git clone http://github.com/huaweicloud/openshift-ansible
-          cd openshift-ansible
           pip install ansible
           pip install jinja2
           pip install shade
@@ -24,15 +26,33 @@
           openstack keypair create "openshift-{{ job_uid }}" > "openshift-{{ job_uid }}.pem"
           chmod 400 "openshift-{{ job_uid }}.pem"
 
+          cat << EOF > cluster-testing.yml
+          ---
+          - name: Deploy example applications for testing cluster functionalities
+            hosts: masters
+            become: yes
+            tasks:
+            - name: provision cluster
+              shell:
+                cmd: |
+                  set -xe
+                  git clone http://github.com/huaweicloud/openshift-ansible
+                  cd openshift-ansible
+                  oc adm policy add-scc-to-group anyuid system:authenticated
+                  oc create -f applications/
+                executable: /bin/bash
+          EOF
+
           cat << EOF > extra_vars.yml
           ---
           openshift_openstack_default_image_name: "CentOS 7.5 64bit"
           openshift_openstack_clusterid: "openshift-{{ job_uid }}"
-          openshift_openstack_public_dns_domain: "huaweicloud.com"
+          openshift_openstack_public_dns_domain: "openlab.com"
           openshift_openstack_keypair_name: "openshift-{{ job_uid }}"
-          openshift_openstack_num_infra: 1
+          openshift_openstack_num_infra: 0
           openshift_openstack_num_nodes: 1
           openshift_release: "{{ openshift_release | default('3.9') }}"
+          openshift_hosted_infra_selector: "node-role.kubernetes.io/master=true"
           EOF
 
           # Check prerequisites
@@ -58,5 +78,14 @@
               --private-key "./openshift-{{ job_uid }}.pem"  \
               playbooks/openstack/openshift-cluster/install.yml \
               -e @extra_vars.yml
+
+          # Testing openshift cluster functionalities
+          ansible-playbook --user root \
+              -i playbooks/openstack/inventory.py \
+              -i playbooks/openstack/huawei-inventory \
+              --private-key "./openshift-{{ job_uid }}.pem"  \
+              cluster-testing.yaml \
+              -e @extra_vars.yml
         executable: /bin/bash
+        chdir: '{{ ansible_user_dir }}/src/github.com/huaweicloud/openshift-ansible'
       environment: '{{ global_env }}'
