@@ -26,23 +26,6 @@
           openstack keypair create "openshift-{{ job_uid }}" > "openshift-{{ job_uid }}.pem"
           chmod 400 "openshift-{{ job_uid }}.pem"
 
-          cat << EOF > cluster-testing.yml
-          ---
-          - name: Deploy example applications for testing cluster functionalities
-            hosts: masters
-            become: yes
-            tasks:
-            - name: provision cluster
-              shell:
-                cmd: |
-                  set -xe
-                  git clone http://github.com/huaweicloud/openshift-ansible
-                  cd openshift-ansible
-                  oc adm policy add-scc-to-group anyuid system:authenticated
-                  oc create -f applications/
-                executable: /bin/bash
-          EOF
-
           cat << EOF > extra_vars.yml
           ---
           openshift_openstack_default_image_name: "CentOS 7.5 64bit"
