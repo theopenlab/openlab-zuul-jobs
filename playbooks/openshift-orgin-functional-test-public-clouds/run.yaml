@@ -32,6 +32,9 @@
           openstack keypair create "openshift-{{ job_uid }}" > "openshift-{{ job_uid }}.pem"
           chmod 400 "openshift-{{ job_uid }}.pem"
 
+          export ANSIBLE_HOST_KEY_CHECKING=false
+          export OPENSHIFT_CLUSTER="openshift-{{ job_uid }}.openlab.com"
+
           # Check prerequisites
           ansible-playbook --user root \
               -i playbooks/openstack/inventory.py \
@@ -39,7 +42,6 @@
               --private-key "./openshift-{{ job_uid }}.pem" \
               playbooks/openstack/openshift-cluster/prerequisites.yml \
               -e @extra_vars.yml
-          sleep 7200
 
           # Provision
           ansible-playbook --user root \
