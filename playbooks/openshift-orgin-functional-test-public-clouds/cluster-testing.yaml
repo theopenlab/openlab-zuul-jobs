@@ -47,6 +47,7 @@
       cmd: |
         set -xe
         oc delete -f openshift-ansible/applications/
+        oc delete all --all
       executable: /bin/bash
 
 - name: Confirm the cloud resources has been removed
