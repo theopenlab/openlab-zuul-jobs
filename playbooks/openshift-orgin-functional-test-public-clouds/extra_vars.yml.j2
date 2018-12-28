@@ -1,5 +1,5 @@
 ---
-{% if openshift_image_name %}
+{% if openshift_image_name is defined %}
 openshift_openstack_default_image_name: "{{ openshift_image_name }}"
 {% endif %}
 openshift_openstack_clusterid: "openshift-{{ job_uid }}"
