@@ -840,5 +840,52 @@
       - huaweicloud/openshift-ansible
     vars:
       cloud_name: huaweicloud
+      inventory_name: huawei
+      openshift_image_name: "CentOS 7.5 64bit"
     secrets:
       - huaweicloud_credentials
+
+- job:
+    name: openshift-origin-v3.9.0-functional-test-opentelekomcloud
+    parent: init-test
+    description: |
+      Run functional tests of openshift-origin repo of v3.9.0 release against opentelekomcloud
+    run: playbooks/openshift-orgin-functional-test-public-clouds/run.yaml
+    post-run: playbooks/openshift-orgin-functional-test-public-clouds/post.yaml
+    required-projects:
+      - huaweicloud/openshift-ansible
+    vars:
+      cloud_name: opentelekomcloud
+      inventory_name: otc
+    secrets:
+      - opentelekomcloud_credentials
+
+- job:
+    name: openshift-origin-v3.9.0-functional-test-telefonica
+    parent: init-test
+    description: |
+      Run functional tests of openshift-origin repo of v3.9.0 release against telefonica cloud
+    run: playbooks/openshift-orgin-functional-test-public-clouds/run.yaml
+    post-run: playbooks/openshift-orgin-functional-test-public-clouds/post.yaml
+    required-projects:
+      - huaweicloud/openshift-ansible
+    vars:
+      cloud_name: telefonica
+      inventory_name: telefonica
+    secrets:
+      - telefonica_credentials
+
+- job:
+    name: openshift-origin-v3.9.0-functional-test-orange
+    parent: init-test
+    description: |
+      Run functional tests of openshift-origin repo of v3.9.0 release against orange cloud
+    run: playbooks/openshift-orgin-functional-test-public-clouds/run.yaml
+    post-run: playbooks/openshift-orgin-functional-test-public-clouds/post.yaml
+    required-projects:
+      - huaweicloud/openshift-ansible
+    vars:
+      cloud_name: orange
+      inventory_name: orange
+    secrets:
+      - orange_credentials
