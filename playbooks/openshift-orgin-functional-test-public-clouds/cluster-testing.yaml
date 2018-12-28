@@ -29,8 +29,13 @@
     shell:
       cmd: |
         set -xe
-        [[ -n `openstack volume list  -f value -c Name |grep kubernetes-dynamic-pvc` ]]
-        [[ -n `neutron lbaas-loadbalancer-list -f value` ]]
+        timeout 60 bash -c '
+            while :
+            do
+                [[ -n `openstack volume list  -f value -c Name |grep kubernetes-dynamic-pvc` ]] && [[ -n `neutron lbaas-loadbalancer-list -f value` ]] && break
+                sleep 2
+            done
+            '
       executable: /bin/bash
 
 - name: Clean resources cretead in openshift cluster
@@ -55,7 +60,7 @@
         timeout 60 bash -c '
             while :
             do
-                [[ -n `neutron lbaas-loadbalancer-list -f value` ]] && break
+                [[ -z `neutron lbaas-loadbalancer-list -f value` ]] && break
                 sleep 2
             done
             '
