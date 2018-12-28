@@ -39,6 +39,7 @@
               --private-key "./openshift-{{ job_uid }}.pem" \
               playbooks/openstack/openshift-cluster/prerequisites.yml \
               -e @extra_vars.yml
+          sleep 7200
 
           # Provision
           ansible-playbook --user root \
