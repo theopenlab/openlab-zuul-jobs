@@ -28,6 +28,7 @@
           pip install dnspython
           pip install python-openstackclient
           pip install python-heatclient
+          pip install python-neutronclient
 
           openstack keypair create "openshift-{{ job_uid }}" > "openshift-{{ job_uid }}.pem"
           chmod 400 "openshift-{{ job_uid }}.pem"
