@@ -21,13 +21,20 @@
             '
       executable: /bin/bash
 
-  - name: Record pv cinder volumes ids
-    shell: oc get pv -o jsonpath='{range .items[*].spec}{.cinder.volumeID}{" "}{end}'
-    register: vol_ids
+  - name: Record pvc cinder volumes name
+    shell: oc get pvc -o jsonpath='{range .items[*].spec}{.volumeName}{end}'
+    register: vol_name
+
+  - name: Record loadbalancer name
+    shell: oc get svc nginx-service -o jsonpath='{.metadata.uid}' | tr -d '-' | sed 's/^/a/' | cut -c -32
+    register: lbaas_id
 
 - name: Confirm the cloud resources has been created
   hosts: localhost
   become: yes
+  vars:
+    lbaas_name: '{{ hostvars[groups["masters"][0]]["lbaas_id"].stdout }}'
+    pvc_vol_name: '{{ hostvars[groups["masters"][0]]["vol_name"].stdout }}'
   tasks:
   - name: confirm resources in cloud
     shell:
@@ -36,13 +43,14 @@
         timeout 60 bash -c '
             while :
             do
-                [[ -n `openstack volume list  -f value -c Name |grep kubernetes-dynamic-pvc` ]] && [[ -n `neutron lbaas-loadbalancer-list -f value` ]] && break
+                openstack volume show kubernetes-dynamic-{{ pvc_vol_name }} && \
+                neutron lbaas-loadbalancer-show {{ lbaas_name }} && break
                 sleep 2
             done
             '
       executable: /bin/bash
 
-- name: Clean resources cretead in openshift cluster
+- name: Clean resources in openshift cluster
   hosts: masters
   become: yes
   tasks:
@@ -57,6 +65,9 @@
 - name: Confirm the cloud resources has been removed
   hosts: localhost
   become: yes
+  vars:
+    lbaas_name: '{{ hostvars[groups["masters"][0]]["lbaas_id"].stdout }}'
+    pvc_vol_name: '{{ hostvars[groups["masters"][0]]["vol_name"].stdout }}'
   tasks:
   - name: confirm resources in cloud removed
     shell:
@@ -65,7 +76,8 @@
         timeout 60 bash -c '
             while :
             do
-                [[ -z `neutron lbaas-loadbalancer-list -f value` ]] && break
+                ! openstack volume show kubernetes-dynamic-{{ pvc_vol_name }} && \
+                ! neutron lbaas-loadbalancer-show {{ lbaas_name }} && break
                 sleep 2
             done
             '
