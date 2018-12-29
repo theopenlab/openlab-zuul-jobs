@@ -47,29 +47,39 @@
 
           openstack keypair delete openshift || true
           openstack keypair create openshift > openshift.pem
-          # sed -i "/openshift_release/ s|v3.9|{{ openshift_release }}|" playbooks/openstack/fusioncloud-inventory/group_vars/OSEv3.yml
           chmod 400 ./openshift.pem
           . ./keystonerc
 
           # Check prerequisites
           ansible-playbook --user root \
               -i playbooks/openstack/inventory.py \
-              -i playbooks/openstack/fusioncloud-inventory \
-              --private-key ./openshift.pem \
-              playbooks/openstack/openshift-cluster/prerequisites.yml
+              -i "playbooks/openstack/{{ inventory_name }}-inventory" \
+              --private-key "./openshift-{{ job_uid }}.pem" \
+              playbooks/openstack/openshift-cluster/prerequisites.yml \
+              -e @extra_vars.yml
 
           # Provision
           ansible-playbook --user root \
               -i playbooks/openstack/inventory.py \
-              -i playbooks/openstack/fusioncloud-inventory \
-              --private-key ./openshift.pem \
-              playbooks/openstack/openshift-cluster/provision.yml
+              -i "playbooks/openstack/{{ inventory_name }}-inventory" \
+              --private-key "./openshift-{{ job_uid }}.pem" \
+              playbooks/openstack/openshift-cluster/provision.yml \
+              -e @extra_vars.yml
 
           # Install openshift cluster
           ansible-playbook --user root \
               -i playbooks/openstack/inventory.py \
-              -i playbooks/openstack/fusioncloud-inventory \
-              --private-key ./openshift.pem \
-              playbooks/openstack/openshift-cluster/install.yml
+              -i "playbooks/openstack/{{ inventory_name }}-inventory" \
+              --private-key "./openshift-{{ job_uid }}.pem"  \
+              playbooks/openstack/openshift-cluster/install.yml \
+              -e @extra_vars.yml
+
+          # Testing openshift cluster functionalities
+          ansible-playbook --user root \
+              -i playbooks/openstack/inventory.py \
+              -i "playbooks/openstack/{{ inventory_name }}-inventory" \
+              --private-key "./openshift-{{ job_uid }}.pem"  \
+              cluster-testing.yaml \
+              -e @extra_vars.yml
         executable: /bin/bash
       environment: '{{ global_env }}'

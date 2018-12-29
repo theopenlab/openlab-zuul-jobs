@@ -16,5 +16,6 @@
           alias openstack="openstack --insecure"
           openstack stack delete --wait --yes "openshift-{{ job_uid }}.openlab.com" || true
           openstack keypair delete "openshift-{{ job_uid }}" || true
+          openstack volume delete `openstack volume list --status available -f value -c Name |grep kubernetes-dynamic-pvc` || true
         executable: /bin/bash
       environment: '{{ global_env }}'
