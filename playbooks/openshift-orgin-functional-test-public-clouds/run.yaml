@@ -60,7 +60,6 @@
               playbooks/openstack/openshift-cluster/install.yml \
               -e @extra_vars.yml
 
-          sleep 7200
           # Testing openshift cluster functionalities
           ansible-playbook --user root \
               -i playbooks/openstack/inventory.py \
