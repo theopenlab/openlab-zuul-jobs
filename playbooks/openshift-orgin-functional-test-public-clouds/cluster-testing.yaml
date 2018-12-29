@@ -21,6 +21,10 @@
             '
       executable: /bin/bash
 
+  - name: Record pv cinder volumes ids
+    shell: oc get pv -o jsonpath='{range .items[*].spec}{.cinder.volumeID}{" "}{end}'
+    register: vol_ids
+
 - name: Confirm the cloud resources has been created
   hosts: localhost
   become: yes
