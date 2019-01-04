@@ -172,3 +172,14 @@
       jobs:
         - terraform-provider-huaweicloud-acceptance-test-fusioncloud:
             branches: master
+
+
+- project:
+    name: huaweicloud/openshift-ansible
+    periodic-utc-2:
+      jobs:
+        - openshift-origin-functional-test-huaweicloud
+        - openshift-origin-functional-test-opentelekomcloud
+        # NOTES: Telefonica account is disable
+        # - openshift-origin-functional-test-telefonica
+        - openshift-origin-functional-test-orange

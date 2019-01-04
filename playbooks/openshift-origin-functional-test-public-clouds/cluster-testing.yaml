@@ -1,0 +1,84 @@
+---
+- name: Deploy example applications for testing cluster functionalities
+  hosts: masters
+  become: yes
+  tasks:
+  - name: Create resources in openshift cluster
+    shell:
+      cmd: |
+        set -xe
+        git clone http://github.com/huaweicloud/openshift-ansible
+        oc adm policy add-scc-to-group anyuid system:authenticated
+        oc create -f openshift-ansible/applications/
+        oc_get_running_pods() { oc get pods -o jsonpath='{range .items[*].status}{.phase}{"\n"}{end}'; }
+        export -f oc_get_running_pods
+        timeout 60 bash -c '
+            while :
+            do
+                [[ $(oc_get_running_pods | uniq) == Running ]] && break
+                sleep 2
+            done
+            '
+      executable: /bin/bash
+
+  - name: Record pvc cinder volumes name
+    shell: oc get pvc -o jsonpath='{range .items[*].spec}{.volumeName}{end}'
+    register: vol_name
+
+  - name: Record loadbalancer name
+    shell: oc get svc nginx-service -o jsonpath='{.metadata.uid}' | tr -d '-' | sed 's/^/a/' | cut -c -32
+    register: lbaas_id
+
+- name: Confirm the cloud resources has been created
+  hosts: localhost
+  become: yes
+  vars:
+    lbaas_name: '{{ hostvars[groups["masters"][0]]["lbaas_id"].stdout }}'
+    pvc_vol_name: '{{ hostvars[groups["masters"][0]]["vol_name"].stdout }}'
+  tasks:
+  - name: confirm resources in cloud
+    shell:
+      cmd: |
+        set -xe
+        timeout 60 bash -c '
+            while :
+            do
+                openstack volume show kubernetes-dynamic-{{ pvc_vol_name }} && \
+                neutron lbaas-loadbalancer-show {{ lbaas_name }} && break
+                sleep 2
+            done
+            '
+      executable: /bin/bash
+
+- name: Clean resources in openshift cluster
+  hosts: masters
+  become: yes
+  tasks:
+  - name: clean resources in openshift cluster
+    shell:
+      cmd: |
+        set -xe
+        oc delete -f openshift-ansible/applications/
+        oc delete all --all
+      executable: /bin/bash
+
+- name: Confirm the cloud resources has been removed
+  hosts: localhost
+  become: yes
+  vars:
+    lbaas_name: '{{ hostvars[groups["masters"][0]]["lbaas_id"].stdout }}'
+    pvc_vol_name: '{{ hostvars[groups["masters"][0]]["vol_name"].stdout }}'
+  tasks:
+  - name: confirm resources in cloud removed
+    shell:
+      cmd: |
+        set -xe
+        timeout 60 bash -c '
+            while :
+            do
+                ! openstack volume show kubernetes-dynamic-{{ pvc_vol_name }} && \
+                ! neutron lbaas-loadbalancer-show {{ lbaas_name }} && break
+                sleep 2
+            done
+            '
+      executable: /bin/bash

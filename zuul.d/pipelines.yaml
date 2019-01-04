@@ -188,6 +188,19 @@
       mysql:
 
 - pipeline:
+    name: periodic-utc-2
+    description: Jobs in this queue are triggered on a timer. UTC-0 02:00
+    manager: independent
+    precedence: low
+    trigger:
+      timer:
+        - time: '0 2 * * *'
+    success:
+      mysql:
+    failure:
+      mysql:
+
+- pipeline:
     name: merge-check
     description: >
       Each time a change merges, this pipeline verifies that all open changes
