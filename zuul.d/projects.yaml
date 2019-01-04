@@ -176,7 +176,7 @@
 
 - project:
     name: huaweicloud/openshift-ansible
-    periodic-utc-2:
+    periodic-2:
       jobs:
         - openshift-origin-functional-test-huaweicloud
         - openshift-origin-functional-test-opentelekomcloud
