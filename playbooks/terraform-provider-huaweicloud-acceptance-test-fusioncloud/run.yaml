@@ -56,13 +56,14 @@
           # Run test 100 testcases at a time
           exitcode=0
           alltestcases=`go test ./huaweicloud/ -v -list 'Acc'`
-          # skip the vpc peering and vpc peering routes data source tests, because it will raise a panic error and will break other tests running
-          # skip the cce, csbs, cts, dms and vbsbackup tests, these services are not supported in fusioncloud
-          testcases=`echo "$alltestcases" | sed '$d' | grep -v -e Kms -e Rds -e RDS -e SFS -e SMN -e DNS -e ELB -e Nat -e Images -e CCE -e CSBS -e CTS -e Dms -e VBSBackup -e TestAccVpcPeeringConnectionV2DataSource_basic -e TestAccVpcRouteIdsV2DataSource_basic -e TestAccVpcRouteV2DataSource_basic`
+
+          # Run acctests of IAM, Images, Compute, Networking, Rts/RTS, Vpc, S3, FW, LB, AS and BlockStorage services which are
+          # supported in fusioncloud. Additionally, we run Images tests in a separate process to avoid messy output.  And we skip
+          # several tests of Vpcpeering to avoid panic error that will break the following tests.
+          testcases=`echo "$alltestcases" | sed '$d' | grep -e IAM -e Compute -e Networking -e Rts -e RTS -e Vpc -e S3 -e FW -e LB -e AS -e BlockStorage | grep -v -e ELB -e TestAccVpcPeeringConnectionV2DataSource_basic -e TestAccVpcRouteIdsV2DataSource_basic -e TestAccVpcRouteV2DataSource_basic`
           # Add OS_DEBUG=1 TF_LOG=debug flags for debuging
           echo "$testcases" | xargs -t -n100 sh -c 'OS_DEBUG=1 TF_LOG=debug TF_ACC=1 go test ./huaweicloud/ -v -timeout 300m -run $(echo "$@" | tr " " "|")' argv0 2>&1 | tee -a $TEST_RESULTS_TXT || exitcode=$?
 
-          # Run image tests in a separate process to avoid messy output
           imagetestcases=`echo "$alltestcases" | sed '$d' | grep Images`
           echo "$imagetestcases" | xargs -t -n100 sh -c 'TF_LOG=debug TF_ACC=1 go test ./huaweicloud/ -v -timeout 300m -run $(echo "$@" | tr " " "|")' argv0 2>&1 | tee -a $TEST_RESULTS_TXT || exitcode=$?
 
