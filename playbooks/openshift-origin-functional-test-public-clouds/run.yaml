@@ -1,0 +1,72 @@
+- hosts: all
+  become: yes
+  vars:
+    job_uid: '{{ zuul.build[:10] }}'
+  roles:
+    - export-cloud-openrc
+  tasks:
+    - name: Copy cluster testing playbook under openshift-ansible
+      become: yes
+      copy:
+        src: cluster-testing.yaml
+        dest: '{{ ansible_user_dir }}/src/github.com/huaweicloud/openshift-ansible/cluster-testing.yaml'
+
+    - name: Generate cloud specific extra vars for openshift cluster deployment
+      become: yes
+      template:
+        dest: "{{ ansible_user_dir }}/src/github.com/huaweicloud/openshift-ansible/extra_vars.yml"
+        src: "extra_vars.yml.j2"
+
+    - name: Run Openshift Origin functional tests against {{ cloud_name }}
+      shell:
+        cmd: |
+          set -xe
+          pip install ansible
+          pip install jinja2
+          pip install shade
+          pip install jmespath
+          pip install dnspython
+          pip install python-openstackclient
+          pip install python-heatclient
+          pip install python-neutronclient
+
+          openstack keypair create "openshift-{{ job_uid }}" > "openshift-{{ job_uid }}.pem"
+          chmod 400 "openshift-{{ job_uid }}.pem"
+
+          export ANSIBLE_HOST_KEY_CHECKING=false
+          export OPENSHIFT_CLUSTER="openshift-{{ job_uid }}.openlab.com"
+
+          # Check prerequisites
+          ansible-playbook --user root \
+              -i playbooks/openstack/inventory.py \
+              -i "playbooks/openstack/{{ inventory_name }}-inventory" \
+              --private-key "./openshift-{{ job_uid }}.pem" \
+              playbooks/openstack/openshift-cluster/prerequisites.yml \
+              -e @extra_vars.yml
+
+          # Provision
+          ansible-playbook --user root \
+              -i playbooks/openstack/inventory.py \
+              -i "playbooks/openstack/{{ inventory_name }}-inventory" \
+              --private-key "./openshift-{{ job_uid }}.pem" \
+              playbooks/openstack/openshift-cluster/provision.yml \
+              -e @extra_vars.yml
+
+          # Install openshift cluster
+          ansible-playbook --user root \
+              -i playbooks/openstack/inventory.py \
+              -i "playbooks/openstack/{{ inventory_name }}-inventory" \
+              --private-key "./openshift-{{ job_uid }}.pem"  \
+              playbooks/openstack/openshift-cluster/install.yml \
+              -e @extra_vars.yml
+
+          # Testing openshift cluster functionalities
+          ansible-playbook --user root \
+              -i playbooks/openstack/inventory.py \
+              -i "playbooks/openstack/{{ inventory_name }}-inventory" \
+              --private-key "./openshift-{{ job_uid }}.pem"  \
+              cluster-testing.yaml \
+              -e @extra_vars.yml
+        executable: /bin/bash
+        chdir: '{{ ansible_user_dir }}/src/github.com/huaweicloud/openshift-ansible'
+      environment: '{{ global_env }}'
