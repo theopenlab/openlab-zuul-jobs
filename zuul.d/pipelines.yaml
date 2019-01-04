@@ -188,13 +188,13 @@
       mysql:
 
 - pipeline:
-    name: periodic-utc-2
-    description: Jobs in this queue are triggered on a timer. UTC-0 02:00
+    name: periodic-2
+    description: Jobs in this queue are triggered on a timer. UTC-0 22:00
     manager: independent
     precedence: low
     trigger:
       timer:
-        - time: '0 2 * * *'
+        - time: '0 22 * * *'
     success:
       mysql:
     failure:
