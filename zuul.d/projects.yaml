@@ -148,8 +148,8 @@
         - osb-checker-test-huaweicloud
 
 - project:
-    name: theopenlab/manageiq-providers-openstack
-    periodic:
+    name: manageiq/manageiq-providers-openstack
+    periodic-2:
       jobs:
         - manageiq-providers-openstack-test-devstack-master
         - manageiq-providers-openstack-test-devstack-mitaka
@@ -158,8 +158,6 @@
         - manageiq-providers-openstack-test-devstack-pike
         - manageiq-providers-openstack-test-devstack-queens
         - manageiq-providers-openstack-test-devstack-rocky
-    check-generic-cloud:
-      jobs:
         - manageiq-providers-openstack-test-huaweicloud
         - manageiq-providers-openstack-test-opentelekomcloud
         - manageiq-providers-openstack-test-orange
