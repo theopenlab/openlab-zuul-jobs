@@ -52,6 +52,9 @@
 
           # workaround, see terraform-providers/terraform-provider-huaweicloud#50
           sed -i s/Sys-default/default/ huaweicloud/resource_huaweicloud_compute_instance_v2.go
+          # workaround, disable AK/SK auth to use token auth instead
+          unset OS_ACCESS_KEY
+          unset OS_SECRET_KEY
 
           # Run test 100 testcases at a time
           exitcode=0
