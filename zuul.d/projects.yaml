@@ -135,6 +135,13 @@
             branches: master
 
 - project:
+    name: terraform-providers/terraform-provider-huaweicloud
+    periodic:
+      jobs:
+        - terraform-provider-huaweicloud-acceptance-test-fusioncloud:
+            branches: master
+
+- project:
     name: cloudfoundry-incubator/bosh-huaweicloud-cpi-release
     check-generic-cloud:
       jobs:
@@ -151,33 +158,40 @@
     name: manageiq/manageiq-providers-openstack
     periodic-2:
       jobs:
-        - manageiq-providers-openstack-test-devstack-master
-        - manageiq-providers-openstack-test-devstack-mitaka
-        - manageiq-providers-openstack-test-devstack-newton
-        - manageiq-providers-openstack-test-devstack-ocata
-        - manageiq-providers-openstack-test-devstack-pike
-        - manageiq-providers-openstack-test-devstack-queens
-        - manageiq-providers-openstack-test-devstack-rocky
-        - manageiq-providers-openstack-test-huaweicloud
-        - manageiq-providers-openstack-test-opentelekomcloud
-        - manageiq-providers-openstack-test-orange
-#        NOTES: Telefonica account is disable
-#        - manageiq-providers-openstack-test-telefonica
-
-- project:
-    name: terraform-providers/terraform-provider-huaweicloud
-    periodic:
-      jobs:
-        - terraform-provider-huaweicloud-acceptance-test-fusioncloud:
+        - manageiq-providers-openstack-test-devstack-master:
             branches: master
-
+        - manageiq-providers-openstack-test-devstack-mitaka:
+            branches: master
+        - manageiq-providers-openstack-test-devstack-newton:
+            branches: master
+        - manageiq-providers-openstack-test-devstack-ocata:
+            branches: master
+        - manageiq-providers-openstack-test-devstack-pike:
+            branches: master
+        - manageiq-providers-openstack-test-devstack-queens:
+            branches: master
+        - manageiq-providers-openstack-test-devstack-rocky:
+            branches: master
+        - manageiq-providers-openstack-test-huaweicloud:
+            branches: master
+        - manageiq-providers-openstack-test-opentelekomcloud:
+            branches: master
+        - manageiq-providers-openstack-test-orange:
+            branches: master
+#        NOTES: Telefonica account is disable
+#        - manageiq-providers-openstack-test-telefonica:
+#            branches: master
 
 - project:
     name: huaweicloud/openshift-ansible
     periodic-2:
       jobs:
-        - openshift-origin-functional-test-huaweicloud
-        - openshift-origin-functional-test-opentelekomcloud
-        # NOTES: Telefonica account is disable
-        # - openshift-origin-functional-test-telefonica
-        - openshift-origin-functional-test-orange
+        - openshift-origin-functional-test-huaweicloud:
+            branches: master
+        - openshift-origin-functional-test-opentelekomcloud:
+            branches: master
+#        NOTES: Telefonica account is disable
+#        - openshift-origin-functional-test-telefonica:
+#            branches: master
+        - openshift-origin-functional-test-orange:
+            branches: master
