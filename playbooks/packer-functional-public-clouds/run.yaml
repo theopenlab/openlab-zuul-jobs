@@ -9,9 +9,11 @@
         cmd: |
           set -ex
           set -o pipefail
+          unset OS_DOMAIN_ID
           pip install python-openstackclient
-          pip install python-glanceclient==2.11.0
-          flavor=$(openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column VCPUs | head -n 1 | awk '{print $1}')
+          # Using second smallest flavor, because first one might cause testing failed.
+          # See https://github.com/theopenlab/openlab/issues/80
+          flavor=$(openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column VCPUs | awk 'NR==2{print $1}')
           network=$(openstack network show openlab-jobs-net -f value -c id)
           src_img_name=$(openstack image list |grep -Eo "cirros.*0.4.0.*-disk")
           image_name="packer-cirros-openstack-$(date +%s)"
@@ -30,6 +32,7 @@
                       "source_image_name": "$src_img_name",
                       "ssh_username": "cirros",
                       "networks": ["$network"],
+                      "security_groups": ["openlab-jobs-sg"],
                       "floating_ip_pool": "admin_external_net"
                   }
               ],

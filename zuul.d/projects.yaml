@@ -46,12 +46,12 @@
     check:
       debug: True
       jobs:
-#        - packer-1.2.5-functional-opentelekomcloud
-#        - packer-1.2.5-functional-orange
-#        - packer-1.2.5-functional-telefonica
-#        - packer-1.2.5-functional-huaweicloud
-        - packer-master-functional-devstack
-#        - packer-1.2.5-functional-devstack
+#        - packer-functional-opentelekomcloud
+#        - packer-functional-orange
+#        - packer-functional-telefonica
+#        - packer-functional-huaweicloud
+#        - packer-master-functional-devstack
+        - packer-functional-devstack
 
 - project:
     name: liu-sheng/machine
