@@ -45,6 +45,13 @@
     name: liu-sheng/ansible
     check:
       jobs:
+        # move to check pipeline for ci test
+        - openstacksdk-ansible-functional-opentelekomcloud:
+            branches: stable-2.7
+        - openstacksdk-ansible-functional-devstack-rocky:
+            branches: stable-2.7
+        - openstacksdk-ansible-functional-devstack-pike:
+            branches: stable-2.7
         - openstacksdk-ansible-devel-functional-devstack:
             branches: devel
             files:
@@ -71,8 +78,6 @@
               - ^lib/ansible/utils/module_docs_fragments/openstack.py
     periodic:
       jobs:
-        - openstacksdk-ansible-functional-opentelekomcloud:
-            branches: stable-2.7
         - openstacksdk-ansible-functional-orange:
             branches: stable-2.7
         #        NOTES: Telefonica account is disable
@@ -82,11 +87,7 @@
             branches: stable-2.7
         - openstacksdk-ansible-functional-devstack:
             branches: stable-2.7
-        - openstacksdk-ansible-functional-devstack-rocky:
-            branches: stable-2.7
         - openstacksdk-ansible-functional-devstack-queens:
-            branches: stable-2.7
-        - openstacksdk-ansible-functional-devstack-pike:
             branches: stable-2.7
         - openstacksdk-ansible-functional-devstack-ocata:
             branches: stable-2.7
