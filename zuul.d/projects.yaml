@@ -44,7 +44,6 @@
 - project:
     name: liu-sheng/packer
     check:
-      debug: True
       jobs:
         - packer-functional-opentelekomcloud
 #        - packer-functional-orange
