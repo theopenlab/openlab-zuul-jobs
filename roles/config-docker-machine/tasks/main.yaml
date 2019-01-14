@@ -8,10 +8,10 @@
     cmd: |
       set -ex
       # path workaround
-      cd '{{ ansible_user_dir }}'
-      mkdir -p src/github.com/docker/
-      cp -r '{{ zuul.project.src_dir }}' src/github.com/docker/
-      cd src/github.com/docker/machine
+      # cd '{{ ansible_user_dir }}'
+      # mkdir -p src/github.com/docker/
+      # cp -r '{{ zuul.project.src_dir }}' src/github.com/docker/
+      # cd src/github.com/docker/machine
 
       # Install docker
       apt-get update
