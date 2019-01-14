@@ -49,7 +49,7 @@
 #        - packer-functional-opentelekomcloud
 #        - packer-functional-orange
 #        - packer-functional-telefonica
-#        - packer-functional-huaweicloud
+        - packer-functional-huaweicloud
 #        - packer-master-functional-devstack
         - packer-functional-devstack
 
@@ -57,12 +57,12 @@
     name: liu-sheng/machine
     check:
       jobs:
-        # - docker-machine-functional-devstack-mitaka
+        - docker-machine-functional-devstack-mitaka
         # - docker-machine-functional-devstack-newton
         # - docker-machine-functional-devstack-pike
         # - docker-machine-functional-devstack-ocata
         - docker-machine-functional-devstack-queens
-        #- docker-machine-functional-huaweicloud
+        - docker-machine-functional-huaweicloud
         #- docker-machine-functional-opentelekomcloud
         #- docker-machine-functional-orange
         #- docker-machine-functional-telefonica
