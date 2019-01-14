@@ -38,12 +38,6 @@
     - name: Install dependencies
       pip: name=python-openstackclient
 
-    # workaround bug introduced by https://review.openstack.org/#/c/568698/
-    - name: Install python-glanceclient 2.11.0 (workaruond)
-      pip:
-        name: python-glanceclient
-        version: 2.11.0
-
     - name: modify run.yml to allow ignoring errors per test case
       lineinfile:
         path: "{{ sdk_ansible_tests_dirs[os_sdk] }}/run.yml"
@@ -53,7 +47,6 @@
     - name: modify sdk test scripts
       shell: |
         sed -i -e 's/ -vvv//g' ./extras/run-ansible-tests.sh
-        sed -i -e 's/^passenv = HOME USER$/passenv = HOME USER ANSIBLE_VAR_*/g' tox.ini
       args:
         executable: /bin/bash
         chdir: '{{ sdk_src_dir }}'
@@ -78,12 +71,17 @@
         tox_extra_args: "--notest"
 
     - name: Run test cases
-      shell: tox -eansible -- -c "{{ cloud_name }}" auth group image keypair keystone_domain keystone_role network nova_flavor object port router security_group server subnet user user_group volume
+      shell: tox -eansible -- -c "{{ cloud_name }}" "{{ test_cases }}"
       args:
         executable: /bin/bash
         chdir: '{{ sdk_src_dir }}'
       environment:
         ANSIBLE_VAR_flavor: "{{ flavor_query.stdout }}"
-        ANSIBLE_VAR_server_network: "ansible-testing-net"
+        ANSIBLE_VAR_server_network: "openlab-jobs-net"
+        ANSIBLE_VAR_floating_ip_pool_name: "admin_external_net"
+        ANSIBLE_VAR_enable_subnet_dhcp: "true"
+        ANSIBLE_VAR_network_external: "false"
+        ANSIBLE_VAR_no_security_groups: "false"
+        ANSIBLE_VAR_boot_volume_size: "40"
       register: testing_output
       failed_when: "'FAILED' in testing_output.stdout or 'ERROR' in testing_output.stdout"

@@ -561,6 +561,210 @@
 #    secrets:
 #      - orange_credentials
 
+# ansible jobs
+- job:
+    name: openstacksdk-ansible-devel-functional-devstack
+    parent: init-test
+    description: |
+      Run openstacksdk ansible functional tests against a master devstack using git devel branch version of ansible.
+    run: playbooks/ansible-functional-devstack/run.yaml
+    required-projects:
+      - name: liu-sheng/ansible
+        override-checkout: devel
+      - openstack/openstacksdk
+    vars:
+      os_sdk: openstacksdk
+
+- job:
+    name: openstacksdk-ansible-functional-devstack
+    parent: init-test
+    description: |
+      Run openstacksdk ansible functional tests against a master devstack using git stable-2.7 branch version of ansible.
+    run: playbooks/ansible-functional-devstack/run.yaml
+    required-projects:
+      - name: liu-sheng/ansible
+        override-checkout: stable-2.7
+      - openstack/openstacksdk
+    vars:
+      os_sdk: openstacksdk
+
+- job:
+    name: openstacksdk-ansible-functional-devstack-rocky
+    parent: init-test
+    description: |
+      Run openstacksdk ansible functional tests against a rocky devstack using git stable-2.7 branch version of ansible.
+    run: playbooks/ansible-functional-devstack/run.yaml
+    required-projects:
+      - name: liu-sheng/ansible
+        override-checkout: stable-2.7
+      - openstack/openstacksdk
+    vars:
+      os_sdk: openstacksdk
+      global_env:
+        OS_BRANCH: stable/rocky
+
+- job:
+    name: openstacksdk-ansible-functional-devstack-queens
+    parent: init-test
+    description: |
+      Run openstacksdk ansible functional tests against a queens devstack using git stable-2.7 branch version of ansible.
+    run: playbooks/ansible-functional-devstack/run.yaml
+    required-projects:
+      - name: liu-sheng/ansible
+        override-checkout: stable-2.7
+      - openstack/openstacksdk
+    vars:
+      os_sdk: openstacksdk
+      global_env:
+        OS_BRANCH: stable/queens
+
+- job:
+    name: openstacksdk-ansible-functional-devstack-pike
+    parent: init-test
+    description: |
+      Run openstacksdk ansible functional tests against a pike devstack using git stable-2.7 branch version of ansible.
+    run: playbooks/ansible-functional-devstack/run.yaml
+    required-projects:
+      - name: liu-sheng/ansible
+        override-checkout: stable-2.7
+      - openstack/openstacksdk
+    vars:
+      os_sdk: openstacksdk
+      global_env:
+        OS_BRANCH: stable/pike
+
+- job:
+    name: openstacksdk-ansible-functional-devstack-ocata
+    parent: init-test
+    description: |
+      Run openstacksdk ansible functional tests against a ocata devstack using git stable-2.7 branch version of ansible.
+    run: playbooks/ansible-functional-devstack/run.yaml
+    required-projects:
+      - name: liu-sheng/ansible
+        override-checkout: stable-2.7
+      - openstack/openstacksdk
+    vars:
+      os_sdk: openstacksdk
+      global_env:
+        OS_BRANCH: stable/ocata
+
+- job:
+    name: openstacksdk-ansible-functional-devstack-newton
+    parent: init-test
+    description: |
+      Run openstacksdk ansible functional tests against a newton devstack using git stable-2.7 branch version of ansible.
+    run: playbooks/ansible-functional-devstack/run.yaml
+    required-projects:
+      - name: liu-sheng/ansible
+        override-checkout: stable-2.7
+      - openstack/openstacksdk
+    vars:
+      os_sdk: openstacksdk
+      global_env:
+        OS_BRANCH: stable/newton
+
+- job:
+    name: openstacksdk-ansible-functional-devstack-mitaka
+    parent: init-test
+    description: |
+      Run openstacksdk ansible functional tests against a mitaka devstac using git stable-2.7 branch version of ansible.
+    run: playbooks/ansible-functional-devstack/run.yaml
+    required-projects:
+      - name: liu-sheng/ansible
+        override-checkout: stable-2.7
+      - openstack/openstacksdk
+    vars:
+      os_sdk: openstacksdk
+      global_env:
+        OS_BRANCH: stable/mitaka
+    nodeset: ubuntu-trusty
+
+- job:
+    name: shade-ansible-stable-2.5-functional-devstack
+    parent: init-test
+    description: |
+      Run shade ansible functional tests against a master devstack
+      using git stable-2.5 branch version of ansible.
+    run: playbooks/ansible-functional-devstack/run.yaml
+    required-projects:
+      - name: liu-sheng/ansible
+        override-checkout: stable-2.5
+      - openstack-infra/shade
+    vars:
+      os_sdk: shade
+
+- job:
+    name: openstacksdk-ansible-functional-opentelekomcloud
+    parent: init-test
+    description: |
+      Run openstacksdk ansible functional tests against a opentelekomcloud using git stable-2.7 branch version of ansible.
+    run: playbooks/ansible-functional-public-clouds/run.yaml
+    required-projects:
+      - name: liu-sheng/ansible
+        override-checkout: stable-2.7
+      - openstack/openstacksdk
+    vars:
+      cloud_name: opentelekomcloud
+      os_sdk: openstacksdk
+      # Disable public cloud policy limit roles: group keystone_domain keystone_role nova_flavor user user_group
+      test_cases: auth image keypair network object port router security_group server subnet volume
+    secrets:
+      - opentelekomcloud_credentials
+
+- job:
+    name: openstacksdk-ansible-functional-orange
+    parent: init-test
+    description: |
+      Run openstacksdk ansible functional tests against orange cloud using git stable-2.7 branch version of ansible.
+    run: playbooks/ansible-functional-public-clouds/run.yaml
+    required-projects:
+      - name: liu-sheng/ansible
+        override-checkout: stable-2.7
+      - openstack/openstacksdk
+    vars:
+      cloud_name: orange
+      os_sdk: openstacksdk
+      # Disable public cloud policy limit roles: group keystone_domain keystone_role nova_flavor user user_group object
+      test_cases: auth image keypair network port router security_group server subnet volume
+    secrets:
+      - orange_credentials
+
+- job:
+    name: openstacksdk-ansible-functional-telefonica
+    parent: init-test
+    description: |
+      Run openstacksdk ansible functional tests against telefonica cloud using git stable-2.7 branch version of ansible.
+    run: playbooks/ansible-functional-public-clouds/run.yaml
+    required-projects:
+      - name: liu-sheng/ansible
+        override-checkout: stable-2.7
+      - openstack/openstacksdk
+    vars:
+      cloud_name: telefonica
+      os_sdk: openstacksdk
+      # Disable public cloud policy limit roles: group keystone_domain keystone_role nova_flavor user user_group object
+      test_cases: auth image keypair network port router security_group server subnet volume
+    secrets:
+      - telefonica_credentials
+
+- job:
+    name: openstacksdk-ansible-functional-huaweicloud
+    parent: init-test
+    description: |
+      Run openstacksdk ansible functional tests against huaweicloud using git stable-2.7 branch version of ansible.
+    run: playbooks/ansible-functional-public-clouds/run.yaml
+    required-projects:
+      - name: liu-sheng/ansible
+        override-checkout: stable-2.7
+      - openstack/openstacksdk
+    vars:
+      cloud_name: huaweicloud
+      os_sdk: openstacksdk
+      # Disable public cloud policy limit roles: group keystone_domain keystone_role nova_flavor user user_group object
+      test_cases: auth image keypair network port router security_group server subnet volume
+    secrets:
+      - huaweicloud_credentials
+
 # packer jobs
 - job:
     name: packer-functional-opentelekomcloud
