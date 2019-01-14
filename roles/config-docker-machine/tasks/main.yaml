@@ -13,12 +13,6 @@
       apt-get install apt-transport-https ca-certificates
       wget -qO- https://get.docker.com/ | sh
 
-      # NOTE: backport fix of PR 4543 and PR 4545
-      git config --global user.email 'zuul@openlab.com'
-      git config --global user.name 'openlab'
-      git cherry-pick 9ec6729
-      git cherry-pick 7909ee3
-
       # Build docker-machine
       make build
       cp ./bin/docker-machine /usr/local/bin/
