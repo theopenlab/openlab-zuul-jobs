@@ -13,7 +13,8 @@
 
               pip install python-openstackclient
 
-              pushd '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}'
+              # pushd '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}'
+              pushd '{{ ansible_user_dir }}/src/github.com/docker/machine'
               # Select a flavor have 2048M memory and 2 vCPU at least
               export OS_FLAVOR_ID=$(openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column \
                   VCPUs | awk '{if($2>=2048 && $3>=2){print $1}}' | head -n 1)
