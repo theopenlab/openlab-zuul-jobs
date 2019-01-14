@@ -638,126 +638,126 @@
 
 # docker machine jobs
 - job:
-    name: docker-machine-0.15.0-functional-opentelekomcloud
+    name: docker-machine-functional-opentelekomcloud
     parent: init-test
     description: |
-      Test functionalities of Docker machine of 0.15.0 version against opentelekomcloud.
+      Test functionalities of Docker machine of v0.16.1 version against opentelekomcloud.
     run: playbooks/docker-machine-functional-public-clouds/run.yaml
     vars:
       cloud_name: opentelekomcloud
-    override-checkout: v0.15.0
+    override-checkout: v0.16.1
     secrets:
       - opentelekomcloud_credentials
 
 - job:
-    name: docker-machine-0.15.0-functional-orange
+    name: docker-machine-functional-orange
     parent: init-test
     description: |
-      Test functionalities of Docker machine of 0.15.0 version against orange.
+      Test functionalities of Docker machine of v0.16.1 version against orange.
     run: playbooks/docker-machine-functional-public-clouds/run.yaml
     vars:
       cloud_name: orange
-    override-checkout: v0.15.0
+    override-checkout: v0.16.1
     secrets:
       - orange_credentials
 
 - job:
-    name: docker-machine-0.15.0-functional-telefonica
+    name: docker-machine-functional-telefonica
     parent: init-test
     description: |
-      Test functionalities of Docker machine of 0.15.0 version against telefonica.
+      Test functionalities of Docker machine of v0.16.1 version against telefonica.
     run: playbooks/docker-machine-functional-public-clouds/run.yaml
     vars:
       cloud_name: telefonica
       ssh_user: linux
-    override-checkout: v0.15.0
+    override-checkout: v0.16.1
     secrets:
       - telefonica_credentials
 
 - job:
-    name: docker-machine-0.15.0-functional-huaweicloud
+    name: docker-machine-functional-huaweicloud
     parent: init-test
     description: |
-      Test functionalities of Docker machine of 0.15.0 version against huaweicloud.
+      Test functionalities of Docker machine of v0.16.1 version against huaweicloud.
     run: playbooks/docker-machine-functional-public-clouds/run.yaml
     vars:
       cloud_name: huaweicloud
-    override-checkout: v0.15.0
+    override-checkout: v0.16.1
     secrets:
       - huaweicloud_credentials
 
 - job:
-    name: docker-machine-0.15.0-functional-devstack-mitaka
+    name: docker-machine-functional-devstack-mitaka
     parent: init-test
     description: |
-      Test image building functionality of Docker machine of 0.15.0 version against
+      Test image building functionality of Docker machine of v0.16.1 version against
       devstack of Mitaka.
     run: playbooks/docker-machine-functional-devstack/run.yaml
     vars:
       global_env:
         OS_BRANCH: stable/mitaka
-    override-checkout: v0.15.0
+    override-checkout: v0.16.1
     nodeset: ubuntu-trusty
 
 - job:
-    name: docker-machine-0.15.0-functional-devstack-newton
+    name: docker-machine-functional-devstack-newton
     parent: init-test
     description: |
-      Test image building functionality of Docker machine of 0.15.0 version against
+      Test image building functionality of Docker machine of v0.16.1 version against
       devstack of Newton.
     run: playbooks/docker-machine-functional-devstack/run.yaml
     vars:
       global_env:
         OS_BRANCH: stable/newton
-    override-checkout: v0.15.0
+    override-checkout: v0.16.1
 
 - job:
-    name: docker-machine-0.15.0-functional-devstack-ocata
+    name: docker-machine-functional-devstack-ocata
     parent: init-test
     description: |
-      Test image building functionality of Docker machine of 0.15.0 version against
+      Test image building functionality of Docker machine of v0.16.1 version against
       devstack of Ocata.
     run: playbooks/docker-machine-functional-devstack/run.yaml
     vars:
       global_env:
         OS_BRANCH: stable/ocata
-    override-checkout: v0.15.0
+    override-checkout: v0.16.1
 
 - job:
-    name: docker-machine-0.15.0-functional-devstack-pike
+    name: docker-machine-functional-devstack-pike
     parent: init-test
     description: |
-      Test image building functionality of Docker machine of 0.15.0 version against
+      Test image building functionality of Docker machine of v0.16.1 version against
       devstack of Pike.
     run: playbooks/docker-machine-functional-devstack/run.yaml
     vars:
       global_env:
         OS_BRANCH: stable/pike
-    override-checkout: v0.15.0
+    override-checkout: v0.16.1
 
 - job:
-    name: docker-machine-0.15.0-functional-devstack-queens
+    name: docker-machine-functional-devstack-queens
     parent: init-test
     description: |
-      Test image building functionality of Docker machine of 0.15.0 version against
+      Test image building functionality of Docker machine of v0.16.1 version against
       devstack of Queens.
     run: playbooks/docker-machine-functional-devstack/run.yaml
     vars:
       global_env:
         OS_BRANCH: stable/queens
-    override-checkout: v0.15.0
+    override-checkout: v0.16.1
 
 - job:
-    name: docker-machine-0.15.0-functional-devstack-rocky
+    name: docker-machine-functional-devstack-rocky
     parent: init-test
     description: |
-      Test image building functionality of Docker machine of 0.15.0 version against
+      Test image building functionality of Docker machine of v0.16.1 version against
       devstack of Rocky.
     run: playbooks/docker-machine-functional-devstack/run.yaml
     vars:
       global_env:
         OS_BRANCH: stable/rocky
-    override-checkout: v0.15.0
+    override-checkout: v0.16.1
 #
 #- job:
 #    name: bosh-huaweicloud-cpi-release-acceptance-test

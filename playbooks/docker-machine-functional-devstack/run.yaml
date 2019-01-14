@@ -1,59 +1,22 @@
 - hosts: all
   become: yes
-  pre_tasks:
-    - name: Prepare local conf for cf validation tests
-      shell:
-        cmd: |
-          set -e
-          set -x
-          cat << EOF >> /tmp/dg-local.conf
-          [[local|localrc]]
-          NETWORK_GATEWAY=10.0.0.1
-          ENABLE_HTTPD_MOD_WSGI_SERVICES="False"
-          KEYSTONE_USE_MOD_WSGI="False"
-          NOVA_USE_MOD_WSGI="False"
-          SWIFT_USE_MOD_WSGI="False"
-          HEAT_USE_MOD_WSGI="False"
-          CINDER_USE_MOD_WSGI="False"
-          EOF
-        executable: /bin/bash
+  vars:
+    #NOTES: docker-machine don't support OpenStack version discovery, so enable legacy endpoint format.
+    DISABLE_HTTPD_MOD_WSGI: true
   roles:
     - clone-devstack-gate-to-workspace
+    - create-devstack-local-conf
     - install-devstack
-    - config-golang
+    - config-docker-machine
   tasks:
     - name: Run Integration tests of Docker machine against devstack
       shell:
         cmd: |
           set -ex
-          git clone https://github.com/sstephenson/bats.git
-          pushd bats
-          ./install.sh /usr/local
-          popd
-          apt-get update
-          apt-get install apt-transport-https ca-certificates
-          wget -qO- https://get.docker.com/ | sh
 
           curl -O http://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-disk1.img
           openstack image create --file xenial-server-cloudimg-amd64-disk1.img --min-disk 1 --container-format bare \
               --disk-format qcow2 "Ubuntu 16.04 Server 64bit"
-          mkdir -p $GOPATH/src/github.com/docker/machine
-          cp -r '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}' $GOPATH/src/github.com/docker
-          pushd $GOPATH/src/github.com/docker/machine
-          # NOTE: backport fix of PR 4543 and PR 4545
-          git config --global user.email 'zuul@openlab.com'
-          git config --global user.name 'openlab'
-          git cherry-pick 9ec6729
-          git cherry-pick 7909ee3
-          make build
-          cp ./bin/docker-machine /usr/local/bin/
-          docker-machine version
-          export OS_FLAVOR_ID=11
-          export OS_IMAGE_NAME="Ubuntu 16.04 Server 64bit"
-          export OS_SSH_USER=ubuntu
-          export OS_NETWORK_NAME=private
-          export OS_FLOATINGIP_POOL=public
-          export OS_DOMAIN_ID=default
 
           project_id=$(openstack token issue -f value -c project_id)
           sg_id=$(openstack security group list | grep default | grep $project_id | head -n 1 | awk '{print $2}')
@@ -67,6 +30,18 @@
           $sg_cmd_prefix icmp $sg_id
           neutron subnet-update --dns-nameserver 8.8.8.8 private-subnet
           openstack flavor create --vcpus 1 --ram 1024 --disk 10 --id 11 docker-machine-test
+
+          pushd '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}'
+          export OS_FLAVOR_ID=11
+          export OS_IMAGE_NAME="Ubuntu 16.04 Server 64bit"
+          export OS_SSH_USER=ubuntu
+          export OS_TENANT_ID=$(openstack token issue -f value -c project_id)
+          export OS_NETWORK_NAME=private
+          export OS_FLOATINGIP_POOL=public
+          export OS_SECURITY_GROUPS=default
+
+          export OS_DOMAIN_ID=default
+
           export DRIVER=openstack
           export DEBUG=true
           export VERBOSE=true
@@ -78,6 +53,13 @@
           export B2D_LOCATION=~/.docker/machine/cache/boot2docker.iso
           export SHARED_NAME="bats-$DRIVER-test-shared-$(date +%s)"
           export MACHINE_BUGSNAG_API_TOKEN=no-report
+
+          # Install bats
+          git clone https://github.com/sstephenson/bats.git '{{ ansible_user_dir }}/bats'
+          pushd '{{ ansible_user_dir }}/bats'
+          ./install.sh /usr/local
+          popd
+
           function machine() {
               "$MACHINE_ROOT"/bin/"$MACHINE_BIN_NAME" "$@"
           }
