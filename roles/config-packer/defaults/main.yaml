@@ -1,3 +1,0 @@
----
-packer_version: 'master'
-packer_download_url: 'https://releases.hashicorp.com/packer/{{ packer_version }}/packer_{{ packer_version }}_linux_amd64.zip'
