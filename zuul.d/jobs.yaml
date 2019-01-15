@@ -592,7 +592,6 @@
       Run openstacksdk ansible functional tests against a rocky devstack using git stable-2.7 branch version of ansible.
     run: playbooks/ansible-functional-devstack/run.yaml
     required-projects:
-      - liu-sheng/ansible
       - openstack/openstacksdk
     vars:
       os_sdk: openstacksdk
@@ -622,7 +621,6 @@
       Run openstacksdk ansible functional tests against a pike devstack using git stable-2.7 branch version of ansible.
     run: playbooks/ansible-functional-devstack/run.yaml
     required-projects:
-      - liu-sheng/ansible
       - openstack/openstacksdk
     vars:
       os_sdk: openstacksdk
