@@ -61,30 +61,30 @@
     name: hashicorp/packer
     periodic:
       jobs:
-        - packer-1.2.5-functional-opentelekomcloud:
+        - packer-functional-opentelekomcloud:
             branches: master
-        - packer-1.2.5-functional-orange:
+        - packer-functional-orange:
             branches: master
 #        NOTES: Telefonica account is disable
-#        - packer-1.2.5-functional-telefonica:
+#        - packer-functional-telefonica:
 #            branches: master
-        - packer-1.2.5-functional-huaweicloud:
+        - packer-functional-huaweicloud:
             branches: master
         - packer-master-functional-devstack:
             branches: master
-        - packer-1.2.5-functional-devstack:
+        - packer-functional-devstack:
             branches: master
-        - packer-1.2.5-functional-devstack-rocky:
+        - packer-functional-devstack-rocky:
             branches: master
-        - packer-1.2.5-functional-devstack-queens:
+        - packer-functional-devstack-queens:
             branches: master
-        - packer-1.2.5-functional-devstack-pike:
+        - packer-functional-devstack-pike:
             branches: master
-        - packer-1.2.5-functional-devstack-ocata:
+        - packer-functional-devstack-ocata:
             branches: master
-        - packer-1.2.5-functional-devstack-newton:
+        - packer-functional-devstack-newton:
             branches: master
-        - packer-1.2.5-functional-devstack-mitaka:
+        - packer-functional-devstack-mitaka:
             branches: master
 
 - project:

@@ -625,52 +625,52 @@
 
 # packer jobs
 - job:
-    name: packer-1.2.5-functional-opentelekomcloud
+    name: packer-functional-opentelekomcloud
     parent: init-test
     description: |
-      Test image building functionality of Packer of version 1.2.5 against opentelekomcloud.
+      Test image building functionality of Packer of v1.3.3 against opentelekomcloud.
     run: playbooks/packer-functional-public-clouds/run.yaml
     vars:
       cloud_name: opentelekomcloud
-      packer_version: 1.2.5
     secrets:
       - opentelekomcloud_credentials
+    override-checkout: v1.3.3
 
 - job:
-    name: packer-1.2.5-functional-orange
+    name: packer-functional-orange
     parent: init-test
     description: |
-      Test image building functionality of Packer of version 1.2.5 against orange.
+      Test image building functionality of Packer of v1.3.3 against orange.
     run: playbooks/packer-functional-public-clouds/run.yaml
     vars:
       cloud_name: orange
-      packer_version: 1.2.5
     secrets:
       - orange_credentials
+    override-checkout: v1.3.3
 
 - job:
-    name: packer-1.2.5-functional-telefonica
+    name: packer-functional-telefonica
     parent: init-test
     description: |
-      Test image building functionality of Packer of version 1.2.5 against telefonica.
+      Test image building functionality of Packer of v1.3.3 against telefonica.
     run: playbooks/packer-functional-public-clouds/run.yaml
     vars:
       cloud_name: telefonica
-      packer_version: 1.2.5
     secrets:
       - telefonica_credentials
+    override-checkout: v1.3.3
 
 - job:
-    name: packer-1.2.5-functional-huaweicloud
+    name: packer-functional-huaweicloud
     parent: init-test
     description: |
-      Test image building functionality of Packer of version 1.2.5 against huaweicloud.
+      Test image building functionality of Packer of v1.3.3 against huaweicloud.
     run: playbooks/packer-functional-public-clouds/run.yaml
     vars:
       cloud_name: huaweicloud
-      packer_version: 1.2.5
     secrets:
       - huaweicloud_credentials
+    override-checkout: v1.3.3
 
 - job:
     name: packer-master-functional-devstack
@@ -680,79 +680,78 @@
     run: playbooks/packer-functional-devstack/run.yaml
 
 - job:
-    name: packer-1.2.5-functional-devstack
+    name: packer-functional-devstack
     parent: init-test
     description: |
-      Test image building functionality of Packer of version 1.2.5 against master devstack.
+      Test image building functionality of Packer of v1.3.3 against master devstack.
     run: playbooks/packer-functional-devstack/run.yaml
-    vars:
-      packer_version: 1.2.5
+    override-checkout: v1.3.3
 
 - job:
-    name: packer-1.2.5-functional-devstack-rocky
+    name: packer-functional-devstack-rocky
     parent: init-test
     description: |
-      Test image building functionality of Packer of version 1.2.5 against rocky devstack.
+      Test image building functionality of Packer of v1.3.3 against rocky devstack.
     run: playbooks/packer-functional-devstack/run.yaml
     vars:
-      packer_version: 1.2.5
       global_env:
         OS_BRANCH: stable/rocky
+    override-checkout: v1.3.3
 
 - job:
-    name: packer-1.2.5-functional-devstack-queens
+    name: packer-functional-devstack-queens
     parent: init-test
     description: |
-      Test image building functionality of Packer of version 1.2.5 against queens devstack.
+      Test image building functionality of Packer of v1.3.3 against queens devstack.
     run: playbooks/packer-functional-devstack/run.yaml
     vars:
-      packer_version: 1.2.5
       global_env:
         OS_BRANCH: stable/queens
+    override-checkout: v1.3.3
 
 - job:
-    name: packer-1.2.5-functional-devstack-pike
+    name: packer-functional-devstack-pike
     parent: init-test
     description: |
-      Test image building functionality of Packer of version 1.2.5 against pike devstack.
+      Test image building functionality of Packer of v1.3.3 against pike devstack.
     run: playbooks/packer-functional-devstack/run.yaml
     vars:
-      packer_version: 1.2.5
       global_env:
         OS_BRANCH: stable/pike
+    override-checkout: v1.3.3
 
 - job:
-    name: packer-1.2.5-functional-devstack-ocata
+    name: packer-functional-devstack-ocata
     parent: init-test
     description: |
-      Test image building functionality of Packer of version 1.2.5 against ocata devstack.
+      Test image building functionality of Packer of v1.3.3 against ocata devstack.
     run: playbooks/packer-functional-devstack/run.yaml
     vars:
-      packer_version: 1.2.5
       global_env:
         OS_BRANCH: stable/ocata
+    override-checkout: v1.3.3
 
 - job:
-    name: packer-1.2.5-functional-devstack-newton
+    name: packer-functional-devstack-newton
     parent: init-test
     description: |
-      Test image building functionality of Packer of version 1.2.5 against newton devstack.
+      Test image building functionality of Packer of v1.3.3  against newton devstack.
     run: playbooks/packer-functional-devstack/run.yaml
     vars:
-      packer_version: 1.2.5
       global_env:
         OS_BRANCH: stable/newton
+    override-checkout: v1.3.3
 
 - job:
-    name: packer-1.2.5-functional-devstack-mitaka
+    name: packer-functional-devstack-mitaka
     parent: init-test
     description: |
-      Test image building functionality of Packer of version 1.2.5 against mitaka devstack.
+      Test image building functionality of Packer of v1.3.3 against mitaka devstack.
     run: playbooks/packer-functional-devstack/run.yaml
     vars:
-      packer_version: 1.2.5
       global_env:
         OS_BRANCH: stable/mitaka
+    override-checkout: v1.3.3
     nodeset: ubuntu-trusty
 
 # docker machine jobs
