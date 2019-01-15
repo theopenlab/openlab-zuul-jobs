@@ -43,6 +43,9 @@
 
           export OS_DOMAIN_ID=default
 
+          #workaournd for the version discovery issue
+          [[ "$OS_AUTH_URL" =~ "v3" ]] || export OS_AUTH_URL="$OS_AUTH_URL"/v3
+
           export DRIVER=openstack
           export DEBUG=true
           export VERBOSE=true
@@ -60,7 +63,6 @@
           pushd '{{ ansible_user_dir }}/bats'
           ./install.sh /usr/local
           popd
-          sleep 7200
 
           function machine() {
               "$MACHINE_ROOT"/bin/"$MACHINE_BIN_NAME" "$@"
