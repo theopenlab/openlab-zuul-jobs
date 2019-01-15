@@ -91,26 +91,26 @@
     name: docker/machine
     periodic:
       jobs:
-        - docker-machine-0.15.0-functional-opentelekomcloud:
+        - docker-machine-functional-opentelekomcloud:
             branches: master
-        - docker-machine-0.15.0-functional-orange:
+        - docker-machine-functional-orange:
             branches: master
 #        NOTES: Telefonica account is disable
-#        - docker-machine-0.15.0-functional-telefonica:
+#        - docker-machine-functional-telefonica:
 #            branches: master
-        - docker-machine-0.15.0-functional-huaweicloud:
+        - docker-machine-functional-huaweicloud:
             branches: master
-        - docker-machine-0.15.0-functional-devstack-mitaka:
+        - docker-machine-functional-devstack-mitaka:
             branches: master
-        - docker-machine-0.15.0-functional-devstack-newton:
+        - docker-machine-functional-devstack-newton:
             branches: master
-        - docker-machine-0.15.0-functional-devstack-ocata:
+        - docker-machine-functional-devstack-ocata:
             branches: master
-        - docker-machine-0.15.0-functional-devstack-pike:
+        - docker-machine-functional-devstack-pike:
             branches: master
-        - docker-machine-0.15.0-functional-devstack-queens:
+        - docker-machine-functional-devstack-queens:
             branches: master
-        - docker-machine-0.15.0-functional-devstack-rocky:
+        - docker-machine-functional-devstack-rocky:
             branches: master
 
 - project:
