@@ -570,9 +570,10 @@
     run: playbooks/ansible-functional-devstack/run.yaml
     required-projects:
       - openstack/openstacksdk
+      - name: liu-sheng/ansible
+        override-checkout: stable-2.7
     vars:
       os_sdk: openstacksdk
-    override-checkout: devel
 
 - job:
     name: openstacksdk-ansible-functional-devstack
@@ -622,11 +623,12 @@
     run: playbooks/ansible-functional-devstack/run.yaml
     required-projects:
       - openstack/openstacksdk
+      - name: liu-sheng/ansible
+        override-checkout: stable-2.7
     vars:
       os_sdk: openstacksdk
       global_env:
         OS_BRANCH: stable/pike
-    override-checkout: stable-2.7
 
 - job:
     name: openstacksdk-ansible-functional-devstack-ocata
