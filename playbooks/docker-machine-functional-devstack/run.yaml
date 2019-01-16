@@ -21,6 +21,8 @@
           project_id=$(openstack token issue -f value -c project_id)
           sg_id=$(openstack security group list | grep default | grep $project_id | head -n 1 | awk '{print $2}')
           if [ "{{ global_env.OS_BRANCH }}" == "stable/mitaka" ]; then
+              export OS_USER_DOMAIN_ID=default
+              export OS_PROJECT_DOMAIN_ID=default
               sg_cmd_prefix="openstack security group rule create --proto"
           else
               sg_cmd_prefix="openstack security group rule create --ingress --protocol"
@@ -40,6 +42,7 @@
           export OS_FLOATINGIP_POOL=public
           export OS_SECURITY_GROUPS=default
 
+          [[ "$OS_AUTH_URL" =~ "v3" ]] || export OS_AUTH_URL="$OS_AUTH_URL"/v3
           export OS_DOMAIN_ID=default
 
           export DRIVER=openstack
