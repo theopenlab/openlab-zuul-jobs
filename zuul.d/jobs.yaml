@@ -571,7 +571,7 @@
     required-projects:
       - openstack/openstacksdk
       - name: liu-sheng/ansible
-        override-checkout: stable-2.7
+        override-checkout: devel
     vars:
       os_sdk: openstacksdk
 
