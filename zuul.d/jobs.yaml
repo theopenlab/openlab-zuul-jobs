@@ -412,121 +412,105 @@
     name: openstacksdk-ansible-devel-functional-devstack
     parent: init-test
     description: |
-      Run openstacksdk ansible functional tests against a master devstack
-      using git devel branch version of ansible.
+      Run openstacksdk ansible functional tests against a master devstack using git devel branch version of ansible.
     run: playbooks/ansible-functional-devstack/run.yaml
     required-projects:
-      - name: theopenlab/ansible
-        override-checkout: devel
       - openstack/openstacksdk
+    override-checkout: devel
     vars:
       os_sdk: openstacksdk
 
 - job:
-    name: openstacksdk-ansible-stable-2.6-functional-devstack
+    name: openstacksdk-ansible-functional-devstack
     parent: init-test
     description: |
-      Run openstacksdk ansible functional tests against a master devstack
-      using git stable-2.6 branch version of ansible.
+      Run openstacksdk ansible functional tests against a master devstack using git stable-2.7 branch version of ansible.
     run: playbooks/ansible-functional-devstack/run.yaml
     required-projects:
-      - name: theopenlab/ansible
-        override-checkout: stable-2.6
       - openstack/openstacksdk
+    override-checkout: stable-2.7
     vars:
       os_sdk: openstacksdk
 
 - job:
-    name: openstacksdk-ansible-stable-2.6-functional-devstack-rocky
+    name: openstacksdk-ansible-functional-devstack-rocky
     parent: init-test
     description: |
-      Run openstacksdk ansible functional tests against a rocky devstack
-      using git stable-2.6 branch version of ansible.
+      Run openstacksdk ansible functional tests against a rocky devstack using git stable-2.7 branch version of ansible.
     run: playbooks/ansible-functional-devstack/run.yaml
     required-projects:
-      - name: theopenlab/ansible
-        override-checkout: stable-2.6
       - openstack/openstacksdk
+    override-checkout: stable-2.7
     vars:
       os_sdk: openstacksdk
       global_env:
         OS_BRANCH: stable/rocky
 
 - job:
-    name: openstacksdk-ansible-stable-2.6-functional-devstack-queens
+    name: openstacksdk-ansible-functional-devstack-queens
     parent: init-test
     description: |
-      Run openstacksdk ansible functional tests against a queens devstack
-      using git stable-2.6 branch version of ansible.
+      Run openstacksdk ansible functional tests against a queens devstack using git stable-2.7 branch version of ansible.
     run: playbooks/ansible-functional-devstack/run.yaml
     required-projects:
-      - name: theopenlab/ansible
-        override-checkout: stable-2.6
       - openstack/openstacksdk
+    override-checkout: stable-2.7
     vars:
       os_sdk: openstacksdk
       global_env:
         OS_BRANCH: stable/queens
 
 - job:
-    name: openstacksdk-ansible-stable-2.6-functional-devstack-pike
+    name: openstacksdk-ansible-functional-devstack-pike
     parent: init-test
     description: |
-      Run openstacksdk ansible functional tests against a pike devstack
-      using git stable-2.6 branch version of ansible.
+      Run openstacksdk ansible functional tests against a pike devstack using git stable-2.7 branch version of ansible.
     run: playbooks/ansible-functional-devstack/run.yaml
     required-projects:
-      - name: theopenlab/ansible
-        override-checkout: stable-2.6
       - openstack/openstacksdk
+    override-checkout: stable-2.7
     vars:
       os_sdk: openstacksdk
       global_env:
         OS_BRANCH: stable/pike
 
 - job:
-    name: openstacksdk-ansible-stable-2.6-functional-devstack-ocata
+    name: openstacksdk-ansible-functional-devstack-ocata
     parent: init-test
     description: |
-      Run openstacksdk ansible functional tests against a ocata devstack
-      using git stable-2.6 branch version of ansible.
+      Run openstacksdk ansible functional tests against a ocata devstack using git stable-2.7 branch version of ansible.
     run: playbooks/ansible-functional-devstack/run.yaml
     required-projects:
-      - name: theopenlab/ansible
-        override-checkout: stable-2.6
       - openstack/openstacksdk
+    override-checkout: stable-2.7
     vars:
       os_sdk: openstacksdk
       global_env:
         OS_BRANCH: stable/ocata
 
 - job:
-    name: openstacksdk-ansible-stable-2.6-functional-devstack-newton
+    name: openstacksdk-ansible-functional-devstack-newton
     parent: init-test
     description: |
-      Run openstacksdk ansible functional tests against a newton devstack
-      using git stable-2.6 branch version of ansible.
+      Run openstacksdk ansible functional tests against a newton devstack using git stable-2.7 branch version of ansible.
     run: playbooks/ansible-functional-devstack/run.yaml
     required-projects:
-      - name: theopenlab/ansible
-        override-checkout: stable-2.6
       - openstack/openstacksdk
+    override-checkout: stable-2.7
     vars:
       os_sdk: openstacksdk
       global_env:
         OS_BRANCH: stable/newton
 
 - job:
-    name: openstacksdk-ansible-stable-2.6-functional-devstack-mitaka
+    name: openstacksdk-ansible-functional-devstack-mitaka
     parent: init-test
     description: |
-      Run openstacksdk ansible functional tests against a mitaka devstack
-      using git stable-2.6 branch version of ansible.
+      Run openstacksdk ansible functional tests against a mitaka devstac using git stable-2.7 branch version of ansible.
     run: playbooks/ansible-functional-devstack/run.yaml
     required-projects:
-      - name: theopenlab/ansible
-        override-checkout: stable-2.6
       - openstack/openstacksdk
+    override-checkout: stable-2.7
     vars:
       os_sdk: openstacksdk
       global_env:
@@ -534,30 +518,26 @@
     nodeset: ubuntu-trusty
 
 - job:
-    name: shade-ansible-stable-2.5-functional-devstack
+    name: shade-ansible-functional-devstack
     parent: init-test
     description: |
-      Run shade ansible functional tests against a master devstack
-      using git stable-2.5 branch version of ansible.
+      Run shade ansible functional tests against a master devstack using git stable-2.5 branch version of ansible.
     run: playbooks/ansible-functional-devstack/run.yaml
     required-projects:
-      - name: theopenlab/ansible
-        override-checkout: stable-2.5
       - openstack-infra/shade
+    override-checkout: stable-2.5
     vars:
       os_sdk: shade
 
 - job:
-    name: openstacksdk-ansible-stable-2.6-functional-opentelekomcloud
+    name: openstacksdk-ansible-functional-opentelekomcloud
     parent: init-test
     description: |
-      Run openstacksdk ansible functional tests against a opentelekomcloud
-      using git stable-2.6 branch version of ansible.
+      Run openstacksdk ansible functional tests against a opentelekomcloud using git stable-2.7 branch version of ansible.
     run: playbooks/ansible-functional-public-clouds/run.yaml
     required-projects:
-      - name: theopenlab/ansible
-        override-checkout: stable-2.6
       - openstack/openstacksdk
+    override-checkout: stable-2.7
     vars:
       cloud_name: opentelekomcloud
       os_sdk: openstacksdk
@@ -567,16 +547,14 @@
       - opentelekomcloud_credentials
 
 - job:
-    name: openstacksdk-ansible-stable-2.6-functional-orange
+    name: openstacksdk-ansible-functional-orange
     parent: init-test
     description: |
-      Run openstacksdk ansible functional tests against orange cloud
-      using git stable-2.6 branch version of ansible.
+      Run openstacksdk ansible functional tests against orange cloud using git stable-2.7 branch version of ansible.
     run: playbooks/ansible-functional-public-clouds/run.yaml
     required-projects:
-      - name: theopenlab/ansible
-        override-checkout: stable-2.6
       - openstack/openstacksdk
+    override-checkout: stable-2.7
     vars:
       cloud_name: orange
       os_sdk: openstacksdk
@@ -586,16 +564,14 @@
       - orange_credentials
 
 - job:
-    name: openstacksdk-ansible-stable-2.6-functional-telefonica
+    name: openstacksdk-ansible-functional-telefonica
     parent: init-test
     description: |
-      Run openstacksdk ansible functional tests against telefonica cloud
-      using git stable-2.6 branch version of ansible.
+      Run openstacksdk ansible functional tests against telefonica cloud using git stable-2.7 branch version of ansible.
     run: playbooks/ansible-functional-public-clouds/run.yaml
     required-projects:
-      - name: theopenlab/ansible
-        override-checkout: stable-2.6
       - openstack/openstacksdk
+    override-checkout: stable-2.7
     vars:
       cloud_name: telefonica
       os_sdk: openstacksdk
@@ -605,16 +581,14 @@
       - telefonica_credentials
 
 - job:
-    name: openstacksdk-ansible-stable-2.6-functional-huaweicloud
+    name: openstacksdk-ansible-functional-huaweicloud
     parent: init-test
     description: |
-      Run openstacksdk ansible functional tests against huaweicloud
-      using git stable-2.6 branch version of ansible.
+      Run openstacksdk ansible functional tests against huaweicloud using git stable-2.7 branch version of ansible.
     run: playbooks/ansible-functional-public-clouds/run.yaml
     required-projects:
-      - name: theopenlab/ansible
-        override-checkout: stable-2.6
       - openstack/openstacksdk
+    override-checkout: stable-2.7
     vars:
       cloud_name: huaweicloud
       os_sdk: openstacksdk
