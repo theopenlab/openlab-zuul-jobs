@@ -50,6 +50,8 @@
           EOF
           set -x
 
+          # NOTES: source to add ruby/rbenv into PATH
+          source ~/.bash_profile
           bin/setup
           bundle install
           rbenv rehash

@@ -97,6 +97,8 @@
           openstack role create heat_stack_owner
           openstack role create SwiftOperator
 
+          # NOTES: source to add ruby/rbenv into PATH
+          source ~/.bash_profile
           bin/setup
           bundle install
           rbenv rehash
