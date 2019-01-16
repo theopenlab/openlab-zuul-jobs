@@ -6,7 +6,7 @@
 - name: Install rbenv dependences
   package:
     name: "{{ item }}"
-    state: persent
+    state: present
   with_items:
     - git
     - curl
