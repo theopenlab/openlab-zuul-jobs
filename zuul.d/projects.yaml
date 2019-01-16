@@ -105,7 +105,9 @@
 #        - packer-functional-telefonica
         #- packer-functional-huaweicloud
 #        - packer-master-functional-devstack
-        - packer-functional-devstack
+        #- packer-functional-devstack
+        - packer-functional-devstack-rocky
+        - packer-functional-devstack-queens
 
 - project:
     name: liu-sheng/machine
