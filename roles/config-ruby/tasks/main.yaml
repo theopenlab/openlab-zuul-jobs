@@ -26,9 +26,9 @@
   shell: |
     set -ex
     curl -sL https://github.com/rbenv/rbenv-installer/raw/master/bin/rbenv-installer | bash - || true
-    echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
-    echo 'eval "$(rbenv init -)"' >> ~/.bashrc
-    source ~/.bashrc
+    echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bash_profile
+    echo 'eval "$(rbenv init -)"' >> ~/.bash_profile
+    source ~/.bash_profile
     rbenv install "{{ ruby_version }}"
     rbenv global "{{ ruby_version }}"
     ruby -v
