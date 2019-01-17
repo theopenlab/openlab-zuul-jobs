@@ -2,6 +2,7 @@
   become: yes
   roles:
     - export-cloud-openrc
+    - config-ruby
   tasks:
     - name: Run Integration tests of manageiq-providers-openstack against aganist {{ cloud_name }}
       shell:
@@ -10,7 +11,6 @@
           # Install Packages
           apt install -y memcached                        # Memcached for the session store
           apt install -y postgresql libpq-dev             # PostgreSQL Database server and to build 'pg' Gem
-          apt install -y bzip2 libffi-dev libreadline-dev # For rbenv install 2.3.1 (might not be needed with other Ruby setups)
           apt install -y libxml2-dev libxslt-dev patch    # For Nokogiri Gem
           apt install -y libsqlite-dev libsqlite3-dev     # For sqlite3 Gem
           apt install -y nodejs nodejs-legacy npm         # For ExecJS Gem, bower, npm, yarn, webpack..
@@ -23,10 +23,6 @@
           curl -sL https://deb.nodesource.com/setup_10.x | sudo bash -
           curl -sL https://deb.nodesource.com/setup_8.x | sudo bash -
           apt-get install -y nodejs
-
-          # Install Ruby
-          apt-get install -y build-essential zlibc zlib1g-dev ruby ruby-dev openssl libxslt-dev libxml2-dev \
-              libssl-dev libreadline6 libreadline6-dev libyaml-dev libsqlite3-dev sqlite3
 
           # Configure PostgreSQL
           grep -q '^local\s' /etc/postgresql/*/main/pg_hba.conf || echo "local all all trust" | sudo tee -a /etc/postgresql/9.5/main/pg_hba.conf
@@ -54,8 +50,11 @@
           EOF
           set -x
 
+          # NOTES: source to add ruby/rbenv into PATH
+          source ~/.bash_profile
           bin/setup
           bundle install
+          rbenv rehash
 
           set +x
           sed -i "/setup_ems/ s|admin|$OS_USERNAME|" spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_liberty_keystone_v3_spec.rb

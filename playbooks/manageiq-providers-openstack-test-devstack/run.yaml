@@ -4,6 +4,7 @@
     #NOTES: manageiq-providers-openstack don't support OpenStack version discovery, so enable legacy endpoint format.
     DISABLE_HTTPD_MOD_WSGI: true
   roles:
+    - config-ruby
     - clone-devstack-gate-to-workspace
     - role: create-devstack-local-conf
       enable_services:
@@ -16,15 +17,12 @@
         cmd: |
           set -ex
           apt-get -y install software-properties-common
-          apt-add-repository ppa:brightbox/ruby-ng -y
           echo "deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main 9.5" >> /etc/apt/sources.list.d/pgdg.list
           curl -4 -O https://www.postgresql.org/media/keys/ACCC4CF8.asc
           apt-key add ACCC4CF8.asc
           apt-get -o Acquire::ForceIPv4=true update -y
           apt-get -o Acquire::ForceIPv4=true install postgresql-9.5 -y
           psql --version
-          apt-get install ruby2.3 ruby2.3-dev -y
-          ruby -v
           sed -i "/flat_networks/ a flat_networks = public,public_net_0,public_net_1,public_net_2,public_net_3,public_net_4,public_net_5" /etc/neutron/plugins/ml2/ml2_conf.ini
           killall neutron-server
           nohup /usr/bin/python /usr/local/bin/neutron-server --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini > /dev/null 2>&1 &
@@ -37,9 +35,6 @@
       shell:
         cmd: |
           set -ex
-          # Install Ruby
-          apt-get install -y build-essential zlibc zlib1g-dev ruby ruby-dev openssl libxslt-dev libxml2-dev \
-              libssl-dev libreadline6 libreadline6-dev libyaml-dev libsqlite3-dev sqlite3
           apt-get install -y postgresql
           sed -i "/flat_networks/ s|public|public,public_net_0,public_net_1,public_net_2,public_net_3,public_net_4,public_net_5|" /etc/neutron/plugins/ml2/ml2_conf.ini
           sed -i "/filter_validation = / a filter_validation = false" /etc/neutron/neutron.conf
@@ -55,7 +50,6 @@
           set -ex
           # Install Packages
           apt install -y memcached                        # Memcached for the session store
-          apt install -y bzip2 libffi-dev libreadline-dev # For rbenv install 2.3.1 (might not be needed with other Ruby setups)
           apt install -y libxml2-dev libxslt-dev patch    # For Nokogiri Gem
           apt install -y libsqlite-dev libsqlite3-dev     # For sqlite3 Gem
           apt install -y nodejs nodejs-legacy npm         # For ExecJS Gem, bower, npm, yarn, webpack..
@@ -94,8 +88,11 @@
           openstack role create heat_stack_owner
           openstack role create SwiftOperator
 
+          # NOTES: source to add ruby/rbenv into PATH
+          source ~/.bash_profile
           bin/setup
           bundle install
+          rbenv rehash
           cp openstack_environments.yml spec/manageiq/
 
           #NOTES: Build ManageIQ environment for devstack
@@ -103,6 +100,7 @@
           sed -i "/admin_role =/ s|:domain_id => domain_id||"  spec/tools/environment_builders/openstack/services/identity/builder/keystone_v3.rb
           ln -s $(readlink -f ../../spec/models/manageiq/providers/openstack) spec/models/manageiq/providers/openstack
           bundle install
+          rbenv rehash
           bundle exec rake db:setup
           bundle exec rails r spec/tools/environment_builders/openstack.rb
           popd
