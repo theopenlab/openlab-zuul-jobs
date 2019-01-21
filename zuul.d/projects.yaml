@@ -113,9 +113,9 @@
     name: liu-sheng/machine
     check:
       jobs:
-        #- docker-machine-functional-devstack-mitaka
-        #- docker-machine-functional-devstack-newton
-        #- docker-machine-functional-devstack-pike
+        - docker-machine-functional-devstack-mitaka
+        - docker-machine-functional-devstack-newton
+        - docker-machine-functional-devstack-pike
         #- docker-machine-functional-devstack-ocata
         #- docker-machine-functional-devstack-queens
         - docker-machine-functional-devstack-rocky

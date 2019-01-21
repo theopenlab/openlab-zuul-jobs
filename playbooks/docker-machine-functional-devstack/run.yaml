@@ -65,7 +65,6 @@
           pushd '{{ ansible_user_dir }}/bats'
           ./install.sh /usr/local
           popd
-          sleep 7200
 
           function machine() {
               "$MACHINE_ROOT"/bin/"$MACHINE_BIN_NAME" "$@"
