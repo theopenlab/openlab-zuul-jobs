@@ -14,6 +14,7 @@
           alias openstack="openstack --insecure"
           openstack server delete `openstack server list -f value -c ID -c Name |grep instance_1 |awk '{ print $1 }'` || true
           openstack volume delete `openstack volume list -f value -c ID -c Name |grep -E 'volume_1|vol_1' |awk '{ print $1 }'` || true
+          neutron lbaas-loadbalancer-delete `neutron lbaas-loadbalancer-list -f value -c ID -c Name |grep loadbalancer_1 |awk '{ print $1 }'` || true
           openstack port delete `openstack port list -f value -c ID -c Name |grep port_1 |awk '{ print $1 }'` || true
           openstack subnet delete `openstack subnet list -f value -c ID -c Name |grep -E 'tf_test_subnet|subnet_1|huaweicloud_subnet' |awk '{ print $1 }'` || true
           openstack network delete `openstack network list -f value -c ID -c Name |grep -E 'tf_test_network|network_1' |awk '{ print $1 }'` || true
