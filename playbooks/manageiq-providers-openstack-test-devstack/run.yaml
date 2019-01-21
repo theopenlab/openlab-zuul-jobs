@@ -79,10 +79,10 @@
           su postgres -c "psql -c \"CREATE ROLE root SUPERUSER LOGIN PASSWORD 'smartvm'\""
 
           # Ubuntu fix for failing Bundler
-          wget http://ftp.cz.debian.org/debian/pool/main/o/openssl1.0/libssl1.0-dev_1.0.2o-1_amd64.deb
-          wget http://ftp.cz.debian.org/debian/pool/main/o/openssl1.0/libssl1.0.2_1.0.2o-1_amd64.deb
+          wget -t 10 -T 2 ftp://ftp.us.debian.org/debian/pool/main/o/openssl1.0/libssl1.0-dev_1.0.2?-?_amd64.deb
+          wget -t 10 -T 2 ftp://ftp.us.debian.org/debian/pool/main/o/openssl1.0/libssl1.0.2_1.0.2?-?_amd64.deb
           apt remove -y libssl-dev
-          dpkg -i libssl1.0-dev_1.0.2o-1_amd64.deb libssl1.0.2_1.0.2o-1_amd64.deb
+          dpkg -i libssl1.0-dev_1.0.2*-*_amd64.deb libssl1.0.2_1.0.2*-*_amd64.deb
 
           apt-get install -y postgresql python-psycopg2 libpq-dev
 
@@ -97,6 +97,8 @@
           openstack role create heat_stack_owner
           openstack role create SwiftOperator
 
+          # NOTES: source to add ruby/rbenv into PATH
+          source ~/.bash_profile
           bin/setup
           bundle install
           rbenv rehash
