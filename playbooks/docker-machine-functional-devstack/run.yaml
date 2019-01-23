@@ -1,8 +1,5 @@
 - hosts: all
   become: yes
-  #vars:
-    #NOTES: docker-machine don't support OpenStack version discovery, so enable legacy endpoint format.
-    #DISABLE_HTTPD_MOD_WSGI: true
   roles:
     - clone-devstack-gate-to-workspace
     - create-devstack-local-conf
@@ -21,9 +18,9 @@
           project_id=$(openstack token issue -f value -c project_id)
           sg_id=$(openstack security group list | grep default | grep $project_id | head -n 1 | awk '{print $2}')
           if [ "{{ global_env.OS_BRANCH }}" == "stable/mitaka" ]; then
-              sg_cmd_prefix="openstack security group rule create --proto"
               export OS_USER_DOMAIN_ID=default
               export OS_PROJECT_DOMAIN_ID=default
+              sg_cmd_prefix="openstack security group rule create --proto"
           else
               sg_cmd_prefix="openstack security group rule create --ingress --protocol"
           fi
@@ -33,7 +30,6 @@
           neutron subnet-update --dns-nameserver 8.8.8.8 private-subnet
           openstack flavor create --vcpus 1 --ram 1024 --disk 10 --id 11 docker-machine-test
 
-          # pushd '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}'
           pushd '{{ ansible_user_dir }}/src/github.com/docker/machine'
           export OS_FLAVOR_ID=11
           export OS_IMAGE_NAME="Ubuntu 16.04 Server 64bit"
@@ -43,10 +39,8 @@
           export OS_FLOATINGIP_POOL=public
           export OS_SECURITY_GROUPS=default
 
-          export OS_DOMAIN_ID=default
-
-          #workaournd for the version discovery issue
           [[ "$OS_AUTH_URL" =~ "v3" ]] || export OS_AUTH_URL="$OS_AUTH_URL"/v3
+          export OS_DOMAIN_ID=default
 
           export DRIVER=openstack
           export DEBUG=true
