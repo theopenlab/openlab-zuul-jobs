@@ -3,17 +3,13 @@
   vars:
     job_uid: '{{ zuul.build[:10] }}'
   roles:
-    - role: export-cloud-openrc
-      vars:
-        cloud_name: 'fusioncloud'
+    - export-cloud-openrc
   tasks:
     - name: Clean up resources of openshift cluster on {{ cloud_name }}
       shell:
         cmd: |
           set -e
           set -x
-          shopt -s expand_aliases
-          alias openstack="openstack --insecure"
           openstack stack delete --wait --yes "openshift-{{ job_uid }}.openlab.com" || true
           openstack keypair delete "openshift-{{ job_uid }}" || true
           openstack volume delete `openstack volume list --status available -f value -c Name |grep kubernetes-dynamic-pvc` || true
