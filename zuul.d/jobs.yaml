@@ -1088,6 +1088,7 @@
     vars:
       cloud_name: fusioncloud
       inventory_name: fusioncloud
+      openshift_external_net_name: eip_external_net2
     secrets:
       - fusioncloud_credentials
 

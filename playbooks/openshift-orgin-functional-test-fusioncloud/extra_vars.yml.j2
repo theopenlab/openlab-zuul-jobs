@@ -1,4 +1,7 @@
 ---
+{% if openshift_external_net_name is defined %}
+openshift_openstack_external_network_name: "{{ openshift_external_net_name }}"
+{% endif %}
 {% if openshift_image_name is defined %}
 openshift_openstack_default_image_name: "{{ openshift_image_name }}"
 {% endif %}
