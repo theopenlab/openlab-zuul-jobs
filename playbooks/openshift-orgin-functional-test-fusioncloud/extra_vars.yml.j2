@@ -1,14 +1,11 @@
 ---
-openshift_openstack_external_network_name: "forapig_external_network"
-openshift_openstack_default_image_name: "CentOS-7-liusheng"
-openshift_openstack_default_flavor: "s2.xlarge.2"
-openshift_openstack_user: centos
-openshift_openstack_bootable_volume_size: 80
-
+{% if openshift_image_name is defined %}
+openshift_openstack_default_image_name: "{{ openshift_image_name }}"
+{% endif %}
 openshift_openstack_clusterid: "openshift-{{ job_uid }}"
 openshift_openstack_public_dns_domain: "openlab.com"
 openshift_openstack_keypair_name: "openshift-{{ job_uid }}"
-openshift_openstack_num_infra: 1
-openshift_openstack_num_nodes: 2
+openshift_openstack_num_infra: 0
+openshift_openstack_num_nodes: 1
 openshift_release: "{{ openshift_release | default('3.9') }}"
-# openshift_hosted_infra_selector: "node-role.kubernetes.io/master=true"
+openshift_hosted_infra_selector: "node-role.kubernetes.io/master=true"

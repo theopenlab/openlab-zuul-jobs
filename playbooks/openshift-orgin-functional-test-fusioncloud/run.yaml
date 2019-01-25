@@ -3,18 +3,24 @@
   vars:
     job_uid: '{{ zuul.build[:10] }}'
   roles:
-    - role: export-cloud-openrc
+    - export-cloud-openrc
   tasks:
+    - name: Copy cluster testing playbook under openshift-ansible
+      become: yes
+      copy:
+        src: cluster-testing.yaml
+        dest: '{{ ansible_user_dir }}/src/github.com/huaweicloud/openshift-ansible/cluster-testing.yaml'
+
+    - name: Generate cloud specific extra vars for openshift cluster deployment
+      become: yes
+      template:
+        dest: "{{ ansible_user_dir }}/src/github.com/huaweicloud/openshift-ansible/extra_vars.yml"
+        src: "extra_vars.yml.j2"
+
     - name: Run Openshift functional tests against {{ cloud_name }}
       shell:
         cmd: |
-          set -e
-          mkdir -p '{{ ansible_user_dir }}/src/github.com/huaweicloud/'
-          cd '{{ ansible_user_dir }}/src/github.com/huaweicloud/'
-          git clone http://github.com/huaweicloud/openshift-ansible
-          cd openshift-ansible
-
-          set -x
+          set -ex
           pip install ansible
           pip install jinja2
           pip install shade
@@ -22,13 +28,13 @@
           pip install dnspython
           pip install python-openstackclient
           pip install python-heatclient
-          # shopt -s expand_aliases
-          # alias openstack="openstack --insecure"
+          pip install python-neutronclient
 
-          openstack keypair delete openshift || true
-          openstack keypair create openshift > openshift.pem
-          chmod 400 ./openshift.pem
-          . ./keystonerc
+          openstack keypair create "openshift-{{ job_uid }}" > "openshift-{{ job_uid }}.pem"
+          chmod 400 "openshift-{{ job_uid }}.pem"
+
+          export ANSIBLE_HOST_KEY_CHECKING=false
+          export OPENSHIFT_CLUSTER="openshift-{{ job_uid }}.openlab.com"
 
           # Check prerequisites
           ansible-playbook --user root \
