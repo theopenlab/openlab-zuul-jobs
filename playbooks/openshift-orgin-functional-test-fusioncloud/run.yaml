@@ -5,6 +5,24 @@
   roles:
     - export-cloud-openrc
   tasks:
+    - name: workaround for fusioncloud domain name mapping
+      shell:
+        cmd: |
+          cat << EOF >> /etc/hosts
+          58.255.93.185 iam-apigateway-proxy.fusioncloud.huawei.com
+          58.255.93.185 iam-cache-proxy.fusioncloud.huawei.com
+          58.255.93.185 ecs-api.fusioncloud.huawei.com
+          58.255.93.185 evs-api.fusioncloud.huawei.com
+          58.255.93.185 vpc-api.fusioncloud.huawei.com
+          58.255.93.185 bms-api.fusioncloud.huawei.com
+          58.255.93.185 ccs-api.fusioncloud.huawei.com
+          58.255.93.185 as-api.fusioncloud.huawei.com
+          58.255.93.185 ims-api.fusioncloud.huawei.com
+          58.255.93.185 rts-api.fusioncloud.huawei.com
+          58.255.93.171 obs-api.fusioncloud.huawei.com
+          EOF
+        executable: /bin/bash
+
     - name: Copy cluster testing playbook under openshift-ansible
       become: yes
       copy:
