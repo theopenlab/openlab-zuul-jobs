@@ -16,6 +16,16 @@
           openstack volume delete `openstack volume list -f value -c ID -c Name |grep -E 'volume_1|vol_1' |awk '{ print $1 }'` || true
           neutron lbaas-loadbalancer-delete `neutron lbaas-loadbalancer-list -f value -c ID -c Name |grep loadbalancer_1 |awk '{ print $1 }'` || true
           openstack port delete `openstack port list -f value -c ID -c Name |grep -E 'port_1|port_2' |awk '{ print $1 }'` || true
+          # remove subnet_1 from routers if we added the subnet to the router in acctest and the port will be deleted automatically
+          for sub_id in `openstack subnet list -f value -c ID -c Name |grep -E ' subnet_1$' | awk '{print $1}'`
+          do
+            for router_id in `openstack router list -f value -c ID -c Name |grep -E ' (router_1|router_2)$'| awk '{print $1}'`
+            do
+              if [ `openstack router show "${router_id}" |grep "${sub_id}" -c | awk '{print $1}'` -ge 1 ]; then
+                  openstack router remove subnet "${router_id}" "${sub_id}" || true
+              fi
+            done
+          done
           openstack subnet delete `openstack subnet list -f value -c ID -c Name |grep -E 'tf_test_subnet|subnet_1|huaweicloud_subnet' |awk '{ print $1 }'` || true
           openstack network delete `openstack network list -f value -c ID -c Name |grep -E 'tf_test_network|network_1' |awk '{ print $1 }'` || true
           openstack router delete `openstack router list -f value -c ID -c Name |grep -E 'test_vpc|vpc_test|vpc_test1|router_1|router_2|terraform_provider_test|terraform_provider_test1|terraform-testacc-vpc-data-source' |awk '{ print $1 }'` || true
