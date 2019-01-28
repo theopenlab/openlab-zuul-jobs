@@ -23,6 +23,14 @@
           EOF
         executable: /bin/bash
 
+    - name: workaround for fusioncloud router name issue and external network
+      shell: |
+        sed -i '/OS::Neutron::Router/,+9s|{{ "{{" }} openshift_openstack_stack_name {{ "}}" }}|openshift-{{ job_uid }}|'  roles/openshift_openstack/templates/heat_stack.yaml.j2
+        sed -i '/external_gateway_info/,+5s|{{ "{{" }} openshift_openstack_external_network_name {{ "}}" }}|dummy_external_network|'  roles/openshift_openstack/templates/heat_stack.yaml.j2
+      args:
+        executable: /bin/bash
+        chdir: '{{ ansible_user_dir }}/src/github.com/huaweicloud/openshift-ansible'
+
     - name: Copy cluster testing playbook under openshift-ansible
       become: yes
       copy:
