@@ -4,33 +4,7 @@
         - openlab-zuul-jobs-check
 
 - project:
-    name: theopenlab/ansible
-    check:
-      jobs:
-        - openstacksdk-ansible-devel-functional-devstack:
-            branches: devel
-            files:
-              - ^lib/ansible/modules/cloud/openstack/.*
-              - ^contrib/inventory/openstack_inventory.py
-              - ^lib/ansible/plugins/inventory/openstack.py
-              - ^lib/ansible/module_utils/openstack.py
-              - ^lib/ansible/utils/module_docs_fragments/openstack.py
-        - openstacksdk-ansible-functional-devstack:
-            branches: stable-2.7
-            files:
-              - ^lib/ansible/modules/cloud/openstack/.*
-              - ^contrib/inventory/openstack_inventory.py
-              - ^lib/ansible/plugins/inventory/openstack.py
-              - ^lib/ansible/module_utils/openstack.py
-              - ^lib/ansible/utils/module_docs_fragments/openstack.py
-        - shade-ansible-functional-devstack:
-            branches: stable-2.5
-            files:
-              - ^lib/ansible/modules/cloud/openstack/.*
-              - ^contrib/inventory/openstack.py
-              - ^lib/ansible/plugins/inventory/openstack.py
-              - ^lib/ansible/module_utils/openstack.py
-              - ^lib/ansible/utils/module_docs_fragments/openstack.py
+    name: ansible/ansible
     periodic:
       jobs:
         - openstacksdk-ansible-functional-opentelekomcloud:
@@ -56,6 +30,8 @@
             branches: stable-2.7
         - openstacksdk-ansible-functional-devstack-mitaka:
             branches: stable-2.7
+        - openstacksdk-ansible-devel-functional-devstack:
+            branches: devel
 
 - project:
     name: hashicorp/packer
