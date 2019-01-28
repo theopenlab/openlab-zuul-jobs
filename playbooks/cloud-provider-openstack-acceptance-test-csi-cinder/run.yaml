@@ -116,7 +116,7 @@
 
           git clone https://github.com/kubernetes-csi/external-attacher ${GOPATH}/src/github.com/kubernetes-csi/external-attacher
           make -C ${GOPATH}/src/github.com/kubernetes-csi/external-attacher container
-          docker tag quay.io/k8scsi/csi-attacher:canary docker.io/k8scsi/csi-attacher:latest
+          docker tag csi-attacher:latest docker.io/k8scsi/csi-attacher:latest
 
           git clone https://github.com/kubernetes-csi/driver-registrar ${GOPATH}/src/github.com/kubernetes-csi/driver-registrar
           make -C ${GOPATH}/src/github.com/kubernetes-csi/driver-registrar container
