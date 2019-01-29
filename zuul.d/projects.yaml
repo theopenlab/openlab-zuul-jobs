@@ -14,8 +14,9 @@
 #        NOTES: Telefonica account is disable
 #        - openstacksdk-ansible-functional-telefonica:
 #            branches: stable-2.7
-        - openstacksdk-ansible-functional-huaweicloud:
-            branches: stable-2.7
+        #
+        #- openstacksdk-ansible-functional-huaweicloud:
+        #    branches: stable-2.7
         - openstacksdk-ansible-functional-devstack:
             branches: stable-2.7
         - openstacksdk-ansible-functional-devstack-rocky:
@@ -44,8 +45,9 @@
 #        NOTES: Telefonica account is disable
 #        - packer-functional-telefonica:
 #            branches: master
-        - packer-functional-huaweicloud:
-            branches: master
+        # NOTES: HuaweiCloud account is disable#
+        #- packer-functional-huaweicloud:
+        #    branches: master
         - packer-master-functional-devstack:
             branches: master
         - packer-functional-devstack:
@@ -74,8 +76,9 @@
 #        NOTES: Telefonica account is disable
 #        - docker-machine-functional-telefonica:
 #            branches: master
-        - docker-machine-functional-huaweicloud:
-            branches: master
+        # NOTES: HuaweiCloud account is disable
+        #- docker-machine-functional-huaweicloud:
+        #    branches: master
         - docker-machine-functional-devstack-mitaka:
             branches: master
         - docker-machine-functional-devstack-newton:
@@ -107,8 +110,9 @@
             branches: master
         - terraform-provider-openstack-acceptance-test-orange:
             branches: master
-        - terraform-provider-openstack-acceptance-test-huaweicloud:
-            branches: master
+        # NOTES: HuaweiCloud account is disable
+        #- terraform-provider-openstack-acceptance-test-huaweicloud:
+        #    branches: master
 
 - project:
     name: terraform-providers/terraform-provider-huaweicloud
@@ -117,18 +121,20 @@
         - terraform-provider-huaweicloud-acceptance-test-fusioncloud:
             branches: master
 
-- project:
-    name: cloudfoundry-incubator/bosh-huaweicloud-cpi-release
-    check-generic-cloud:
-      jobs:
-        - bosh-huaweicloud-cpi-release-validator-test-huaweicloud
-        - bosh-huaweicloud-cpi-release-acceptance-test-huaweicloud
+# NOTES: HuaweiCloud account is disable
+#- project:
+#    name: cloudfoundry-incubator/bosh-huaweicloud-cpi-release
+#    check-generic-cloud:
+#      jobs:
+#        - bosh-huaweicloud-cpi-release-validator-test-huaweicloud
+#        - bosh-huaweicloud-cpi-release-acceptance-test-huaweicloud
 
-- project:
-    name: huaweicloud/huaweicloud-service-broker
-    check-generic-cloud:
-      jobs:
-        - osb-checker-test-huaweicloud
+# NOTES: HuaweiCloud account is disable
+#- project:
+#    name: huaweicloud/huaweicloud-service-broker
+#    check-generic-cloud:
+#      jobs:
+#        - osb-checker-test-huaweicloud
 
 - project:
     name: manageiq/manageiq-providers-openstack
@@ -148,8 +154,9 @@
             branches: master
         - manageiq-providers-openstack-test-devstack-rocky:
             branches: master
-        - manageiq-providers-openstack-test-huaweicloud:
-            branches: master
+        # NOTES: HuaweiCloud account is disable
+        #- manageiq-providers-openstack-test-huaweicloud:
+        #    branches: master
         - manageiq-providers-openstack-test-opentelekomcloud:
             branches: master
         - manageiq-providers-openstack-test-orange:
@@ -162,8 +169,9 @@
     name: huaweicloud/openshift-ansible
     periodic-2:
       jobs:
-        - openshift-origin-functional-test-huaweicloud:
-            branches: master
+        # NOTES: HuaweiCloud account is disable
+        #- openshift-origin-functional-test-huaweicloud:
+        #    branches: master
         - openshift-origin-functional-test-opentelekomcloud:
             branches: master
 #        NOTES: Telefonica account is disable
