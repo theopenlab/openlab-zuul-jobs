@@ -110,18 +110,6 @@
           EOF
           docker build -t docker.io/k8scloudprovider/cinder-csi-plugin:latest .
 
-          git clone https://github.com/kubernetes-csi/external-provisioner ${GOPATH}/src/github.com/kubernetes-csi/external-provisioner
-          make -C ${GOPATH}/src/github.com/kubernetes-csi/external-provisioner container
-          docker tag quay.io/k8scsi/csi-provisioner:canary docker.io/k8scsi/csi-provisioner:latest
-
-          git clone https://github.com/kubernetes-csi/external-attacher ${GOPATH}/src/github.com/kubernetes-csi/external-attacher
-          make -C ${GOPATH}/src/github.com/kubernetes-csi/external-attacher container
-          docker tag quay.io/k8scsi/csi-attacher:canary docker.io/k8scsi/csi-attacher:latest
-
-          git clone https://github.com/kubernetes-csi/driver-registrar ${GOPATH}/src/github.com/kubernetes-csi/driver-registrar
-          make -C ${GOPATH}/src/github.com/kubernetes-csi/driver-registrar container
-          docker tag quay.io/k8scsi/driver-registrar:canary docker.io/k8scsi/driver-registrar:latest
-
           # Replace custom cloud config
           {
               cloud_cfg=$(base64 -w 0 ${CLOUD_CONFIG})
