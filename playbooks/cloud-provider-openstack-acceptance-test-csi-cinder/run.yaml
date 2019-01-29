@@ -113,7 +113,7 @@
           # Replace custom cloud config
           {
               cloud_cfg=$(base64 -w 0 ${CLOUD_CONFIG})
-              sed "s/cloud.conf.*$/cloud.conf: $cloud_cfg/g" -i manifests/cinder-csi-plugin/csi-secret-cinderplugin.yaml
+              sed "s/cloud\.conf:.*$/cloud.conf: $cloud_cfg/g" -i manifests/cinder-csi-plugin/csi-secret-cinderplugin.yaml
           } > /dev/null 2>&1
 
           # Enable services
