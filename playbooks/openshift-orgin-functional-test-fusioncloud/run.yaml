@@ -61,7 +61,6 @@
 
           export ANSIBLE_HOST_KEY_CHECKING=false
           export OPENSHIFT_CLUSTER="openshift-{{ job_uid }}.openlab.com"
-          sleep 7200
 
           # Check prerequisites
           ansible-playbook --user root \
