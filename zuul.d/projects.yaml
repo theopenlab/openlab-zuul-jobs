@@ -42,6 +42,36 @@
 #            branches: stable-2.6
 
 - project:
+    name: hashicorp/packer
+    periodic:
+      jobs:
+        - packer-functional-opentelekomcloud:
+            branches: master
+#        - packer-functional-orange:
+#            branches: master
+#        NOTES: Telefonica account is disable
+#        - packer-functional-telefonica:
+#            branches: master
+#        - packer-functional-huaweicloud:
+#            branches: master
+#        - packer-master-functional-devstack:
+#            branches: master
+#        - packer-functional-devstack:
+#            branches: master
+#        - packer-functional-devstack-rocky:
+#            branches: master
+#        - packer-functional-devstack-queens:
+#            branches: master
+#        - packer-functional-devstack-pike:
+#            branches: master
+#        - packer-functional-devstack-ocata:
+#            branches: master
+#        - packer-functional-devstack-newton:
+#            branches: master
+#        - packer-functional-devstack-mitaka:
+#            branches: master
+
+- project:
     name: liu-sheng/ansible
     check:
       jobs:

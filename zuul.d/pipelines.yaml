@@ -157,7 +157,8 @@
     precedence: low
     trigger:
       timer:
-        - time: '0 0,8,16 * * *'
+        # format: minute hour day_of_month month day_of_week
+        - time: '40 2 * * *'
     success:
       mysql:
     failure:
