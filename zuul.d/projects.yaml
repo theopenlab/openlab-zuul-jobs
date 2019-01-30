@@ -46,8 +46,8 @@
     periodic:
       jobs:
         - packer-functional-opentelekomcloud:
-            branches: gogetter
-#        - packer-functional-orange:
+            branches: master
+  #        - packer-functional-orange:
 #            branches: master
 #        NOTES: Telefonica account is disable
 #        - packer-functional-telefonica:
