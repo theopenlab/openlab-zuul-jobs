@@ -41,12 +41,12 @@
 #        - openstacksdk-ansible-stable-2.6-functional-orange:
 #            branches: stable-2.6
 
-- project:
-    name: hashicorp/packer
-    periodic:
-      jobs:
-        - packer-functional-opentelekomcloud:
-            branches: master
+#- project:
+#    name: hashicorp/packer
+#    periodic:
+#      jobs:
+#        - packer-functional-opentelekomcloud:
+#            branches: master
   #        - packer-functional-orange:
 #            branches: master
 #        NOTES: Telefonica account is disable
@@ -71,60 +71,60 @@
 #        - packer-functional-devstack-mitaka:
 #            branches: master
 
-- project:
-    name: liu-sheng/ansible
-    check:
-      jobs:
-        # move to check pipeline for ci test
-        - openstacksdk-ansible-functional-opentelekomcloud:
-            branches: stable-2.7
-        - openstacksdk-ansible-functional-devstack-rocky:
-            branches: stable-2.7
-        - openstacksdk-ansible-functional-devstack-pike:
-            branches: stable-2.7
-        - openstacksdk-ansible-devel-functional-devstack:
-            branches: devel
-            files:
-              - ^lib/ansible/modules/cloud/openstack/.*
-              - ^contrib/inventory/openstack_inventory.py
-              - ^lib/ansible/plugins/inventory/openstack.py
-              - ^lib/ansible/module_utils/openstack.py
-              - ^lib/ansible/utils/module_docs_fragments/openstack.py
-        - openstacksdk-ansible-functional-devstack:
-            branches: stable-2.7
-            files:
-              - ^lib/ansible/modules/cloud/openstack/.*
-              - ^contrib/inventory/openstack_inventory.py
-              - ^lib/ansible/plugins/inventory/openstack.py
-              - ^lib/ansible/module_utils/openstack.py
-              - ^lib/ansible/utils/module_docs_fragments/openstack.py
-        - shade-ansible-stable-2.5-functional-devstack:
-            branches: stable-2.5
-            files:
-              - ^lib/ansible/modules/cloud/openstack/.*
-              - ^contrib/inventory/openstack.py
-              - ^lib/ansible/plugins/inventory/openstack.py
-              - ^lib/ansible/module_utils/openstack.py
-              - ^lib/ansible/utils/module_docs_fragments/openstack.py
-    periodic:
-      jobs:
-        - openstacksdk-ansible-functional-orange:
-            branches: stable-2.7
+#- project:
+#    name: liu-sheng/ansible
+#    check:
+#      jobs:
+#        # move to check pipeline for ci test
+#        - openstacksdk-ansible-functional-opentelekomcloud:
+#            branches: stable-2.7
+#        - openstacksdk-ansible-functional-devstack-rocky:
+#            branches: stable-2.7
+#        - openstacksdk-ansible-functional-devstack-pike:
+#            branches: stable-2.7
+#        - openstacksdk-ansible-devel-functional-devstack:
+#            branches: devel
+#            files:
+#              - ^lib/ansible/modules/cloud/openstack/.*
+#              - ^contrib/inventory/openstack_inventory.py
+#              - ^lib/ansible/plugins/inventory/openstack.py
+#              - ^lib/ansible/module_utils/openstack.py
+#              - ^lib/ansible/utils/module_docs_fragments/openstack.py
+#        - openstacksdk-ansible-functional-devstack:
+#            branches: stable-2.7
+#            files:
+#              - ^lib/ansible/modules/cloud/openstack/.*
+#              - ^contrib/inventory/openstack_inventory.py
+#              - ^lib/ansible/plugins/inventory/openstack.py
+#              - ^lib/ansible/module_utils/openstack.py
+#              - ^lib/ansible/utils/module_docs_fragments/openstack.py
+#        - shade-ansible-stable-2.5-functional-devstack:
+#            branches: stable-2.5
+#            files:
+#              - ^lib/ansible/modules/cloud/openstack/.*
+#              - ^contrib/inventory/openstack.py
+#              - ^lib/ansible/plugins/inventory/openstack.py
+#              - ^lib/ansible/module_utils/openstack.py
+#              - ^lib/ansible/utils/module_docs_fragments/openstack.py
+#    periodic:
+#      jobs:
+#        - openstacksdk-ansible-functional-orange:
+#            branches: stable-2.7
         #        NOTES: Telefonica account is disable
         #        - openstacksdk-ansible-functional-telefonica:
         #            branches: stable-2.7
-        - openstacksdk-ansible-functional-huaweicloud:
-            branches: stable-2.7
-        - openstacksdk-ansible-functional-devstack:
-            branches: stable-2.7
-        - openstacksdk-ansible-functional-devstack-queens:
-            branches: stable-2.7
-        - openstacksdk-ansible-functional-devstack-ocata:
-            branches: stable-2.7
-        - openstacksdk-ansible-functional-devstack-newton:
-            branches: stable-2.7
-        - openstacksdk-ansible-functional-devstack-mitaka:
-            branches: stable-2.7
+#        - openstacksdk-ansible-functional-huaweicloud:
+#            branches: stable-2.7
+#        - openstacksdk-ansible-functional-devstack:
+#            branches: stable-2.7
+#        - openstacksdk-ansible-functional-devstack-queens:
+#            branches: stable-2.7
+#        - openstacksdk-ansible-functional-devstack-ocata:
+#            branches: stable-2.7
+#        - openstacksdk-ansible-functional-devstack-newton:
+#            branches: stable-2.7
+#        - openstacksdk-ansible-functional-devstack-mitaka:
+#            branches: stable-2.7
 
 - project:
     name: liu-sheng/packer
@@ -176,8 +176,8 @@
     name: liu-sheng/origin
     check:
       jobs:
-        - openshift-origin-v3.9.0-functional-test-fusioncloud
-        # - openshift-origin-v3.9.0-functional-test-huaweicloud
-        #- openshift-origin-v3.9.0-functional-test-opentelekomcloud
-        # - openshift-origin-v3.9.0-functional-test-telefonica
-        #- openshift-origin-v3.9.0-functional-test-orange
+#        - openshift-origin-v3.9.0-functional-test-fusioncloud
+#        - openshift-origin-v3.9.0-functional-test-huaweicloud
+        - openshift-origin-v3.9.0-functional-test-opentelekomcloud
+#        - openshift-origin-v3.9.0-functional-test-telefonica
+#        - openshift-origin-v3.9.0-functional-test-orange
