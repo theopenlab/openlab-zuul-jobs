@@ -119,7 +119,7 @@
               --deployment=local \
               --provider=local \
               --ginkgo-parallel=1 \
-              --test_args="--ginkgo.focus=\\[Conformance\\] --ginkgo.noColor=true" \
+              --test_args="--ginkgo.focus=\\[Conformance\\] --ginkgo.noColor=true --ginkgo.skip=\[sig\-apps\]\sDaemon\sset\s\[Serial\]\sshould\srollback\swithout\sunnecessary\srestarts\s\[Conformance\]" \
               --timeout=150m | tee $LOG_DIR/e2e.log
         executable: /bin/bash
         chdir: '{{ k8s_os_provider_src_dir }}'
