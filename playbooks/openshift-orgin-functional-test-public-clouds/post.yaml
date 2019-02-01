@@ -10,6 +10,7 @@
         cmd: |
           set -e
           set -x
+          sleep 10800
           timeout 180 bash -c '
               while :
               do
