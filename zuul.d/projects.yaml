@@ -158,16 +158,16 @@
 #        - manageiq-providers-openstack-test-telefonica:
 #            branches: master
 
-- project:
-    name: huaweicloud/openshift-ansible
-    periodic-2:
-      jobs:
-        - openshift-origin-functional-test-huaweicloud:
-            branches: master
-        - openshift-origin-functional-test-opentelekomcloud:
-            branches: master
-#        NOTES: Telefonica account is disable
-#        - openshift-origin-functional-test-telefonica:
+#- project:
+#    name: huaweicloud/openshift-ansible
+#    periodic-2:
+#      jobs:
+#        - openshift-origin-functional-test-huaweicloud:
 #            branches: master
-        - openshift-origin-functional-test-orange:
-            branches: master
+#        - openshift-origin-functional-test-opentelekomcloud:
+#            branches: master
+##        NOTES: Telefonica account is disable
+##        - openshift-origin-functional-test-telefonica:
+##            branches: master
+#        - openshift-origin-functional-test-orange:
+#            branches: master
