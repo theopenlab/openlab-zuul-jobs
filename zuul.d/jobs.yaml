@@ -1167,4 +1167,3 @@
     description: |
       Test creating k8s cluster by kubeadm
     run: playbooks/create-k8s-cluster-test/run.yaml
-    override-checkout: branch-2.4
