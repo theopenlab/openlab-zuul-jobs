@@ -187,9 +187,3 @@
     check:
       jobs:
         - spark-funcional-test-k8s
-
-- project:
-     name: h00130372/terraform-provider-openstack
-     check:
-        jobs:
-          - test-create-k8s-cluster
