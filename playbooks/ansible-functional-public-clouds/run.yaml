@@ -52,7 +52,7 @@
         chdir: '{{ sdk_src_dir }}'
 
     - name: query flavor for testing
-      shell: openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column VCPUs | head -n 1 | awk '{print $1}'
+      shell: set -o pipefail && openstack flavor list -f value -c ID -c RAM -c VCPUs --sort-column RAM --sort-column VCPUs | head -n 1 | awk '{print $1}'
       args:
         executable: /bin/bash
       register: flavor_query
