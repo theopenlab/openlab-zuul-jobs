@@ -8,7 +8,7 @@
           set -o pipefail
           set -x
           pip install ansible-lint
-          find playbooks -type f -regex '.*.y[a]?ml' -not -path "{{ excluded_path }}" -print0 | xargs -t -n1 -0 ansible-lint -x204,301,206,305,303,405
+          find playbooks -type f -regex '.*.y[a]?ml' -not -path "{{ excluded_path }}" -print0 | xargs -t -n1 -0 ansible-lint -x204,301,206,305,303,405,601
           find playbooks -type f -regex '.*.y[a]?ml' -not -path "{{ excluded_path }}" -exec ansible-playbook -v --syntax-check -i ./playbooks/openlab-zuul-jobs-check/inventory \{\} + > /dev/null
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
