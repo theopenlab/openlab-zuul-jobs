@@ -1160,3 +1160,11 @@
       Run functional tests of spark deployed on k8s cluster
     run: playbooks/spark-funcional-test-k8s/run.yaml
     override-checkout: branch-2.4
+
+- job:
+    name: test-create-k8s-cluster
+    parent: init-test
+    description: |
+      Test creating k8s cluster by kubeadm
+    run: playbooks/create-k8s-cluster-test/run.yaml
+    override-checkout: branch-2.4
