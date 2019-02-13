@@ -1159,3 +1159,4 @@
     description: |
       Run functional tests of spark deployed on k8s cluster
     run: playbooks/spark-funcional-test-k8s/run.yaml
+    override-checkout: branch-2.4
