@@ -7,7 +7,7 @@
   tasks:
     - name: Cleanup resources
       shell: |
-        set -ex
+        set -exo pipefail
         cd bosh-1
         export BOSH_CLIENT=admin
         export BOSH_CLIENT_SECRET=`bosh int ./creds.yml --path /admin_password`

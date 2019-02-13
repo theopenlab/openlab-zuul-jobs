@@ -26,7 +26,7 @@
     register: vol_name
 
   - name: Record loadbalancer name
-    shell: oc get svc nginx-service -o jsonpath='{.metadata.uid}' | tr -d '-' | sed 's/^/a/' | cut -c -32
+    shell: set -o pipefail && oc get svc nginx-service -o jsonpath='{.metadata.uid}' | tr -d '-' | sed 's/^/a/' | cut -c -32
     register: lbaas_id
 
 - name: Confirm the cloud resources has been created
