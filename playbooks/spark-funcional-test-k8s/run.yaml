@@ -12,6 +12,8 @@
         cd spark-2.4.0
 
         apt-get install openjdk-8-jdk -y
+
+        export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m"
         # install dependencies
         build/mvn install -Pkubernetes -pl resource-managers/kubernetes/core -am -DskipTests
         # compile spack on k8s
