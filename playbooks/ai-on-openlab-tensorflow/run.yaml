@@ -1,0 +1,5 @@
+- hosts: all
+  become: yes
+  roles:
+    - create-single-k8s-cluster-with-kubeadm
+    - create-tensorflow-pod

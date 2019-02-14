@@ -1,0 +1,7 @@
+- name: Create tensorflow pod
+  shell:
+    cmd: |
+      set -x
+      set -e
+
+    executable: /bin/bash
