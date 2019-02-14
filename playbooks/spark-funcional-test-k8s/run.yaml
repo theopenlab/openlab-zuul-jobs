@@ -1,7 +1,7 @@
 - hosts: all
   become: yes
   roles:
-    - deploy-k8s-cluster-kubeadm
+    - create-single-k8s-cluster-with-kubeadm
   tasks:
     - name: Test functionalities of Spark deployed on k8s cluster
       shell: |
