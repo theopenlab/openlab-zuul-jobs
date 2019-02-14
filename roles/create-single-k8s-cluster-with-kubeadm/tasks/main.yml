@@ -1,0 +1,42 @@
+- name: Install Runtime Docker CE
+  include_role:
+    name: install-docker-ce
+
+- name: Create a single k8s master cluster by kubeadm
+  shell:
+    cmd: |
+      set -x
+      set -e
+
+      # Installing kubeadm, kubelet and kubectl.
+      apt-get update && apt-get install -y apt-transport-https curl
+      curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+
+      cat <<EOF >/etc/apt/sources.list.d/kubernetes.list
+      deb https://apt.kubernetes.io/ kubernetes-xenial main
+      EOF
+
+      apt-get update
+      apt-get install -y kubelet kubeadm kubectl
+      apt-mark hold kubelet kubeadm kubectl
+
+      # Creating a single master cluster with kubeadm:
+      ## to avoid coredns crashloopbackoff, we set nameserver to 8.8.8.8 instead of 127.0.0.1
+      cat /etc/resolv.conf
+      sed -i 's/nameserver 127.0.0.1/nameserver 8.8.8.8/' /etc/resolv.conf
+      cat /etc/resolv.conf
+
+      ## Initializing master
+      kubeadm init --pod-network-cidr=192.168.0.0/16
+
+      export KUBECONFIG=/etc/kubernetes/admin.conf
+
+      ## Installing a pod network add-on.
+      kubectl apply -f https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/rbac-kdd.yaml
+      kubectl apply -f https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/kubernetes-datastore/calico-networking/1.7/calico.yaml
+
+      # make sure we can schedule pods on the master.
+      kubectl taint nodes --all node-role.kubernetes.io/master-
+
+    executable: /bin/bash
+
