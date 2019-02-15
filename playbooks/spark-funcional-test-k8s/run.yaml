@@ -12,6 +12,9 @@
         tar -zxf spark-2.4.0-bin-hadoop2.7.tgz
         cd spark-2.4.0-bin-hadoop2.7
 
+        # install java8
+        apt-get install openjdk-8-jdk -y
+
         # Build spark docker images
         ./bin/docker-image-tool.sh -r kubespark -t v2.4.0-hadoop2.7 build
 
