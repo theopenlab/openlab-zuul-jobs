@@ -8,29 +8,26 @@
         set -ex
         export KUBECONFIG=/etc/kubernetes/admin.conf
 
-        wget https://github.com/liu-sheng/spark/archive/v2.4.0.tar.gz
-        tar -zxf v2.4.0.tar.gz
-        cd spark-2.4.0
-
-        # install java8
-        apt-get install openjdk-8-jdk -y
-
-        # Build spark
-        export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m"
-        ./build/mvn -Pkubernetes -DskipTests clean package
+        wget http://ftp.cuhk.edu.hk/pub/packages/apache.org/spark/spark-2.4.0/spark-2.4.0-bin-hadoop2.7.tgz
+        tar -zxf spark-2.4.0-bin-hadoop2.7.tgz
+        cd spark-2.4.0-bin-hadoop2.7
 
         # Build spark docker images
-        ./bin/docker-image-tool.sh -r kubespark -t v2.4.0 build
+        ./bin/docker-image-tool.sh -r kubespark -t v2.4.0-hadoop2.7 build
 
         sed -i -e '/127.0.0.1/ s/\(localhost\)/'$(hostname)' \1/' /etc/hosts
-        sleep 10800
+
+        kubectl create serviceaccount spark
+        kubectl create clusterrolebinding spark-role --clusterrole=edit --serviceaccount=default:spark --namespace=default
+
         bin/spark-submit \
           --master k8s://$(kubectl config view -o jsonpath='{.clusters[0].cluster.server}') \
           --deploy-mode cluster \
           --name spark-pi \
           --class org.apache.spark.examples.SparkPi \
           --conf spark.executor.instances=5 \
-          --conf spark.kubernetes.container.image=kubespark/spark \
-          local:///opt/spark/jars/spark-examples_2.11-2.4.0.jar
+          --conf spark.kubernetes.authenticate.driver.serviceAccountName=spark
+          --conf spark.kubernetes.container.image=kubespark/spark:v2.4.0-hadoop2.7 \
+          local:///opt/spark/examples/jars/spark-examples_2.11-2.4.0.jar
       args:
         executable: /bin/bash
