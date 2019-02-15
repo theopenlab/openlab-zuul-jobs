@@ -4,4 +4,39 @@
       set -x
       set -e
 
+      mkdir /opt/aitest
+
+      wget https://github.com/wangxiyuan/ai-openlab-test/blob/master/tensorflow_test.py -O /opt/aitest/tensorflow_test.py
+
+      cat > "/opt/aitest/test.yml" <<EOF
+      apiVersion: v1
+      kind: Pod
+      metadata:
+        name: ai-test
+      spec:
+        containers:
+        - name: ai-tensorflow-cpu
+          image: tensorflow/tensorflow
+          ports:
+          - containerPort: 7777
+          command: ["/usr/local/bin/python"]
+          args: ["/test/tensorflow_test.py"]
+          volumeMounts:
+          - mountPath: /test/
+            name: exec
+            readOnly: true
+        hostNetwork: true
+        volumes:
+        - hostPath:
+            path: /opt/aitest
+            type: DirectoryOrCreate
+          name: exec
+      EOF
+
+      sleep 3600
+
+      export KUBECONFIG=/etc/kubernetes/admin.conf
+      kubectl create -f /opt/aitest/test.yml
+
+
     executable: /bin/bash
