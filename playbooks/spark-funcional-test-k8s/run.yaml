@@ -10,19 +10,13 @@
         wget https://github.com/liu-sheng/spark/archive/v2.4.0.tar.gz
         tar -zxf v2.4.0.tar.gz
         cd spark-2.4.0
-        sleep 21600
 
         apt-get install openjdk-8-jdk -y
-
         export MAVEN_OPTS="-Xmx2g -XX:ReservedCodeCacheSize=512m"
-        # install dependencies
-        build/mvn install -Pkubernetes -pl resource-managers/kubernetes/core -am -DskipTests
-        # compile spack on k8s
-        build/mvn compile -Pkubernetes -pl resource-managers/kubernetes/core -am -DskipTests
-        # distribute
-        dev/make-distribution.sh --tgz -Phadoop-2.7 -Pkubernetes
-        ./bin/docker-image-tool.sh -r liusheng2048 -t v2.4.0 build
-        # ./bin/docker-image-tool.sh -r liusheng2048 -t v2.4.0 push
+        ./build/mvn -Pkubernetes -DskipTests clean package
+
+        ./bin/docker-image-tool.sh -r kubespark -t v2.4.0 build
+        sed -i -e '/127.0.0.1/ s/\(localhost\)/'$(hostname)' \1/' /etc/hosts
         sleep 21600
         bin/spark-submit \
           --master k8s://https://127.0.0.1:6443 \
@@ -30,9 +24,8 @@
           --name spark-pi \
           --class org.apache.spark.examples.SparkPi \
           --conf spark.executor.instances=5 \
-          --conf spark.kubernetes.container.image=<spark-image> \
+          --conf spark.kubernetes.container.image=kubespark/spark \
           local:///opt/spark/jars/spark-examples_2.11-2.4.0.jar
 
       args:
         executable: /bin/bash
-        chdir: '{{ zuul.project.src_dir }}'
