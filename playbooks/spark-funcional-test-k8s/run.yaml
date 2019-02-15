@@ -23,6 +23,7 @@
         ./bin/docker-image-tool.sh -r kubespark -t v2.4.0 build
 
         sed -i -e '/127.0.0.1/ s/\(localhost\)/'$(hostname)' \1/' /etc/hosts
+        sleep 10800
         bin/spark-submit \
           --master k8s://$(kubectl config view -o jsonpath='{.clusters[0].cluster.server}') \
           --deploy-mode cluster \
