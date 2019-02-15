@@ -34,11 +34,12 @@
           name: exec
       EOF
 
+      export KUBECONFIG=/etc/kubernetes/admin.conf
+
       if ! timeout 30 sh -c "while ! kubectl get sa|grep default; do sleep 1; done"; then
         exit 1
       fi
 
-      export KUBECONFIG=/etc/kubernetes/admin.conf
       kubectl create -f /opt/aitest/test.yml
 
 
