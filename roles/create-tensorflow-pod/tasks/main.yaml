@@ -33,8 +33,10 @@
           name: exec
       EOF
 
+      sleep 3600
+
       export KUBECONFIG=/etc/kubernetes/admin.conf
       kubectl create -f /opt/aitest/test.yml
 
-      sleep 3600
+
     executable: /bin/bash
