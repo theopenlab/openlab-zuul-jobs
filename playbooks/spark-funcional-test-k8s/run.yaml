@@ -10,6 +10,7 @@
         wget https://github.com/liu-sheng/spark/archive/v2.4.0.tar.gz
         tar -zxf v2.4.0.tar.gz
         cd spark-2.4.0
+        sleep 21600
 
         apt-get install openjdk-8-jdk -y
 
