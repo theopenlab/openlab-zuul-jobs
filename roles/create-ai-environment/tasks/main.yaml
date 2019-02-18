@@ -5,7 +5,7 @@
       set -e
 
       apt install unzip python-pip -y
-      pip install yaml
+      pip install pyyaml
 
       result_folder="{{ ansible_user_dir }}/workspace/test_results/"
       mkdir -p $result_folder
