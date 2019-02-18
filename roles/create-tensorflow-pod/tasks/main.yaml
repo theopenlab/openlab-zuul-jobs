@@ -10,8 +10,8 @@
       file_name=`ls $folder_name | grep zip`
 
       apt install unzip -y
-      sleep 3600
-      unzip $folder$file_name -d /opt/aitest
+
+      sudo unzip $folder_name$file_name -d /opt/aitest
 
       cat > "/opt/aitest/test.yml" <<EOF
       apiVersion: v1
