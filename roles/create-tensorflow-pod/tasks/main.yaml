@@ -6,8 +6,7 @@
 
       mkdir /opt/aitest
 
-      wget https://raw.githubusercontent.com/wangxiyuan/ai-openlab-test/master/tensorflow_test.py \
-        -O /opt/aitest/tensorflow_test.py
+      unzip '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}' -d /opt/aitest
 
       cat > "/opt/aitest/test.yml" <<EOF
       apiVersion: v1
