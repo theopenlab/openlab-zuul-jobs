@@ -17,11 +17,11 @@
       fi
       zip_file=`ls $user_data_folder | grep zip`
 
-      unzip $user_data_folder$zip_file
+      unzip $user_data_folder$zip_file -d $user_data_folder
 
       pip install tensorflow
 
       py_file=`ls $user_data_folder | grep py`
-      python $user_data_folder$py_file
+      python $user_data_folder$py_file | tee ${result_folder}"/model_log.txt"
 
     executable: /bin/bash
