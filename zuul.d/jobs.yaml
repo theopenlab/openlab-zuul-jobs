@@ -1162,13 +1162,6 @@
     override-checkout: branch-2.4
 
 - job:
-    name: test-create-k8s-cluster
-    parent: init-test
-    description: |
-      Test creating k8s cluster by kubeadm
-    run: playbooks/create-k8s-cluster-test/run.yaml
-
-- job:
     name: ai-on-openlab-test-tensorflow-k8s
     parent: init-test
     description: |
