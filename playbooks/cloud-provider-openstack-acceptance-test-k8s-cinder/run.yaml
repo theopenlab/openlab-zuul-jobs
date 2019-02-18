@@ -29,7 +29,7 @@
           region = $OS_REGION_NAME
 
           [BlockStorage]
-          bs-version = v2
+          bs-version = v3
           ignore-volume-az = yes
           EOF
 
