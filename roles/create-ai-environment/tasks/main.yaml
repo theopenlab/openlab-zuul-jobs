@@ -9,8 +9,8 @@
       mkdir -p $result_folder
 
       user_data_folder='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/'
-      zip_file=`ls $user_data_folder | grep zip`
-      if [ ! -n $zip_file_name ] ;then
+
+      if [ ! -n `ls $user_data_folder | grep zip` ] ;then
         txt_file=`ls $user_data_folder | grep txt`
         url=`cat $user_data_folder$txt_file`
         wget $url -O $user_data_folder
