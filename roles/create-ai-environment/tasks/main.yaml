@@ -11,7 +11,7 @@
       user_data_folder='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/'
 
       if ls $user_data_folder | grep txt;then
-        wget `cat *.txt` -O $user_data_folder
+        wget $(cat *.txt) -O $user_data_folder
       fi
 
       zip_file=`ls $user_data_folder | grep zip`
