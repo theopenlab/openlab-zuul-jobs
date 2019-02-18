@@ -5,8 +5,9 @@
       set -e
 
       mkdir /opt/aitest
-
-      unzip '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}' -d /opt/aitest
+      folder_name='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data'
+      file_name=`ls $folder_name | grep zip`
+      unzip '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/$file_name' -d /opt/aitest
 
       cat > "/opt/aitest/test.yml" <<EOF
       apiVersion: v1
