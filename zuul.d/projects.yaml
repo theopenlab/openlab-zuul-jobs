@@ -192,4 +192,5 @@
     name: wangxiyuan/ai-openlab-test
     check:
       jobs:
-        - ai-on-openlab-test-tensorflow
+        # - ai-on-openlab-test-tensorflow-k8s
+        - ai-on-openlab-test-vm

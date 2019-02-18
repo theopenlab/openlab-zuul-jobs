@@ -1169,8 +1169,15 @@
     run: playbooks/create-k8s-cluster-test/run.yaml
 
 - job:
-    name: ai-on-openlab-test-tensorflow
+    name: ai-on-openlab-test-tensorflow-k8s
     parent: init-test
     description: |
       Test tensorflow in openlab k8s cluster.
-    run: playbooks/ai-on-openlab-tensorflow/run.yaml
+    run: playbooks/ai-on-openlab-tensorflow-k8s/run.yaml
+
+- job:
+    name: ai-on-openlab-test-vm
+    parent: init-test
+    description: |
+      Train and inference AI model in openlab VM.
+    run: playbooks/ai-on-openlab/run.yaml

@@ -11,8 +11,9 @@
 
       apt install unzip -y
 
-      sudo unzip $folder_name$file_name -d /opt/aitest
+      unzip $folder_name$file_name -d /opt/aitest
 
+      # TODO(wxy): use Job
       cat > "/opt/aitest/test.yml" <<EOF
       apiVersion: v1
       kind: Pod
@@ -44,7 +45,7 @@
         exit 1
       fi
 
-      sleep 3600
+      mkdir -p "{{ ansible_user_dir }}/workspace/test_results/"
 
       kubectl create -f /opt/aitest/test.yml
 
