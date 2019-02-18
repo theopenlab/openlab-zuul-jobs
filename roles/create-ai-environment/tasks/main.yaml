@@ -3,7 +3,9 @@
     cmd: |
       set -x
       set -e
+
       apt install unzip python-pip -y
+      pip install pyyaml
 
       result_folder="{{ ansible_user_dir }}/workspace/test_results/"
       mkdir -p $result_folder
@@ -20,10 +22,26 @@
       zip_file=`ls | grep zip`
 
       unzip $zip_file
+      sleep 3600
+      python '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/tools/analysis_yaml.py'
 
-      pip install tensorflow
-
-      py_file=`ls | grep py`
-      python $py_file | tee ${result_folder}"/model_log.txt"
-
+      head -n 1 metadata.txt |tail -n 1
     executable: /bin/bash
+  register: framework
+
+- name: Tensorflow framework
+  when: "framework==tensorflow"
+  shell:
+    cmd: |
+      set -x
+      set -e
+
+      version = head -n 2 metadata.txt |tail -n 1
+
+      pip install tensorflow==${version}
+
+      py_file=head -n 3 metadata.txt |tail -n 1
+
+      python $py_file | tee ${result_folder}"/model_log.txt"
+    executable: /bin/bash
+
