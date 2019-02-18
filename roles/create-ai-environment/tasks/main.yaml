@@ -12,7 +12,7 @@
 
       if ls $user_data_folder | grep txt;then
         txt_file=`ls $user_data_folder | grep txt`
-        url=`cat $txt_file`
+        url=`cat $user_data_folder$txt_file`
         wget $url -O $user_data_folder
       fi
 
