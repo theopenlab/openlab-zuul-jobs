@@ -5,8 +5,11 @@
       set -e
 
       mkdir /opt/aitest
+
       folder_name='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data'
       file_name=`ls $folder_name | grep zip`
+
+      apt install unzip -y
       unzip '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/$file_name' -d /opt/aitest
 
       cat > "/opt/aitest/test.yml" <<EOF
