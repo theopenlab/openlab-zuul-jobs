@@ -171,3 +171,9 @@
 ##            branches: master
 #        - openshift-origin-functional-test-orange:
 #            branches: master
+
+- project:
+    name: theopenlab/openlab-dummy
+    periodic-2:
+      jobs:
+        - spark-funcional-test-k8s

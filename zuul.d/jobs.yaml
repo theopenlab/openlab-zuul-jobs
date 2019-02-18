@@ -1065,3 +1065,10 @@
       inventory_name: orange
     secrets:
       - orange_credentials
+
+- job:
+    name: spark-funcional-test-k8s
+    parent: init-test
+    description: |
+      Run functional tests of spark v2.4.0 deployed on native k8s cluster
+    run: playbooks/spark-funcional-test-k8s/run.yaml

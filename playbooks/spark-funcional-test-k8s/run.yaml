@@ -1,0 +1,36 @@
+- hosts: all
+  become: yes
+  roles:
+    - create-single-k8s-cluster-with-kubeadm
+  tasks:
+    - name: Test functionalities of Spark deployed on k8s cluster
+      shell: |
+        set -ex
+        export KUBECONFIG=/etc/kubernetes/admin.conf
+
+        wget http://ftp.cuhk.edu.hk/pub/packages/apache.org/spark/spark-2.4.0/spark-2.4.0-bin-hadoop2.7.tgz
+        tar -zxf spark-2.4.0-bin-hadoop2.7.tgz
+        cd spark-2.4.0-bin-hadoop2.7
+
+        # install java8
+        apt-get install openjdk-8-jdk -y
+
+        # Build spark docker images
+        ./bin/docker-image-tool.sh -r kubespark -t v2.4.0-hadoop2.7 build
+
+        sed -i -e '/127.0.0.1/ s/\(localhost\)/'$(hostname)' \1/' /etc/hosts
+
+        kubectl create serviceaccount spark
+        kubectl create clusterrolebinding spark-role --clusterrole=edit --serviceaccount=default:spark --namespace=default
+
+        bin/spark-submit \
+          --master k8s://$(kubectl config view -o jsonpath='{.clusters[0].cluster.server}') \
+          --deploy-mode cluster \
+          --name spark-pi \
+          --class org.apache.spark.examples.SparkPi \
+          --conf spark.executor.instances=5 \
+          --conf spark.kubernetes.authenticate.driver.serviceAccountName=spark \
+          --conf spark.kubernetes.container.image=kubespark/spark:v2.4.0-hadoop2.7 \
+          local:///opt/spark/examples/jars/spark-examples_2.11-2.4.0.jar
+      args:
+        executable: /bin/bash
