@@ -3,21 +3,25 @@
     cmd: |
       set -x
       set -e
+      apt install unzip python-pip -y
 
-      mkdir /opt/aitest
-      mkdir -p "{{ ansible_user_dir }}/workspace/test_results/"
+      result_folder="{{ ansible_user_dir }}/workspace/test_results/"
+      mkdir -p $result_folder
 
-      folder_name='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/'
-      file_name=`ls $folder_name | grep zip`
+      user_data_folder='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/'
+      zip_file=`ls $user_data_folder | grep zip`
+      if [ ! -n $zip_file_name ] ;then
+        txt_file=`ls $user_data_folder | grep txt`
+        url=`cat $user_data_folder$txt_file`
+        wget $url -O $user_data_folder
+      fi
+      zip_file=`ls $user_data_folder | grep zip`
 
-      apt install unzip -y
-
-      unzip $folder_name$file_name -d /opt/aitest
-
-      apt install -y python-pip
+      unzip $user_data_folder$zip_file
 
       pip install tensorflow
 
-      python /opt/aitest/tensorflow_test.py
+      py_file=`ls $user_data_folder | grep py`
+      python $user_data_folder$py_file
 
     executable: /bin/bash
