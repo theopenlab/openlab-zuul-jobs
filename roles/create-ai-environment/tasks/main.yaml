@@ -30,7 +30,7 @@
   register: framework
 
 - name: Tensorflow framework
-  when: "framework==tensorflow"
+  when: "framework == 'tensorflow'"
   shell:
     cmd: |
       set -x
