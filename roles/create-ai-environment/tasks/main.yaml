@@ -82,7 +82,7 @@
 
       result_folder="{{ ansible_user_dir }}/workspace/test_results/"
 
-      '{{ runtime.stdout }}' python $py_file | tee ${result_folder}"/process_log.txt"
+      '{{ runtime.stdout }}' $py_file | tee ${result_folder}"/process_log.txt"
     executable: /bin/bash
 
 - name: Check output folder variable exists
