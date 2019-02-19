@@ -33,8 +33,7 @@
 - name: Install Python Runtime
   when: runtime.stdout.find('python') != -1
   shell: apt install -y python2.7 python3.5 python3.6 python3.7
-  set_fact:
-    is_python_runtime: true
+  register: is_python_runtime
 
 - name: Get Framework Name
   shell: cat '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/framework_name.txt'
