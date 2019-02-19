@@ -22,7 +22,6 @@
       zip_file=`ls | grep zip`
 
       unzip $zip_file
-      sleep 3600
       python '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/tools/analysis_yaml.py'
     executable: /bin/bash
 
@@ -32,7 +31,12 @@
 
 - name: Install Python Runtime
   when: runtime.stdout.find('python') != -1
-  shell: apt install -y python2.7 python3.5 python3.6 python3.7
+  shell:
+    cmd: |
+      add-apt-repository -y ppa:deadsnakes/ppa
+      apt update
+      apt install -y python2.7 python3.5 python3.6 python3.7
+    executable: /bin/bash
   register: is_python_runtime
 
 - name: Get Framework Name
