@@ -47,3 +47,9 @@
     nodes:
       - name: centos-7
         label: centos-7
+
+- nodeset:
+    name: ubuntu-bionic-vxh-arm64
+    nodes:
+      - name: ubuntu-bionic-vxh-arm64
+        label: ubuntu-bionic-vxh-arm64
