@@ -29,6 +29,8 @@
     executable: /bin/bash
   register: framework
 
+- debug: msg="{{ framework.stdout }}"
+
 - name: Tensorflow framework
   when: framework.stdout == "tensorflow"
   shell:
