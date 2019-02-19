@@ -30,7 +30,8 @@
   register: framework
 
 - name: Tensorflow framework
-  when: "framework.stdout == 'tensorflow'"
+  when:
+    - {{ framework.stdout }} == "tensorflow"
   shell:
     cmd: |
       set -x
