@@ -27,7 +27,7 @@
     executable: /bin/bash
 
 - name: Get Framework Name
-  shell: head -n 1 '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/metadata.txt' | tail -n 1
+  shell: cat '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/framework_name.txt'
   register: framework
 
 - name: Run Tensorflow Job
@@ -40,13 +40,38 @@
       user_data_folder='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/'
       cd $user_data_folder
 
-      version=`head -n 2 metadata.txt | tail -n 1`
+      version=`cat framework_version.txt`
 
       pip install tensorflow==${version}
 
-      py_file=`head -n 3 metadata.txt | tail -n 1`
+      py_file=`cat entry_point.txt`
 
       result_folder="{{ ansible_user_dir }}/workspace/test_results/"
 
       python $py_file | tee ${result_folder}"/process_log.txt"
     executable: /bin/bash
+
+- name: Check output folder variable exists
+  stat:
+    path: '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/output_folder.txt'
+  register: stat_ouput_folder_variable
+
+- name: Get output folder variable value
+  when: stat_ouput_folder_variable.stat.exists
+  shell: cat '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/output_folder.txt'
+  register: output_folder_name
+
+- name: Check output folder exists
+  stat:
+    path: '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/{{ output_folder_name.stdout }}'
+  register: stat_ouput_folder
+
+- name: Collect Traning or Inference Result if needed
+  when: stat_ouput_folder.stat.exists and stat_ouput_folder.stat.isdir
+  shell:
+    cmd: |
+      set -x
+      set -e
+
+      mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/{{ output_folder_name.stdout }}' \
+        '{{ ansible_user_dir }}/workspace/test_results/'
