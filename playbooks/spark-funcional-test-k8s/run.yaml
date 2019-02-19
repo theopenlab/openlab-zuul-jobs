@@ -23,7 +23,7 @@
         kubectl create serviceaccount spark
         kubectl create clusterrolebinding spark-role --clusterrole=edit --serviceaccount=default:spark --namespace=default
 
-        sleep 7200
+        sleep 21600
         bin/spark-submit \
           --master k8s://$(kubectl config view -o jsonpath='{.clusters[0].cluster.server}') \
           --deploy-mode cluster \
