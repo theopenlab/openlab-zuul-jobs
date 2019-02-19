@@ -194,3 +194,9 @@
       jobs:
         # - ai-on-openlab-test-tensorflow-k8s
         - ai-on-openlab-test-vm
+
+- project:
+    name: yikun/arm-openlab-test
+    check:
+      jobs:
+        - arm-on-openlab-test

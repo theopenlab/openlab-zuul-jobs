@@ -1174,3 +1174,11 @@
     description: |
       Train and inference AI model in openlab VM.
     run: playbooks/ai-on-openlab/run.yaml
+
+- job:
+    name: arm-on-openlab-test
+    parent: init-test
+    description: |
+      Test arm in openlab cluster.
+    run: playbooks/arm-on-openlab/run.yaml
+    nodeset: ubuntu-bionic-vxh-arm64
