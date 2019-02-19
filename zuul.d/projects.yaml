@@ -202,7 +202,7 @@
         - ai-on-openlab-test-vm
 
 - project:
-    name: yikun/arm-openlab-test
+    name: Yikun/arm-openlab-test
     check:
       jobs:
         - arm-on-openlab-test
