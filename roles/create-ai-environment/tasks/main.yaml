@@ -22,7 +22,7 @@
       zip_file=`ls | grep zip`
 
       unzip $zip_file
-
+      sleep 3600
       python '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/tools/analysis_yaml.py'
     executable: /bin/bash
 
