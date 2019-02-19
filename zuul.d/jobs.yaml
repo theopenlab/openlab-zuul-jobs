@@ -30,7 +30,7 @@
       Base job for all types of test jobs. Ensure workspace and copy log files.
     pre-run: playbooks/init-test/pre.yaml
     post-run: playbooks/init-test/post.yaml
-    timeout: 10800
+    timeout: 21600
     vars:
       global_env:
         OS_BRANCH: master
