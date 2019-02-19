@@ -40,6 +40,9 @@
       set -x
       set -e
 
+      user_data_folder='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/'
+      cd $user_data_folder
+
       version = head -n 2 metadata.txt |tail -n 1
 
       pip install tensorflow==${version}
