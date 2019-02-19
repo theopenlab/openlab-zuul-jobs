@@ -3,5 +3,5 @@
     cmd: |
       set -x
       set -e
-	  
-	  echo 'Hello ARM!'
+      echo 'Hello ARM!'
+    executable: /bin/bash
