@@ -1154,12 +1154,19 @@
       - orange_credentials
 
 - job:
-    name: spark-funcional-test-k8s
+    name: spark-2.4.0-funcional-test-k8s
     parent: init-test
     description: |
-      Run functional tests of spark deployed on k8s cluster
+      Run functional tests of spark of 2.4.0 release deployed on k8s cluster
     run: playbooks/spark-funcional-test-k8s/run.yaml
     override-checkout: branch-2.4
+
+- job:
+    name: spark-master-funcional-test-k8s
+    parent: init-test
+    description: |
+      Run functional tests of spark of master deployed on k8s cluster
+    run: playbooks/spark-funcional-test-k8s/run.yaml
 
 - job:
     name: ai-on-openlab-test-tensorflow-k8s

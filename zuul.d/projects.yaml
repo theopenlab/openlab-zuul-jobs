@@ -183,10 +183,16 @@
 #        - openshift-origin-v3.9.0-functional-test-orange
 
 - project:
-    name: liu-sheng/openlab-dummy
+    name: liu-sheng/spark
     check:
       jobs:
-        - spark-funcional-test-k8s
+        - spark-master-funcional-test-k8s
+
+#- project:
+#    name: liu-sheng/spark
+#    check:
+#      jobs:
+#        - spark-2.4.0-funcional-test-k8s
 
 - project:
     name: wangxiyuan/ai-openlab-test
