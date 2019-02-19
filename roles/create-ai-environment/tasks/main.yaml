@@ -1,10 +1,10 @@
-- name: Create AI environment and train
+- name: Create AI Environment
   shell:
     cmd: |
       set -x
       set -e
 
-      apt install unzip python-pip -y
+      apt install -y unzip python-pip
       pip install pyyaml
 
       result_folder="{{ ansible_user_dir }}/workspace/test_results/"
@@ -26,12 +26,22 @@
       python '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/tools/analysis_yaml.py'
     executable: /bin/bash
 
+- name: Get Runtime Name
+  shell: cat '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/framework_runtime.txt'
+  register: runtime
+
+- name: Install Python Runtime
+  when: runtime.stdout.find('python') != -1
+  shell: apt install -y python2.7 python3.5 python3.6 python3.7
+  set_fact:
+    is_python_runtime: true
+
 - name: Get Framework Name
   shell: cat '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/framework_name.txt'
   register: framework
 
-- name: Run Tensorflow Job
-  when: framework.stdout == "tensorflow"
+- name: Run Tensorflow Python Job
+  when: framework.stdout == "tensorflow" and is_python_runtime is defined
   shell:
     cmd: |
       set -x
@@ -48,7 +58,28 @@
 
       result_folder="{{ ansible_user_dir }}/workspace/test_results/"
 
-      python $py_file | tee ${result_folder}"/process_log.txt"
+      '{{ runtime.stdout }}' $py_file | tee ${result_folder}"/process_log.txt"
+    executable: /bin/bash
+
+- name: Run PyTorch Python Job
+  when: framework.stdout == "pytorch" and is_python_runtime is defined
+  shell:
+    cmd: |
+      set -x
+      set -e
+
+      user_data_folder='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/'
+      cd $user_data_folder
+
+      version=`cat framework_version.txt`
+
+      pip install torch==${version} torchvision
+
+      py_file=`cat entry_point.txt`
+
+      result_folder="{{ ansible_user_dir }}/workspace/test_results/"
+
+      '{{ runtime.stdout }}' python $py_file | tee ${result_folder}"/process_log.txt"
     executable: /bin/bash
 
 - name: Check output folder variable exists
