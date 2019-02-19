@@ -31,7 +31,7 @@
 
 - name: Tensorflow framework
   when:
-    - {{ framework.stdout }} == "tensorflow"
+    - "{{ framework.stdout }}" == "tensorflow"
   shell:
     cmd: |
       set -x
