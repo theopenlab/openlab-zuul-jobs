@@ -19,6 +19,7 @@
         chmod +x /usr/local/bin/minikube
 
         # Start k8s cluster by minikube
+        sed -i 's/nameserver 127.0.0.1/nameserver 8.8.8.8/' /etc/resolv.conf
         minikube start --cpus 4 --memory 6144 --vm-driver=none
 
         # Install kubectl
