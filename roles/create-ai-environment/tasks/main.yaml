@@ -41,6 +41,7 @@
                            content=data,
                            branch='master')
       EOF
+      sleep 3600
       python upload_env_info.py '{{ zuul.patchset }}.json'
     executable: /bin/bash
 
