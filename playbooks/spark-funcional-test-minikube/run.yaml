@@ -20,6 +20,8 @@
 
         # Start k8s cluster by minikube
         sed -i 's/nameserver 127.0.0.1/nameserver 8.8.8.8/' /etc/resolv.conf
+        sleep 2000000
+
         minikube start --cpus 4 --memory 6144 --vm-driver=none
 
         # Install kubectl
@@ -28,8 +30,6 @@
         echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
         sudo apt-get update
         sudo apt-get install -y kubectl
-
-        sleep 2000000
 
         pushd resource-managers/kubernetes/integration-tests
         dev/dev-run-integration-tests.sh --deploy-mode cloud --spark-master k8s://$(kubectl config view -o jsonpath='{.clusters[0].cluster.server}') --spark-tgz '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/spark-3.0.0-SNAPSHOT-bin-2.7.4.tgz' --image-repo kubespark --namespace default --service-account spark
