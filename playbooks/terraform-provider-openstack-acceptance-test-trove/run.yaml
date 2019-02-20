@@ -1,37 +1,22 @@
 - hosts: all
   become: yes
-  tasks:
-    - name:  Prepare git repos for trove environment
-      shell:
-        cmd: |
-          set -e
-          set -x
-          sudo mkdir -p /opt/stack/
-          cp -r /opt/git/openstack/* /opt/stack/
-          cp -r /opt/git/openstack-dev/devstack /home/zuul/
-          if [ ! -d /opt/stack/trove ]; then
-              git clone git://git.openstack.org/openstack/trove /opt/stack/trove
-          fi
-          pip install -r /opt/stack/trove/requirements.txt
-          chown zuul.zuul /opt/stack/ -R
-          chown zuul.zuul /home/zuul/ -R
-        executable: /bin/bash
-        chdir: '{{ ansible_user_dir }}/workspace'
-      environment: '{{ zuul | zuul_legacy_vars }}'
-
-- hosts: all
+  roles:
+    - clone-devstack-gate-to-workspace
+    - role: create-devstack-local-conf
+      enable_services:
+        - 'trove'
+    - install-devstack
   tasks:
     - name:  Install and init trove environment
       shell:
         cmd: |
           set -e
           set -x
-          export BRIDGE_IP=10.1.0.1
+          export BRIDGE_IP=10.0.0.1
           export DEST='/opt/stack'
           export PATH_DEVSTACK_SRC=$DEST/devstack
           export TROVE_RESIZE_TIME_OUT=''
           cd $DEST/trove
-          tox -etrovestack -vv -- install
           tox -etrovestack -vv -- kick-start mysql
           source /home/zuul/devstack/openrc admin admin
 
