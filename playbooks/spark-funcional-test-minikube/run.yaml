@@ -20,7 +20,9 @@
 
         # Start k8s cluster by minikube
         sed -i 's/nameserver 127.0.0.1/nameserver 8.8.8.8/' /etc/resolv.conf
-        sleep 2000000
+        # Change the docker cgroup driver to cgroupfs as it is the default choice of kubelet
+        sed -i 's/systemd/cgroupfs/' /etc/docker/daemon.json
+        systemctl restart docker
 
         minikube start --cpus 4 --memory 6144 --vm-driver=none
 
@@ -31,8 +33,12 @@
         sudo apt-get update
         sudo apt-get install -y kubectl
 
+        # Create required account in k8s
+        kubectl create serviceaccount spark
+        kubectl create clusterrolebinding spark-role --clusterrole=edit --serviceaccount=default:spark --namespace=default
+
         pushd resource-managers/kubernetes/integration-tests
-        dev/dev-run-integration-tests.sh --deploy-mode cloud --spark-master k8s://$(kubectl config view -o jsonpath='{.clusters[0].cluster.server}') --spark-tgz '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/spark-3.0.0-SNAPSHOT-bin-2.7.4.tgz' --image-repo kubespark --namespace default --service-account spark
+        dev/dev-run-integration-tests.sh --deploy-mode minikube --spark-master k8s://$(kubectl config view -o jsonpath='{.clusters[0].cluster.server}') --spark-tgz '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/spark-3.0.0-SNAPSHOT-bin-2.7.4.tgz' --image-repo kubespark --namespace default --service-account spark
         popd
       args:
         executable: /bin/bash
