@@ -1,3 +1,11 @@
+- name: Get IP and Credential
+  shell:
+    cmd: |
+      set -x
+      set -e
+      sleep 3600
+    executable: /bin/bash
+
 - name: Create AI Environment
   shell:
     cmd: |
