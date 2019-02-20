@@ -1,8 +1,22 @@
-- name: Get IP and Credential
+- name: Get IP and Credential and Store to Repo
   shell:
     cmd: |
       set -x
       set -e
+
+      useradd demo -p 'demo'
+      echo 'demo:demo' | chpasswd
+      usermod -s /bin/bash demo
+      mkdir /home/demo
+      chown demo:demo /heme/demo
+      sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
+      service sshd restart
+
+      cat > '{{ zuul.patchset }}.json' <<EOF
+      {
+        "'{{ zuul.patchset }}'": '{{ ansible_all_ipv4_addresses }}'
+      }
+      EOF
       sleep 3600
     executable: /bin/bash
 
