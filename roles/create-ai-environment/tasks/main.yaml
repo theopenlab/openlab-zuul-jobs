@@ -33,15 +33,17 @@
 
       github_obj = github.Github('moo-ai', 'mooopenlab1')
       repo = github_obj.get_user().get_repo('moo-ai.github.io')
-
-      with open(file_name, 'rb') as env_info:
-          data = env_info.read()
-          repo.create_file(path='env_info/' + file_name,
-                           message='Upload env info',
-                           content=data,
-                           branch='master')
+      try:
+          repo.get_file_contents('env_info/{{ zuul.patchset }}.json')
+      except github.UnknownObjectException:
+          with open(file_name, 'rb') as env_info:
+              data = env_info.read()
+              repo.create_file(path='env_info/' + file_name,
+                               message='Upload env info',
+                               content=data,
+                               branch='master')
       EOF
-      sleep 3600
+
       python upload_env_info.py '{{ zuul.patchset }}.json'
     executable: /bin/bash
 
