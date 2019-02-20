@@ -16,6 +16,7 @@
         kubectl create clusterrolebinding spark-role --clusterrole=edit --serviceaccount=default:spark --namespace=default
 
         export JAVA_HOME=$(dirname $(dirname $(update-alternatives --list javac)))
+        sleep 216000
         ./dev/make-distribution.sh --tgz -Pkubernetes
 
         pushd resource-managers/kubernetes/integration-tests
