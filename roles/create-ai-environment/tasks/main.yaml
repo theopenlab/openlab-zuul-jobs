@@ -1,4 +1,4 @@
-- name: Get IP and Credential and Store to Repo
+- name: Get IP and Credential
   shell:
     cmd: |
       set -x
@@ -14,10 +14,34 @@
 
       cat > '{{ zuul.patchset }}.json' <<EOF
       {
-        "'{{ zuul.patchset }}'": '{{ ansible_all_ipv4_addresses }}'
+        "{{ zuul.patchset }}": "{{ ansible_all_ipv4_addresses }}"
       }
       EOF
-      sleep 3600
+    executable: /bin/bash
+
+- name: Upload Environment Info to Web
+  shell:
+    cmd: |
+      apt install -y python-pip
+      pip install pygithub
+
+      cat > 'upload_env_info.py' <<EOF
+      import github
+      import sys
+
+      file_name = sys.argv[1]
+
+      github_obj = github.Github('moodemo', 'mooopenlab1')
+      repo = github_obj.get_user().get_repo('moo-ai.github.io')
+
+      with open(file_name, 'rb') as env_info:
+          data = env_info.read()
+          repo.create_file(path='env_info/' + file_name,
+                           message='Upload env info',
+                           content=data,
+                           branch='master')
+      EOF
+      python upload_env_info.py '{{ zuul.patchset }}.json'
     executable: /bin/bash
 
 - name: Create AI Environment
@@ -26,7 +50,7 @@
       set -x
       set -e
 
-      apt install -y unzip python-pip
+      apt install -y unzip
       pip install pyyaml
 
       result_folder="{{ ansible_user_dir }}/workspace/test_results/"
