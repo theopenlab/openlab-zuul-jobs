@@ -190,7 +190,7 @@
         - spark-2.4.0-funcional-test-minikube
 
 - project:
-    name: wangxiyuan/ai-openlab-test
+    name: moo-ai/moo-ai.github.io
     check:
       jobs:
         # - ai-on-openlab-test-tensorflow-k8s
