@@ -187,12 +187,7 @@
     check:
       jobs:
         - spark-master-funcional-test-k8s
-
-#- project:
-#    name: liu-sheng/spark
-#    check:
-#      jobs:
-#        - spark-2.4.0-funcional-test-k8s
+        - spark-2.4.0-funcional-test-minikube
 
 - project:
     name: wangxiyuan/ai-openlab-test
