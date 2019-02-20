@@ -26,9 +26,13 @@
         cmd: |
           set -e
           set -x
-          cd /opt/stack/trove/integration/scripts/
-          ./trovestack install
-          ./trovestack kick-start mysql
+          export BRIDGE_IP=10.1.0.1
+          export DEST='/opt/stack'
+          export PATH_DEVSTACK_SRC=$DEST/devstack
+          export TROVE_RESIZE_TIME_OUT=''
+          cd $DEST/trove
+          tox -etrovestack -vv -- install
+          tox -etrovestack -vv -- kick-start mysql
           source /home/zuul/devstack/openrc admin admin
 
           # Following commands show some info for debugging
