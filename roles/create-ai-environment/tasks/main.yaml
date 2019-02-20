@@ -31,7 +31,7 @@
 
       file_name = sys.argv[1]
 
-      github_obj = github.Github('moodemo', 'mooopenlab1')
+      github_obj = github.Github('moo-ai', 'mooopenlab1')
       repo = github_obj.get_user().get_repo('moo-ai.github.io')
 
       with open(file_name, 'rb') as env_info:
