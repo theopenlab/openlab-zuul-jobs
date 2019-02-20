@@ -38,7 +38,7 @@
         kubectl create clusterrolebinding spark-role --clusterrole=edit --serviceaccount=default:spark --namespace=default
 
         pushd resource-managers/kubernetes/integration-tests
-        dev/dev-run-integration-tests.sh --deploy-mode minikube --spark-master k8s://$(kubectl config view -o jsonpath='{.clusters[0].cluster.server}') --spark-tgz '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/spark-3.0.0-SNAPSHOT-bin-2.7.4.tgz' --image-repo kubespark --namespace default --service-account spark
+        dev/dev-run-integration-tests.sh --deploy-mode minikube --spark-master k8s://$(kubectl config view -o jsonpath='{.clusters[0].cluster.server}') --spark-tgz '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/spark-2.4.2-SNAPSHOT-bin-2.6.5.tgz' --image-repo kubespark --namespace default --service-account spark
         popd
       args:
         executable: /bin/bash
