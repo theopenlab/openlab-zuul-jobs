@@ -183,13 +183,6 @@
 #        - openshift-origin-v3.9.0-functional-test-orange
 
 - project:
-    name: liu-sheng/spark
-    check:
-      jobs:
-        - spark-integration-test-kubeadm-k8s
-        - spark-integration-test-minikube-k8s
-
-- project:
     name: moo-ai/moo-ai.github.io
     check:
       jobs:
@@ -201,3 +194,10 @@
     check:
       jobs:
         - arm-on-openlab-test
+
+- project:
+    name: liu-sheng/spark
+    periodic:
+      jobs:
+        - spark-integration-test-kubeadm-k8s
+        - spark-integration-test-minikube-k8s

@@ -1,7 +1,10 @@
 - hosts: all
   become: yes
   roles:
-    - install-docker-ce
+    - role: install-docker-ce
+      docker_ce_version: 18.06
+      docker_vcgroupdriver: "cgroupfs"
+    - create-single-k8s-cluster-with-minikube
   tasks:
     - name: Run integration tests of Spark deployed on k8s cluster
       shell: |
@@ -10,28 +13,9 @@
         apt-get install openjdk-8-jdk -y
         sed -i -e '/127.0.0.1/ s/\(localhost\)/'$(hostname)' \1/' /etc/hosts
         export JAVA_HOME=$(dirname $(dirname $(update-alternatives --list javac)))
-        echo "nameserver 8.8.8.8" >> /etc/resolv.conf
 
         # NOTE: the distribution step may fail due to dependencies downloading failure, so we suport retry
         for i in $(seq 1 3); do ./dev/make-distribution.sh --tgz -Pkubernetes && s=0 && break || s=$? && sleep 5; done; (exit $s)
-
-        # Download minikube binary, the newest version supportted is v0.30.0
-        curl -Lo /usr/local/bin/minikube https://storage.googleapis.com/minikube/releases/v0.30.0/minikube-linux-amd64 && chmod +x /usr/local/bin/minikube
-        # Download kubectl binary
-        curl -Lo /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/v1.10.0/bin/linux/amd64/kubectl && chmod +x /usr/local/bin/kubectl
-
-        # Now, only the 18.06 version of Docker is supportted
-        apt-get remove docker-ce -y
-        apt-get install docker-ce=$(apt-cache madison docker-ce |grep 18.06 | head -n 1 | awk '{print $3}') -y
-        apt-get install
-        iptables -F
-        sed -i "s/cgroupdriver=systemd/cgroupdriver=cgroupfs/" /etc/docker/daemon.json
-        systemctl restart docker
-
-        minikube start --cpus 4 --memory 6144 --vm-driver=none
-        # Sleep 4 mins, waiting for cluster ready
-        sleep 240
-        kubectl get pods --all-namespaces
 
         # Create required account in k8s
         kubectl create serviceaccount spark

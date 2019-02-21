@@ -27,12 +27,17 @@
 
       # Install docker ce.
       apt-get update
-      apt-get install -y docker-ce docker-ce-cli containerd.io
+      if [[ "{{ docker_ce_version }}" == "latest" ]]; then
+          apt-get install -y docker-ce
+      else
+          apt-get install docker-ce=$(apt-cache madison docker-ce |grep "{{ docker_ce_version }}" | head -n 1 | awk '{print $3}') -y
+      fi
+
 
       # Setup daemon.
       cat > /etc/docker/daemon.json <<EOF
       {
-        "exec-opts": ["native.cgroupdriver=systemd"],
+        "exec-opts": ["native.cgroupdriver={{ docker_vcgroupdriver }}"],
         "log-driver": "json-file",
         "log-opts": {
           "max-size": "100m"
@@ -43,6 +48,7 @@
 
       mkdir -p /etc/systemd/system/docker.service.d
 
+      iptables -F
       # Restart docker.
       systemctl daemon-reload
       systemctl restart docker

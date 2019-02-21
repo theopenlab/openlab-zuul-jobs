@@ -1154,21 +1154,6 @@
       - orange_credentials
 
 - job:
-    name: spark-integration-test-kubeadm-k8s
-    parent: init-test
-    description: |
-      Run integration tests of spark of master with k8s cluster deployed by kubeadm
-    run: playbooks/spark-integration-test-kubeadm-k8s/run.yaml
-
-- job:
-    name: spark-integration-test-minikube-k8s
-    parent: init-test
-    description: |
-      Run integration tests of spark of v2.4.0 with k8s cluster deployed by minikube
-    run: playbooks/spark-integration-test-minikube-k8s/run.yaml
-    override-checkout: branch-2.4
-
-- job:
     name: ai-on-openlab-test-tensorflow-k8s
     parent: init-test
     description: |
@@ -1189,3 +1174,19 @@
       Test arm in openlab cluster.
     run: playbooks/arm-on-openlab/run.yaml
     nodeset: ubuntu-bionic-vxh-arm64
+
+
+- job:
+    name: spark-integration-test-kubeadm-k8s
+    parent: init-test
+    description: |
+      Run integration tests of spark of master with k8s cluster deployed by kubeadm
+    run: playbooks/spark-integration-test-kubeadm-k8s/run.yaml
+
+- job:
+    name: spark-integration-test-minikube-k8s
+    parent: init-test
+    description: |
+      Run integration tests of spark of v2.4.0 with k8s cluster deployed by minikube
+    run: playbooks/spark-integration-test-minikube-k8s/run.yaml
+    override-checkout: branch-2.4
