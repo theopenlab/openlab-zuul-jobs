@@ -1154,18 +1154,18 @@
       - orange_credentials
 
 - job:
-    name: spark-funcional-test-kubeadm-k8s
+    name: spark-integration-test-kubeadm-k8s
     parent: init-test
     description: |
-      Run functional tests of spark of master with k8s cluster deployed by kubeadm
+      Run integration tests of spark of master with k8s cluster deployed by kubeadm
     run: playbooks/spark-funcional-test-kubeadm-k8s/run.yaml
 
 - job:
-    name: spark-funcional-test-minikube-k8s
+    name: spark-integration-test-minikube-k8s
     parent: init-test
     description: |
-      Run functional tests of spark of v2.4.0 with k8s cluster deployed by minikube
-    run: playbooks/spark-funcional-test-minikube-k8s/run.yaml
+      Run integration tests of spark of v2.4.0 with k8s cluster deployed by minikube
+    run: playbooks/spark-integration-test-minikube-k8s/run.yaml
     override-checkout: branch-2.4
 
 - job:
