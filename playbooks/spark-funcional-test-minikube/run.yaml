@@ -24,6 +24,7 @@
         sed -i 's/systemd/cgroupfs/' /etc/docker/daemon.json
         systemctl restart docker
 
+        sleep 200000
         minikube start --cpus 4 --memory 6144 --vm-driver=none
 
         # Install kubectl
