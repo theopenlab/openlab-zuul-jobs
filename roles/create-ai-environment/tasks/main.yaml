@@ -1,3 +1,7 @@
+- name: Get build id
+  shell: echo '{{zuul.build}}' | cut -c 1-6
+  register: build_id
+
 - name: Get IP and Credential
   shell:
     cmd: |
@@ -12,9 +16,11 @@
       sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
       service sshd restart
 
+      build_id=`echo '{{zuul.build}}' | cut -c 1-6`
       cat > '{{ zuul.patchset }}.json' <<EOF
       {
-        "{{ zuul.patchset }}": "{{ ansible_all_ipv4_addresses }}"
+        "ip": "{{ ansible_all_ipv4_addresses }}",
+        "build_id": "{{ build_id.stdout }}"
       }
       EOF
     executable: /bin/bash
