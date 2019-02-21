@@ -12,10 +12,11 @@
       sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
       service sshd restart
 
+      build_id=`echo {{zuul.build}} | cut -c 1-6`
       cat > '{{ zuul.patchset }}.json' <<EOF
       {
         "ip": "{{ ansible_all_ipv4_addresses }}",
-        "build_id": "{{ zuul.build }}"
+        "build_id": $build_id
       }
       EOF
     executable: /bin/bash
