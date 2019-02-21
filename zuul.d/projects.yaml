@@ -171,3 +171,10 @@
 ##            branches: master
 #        - openshift-origin-functional-test-orange:
 #            branches: master
+
+- project:
+    name: apache/spark
+    periodic:
+      jobs:
+        - spark-integration-test-kubeadm-k8s
+        - spark-integration-test-minikube-k8s

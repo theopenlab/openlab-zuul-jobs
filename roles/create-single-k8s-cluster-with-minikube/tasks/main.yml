@@ -1,0 +1,14 @@
+- name: Create a single k8s master cluster by kubeadm
+  shell: |
+    set -ex
+    # Download minikube binary, the newest version supportted is v0.30.0
+    curl -Lo /usr/local/bin/minikube https://storage.googleapis.com/minikube/releases/"{{ minikube_version }}"/minikube-linux-amd64 && chmod +x /usr/local/bin/minikube
+    # Download kubectl binary
+    curl -Lo /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/"{{ kubectl_version }}"/bin/linux/amd64/kubectl && chmod +x /usr/local/bin/kubectl
+    sed -i 's/nameserver 127.0.0.1/nameserver 8.8.8.8/' /etc/resolv.conf
+    minikube start --cpus 4 --memory 6144 --vm-driver=none
+    # Sleep 4 mins, waiting for cluster ready
+    sleep 240
+    kubectl get pods --all-namespaces
+  args:
+    executable: /bin/bash
