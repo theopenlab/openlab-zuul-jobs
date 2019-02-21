@@ -60,6 +60,7 @@
       export PROJECTS="openstack/zun openstack/zun-tempest-plugin openstack/python-zunclient $PROJECTS"
       export PROJECTS="openstack/diskimage-builder $PROJECTS"
       export PROJECTS="openstack/python-octaviaclient $PROJECTS"
+      export PROJECTS="openstack/trove openstack/python-troveclient openstack/trove-dashboard openstack/tripleo-image-elements $PROJECTS"
 
       cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
       ./safe-devstack-vm-gate-wrap.sh
