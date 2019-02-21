@@ -1158,7 +1158,7 @@
     parent: init-test
     description: |
       Run integration tests of spark of master with k8s cluster deployed by kubeadm
-    run: playbooks/spark-funcional-test-kubeadm-k8s/run.yaml
+    run: playbooks/spark-integration-test-kubeadm-k8s/run.yaml
 
 - job:
     name: spark-integration-test-minikube-k8s
