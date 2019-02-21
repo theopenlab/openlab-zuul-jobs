@@ -14,8 +14,8 @@
         # NOTE: the distribution step may fail due to dependencies downloading failure, so we suport retry
         for i in $(seq 1 3); do ./dev/make-distribution.sh --tgz -Pkubernetes && s=0 && break || s=$? && sleep 5; done; (exit $s)
 
-        # Download minikube binary
-        curl -Lo /usr/local/bin/minikube https://storage.googleapis.com/minikube/releases/v0.34.1/minikube-linux-amd64 && chmod +x /usr/local/bin/minikube
+        # Download minikube binary, the newest version supportted is v0.30.0
+        curl -Lo /usr/local/bin/minikube https://storage.googleapis.com/minikube/releases/v0.30.0/minikube-linux-amd64 && chmod +x /usr/local/bin/minikube
         # Download kubectl binary
         curl -Lo /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/v1.10.0/bin/linux/amd64/kubectl && chmod +x /usr/local/bin/kubectl
 
@@ -24,17 +24,19 @@
         apt-get install docker-ce=$(apt-cache madison docker-ce |grep 18.06 | head -n 1 | awk '{print $3}') -y
         apt-get install
         iptables -F
+        sed -i "s/cgroupdriver=systemd/cgroupdriver=cgroupfs/" /etc/docker/daemon.json
         systemctl restart docker
 
-        sleep 200000
         minikube start --cpus 4 --memory 6144 --vm-driver=none
+        # waiting for cluster ready
+        sleep 180
 
         # Create required account in k8s
         kubectl create serviceaccount spark
         kubectl create clusterrolebinding spark-role --clusterrole=edit --serviceaccount=default:spark --namespace=default
 
         pushd resource-managers/kubernetes/integration-tests
-        dev/dev-run-integration-tests.sh --spark-tgz '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/spark-2.4.2-SNAPSHOT-bin-2.6.5.tgz' --namespace default --service-account spark
+        dev/dev-run-integration-tests.sh --spark-tgz $(realpath ../../../spark-*.tgz) --namespace default --service-account spark
         popd
       args:
         executable: /bin/bash
