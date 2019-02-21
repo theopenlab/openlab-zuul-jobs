@@ -26,6 +26,7 @@
         iptables -F
         systemctl restart docker
 
+        sleep 200000
         minikube start --cpus 4 --memory 6144 --vm-driver=none
 
         # Create required account in k8s
