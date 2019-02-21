@@ -10,6 +10,7 @@
         apt-get install openjdk-8-jdk -y
         sed -i -e '/127.0.0.1/ s/\(localhost\)/'$(hostname)' \1/' /etc/hosts
         export JAVA_HOME=$(dirname $(dirname $(update-alternatives --list javac)))
+        echo "nameserver 8.8.8.8" >> /etc/resolv.conf
 
         # NOTE: the distribution step may fail due to dependencies downloading failure, so we suport retry
         for i in $(seq 1 3); do ./dev/make-distribution.sh --tgz -Pkubernetes && s=0 && break || s=$? && sleep 5; done; (exit $s)
@@ -28,8 +29,8 @@
         systemctl restart docker
 
         minikube start --cpus 4 --memory 6144 --vm-driver=none
-        # waiting for cluster ready
-        sleep 180
+        # Sleep 4 mins, waiting for cluster ready
+        sleep 240
         kubectl get pods --all-namespaces
 
         # Create required account in k8s

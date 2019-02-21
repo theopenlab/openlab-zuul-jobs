@@ -10,7 +10,6 @@
         # install java8
         apt-get install openjdk-8-jdk -y
         sed -i -e '/127.0.0.1/ s/\(localhost\)/'$(hostname)' \1/' /etc/hosts
-        echo "nameserver 8.8.8.8" >> /etc/resolv.conf
 
         # Create required account in k8s
         kubectl create serviceaccount spark

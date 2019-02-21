@@ -186,8 +186,8 @@
     name: liu-sheng/spark
     check:
       jobs:
-        - spark-master-funcional-test-k8s
-        - spark-2.4.0-funcional-test-minikube
+        - spark-funcional-test-kubeadm-k8s
+        - spark-funcional-test-minikube-k8s
 
 - project:
     name: moo-ai/moo-ai.github.io

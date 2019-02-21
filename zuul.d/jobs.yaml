@@ -1154,19 +1154,19 @@
       - orange_credentials
 
 - job:
-    name: spark-2.4.0-funcional-test-minikube
+    name: spark-funcional-test-kubeadm-k8s
     parent: init-test
     description: |
-      Run functional tests of spark of 2.4.0 release deployed on k8s cluster created by minikube
-    run: playbooks/spark-funcional-test-minikube/run.yaml
-    override-checkout: branch-2.4
+      Run functional tests of spark of master with k8s cluster deployed by kubeadm
+    run: playbooks/spark-funcional-test-kubeadm-k8s/run.yaml
 
 - job:
-    name: spark-master-funcional-test-k8s
+    name: spark-funcional-test-minikube-k8s
     parent: init-test
     description: |
-      Run functional tests of spark of master deployed on k8s cluster
-    run: playbooks/spark-funcional-test-k8s/run.yaml
+      Run functional tests of spark of v2.4.0 with k8s cluster deployed by minikube
+    run: playbooks/spark-funcional-test-minikube-k8s/run.yaml
+    override-checkout: branch-2.4
 
 - job:
     name: ai-on-openlab-test-tensorflow-k8s
