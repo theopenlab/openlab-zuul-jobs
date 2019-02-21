@@ -30,6 +30,7 @@
         minikube start --cpus 4 --memory 6144 --vm-driver=none
         # waiting for cluster ready
         sleep 180
+        kubectl get pods --all-namespaces
 
         # Create required account in k8s
         kubectl create serviceaccount spark
