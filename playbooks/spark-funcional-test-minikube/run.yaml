@@ -21,7 +21,7 @@
 
         # Now, only the 18.06 version of Docker is supportted
         apt-get remove docker-ce -y
-        apt-get install docker-ce=$(apt-cache madison docker-ce |grep 18.06 | head -n 1 | awk '{print $3}')
+        apt-get install docker-ce=$(apt-cache madison docker-ce |grep 18.06 | head -n 1 | awk '{print $3}') -y
         apt-get install
         iptables -F
         systemctl restart docker
