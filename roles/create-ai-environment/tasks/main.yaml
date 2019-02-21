@@ -14,7 +14,8 @@
 
       cat > '{{ zuul.patchset }}.json' <<EOF
       {
-        "{{ zuul.patchset }}": "{{ ansible_all_ipv4_addresses }}"
+        "ip": "{{ ansible_all_ipv4_addresses }}",
+        "build_id": "{{ zuul.build }}"
       }
       EOF
     executable: /bin/bash
