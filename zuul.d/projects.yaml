@@ -197,7 +197,7 @@
 
 - project:
     name: liu-sheng/spark
-    periodic:
+    check:
       jobs:
         - spark-integration-test-kubeadm-k8s
         - spark-integration-test-minikube-k8s
