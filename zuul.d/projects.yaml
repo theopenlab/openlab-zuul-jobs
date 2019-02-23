@@ -176,5 +176,7 @@
     name: apache/spark
     periodic:
       jobs:
-        - spark-integration-test-kubeadm-k8s
-        - spark-integration-test-minikube-k8s
+        - spark-integration-test-kubeadm-k8s:
+            branches: master
+        - spark-integration-test-minikube-k8s:
+            branches: master

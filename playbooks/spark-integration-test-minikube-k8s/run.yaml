@@ -6,13 +6,14 @@
       docker_vcgroupdriver: "cgroupfs"
     - create-single-k8s-cluster-with-minikube
   tasks:
-    - name: Run integration tests of Spark deployed on k8s cluster
+    - name: Run integration tests of Spark with k8s cluster manager
       shell: |
         set -ex
         # install java8
         apt-get install openjdk-8-jdk -y
-        sed -i -e '/127.0.0.1/ s/\(localhost\)/'$(hostname)' \1/' /etc/hosts
         export JAVA_HOME=$(dirname $(dirname $(update-alternatives --list javac)))
+
+        sed -i -e '/127.0.0.1/ s/\(localhost\)/'$(hostname)' \1/' /etc/hosts
 
         # NOTE: the distribution step may fail due to dependencies downloading failure, so we suport retry
         for i in $(seq 1 3); do ./dev/make-distribution.sh --tgz -Pkubernetes && s=0 && break || s=$? && sleep 5; done; (exit $s)
