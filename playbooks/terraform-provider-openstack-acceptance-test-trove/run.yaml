@@ -13,7 +13,7 @@
           set -e
           set -x
           export BRIDGE_IP=10.0.0.1
-          export DEST='/opt/stack'
+          export DEST='/opt/stack/new'
           export PATH_DEVSTACK_SRC=$DEST/devstack
           export TROVE_RESIZE_TIME_OUT=''
           cd $DEST/trove
