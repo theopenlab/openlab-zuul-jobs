@@ -52,53 +52,93 @@
       python upload_env_info.py '{{ zuul.patchset }}.json'
     executable: /bin/bash
 
-- name: Create AI Environment
+
+- name: Install {{ runtime.stdout }} Runtime
+  when: runtime_name != ''
   shell:
     cmd: |
       set -x
       set -e
 
-      apt install -y unzip
-      pip install pyyaml
-
-      result_folder="{{ ansible_user_dir }}/workspace/test_results/"
-      mkdir -p $result_folder
-
-      user_data_folder='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/'
-      cd $user_data_folder
-
-      if ls | grep txt;then
-        txt_file=`ls | grep txt`
-        url=`cat $txt_file`
-        wget $url
-      fi
-
-      zip_file=`ls | grep zip`
-
-      unzip $zip_file
-      python '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/tools/analysis_yaml.py'
-    executable: /bin/bash
-
-- name: Get Runtime Name
-  shell: cat '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/framework_runtime.txt'
-  register: runtime
-
-- name: Install Python Runtime
-  when: runtime.stdout.find('python') != -1
-  shell:
-    cmd: |
+      runtime_name={{ runtime_name.stdout }}
+      runtime_version={{ runtime_version.stdout }}
       add-apt-repository -y ppa:deadsnakes/ppa
       apt update
-      apt install -y python2.7 python3.5 python3.6 python3.7
-    executable: /bin/bash
-  register: is_python_runtime
+      if [ $runtime_name == 'python' ];then
+        apt install -y $runtime_name$runtime_version
+        apt install -y python2.7 python3.5 python3.6 python3.7
+      fi
 
-- name: Get Framework Name
-  shell: cat '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/framework_name.txt'
-  register: framework
+      if [ $runtime_name == 'java' ];then
+        apt install -y default-jre default-jdk
+        apt install -y openjdk-7-jre openjdk-8-jdk
+      fi
+
+      if [ $runtime_name == 'c' ];then
+        apt install -y gcc=$runtime_version g++=$runtime_version
+        apt install -y gcc-7 g++-7 gcc-8 g++-8 gcc-9 g++-9
+      fi
+
+      if [ $runtime_name == 'go' ];then
+        apt install -y golang-go=$runtime_version
+      fi
+
+    executable: /bin/bash
+  register: runtime_done
+
+
+- name: Install {{ framework.stdout }}-{{ framework_version.stdout }}
+  when:
+    ( framework.stdout.find('tensorflow') and runtime_name.stdout in ['python', 'java', 'go', 'c'] ) or
+    ( framework.stdout.find('pytorch') and runtime_name.stdout in ['python', 'c'] )
+  shell:
+    cmd: |
+      set -x
+      set -e
+      framework={{ framework.stdout }}
+      framework_version={{ framework_version.stdout }}
+      runtime_name={{ runtime_name.stdout }}
+
+      if [ $framework == "tensorflow" ];then
+        if [ runtime_name == "python" ];then
+          pip install tensorflow=={{ framework_version.stdout }}
+        fi
+        if [ runtime_name == "java" ];then
+          wget https://storage.googleapis.com/tensorflow/libtensorflow_jni-cpu-linux-x86_64-{{ framework_version.stdout }}.tar.gz
+          tar -xvf libtensorflow_jni-cpu-linux-x86_64-{{ framework_version.stdout }}.tar.gz
+        fi
+        if [ runtime_name == "go" ];then
+          mkdir ./download
+          export GOPATH=`pwd`/download
+          apt install -y git-core
+          go get github.com/tensorflow/tensorflow/tensorflow/go
+          go test github.com/tensorflow/tensorflow/tensorflow/go
+          git checkout tags/{{ framework_version.stdout }}
+
+        fi
+        if [ runtime_name == "c" ];then
+          wget https://storage.googleapis.com/tensorflow/libtensorflow-cpu-linux-x86_64-{{ framework_version.stdout }}.tar.gz
+          tar -xz libtensorflow-cpu-linux-x86_64-{{ framework_version.stdout }}.tar.gz /usr/local
+          ldconfig
+        fi
+      fi
+
+      if [ $framework == 'pythorch' ];then
+        if [ runtime_name == "python" ];then
+          pip install torch=={{ framework_version.stdout }} torchvision
+        fi
+        if [ runtime_name == "c" ];then
+          wget https://download.pytorch.org/libtorch/cu90/libtorch-shared-with-deps-latest.zip
+          apt install zip
+          unzip libtorch-shared-with-deps-latest.zip
+        fi
+      fi
+
+    executable: /bin/bash
+    register: install_done
 
 - name: Run Tensorflow Python Job
-  when: framework.stdout == "tensorflow" and is_python_runtime is defined
+  when: framework.stdout == "tensorflow" and runtime_name.stdout in ["python", "java", "go", "c"]
   shell:
     cmd: |
       set -x
@@ -107,11 +147,9 @@
       user_data_folder='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/'
       cd $user_data_folder
 
-      version=`cat framework_version.txt`
+      pip install tensorflow=={{ framework_version.stdout }}
 
-      pip install tensorflow==${version}
-
-      py_file=`cat entry_point.txt`
+      py_file={{ entrypoint.stdout }}
 
       result_folder="{{ ansible_user_dir }}/workspace/test_results/"
 
@@ -138,21 +176,6 @@
 
       '{{ runtime.stdout }}' $py_file | tee ${result_folder}"/process_log.txt"
     executable: /bin/bash
-
-- name: Check output folder variable exists
-  stat:
-    path: '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/output_folder.txt'
-  register: stat_ouput_folder_variable
-
-- name: Get output folder variable value
-  when: stat_ouput_folder_variable.stat.exists
-  shell: cat '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/output_folder.txt'
-  register: output_folder_name
-
-- name: Check output folder exists
-  stat:
-    path: '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/{{ output_folder_name.stdout }}'
-  register: stat_ouput_folder
 
 - name: Collect Traning or Inference Result if needed
   when: stat_ouput_folder.stat.exists and stat_ouput_folder.stat.isdir
