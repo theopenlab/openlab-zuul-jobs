@@ -43,11 +43,11 @@
       register: framework
 
     - name: Get Framework Version
-      shell: cat {{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/framework_version.txt'
+      shell: cat '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/framework_version.txt'
       register: framework_version
 
     - name: Get User Entry Point
-      shell: cat {{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/entry_point.txt'
+      shell: cat '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/entry_point.txt'
       register: entrypoint
 
     - name: Check output folder variable exists
