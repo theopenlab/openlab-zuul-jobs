@@ -33,7 +33,8 @@
       shell: cat '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/framework_runtime.txt'
       register: runtime
 
-    - set_fact:
+    - name: Defind Parameters
+      set_fact:
         runtime_name: "{{ runtime.stdout | regex_replace('[\\d+\\.*]+', '') }}"
         runtime_version: "{{ runtime.stdout | regex_replace('[java|go|python|c|c++]', '') }}"
 
