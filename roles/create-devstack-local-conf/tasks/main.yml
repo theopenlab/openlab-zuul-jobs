@@ -41,6 +41,19 @@
   when:
     - '"heat" in enable_services'
 
+# Populate local conf with trove service enabled
+- name: create devstack local conf with Trove enabled
+  shell:
+    cmd: |
+      set -e
+      set -x
+      cat << EOF >> /tmp/dg-local.conf
+      enable_plugin trove git://git.openstack.org/openstack/trove
+      EOF
+    executable: /bin/bash
+  when:
+    - '"trove" in enable_services'
+
 # Use neutron-* services to replace q-* services except Mitaka, Newton, Ocata and Pike
 - name: enable neutron services by new services names
   shell:
