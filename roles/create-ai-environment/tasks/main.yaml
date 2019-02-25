@@ -1,6 +1,6 @@
 - name: debug var
   debug:
-    msg="hostvars ======= {{ hostvars['wolegequ'] }}"
+    msg="hostvars ======= {{ hostvars }}"
 
 - name: Install {{ runtime.stdout }} Runtime
   when: runtime_name != ''

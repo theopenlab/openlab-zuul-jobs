@@ -1,8 +1,7 @@
 - name: AI On Openlab Pre Job
-  hosts: wolegequ
+  hosts: all
   become: yes
   tasks:
-
     - name: Get build id
       shell: echo '{{zuul.build}}' | cut -c 1-7
       register: build_id
@@ -127,4 +126,4 @@
 
     - name: debug var
       debug:
-        msg="hostvars ======= {{ hostvars['wolegequ'] }}"
+        msg="hostvars ======= {{ hostvars }}"
