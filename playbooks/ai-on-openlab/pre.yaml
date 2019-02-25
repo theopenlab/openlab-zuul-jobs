@@ -57,34 +57,34 @@
         python upload_env_info.py '{{ zuul.patchset }}.json'
       executable: /bin/bash
 
-    - name: Get User Metadata Zip or Url
-      shell:
-        cmd: |
-          set -x
-          set -e
+  - name: Get User Metadata Zip or Url
+    shell:
+      cmd: |
+        set -x
+        set -e
 
-          apt install -y unzip
-          pip install pyyaml
+        apt install -y unzip
+        pip install pyyaml
 
-          result_folder="{{ ansible_user_dir }}/workspace/test_results/"
-          mkdir -p $result_folder
+        result_folder="{{ ansible_user_dir }}/workspace/test_results/"
+        mkdir -p $result_folder
 
-          user_data_folder='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/'
-          cd $user_data_folder
+        user_data_folder='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/'
+        cd $user_data_folder
 
-          if ls | grep txt;then
-            txt_file=`ls | grep txt`
-            url=`cat $txt_file`
-            if [ -n "$url" ];then
-              wget $url
-            fi
+        if ls | grep txt;then
+          txt_file=`ls | grep txt`
+          url=`cat $txt_file`
+          if [ -n "$url" ];then
+            wget $url
           fi
+        fi
 
-          zip_file=`ls | grep zip`
+        zip_file=`ls | grep zip`
 
-          unzip $zip_file
-          python '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/tools/analysis_yaml.py'
-        executable: /bin/bash
+        unzip $zip_file
+        python '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/tools/analysis_yaml.py'
+      executable: /bin/bash
 
     - name: Get Runtime Info
       shell: cat '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/framework_runtime.txt'
