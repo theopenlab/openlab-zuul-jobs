@@ -72,4 +72,4 @@
 
     - name: debug var
       debug:
-        msg="hostvars ======= {{ hostvars }}"
+        msg="hostvars ======= {{ hostvars[inventory_hostname] }}"
