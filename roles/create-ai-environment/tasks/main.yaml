@@ -32,7 +32,7 @@
   register: runtime
 
 - name: Defind Parameters - runtime_name
-  shell: echo "{{ runtime.stdout | regex_replace('(\\d+|\\.)') }}"
+  shell: echo "{{ runtime.stdout | regex_findall('[java|go|python|c|c++]') | join("") }}"
   register: runtime_name
 
 - name: Defind Parameters - runtime_version
