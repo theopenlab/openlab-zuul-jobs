@@ -35,10 +35,13 @@
       shell: cat '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/framework_runtime.txt'
       register: runtime
 
-    - name: Defind Parameters
-      set_fact:
-        runtime_name: "{{ runtime.stdout | regex_replace('[\\d+\\.*]+', '') }}"
-        runtime_version: "{{ runtime.stdout | regex_replace('[java|go|python|c|c++]', '') }}"
+    - name: Defind Parameters - runtime_name
+      shell: echo "{{ runtime.stdout | regex_replace('[\\d+\\.*]+', '') }}"
+      register: runtime_name
+
+    - name: Defind Parameters - runtime_version
+      shell: echo "{{ runtime.stdout | regex_replace('[java|go|python|c|c++]', '') }}"
+      register: runtime_version
 
     - name: Get Framework Name
       shell: cat '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/framework_name.txt'
