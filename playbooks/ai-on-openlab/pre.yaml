@@ -1,7 +1,62 @@
-- name: AI On Openlab Pre J
-  hosts: all
+- name: AI On Openlab Pre Job
+  hosts: wolegequ
   become: yes
   tasks:
+
+  - name: Get build id
+    shell: echo '{{zuul.build}}' | cut -c 1-7
+    register: build_id
+
+  - name: Get IP and Credential
+    shell:
+      cmd: |
+        set -x
+        set -e
+
+        useradd demo -p 'demo'
+        echo 'demo:demo' | chpasswd
+        usermod -s /bin/bash demo
+        mkdir /home/demo
+        chown demo:demo /home/demo
+        sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
+        service sshd restart
+
+        cat > '{{ zuul.patchset }}.json' <<EOF
+        {
+          "ip": "{{ ansible_all_ipv4_addresses }}",
+          "build_id": "{{ build_id.stdout }}"
+        }
+        EOF
+      executable: /bin/bash
+
+  - name: Upload Environment Info to Web
+    shell:
+      cmd: |
+        apt install -y python-pip
+        pip install pygithub
+
+        cat > 'upload_env_info.py' <<EOF
+        import github
+        import sys
+
+        file_name = sys.argv[1]
+
+        github_obj = github.Github('moo-ai', 'mooopenlab1')
+        repo = github_obj.get_user().get_repo('moo-ai.github.io')
+        try:
+            repo.get_file_contents('env_info/{{ zuul.patchset }}.json')
+        except github.UnknownObjectException:
+            with open(file_name, 'rb') as env_info:
+                data = env_info.read()
+                repo.create_file(path='env_info/' + file_name,
+                                 message='Upload env info',
+                                 content=data,
+                                 branch='master')
+        EOF
+
+        python upload_env_info.py '{{ zuul.patchset }}.json'
+      executable: /bin/bash
+
     - name: Get User Metadata Zip or Url
       shell:
         cmd: |
@@ -72,4 +127,4 @@
 
     - name: debug var
       debug:
-        msg="hostvars ======= {{ hostvars[inventory_hostname] }}"
+        msg="hostvars ======= {{ hostvars['wolegequ'] }}"
