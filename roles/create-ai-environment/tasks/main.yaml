@@ -32,7 +32,7 @@
   register: runtime
 
 - name: Defind Parameters - runtime_name
-  shell: echo "{{ runtime.stdout | regex_replace('[(\\d+\\.\\d+)|(\\d+\\.\\d+\\.\\d+)]', '') }}"
+  shell: echo "{{ runtime.stdout | regex_replace('[\\d|\\.]', '') }}"
   register: runtime_name
 
 - name: Defind Parameters - runtime_version
