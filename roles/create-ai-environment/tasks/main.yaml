@@ -32,11 +32,11 @@
   register: runtime
 
 - name: Defind Parameters - runtime_name
-  shell: echo "{{ runtime.stdout | regex_replace('[\\d|\\.]+') }}"
+  shell: echo "{{ runtime.stdout | regex_replace('(\\d+|\\.)+') }}"
   register: runtime_name
 
 - name: Defind Parameters - runtime_version
-  shell: echo "{{ runtime.stdout | regex_replace('[java|go|python|c|c++]', '') }}"
+  shell: echo "{{ runtime.stdout | regex_replace('[java|go|python|c|c++]') }}"
   register: runtime_version
 
 - name: Get Framework Name
