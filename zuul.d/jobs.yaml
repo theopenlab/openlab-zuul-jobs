@@ -1165,7 +1165,9 @@
     parent: init-test
     description: |
       Train and inference AI model in openlab VM.
+    pre-run: playbooks/ai-on-openlab/pre.yaml
     run: playbooks/ai-on-openlab/run.yaml
+    post-run: playbooks/ai-on-openlab/post.yaml
 
 - job:
     name: arm-on-openlab-test
