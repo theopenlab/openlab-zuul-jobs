@@ -12,18 +12,18 @@
 
         github_obj = github.Github('moo-ai', 'mooopenlab1')
         repo = github_obj.get_user().get_repo('moo-ai.github.io')
-        try:
-            pr = repo.get_pull(int({{ zuul.change }}))
-        except github.UnknownObjectException:
-            exit(0)
+        #try:
+        #    pr = repo.get_pull(int({{ zuul.change }}))
+        #except github.UnknownObjectException:
+        #    exit(0)
 
-        branch_name = pr.head.ref
-        pr.edit(state="closed")
-        try:
-            ref = repo.get_git_ref("heads/" + branch_name)
-        except github.UnknownObjectException:
-            exit(0)
-        ref.delete()
+        #branch_name = pr.head.ref
+        #pr.edit(state="closed")
+        #try:
+        #    ref = repo.get_git_ref("heads/" + branch_name)
+        #except github.UnknownObjectException:
+        #    exit(0)
+        #ref.delete()
         EOF
 
         python clean_repo_resource.py

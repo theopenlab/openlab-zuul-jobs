@@ -69,3 +69,7 @@
       stat:
         path: '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/{{ output_folder_name.stdout }}'
       register: stat_ouput_folder
+
+    - name: debug var
+      debug:
+        msg="hostvars ======= {{ hostvars['all'] }}"
