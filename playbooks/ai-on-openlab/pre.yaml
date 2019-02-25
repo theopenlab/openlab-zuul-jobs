@@ -20,7 +20,9 @@
           if ls | grep txt;then
             txt_file=`ls | grep txt`
             url=`cat $txt_file`
-            wget $url
+            if [ -n "$url" ];then
+              wget $url
+            fi
           fi
 
           zip_file=`ls | grep zip`
