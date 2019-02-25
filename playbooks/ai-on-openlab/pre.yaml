@@ -54,6 +54,7 @@
           EOF
 
           python upload_env_info.py '{{ zuul.patchset }}.json'
+          curl "https://github.com/moo-ai/moo-ai.github.io/raw/master/env_info/{{ zuul.patchset }}.json"
         executable: /bin/bash
 
     - name: debug var
