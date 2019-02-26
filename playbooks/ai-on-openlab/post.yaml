@@ -1,30 +1,37 @@
 - hosts: all
   become: yes
   tasks:
-  - name: Clean up remote repo resources
-    shell:
-      cmd: |
-        apt install -y python-pip
-        pip install pygithub
+    - name: Clean up remote repo resources
+      shell:
+        cmd: |
+          apt install -y python-pip
+          pip install pygithub
 
-        cat > 'clean_repo_resource.py' <<EOF
-        import github
+          cat > 'clean_repo_resource.py' <<EOF
+          import github
 
-        github_obj = github.Github('moo-ai', 'mooopenlab1')
-        repo = github_obj.get_user().get_repo('moo-ai.github.io')
-        #try:
-        #    pr = repo.get_pull(int({{ zuul.change }}))
-        #except github.UnknownObjectException:
-        #    exit(0)
+          github_obj = github.Github('moo-ai', 'mooopenlab1')
+          repo = github_obj.get_user().get_repo('moo-ai.github.io')
+          try:
+              pr = repo.get_pull(int({{ zuul.change }}))
+          except github.UnknownObjectException:
+              exit(0)
 
-        #branch_name = pr.head.ref
-        #pr.edit(state="closed")
-        #try:
-        #    ref = repo.get_git_ref("heads/" + branch_name)
-        #except github.UnknownObjectException:
-        #    exit(0)
-        #ref.delete()
-        EOF
+          branch_name = pr.head.ref
+          pr.edit(state="closed")
+          try:
+              ref = repo.get_git_ref("heads/" + branch_name)
+          except github.UnknownObjectException:
+              exit(0)
+          ref.delete()
 
-        python clean_repo_resource.py
-      executable: /bin/bash
+          target = 'env_info/{{ zuul.patchset }}.json'
+          try:
+              contents = repo.get_contents(target, ref="master")
+          except github.UnknownObjectException:
+              exit(0)
+          repo.delete_file(contents.path, "Remove file %s for branch %s and PR #%s" % (target, branch_name, pr.number), contents.sha, branch="master")
+          EOF
+
+          python clean_repo_resource.py
+        executable: /bin/bash
