@@ -101,8 +101,8 @@
 
 - name: Install {{ framework.stdout }}-{{ framework_version.stdout }}
   when:
-    ( framework.stdout.find("tensorflow") != -1 and ( runtime_name.stdout.find("python") or runtime_name.stdout.find("java") or runtime_name.stdout.find("go") or runtime_name.stdout.find("c") )) or
-    ( framework.stdout.find("pytorch") != -1 and ( runtime_name.stdout.find("python") or runtime_name.stdout.find("c") ))
+	( framework.stdout == "tensorflow" and runtime_name.stdout in ["python", "c", "java", "go"] ) or
+	( framework.stdout == "pytorch" and runtime_name.stdout in ["python", "c"] )
   shell:
     cmd: |
       set -x
@@ -112,14 +112,14 @@
       runtime_name={{ runtime_name.stdout }}
 
       if [ $framework == "tensorflow" ];then
-        if [ runtime_name == "python" ];then
+        if [ $runtime_name == "python" ];then
           pip install tensorflow=={{ framework_version.stdout }}
         fi
-        if [ runtime_name == "java" ];then
+        if [ $runtime_name == "java" ];then
           wget https://storage.googleapis.com/tensorflow/libtensorflow_jni-cpu-linux-x86_64-{{ framework_version.stdout }}.tar.gz
           tar -xvf libtensorflow_jni-cpu-linux-x86_64-{{ framework_version.stdout }}.tar.gz
         fi
-        if [ runtime_name == "go" ];then
+        if [ $runtime_name == "go" ];then
           mkdir ./download
           export GOPATH=`pwd`/download
           apt install -y git-core
@@ -128,7 +128,7 @@
           git checkout tags/{{ framework_version.stdout }}
 
         fi
-        if [ runtime_name == "c" ];then
+        if [ $runtime_name == "c" ];then
           wget https://storage.googleapis.com/tensorflow/libtensorflow-cpu-linux-x86_64-{{ framework_version.stdout }}.tar.gz
           tar -xz libtensorflow-cpu-linux-x86_64-{{ framework_version.stdout }}.tar.gz /usr/local
           ldconfig
@@ -136,10 +136,10 @@
       fi
 
       if [ $framework == 'pythorch' ];then
-        if [ runtime_name == "python" ];then
+        if [ $runtime_name == "python" ];then
           pip install torch=={{ framework_version.stdout }} torchvision
         fi
-        if [ runtime_name == "c" ];then
+        if [ $runtime_name == "c" ];then
           wget https://download.pytorch.org/libtorch/cu90/libtorch-shared-with-deps-latest.zip
           apt install zip
           unzip libtorch-shared-with-deps-latest.zip
@@ -157,8 +157,6 @@
 
       user_data_folder='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/'
       cd $user_data_folder
-
-      pip install tensorflow=={{ framework_version.stdout }}
 
       py_file={{ entrypoint.stdout }}
 
