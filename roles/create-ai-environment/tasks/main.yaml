@@ -97,7 +97,6 @@
       fi
 
     executable: /bin/bash
-  register: runtime_done
 
 
 - name: Install {{ framework.stdout }}-{{ framework_version.stdout }}
@@ -148,7 +147,6 @@
       fi
 
     executable: /bin/bash
-    register: install_done
 
 - name: Run Tensorflow Python Job
   when: framework.stdout == "tensorflow" and runtime_name.stdout in ["python", "java", "go", "c"]
