@@ -25,10 +25,22 @@
         label: ubuntu-xenial-vexxhost
 
 - nodeset:
+    name: ubuntu-xenial-vxh-arm64
+    nodes:
+      - name: ubuntu-xenial-vxh-arm64
+        label: ubuntu-xenial-vxh-arm64
+
+- nodeset:
     name: ubuntu-bionic-vxh-arm64
     nodes:
       - name: ubuntu-bionic-vxh-arm64
         label: ubuntu-bionic-vxh-arm64
+
+- nodeset:
+    name: centos-7-vxh-arm64
+    nodes:
+      - name: centos-7-vxh-arm64
+        label: centos-7-vxh-arm64
 
 - nodeset:
     name: ubuntu-xenial-huaweicloud
