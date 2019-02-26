@@ -1,0 +1,30 @@
+- hosts: all
+  become: yes
+  roles:
+    - role: install-docker-ce
+      docker_ce_version: 18.06
+      docker_vcgroupdriver: "cgroupfs"
+    - create-single-k8s-cluster-with-minikube
+  tasks:
+    - name: Run integration tests of Spark with k8s cluster manager
+      shell: |
+        set -ex
+        # install java8
+        apt-get install openjdk-8-jdk -y
+        export JAVA_HOME=$(dirname $(dirname $(update-alternatives --list javac)))
+
+        sed -i -e '/127.0.0.1/ s/\(localhost\)/'$(hostname)' \1/' /etc/hosts
+
+        # NOTE: the distribution step may fail due to dependencies downloading failure, so we suport retry
+        for i in $(seq 1 3); do ./dev/make-distribution.sh --tgz -Pkubernetes && s=0 && break || s=$? && sleep 5; done; (exit $s)
+
+        # Create required account in k8s
+        kubectl create serviceaccount spark
+        kubectl create clusterrolebinding spark-role --clusterrole=edit --serviceaccount=default:spark --namespace=default
+
+        pushd resource-managers/kubernetes/integration-tests
+        dev/dev-run-integration-tests.sh --spark-tgz $(realpath ../../../spark-*.tgz) --namespace default --service-account spark
+        popd
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
