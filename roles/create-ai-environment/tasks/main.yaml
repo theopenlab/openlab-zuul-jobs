@@ -102,8 +102,8 @@
 
 - name: Install {{ framework.stdout }}-{{ framework_version.stdout }}
   when:
-    '( framework.stdout.find("tensorflow") != -1 and "{{ runtime_name.stdout }}" in ["python", "java", "go", "c"] ) or
-    ( framework.stdout.find("pytorch") != -1 and "{{ runtime_name.stdout }}" in ["python", "c"] )'
+    ( framework.stdout.find("tensorflow") != -1 and ( runtime_name.stdout.find("python") or runtime_name.stdout.find("java") or runtime_name.stdout.find("go") or runtime_name.stdout.find("c") )) or
+    ( framework.stdout.find("pytorch") != -1 and ( runtime_name.stdout.find("python") or runtime_name.stdout.find("c") ))
   shell:
     cmd: |
       set -x
