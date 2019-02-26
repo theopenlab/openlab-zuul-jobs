@@ -1167,6 +1167,7 @@
     pre-run: playbooks/ai-on-openlab/pre.yaml
     run: playbooks/ai-on-openlab/run.yaml
     post-run: playbooks/ai-on-openlab/post.yaml
+    nodeset: ubuntu-xenial-gpu
 
 - job:
     name: arm-on-openlab-test

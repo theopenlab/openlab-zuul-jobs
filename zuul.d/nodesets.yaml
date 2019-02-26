@@ -53,3 +53,9 @@
     nodes:
       - name: ubuntu-xenial-arm64
         label: ubuntu-xenial-arm64
+
+- nodeset:
+    name: ubuntu-xenial-gpu
+    nodes:
+      - name: ubuntu-xenial-gpu
+        label: ubuntu-xenial-gpu
