@@ -32,11 +32,11 @@
   register: runtime
 
 - name: Defind Parameters - runtime_name
-  shell: echo "{{ runtime.stdout | regex_replace('[(\\d+\\.\\d+)|(\\d+\\.\\d+\\.\\d+)]', '') }}"
+  shell: echo "{{ runtime.stdout | regex_findall('[java|go|python|c|c++]') | join("") }}"
   register: runtime_name
 
 - name: Defind Parameters - runtime_version
-  shell: echo "{{ runtime.stdout | regex_replace('[java|go|python|c|c++]', '') }}"
+  shell: echo "{{ runtime.stdout | regex_replace('[java|go|python|c|c++]') }}"
   register: runtime_version
 
 - name: Get Framework Name
@@ -97,13 +97,12 @@
       fi
 
     executable: /bin/bash
-  register: runtime_done
 
 
 - name: Install {{ framework.stdout }}-{{ framework_version.stdout }}
   when:
-    ( framework.stdout.find('tensorflow') and runtime_name.stdout in ['python', 'java', 'go', 'c'] ) or
-    ( framework.stdout.find('pytorch') and runtime_name.stdout in ['python', 'c'] )
+    ( framework.stdout.find("tensorflow") != -1 and ( runtime_name.stdout.find("python") or runtime_name.stdout.find("java") or runtime_name.stdout.find("go") or runtime_name.stdout.find("c") )) or
+    ( framework.stdout.find("pytorch") != -1 and ( runtime_name.stdout.find("python") or runtime_name.stdout.find("c") ))
   shell:
     cmd: |
       set -x
@@ -148,7 +147,6 @@
       fi
 
     executable: /bin/bash
-    register: install_done
 
 - name: Run Tensorflow Python Job
   when: framework.stdout == "tensorflow" and runtime_name.stdout in ["python", "java", "go", "c"]

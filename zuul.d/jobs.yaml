@@ -1174,7 +1174,7 @@
     description: |
       Test arm in openlab cluster.
     run: playbooks/arm-on-openlab/run.yaml
-    nodeset: ubuntu-bionic-vxh-arm64
+    nodeset: ubuntu-xenial-arm64
 
 
 - job:
