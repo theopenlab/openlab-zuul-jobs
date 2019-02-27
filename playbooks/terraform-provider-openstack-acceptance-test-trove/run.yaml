@@ -20,6 +20,7 @@
           export TROVE_RESIZE_TIME_OUT=''
           cd $DEST/trove
           sudo sed -i 's/\/opt\/stack\/trove\/test-upper-constraints.txt/{toxinidir}\/test-upper-constraints.txt/' tox.ini
+          sleep 5400
           tox -etrovestack -vv -- kick-start mysql
           source /home/zuul/devstack/openrc admin admin
 
