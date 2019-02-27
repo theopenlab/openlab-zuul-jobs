@@ -75,7 +75,6 @@
 
       runtime_name={{ runtime_name.stdout }}
       runtime_version={{ runtime_version.stdout }}
-      sleep 1200
       add-apt-repository -y ppa:deadsnakes/ppa
       apt update
       if [ $runtime_name == 'python' ];then
