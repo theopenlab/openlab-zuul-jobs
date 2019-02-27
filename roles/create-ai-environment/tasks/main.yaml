@@ -72,10 +72,10 @@
     cmd: |
       set -x
       set -e
-      sleep 3000
       runtime_name={{ runtime_name.stdout }}
       runtime_version={{ runtime_version.stdout }}
       add-apt-repository -y ppa:deadsnakes/ppa
+      apt-key adv --keyserver keyserver.ubuntu.com --recv-keys F60F4B3D7FA2AF80
       apt update
       if [ $runtime_name == 'python' ];then
         apt install -y $runtime_name$runtime_version
