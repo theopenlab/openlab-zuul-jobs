@@ -6,6 +6,8 @@
       enable_services:
         - 'trove'
     - install-devstack
+
+- hosts: all
   tasks:
     - name:  Install and init trove environment
       shell:
@@ -17,6 +19,7 @@
           export PATH_DEVSTACK_SRC=$DEST/devstack
           export TROVE_RESIZE_TIME_OUT=''
           cd $DEST/trove
+          sed -i 's/\/opt\/stack\/trove\/test-upper-constraints.txt/{toxinidir}\/test-upper-constraints.txt/' tox.ini
           tox -etrovestack -vv -- kick-start mysql
           source /home/zuul/devstack/openrc admin admin
 
