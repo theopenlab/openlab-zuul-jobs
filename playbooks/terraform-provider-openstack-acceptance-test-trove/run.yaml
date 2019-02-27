@@ -15,7 +15,6 @@
           set -e
           set -x
           cd /opt/stack/new/trove/integration/scripts/
-          ./trovestack install
           ./trovestack kick-start mysql
           source /home/zuul/devstack/openrc admin admin
 
