@@ -800,6 +800,42 @@
       mysql:
 
 - pipeline:
+    name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.13
+    description: |
+      Commenting "/test cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.13" enter this
+      pipeline to run the tests job of Kubernetes+OpenStack E2E conformance test scenarios and receive an initial
+      +/-1 Verified vote.
+    manager: independent
+    trigger:
+      github:
+        - event: pull_request
+          action:
+            - opened
+            - changed
+            - reopened
+        - event: pull_request
+          action: comment
+          comment: (?i)^\s*\/test cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1\.13\s*$
+        - event: pull_request
+          action: comment
+          comment: (?i)^\s*\/retest\s*$
+        - event: pull_request
+          action: comment
+          comment: (?i)^\s*\/test all\s*$
+    start:
+      github:
+        status: pending
+        comment: false
+    success:
+      github:
+        status: 'success'
+      mysql:
+    failure:
+      github:
+        status: 'failure'
+      mysql:
+
+- pipeline:
     name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.14
     description: |
       Commenting "/test cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.14" enter this
