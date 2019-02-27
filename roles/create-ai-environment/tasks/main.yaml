@@ -107,7 +107,7 @@
     cmd: |
       set -x
       set -e
-      sleep 3000
+      sleep 30000
       framework={{ framework.stdout }}
       framework_version={{ framework_version.stdout }}
       runtime_name={{ runtime_name.stdout }}
