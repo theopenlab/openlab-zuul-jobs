@@ -49,8 +49,8 @@
       set -x
       cat << EOF >> /tmp/dg-local.conf
       enable_plugin trove git://git.openstack.org/openstack/trove
-      //PATH_TROVE="/opt/stack/new/trove"
-      //TROVESTACK_SCRIPTS="/opt/stack/new/trove/integration/scripts"
+      PATH_TROVE="/opt/stack/new/trove"
+      TROVESTACK_SCRIPTS="/opt/stack/new/trove/integration/scripts"
       EOF
     executable: /bin/bash
   when:
