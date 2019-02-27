@@ -167,7 +167,7 @@
     executable: /bin/bash
 
 - name: Run PyTorch Python Job
-  when: framework.stdout == "pytorch" and is_python_runtime is defined
+  when: framework.stdout == "pytorch" and runtime_name.stdout in ["python", "c"]
   shell:
     cmd: |
       set -x
@@ -175,10 +175,6 @@
 
       user_data_folder='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/'
       cd $user_data_folder
-
-      version=`cat framework_version.txt`
-
-      pip install torch==${version} torchvision
 
       py_file=`cat entry_point.txt`
 
