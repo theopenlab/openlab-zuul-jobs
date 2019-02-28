@@ -14,9 +14,15 @@
         cmd: |
           set -e
           set -x
-          sleep 5400
-          cd /opt/stack/new/trove/integration/scripts/
-          ./trovestack kick-start mysql
+          sudo chown zuul.zuul /opt/stack/
+          sudo chown zuul.zuul /etc/trove
+          export BRIDGE_IP=10.0.0.1
+          export DEST='/opt/stack/new'
+          export PATH_DEVSTACK_SRC=$DEST/devstack
+          export TROVE_RESIZE_TIME_OUT=''
+          cd $DEST/trove
+          sed -i 's/\/opt\/stack\/trove\/test-upper-constraints.txt/{toxinidir}\/test-upper-constraints.txt/' tox.ini
+          tox -etrovestack -vv -- kick-start mysql
           source /home/zuul/devstack/openrc admin admin
 
           # Following commands show some info for debugging
