@@ -3,7 +3,7 @@
   roles:
     - create-single-k8s-cluster-with-kubeadm
   tasks:
-    - name: Run integration tests of helm charts deployed on k8s cluster
+    - name: Run integration tests of Spark deployed on k8s cluster
       shell: |
         set -ex
         export KUBECONFIG=/etc/kubernetes/admin.conf
