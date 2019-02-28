@@ -21,24 +21,18 @@
           service sshd restart
 
           if {{ env_keeping }};then
-            cat > '{{ zuul.patchset }}.json' <<EOF
-            {
-              "ip": "{{ ansible_all_ipv4_addresses }}",
-              "credentail": "demo/demo",
-              "result_url": "",
-              "endpoint": ""
-            }
-            EOF
+            result_url=""
           else
-            cat > '{{ zuul.patchset }}.json' <<EOF
-            {
-              "ip": "{{ ansible_all_ipv4_addresses }}",
-              "credentail": "demo/demo",
-              "result_url": "http://80.158.7.210/logs/{{ zuul.change }}/{{ zuul.change }}/{{ zuul.patchset }}/check/{{ zuul.job }}/{{ build_id.stdout }}/test_results/",
-              "endpoint": ""
-            }
-            EOF
-          fi
+            result_url="http://80.158.7.210/logs/{{ zuul.change }}/{{ zuul.change }}/{{ zuul.patchset }}/check/{{ zuul.job }}/{{ build_id.stdout }}/test_results/"
+
+          cat > '{{ zuul.patchset }}.json' <<EOF
+          {
+            "ip": "{{ ansible_all_ipv4_addresses }}",
+            "credentail": "demo/demo",
+            "result_url": "$result_url",
+            "endpoint": ""
+          }
+          EOF
         executable: /bin/bash
 
     - name: Upload Environment Info to Web
