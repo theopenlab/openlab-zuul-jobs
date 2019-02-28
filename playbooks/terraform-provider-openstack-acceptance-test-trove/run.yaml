@@ -23,7 +23,7 @@
           cd $DEST/trove
           sed -i 's/\/opt\/stack\/trove\/test-upper-constraints.txt/{toxinidir}\/test-upper-constraints.txt/' tox.ini
           tox -etrovestack -vv -- kick-start mysql
-          source /home/zuul/devstack/openrc admin admin
+          source $PATH_DEVSTACK_SRC/openrc admin admin
 
           # Following commands show some info for debugging
           trove datastore-list
@@ -47,7 +47,7 @@
           set -e
           set -o pipefail
           set -x
-          pushd /home/zuul/devstack
+          pushd /opt/stack/new/devstack
           source openrc admin admin
           openstack flavor create m1.acctest --id 99 --ram 512 --disk 5 --vcpu 1 --ephemeral 10
           openstack flavor create m1.resize --id 98 --ram 512 --disk 6 --vcpu 1 --ephemeral 10
