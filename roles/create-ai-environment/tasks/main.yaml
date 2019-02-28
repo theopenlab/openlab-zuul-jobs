@@ -1,12 +1,12 @@
 - name: Set Default Hardware type Parameters
   set_fact:
     user_file: "user_data"
-  when: not is_gpu_enable
+  when: not is_gpu_enabled
 
 - name: Split Hardware type Parameters for GPU
   set_fact:
     user_file: "user_data_gpu"
-  when: is_gpu_enable
+  when: is_gpu_enabled
 
 - name: Get User Metadata Zip or Url
   shell:
@@ -110,7 +110,7 @@
     executable: /bin/bash
 
 - name: Prepare GPU env (GPU driver and CUDA)
-  when: is_gpu_enable
+  when: is_gpu_enabled
   shell:
     cmd: |
       set -xe
