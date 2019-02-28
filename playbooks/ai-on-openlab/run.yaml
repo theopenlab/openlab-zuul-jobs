@@ -3,3 +3,5 @@
   connection: local
   roles:
     - create-ai-environment
+  vars:
+    - is_gpu_enabled: {{ is_gpu_enabled }}
