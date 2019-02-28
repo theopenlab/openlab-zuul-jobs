@@ -230,3 +230,12 @@
 
       mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/{{ output_folder_name.stdout }}' \
         '{{ ansible_user_dir }}/workspace/test_results/'
+    executable: /bin/bash
+
+- name: ENV keeping
+  when: env_keeping
+  shell:
+    cmd: |
+      set -xe
+      sleep 120
+    executable: /bin/bash
