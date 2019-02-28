@@ -148,7 +148,7 @@
 
       if [ $framework == "tensorflow" ];then
         if [ $runtime_name == "python" ];then
-          if {{ is_gpu_enabled }};then
+          if [ {{ is_gpu_enabled }} ];then
             pip install tensorflow-gpu=={{ framework_version.stdout }}
           else
             pip install tensorflow=={{ framework_version.stdout }}
