@@ -187,10 +187,10 @@
     check:
       jobs:
         # - ai-on-openlab-test-tensorflow-k8s
-        - ai-on-openlab-test-vm
+        - ai-on-openlab-test-vm:
             files:
               - ^user_data/.*
-        - ai-on-openlab-test-vm-with-gpu
+        - ai-on-openlab-test-vm-with-gpu:
             files:
               - ^user_data_gpu/.*
 
