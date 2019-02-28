@@ -1,3 +1,13 @@
+- name: Set Default Hardware type Parameters
+  set_fact:
+    user_file: "user_data"
+  when: not is_gpu_enable
+
+- name: Split Hardware type Parameters for GPU
+  set_fact:
+    user_file: "user_data_gpu"
+  when: is_gpu_enable
+
 - name: Get User Metadata Zip or Url
   shell:
     cmd: |
@@ -10,7 +20,8 @@
       result_folder="{{ ansible_user_dir }}/workspace/test_results/"
       mkdir -p $result_folder
 
-      user_data_folder='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/'
+      user_data_folder='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/'
+
       cd $user_data_folder
 
       if ls | grep txt;then
@@ -28,7 +39,7 @@
     executable: /bin/bash
 
 - name: Get Runtime Info
-  shell: cat '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/framework_runtime.txt'
+  shell: cat '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/framework_runtime.txt'
   register: runtime
 
 - name: Defind Parameters - runtime_name
@@ -40,30 +51,30 @@
   register: runtime_version
 
 - name: Get Framework Name
-  shell: cat '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/framework_name.txt'
+  shell: cat '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/framework_name.txt'
   register: framework
 
 - name: Get Framework Version
-  shell: cat '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/framework_version.txt'
+  shell: cat '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/framework_version.txt'
   register: framework_version
 
 - name: Get User Entry Point
-  shell: cat '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/entry_point.txt'
+  shell: cat '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/entry_point.txt'
   register: entrypoint
 
 - name: Check output folder variable exists
   stat:
-    path: '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/output_folder.txt'
+    path: '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/output_folder.txt'
   register: stat_ouput_folder_variable
 
 - name: Get output folder variable value
   when: stat_ouput_folder_variable.stat.exists
-  shell: cat '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/output_folder.txt'
+  shell: cat '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/output_folder.txt'
   register: output_folder_name
 
 - name: Check output folder exists
   stat:
-    path: '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/{{ output_folder_name.stdout }}'
+    path: '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/{{ output_folder_name.stdout }}'
   register: stat_ouput_folder
 
 - name: Install {{ runtime.stdout }} Runtime
@@ -183,7 +194,7 @@
       set -x
       set -e
 
-      user_data_folder='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/'
+      user_data_folder='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/'
       cd $user_data_folder
 
       py_file={{ entrypoint.stdout }}
@@ -200,7 +211,7 @@
       set -x
       set -e
 
-      user_data_folder='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/'
+      user_data_folder='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/'
       cd $user_data_folder
 
       py_file=`cat entry_point.txt`
@@ -217,5 +228,5 @@
       set -x
       set -e
 
-      mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/user_data/{{ output_folder_name.stdout }}' \
+      mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/{{ output_folder_name.stdout }}' \
         '{{ ansible_user_dir }}/workspace/test_results/'
