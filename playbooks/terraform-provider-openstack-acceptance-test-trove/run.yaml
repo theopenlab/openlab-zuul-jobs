@@ -49,7 +49,6 @@
           set -x
           pushd /opt/stack/new/devstack
           source openrc admin admin
-          sleep 3600
           openstack flavor create m1.acctest --id 99 --ram 512 --disk 5 --vcpu 1 --ephemeral 10
           openstack flavor create m1.resize --id 98 --ram 512 --disk 6 --vcpu 1 --ephemeral 10
           _NETWORK_ID=$(openstack network show private -c id -f value)
