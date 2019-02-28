@@ -28,7 +28,7 @@
           # Following commands show some info for debugging
           trove datastore-list
           openstack image list
-          openstack image show ubuntu_mysql
+          openstack image show ubuntu-mysql-5.7
           trove flavor-list
           df -h
 
