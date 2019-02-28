@@ -16,6 +16,7 @@
           set -x
           sudo chown zuul.zuul /opt/stack/
           sudo chown zuul.zuul /etc/trove
+          chmod 666 /dev/pts/0
           export BRIDGE_IP=10.0.0.1
           export DEST='/opt/stack/new'
           export PATH_DEVSTACK_SRC=$DEST/devstack
