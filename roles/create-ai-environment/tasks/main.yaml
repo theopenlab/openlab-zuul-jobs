@@ -99,6 +99,7 @@
     executable: /bin/bash
 
 - name: Prepare GPU env (GPU driver and CUDA)
+  when: is_gpu_enable
   shell:
     cmd: |
       set -xe
@@ -136,7 +137,11 @@
 
       if [ $framework == "tensorflow" ];then
         if [ $runtime_name == "python" ];then
-          pip install tensorflow-gpu=={{ framework_version.stdout }}
+          if {{ is_gpu_enabled }};then
+            pip install tensorflow-gpu=={{ framework_version.stdout }}
+          else
+            pip install tensorflow=={{ framework_version.stdout }}
+          fi
         fi
         if [ $runtime_name == "java" ];then
           wget https://storage.googleapis.com/tensorflow/libtensorflow_jni-cpu-linux-x86_64-{{ framework_version.stdout }}.tar.gz
