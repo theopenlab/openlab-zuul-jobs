@@ -14,6 +14,7 @@
         cmd: |
           set -e
           set -x
+          sleep 5400
           cd /opt/stack/new/trove/integration/scripts/
           ./trovestack kick-start mysql
           source /home/zuul/devstack/openrc admin admin
