@@ -29,7 +29,6 @@
 
         # helm client has installed in chart-testing image, here we install the helm server tiller
         docker exec --interactive ctd "$@" helm init --service-account tiller
-        docker exec --interactive ctd "$@" helm version
 
         # we need to test databases like mysql installing, persistence is enabled default,
         # create local pv to support the test
