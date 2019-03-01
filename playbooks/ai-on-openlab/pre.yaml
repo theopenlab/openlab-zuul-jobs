@@ -6,6 +6,8 @@
       shell: echo '{{zuul.build}}' | cut -c 1-7
       register: build_id
 
+'{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/framework_version.txt'
+
     - name: Get IP and Credential
       shell:
         cmd: |
@@ -42,6 +44,9 @@
           apt install -y python-pip
           pip install pygithub
 
+          source_file=`ls "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/" | grep moo-job`
+          dest_file=$(echo $source_file | cut -d . -f1)
+          mv "{{ zuul.patchset }}.json" $dest_file.json
           cat > 'upload_env_info.py' <<EOF
           import github
           import sys
@@ -51,7 +56,7 @@
           github_obj = github.Github('moo-ai', 'mooopenlab1')
           repo = github_obj.get_user().get_repo('moo-ai.github.io')
           try:
-              repo.get_file_contents('env_info/{{ zuul.patchset }}.json')
+              repo.get_file_contents('env_info/$dest_file.json')
           except github.UnknownObjectException:
               with open(file_name, 'rb') as env_info:
                   data = env_info.read()

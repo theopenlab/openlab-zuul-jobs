@@ -189,10 +189,10 @@
         # - ai-on-openlab-test-tensorflow-k8s
         - ai-on-openlab-test-vm:
             files:
-              - ^user_data/.*(!sleep).*
+              - ^user_data/(?!.*?sleep).*?$
         - ai-on-openlab-test-vm-with-gpu:
             files:
-              - ^user_data_gpu/.*(!sleep).*
+              - ^user_data_gpu/(?!.*?sleep).*?$
         - ai-on-openlab-test-vm-env-keeping:
             files:
               - ^user_data/.*sleep.*
