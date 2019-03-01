@@ -32,9 +32,7 @@
         # we need to test databases like mysql installing, persistence is enabled default,
         # create local pv to support the test
         mkdir /root/k8s/
-
         cat << EOF >> /root/local-pv.yaml
-        ---
         apiVersion: "v1"
         kind: "PersistentVolume"
         metadata:
@@ -42,12 +40,12 @@
           namespace: kube-system
         spec:
           capacity:
-        	storage: "10Gi"
+            storage: "10Gi"
           accessModes:
-        	- "ReadWriteOnce"
+            - "ReadWriteOnce"
           persistentVolumeReclaimPolicy: Recycle
           hostPath:
-        	path: /root/k8s/
+            path: /k8s
         EOF
         kubectl create -f /root/local-pv.yaml
         kubectl get pv
