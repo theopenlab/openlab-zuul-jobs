@@ -33,6 +33,7 @@
         # we need to test databases like mysql installing, persistence is enabled default,
         # create local pv to support the test
         mkdir /root/k8s
+
         cat << EOF >> /root/local-pv.yaml
         apiVersion: "v1"
         kind: "PersistentVolume"
