@@ -213,3 +213,9 @@
       jobs:
         - spark-integration-test-kubeadm-k8s
         - spark-integration-test-minikube-k8s
+
+- project:
+    name: h00130372/charts
+    check:
+      jobs:
+        - helm-integration-test-kubeadm-k8s

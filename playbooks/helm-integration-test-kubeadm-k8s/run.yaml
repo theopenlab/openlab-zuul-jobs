@@ -7,9 +7,6 @@
       shell: |
         set -ex
         cp /etc/kubernetes/admin.conf /root/.kube/config
-        cd /usr/local/src
-        git clone http://github.com/helm/charts
-        cd charts
         git remote add k8s https://github.com/helm/charts.git &> /dev/null || true
         git fetch k8s
         # we use chart-testing docker image v2.2.0 to run tests
@@ -57,7 +54,7 @@
         kubectl get pv
 
         # run cmd "ct lint-and-install" to test several charts
-         docker exec --interactive ct "$@" ct lint-and-install --charts stable/mysql,stable/postgresql,stable/etcd-operator,stable/coredns --namespce kube-system
+        docker exec --interactive ct "$@" ct lint-and-install --charts stable/mysql,stable/postgresql,stable/etcd-operator,stable/coredns --namespce kube-system
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
