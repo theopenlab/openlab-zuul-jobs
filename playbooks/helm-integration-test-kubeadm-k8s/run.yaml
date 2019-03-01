@@ -26,6 +26,7 @@
         # Create service account tiller and bind the right role
         docker exec --interactive ct1 "$@" kubectl --namespace kube-system create sa tiller
         docker exec --interactive ct1 "$@" kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
+        sleep 3600
         docker exec --interactive ct1 "$@" kubectl patch deploy --namespace kube-system tiller-deploy -p '{"spec":{"template":{"spec":{"serviceAccount":"tiller"}}}}'
 
         # helm client has installed in chart-testing image, here we install the helm server tiller
