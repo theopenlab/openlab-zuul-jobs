@@ -10,28 +10,26 @@
         git remote add k8s https://github.com/helm/charts.git &> /dev/null || true
         git fetch k8s
         # we use chart-testing docker image v2.2.0 to run tests
-        docker run --rm --interactive --detach --network host --name ct1 \
+        docker run --rm --interactive --detach --network host --name ctd \
                 --volume "$(pwd)/test/ct.yaml:/etc/ct/ct.yaml" \
                 --volume "$(pwd):/workdir" \
                 --workdir /workdir \
                 "quay.io/helmpack/chart-testing:v2.2.0" \
                 cat
-        trap "docker container rm --force ct1 > /dev/null" EXIT
+        trap "docker container rm --force ctd > /dev/null" EXIT
         # copy the config file into test container
-        docker cp "$HOME/.kube" "ct1:/root/.kube"
+        docker cp "$HOME/.kube" "ctd:/root/.kube"
 
         # debug the cluster info
-        docker exec --interactive ct1 "$@" kubectl cluster-info
+        docker exec --interactive ctd "$@" kubectl cluster-info
 
         # Create service account tiller and bind the right role
-        docker exec --interactive ct1 "$@" kubectl --namespace kube-system create sa tiller
-        docker exec --interactive ct1 "$@" kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
-        sleep 3600
-        docker exec --interactive ct1 "$@" kubectl patch deploy --namespace kube-system tiller-deploy -p '{"spec":{"template":{"spec":{"serviceAccount":"tiller"}}}}'
+        docker exec --interactive ctd "$@" kubectl --namespace kube-system create sa tiller
+        docker exec --interactive ctd "$@" kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
 
         # helm client has installed in chart-testing image, here we install the helm server tiller
-        docker exec --interactive ct1 "$@" helm init --service-account tiller
-        docker exec --interactive ct1 "$@" helm version
+        docker exec --interactive ctd "$@" helm init --service-account tiller
+        docker exec --interactive ctd "$@" helm version
 
         # we need to test databases like mysql installing, persistence is enabled default,
         # create local pv to support the test
@@ -55,7 +53,13 @@
         kubectl get pv
 
         # run cmd "ct lint-and-install" to test several charts
-        docker exec --interactive ct "$@" ct lint-and-install --charts stable/mysql,stable/postgresql,stable/etcd-operator,stable/coredns --namespce kube-system
+        docker exec --interactive ctd "$@" ct lint-and-install --charts stable/mysql,stable/postgresql,stable/etcd-operator,stable/coredns --namespace kube-system
+
+        # due postgresql chart won't release pvc, we need to delete it manually
+        PVC_NAMESPACE=$(kubectl get pvc --all-namespaces |grep postgresql |awk '{ print $1 }')
+        PVC_NAME=$(kubectl get pvc --all-namespaces |grep postgresql |awk '{ print $2 }')
+        kubectl delete pvc $PVC_NAME --namespace $PVC_NAMESPACE
+        sleep 7200
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
