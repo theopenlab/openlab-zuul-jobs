@@ -6,7 +6,15 @@
       shell: echo '{{zuul.build}}' | cut -c 1-7
       register: build_id
 
-'{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/framework_version.txt'
+    - name: Set Default Hardware type Parameters
+      set_fact:
+        user_file: "user_data"
+      when: not is_gpu_enabled
+
+    - name: Split Hardware type Parameters for GPU
+      set_fact:
+        user_file: "user_data_gpu"
+      when: is_gpu_enabled
 
     - name: Get IP and Credential
       shell:
