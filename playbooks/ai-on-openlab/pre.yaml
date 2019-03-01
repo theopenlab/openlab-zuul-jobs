@@ -38,6 +38,7 @@
 
           cat > '{{ zuul.patchset }}.json' <<EOF
           {
+            "patch_set": "{{ zuul.patchset }}"
             "ip": "{{ ansible_all_ipv4_addresses }}",
             "credentail": "demo/demo",
             "result_url": "$result_url",
@@ -53,29 +54,55 @@
           pip install pygithub
 
           source_file=`ls "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/" | grep moo-job`
-          dest_file=$(echo $source_file | cut -d . -f1)
-          mv "{{ zuul.patchset }}.json" $dest_file.json
+          job_name=$(echo $source_file | cut -d . -f1)
+
+          if {{ env_keeping | lower }};then
+            result_url=""
+          else
+            result_url="http://80.158.7.210/logs/{{ zuul.change }}/{{ zuul.change }}/{{ zuul.patchset }}/check/{{ zuul.job }}/{{ build_id.stdout }}/test_results/"
+          fi
+          wget https://raw.githubusercontent.com/moo-ai/moo-ai.github.io/master/env_info/task_list.json
+
+          cat > 'json_output.py <<EOF
+          import json
+          exist_data = None
+          with open('task_list.json') as json_file:
+              exist_data = json.load(json_file)
+
+          exist_data["$job_name"] = {
+              "patch_set": "{{ zuul.patchset }}",
+              "ip": "{{ ansible_all_ipv4_addresses }}",
+              "credential": "demo/demo",
+              "result_url": "$result_url",
+              "endpoint": ""
+          }
+          with open('task_list.json_tmp', 'w') as file:
+              json.dump(exist_data, file)
+          EOF
+          python json_output.py
+          cat task_list.json_tmp | python -m json.tool > task_list.json
+
           cat > 'upload_env_info.py' <<EOF
           import github
           import sys
 
           file_name = sys.argv[1]
 
+          with open(file_name) as f:
+              cont = f.read()
+
           github_obj = github.Github('moo-ai', 'mooopenlab1')
           repo = github_obj.get_user().get_repo('moo-ai.github.io')
           try:
-              repo.get_file_contents('env_info/$dest_file.json')
+              contents = repo.get_contents('env_info/task_list.json', ref="master")
           except github.UnknownObjectException:
-              with open(file_name, 'rb') as env_info:
-                  data = env_info.read()
-                  repo.create_file(path='env_info/' + file_name,
-                                   message='Upload env info',
-                                   content=data,
-                                   branch='master')
+              exit(1)
+
+          repo.update_file(contents.path, "upload $job_name ci job", cont, contents.sha, branch="master")
           EOF
 
-          python upload_env_info.py $dest_file.json
-          curl -L "https://github.com/moo-ai/moo-ai.github.io/raw/master/env_info/$dest_file.json"
+          python upload_env_info.py task_list.json
+          curl -L "https://github.com/moo-ai/moo-ai.github.io/raw/master/env_info/task_list.json"
         executable: /bin/bash
 
     - name: debug var
