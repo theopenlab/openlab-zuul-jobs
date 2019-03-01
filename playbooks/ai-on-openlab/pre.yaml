@@ -63,7 +63,7 @@
           fi
           wget https://raw.githubusercontent.com/moo-ai/moo-ai.github.io/master/env_info/task_list.json
 
-          cat > 'json_output.py <<EOF
+          cat > 'json_output.py' <<EOF
           import json
           exist_data = None
           with open('task_list.json') as json_file:
@@ -79,6 +79,7 @@
           with open('task_list.json_tmp', 'w') as file:
               json.dump(exist_data, file)
           EOF
+
           python json_output.py
           cat task_list.json_tmp | python -m json.tool > task_list.json
 
