@@ -74,8 +74,8 @@
                                    branch='master')
           EOF
 
-          python upload_env_info.py '{{ zuul.patchset }}.json'
-          curl -L "https://github.com/moo-ai/moo-ai.github.io/raw/master/env_info/{{ zuul.patchset }}.json"
+          python upload_env_info.py $dest_file.json
+          curl -L "https://github.com/moo-ai/moo-ai.github.io/raw/master/env_info/$dest_file.json"
         executable: /bin/bash
 
     - name: debug var
