@@ -14,8 +14,7 @@
                 --volume "$(pwd)/test/ct.yaml:/etc/ct/ct.yaml" \
                 --volume "$(pwd):/workdir" \
                 --workdir /workdir \
-                "quay.io/helmpack/chart-testing:v2.2.0" \
-                cat
+                "quay.io/helmpack/chart-testing:v2.2.0"
         trap "docker container rm --force ctd > /dev/null" EXIT
         # copy the config file into test container
         docker cp "$HOME/.kube" "ctd:/root/.kube"
@@ -32,9 +31,10 @@
 
         # we need to test databases like mysql installing, persistence is enabled default,
         # create local pv to support the test
-        mkdir /root/k8s
+        mkdir /root/k8s/
 
         cat << EOF >> /root/local-pv.yaml
+        ---
         apiVersion: "v1"
         kind: "PersistentVolume"
         metadata:
@@ -47,7 +47,7 @@
             - "ReadWriteOnce"
           persistentVolumeReclaimPolicy: Recycle
           hostPath:
-            path: /root/k8s
+            path: /root/k8s/
         EOF
         kubectl create -f /root/local-pv.yaml
         kubectl get pv
