@@ -32,28 +32,26 @@
         # we need to test databases like mysql installing, persistence is enabled default,
         # create local pv to support the test
         mkdir /root/k8s/
-        cat <<-EOF >> /root/local-pv.yaml
-        apiVersion: "v1"
-        kind: "PersistentVolume"
+        cat << EOF >> /root/local-pv.yaml
+        apiVersion: v1
+        kind: PersistentVolume
         metadata:
-          name: "local-pv"
+          name: local-pv
           namespace: kube-system
         spec:
           capacity:
-            storage: "10Gi"
+            storage: 10Gi
           accessModes:
-            - "ReadWriteOnce"
+            - ReadWriteOnce
           persistentVolumeReclaimPolicy: Recycle
           hostPath:
             path: /k8s
-        EOF
+EOF
         kubectl create -f /root/local-pv.yaml
         kubectl get pv
 
         # run cmd "ct lint-and-install" to test several charts
         docker exec --interactive ctd "$@" ct lint-and-install --charts stable/mysql,stable/postgresql,stable/etcd-operator,stable/coredns --namespace kube-system
-
-        sleep 7200
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
