@@ -46,7 +46,7 @@
           persistentVolumeReclaimPolicy: Recycle
           hostPath:
             path: /k8s
-EOF
+        EOF
         kubectl create -f /root/local-pv.yaml
         kubectl get pv
 
