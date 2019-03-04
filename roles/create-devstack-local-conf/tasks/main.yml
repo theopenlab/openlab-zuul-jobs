@@ -51,6 +51,7 @@
       enable_plugin trove git://git.openstack.org/openstack/trove
       PATH_TROVE="/opt/stack/new/trove"
       TROVESTACK_SCRIPTS="/opt/stack/new/trove/integration/scripts"
+      SSH_DIR="/opt/stack/new/.ssh"
       EOF
     executable: /bin/bash
   when:
