@@ -33,16 +33,16 @@
         # create local pv to support the test
         mkdir /root/k8s/
         cat << EOF >> /root/local-pv.yaml
-        apiVersion: "v1"
-        kind: "PersistentVolume"
+        apiVersion: v1
+        kind: PersistentVolume
         metadata:
-          name: "local-pv"
+          name: local-pv
           namespace: kube-system
         spec:
           capacity:
-            storage: "10Gi"
+            storage: 10Gi
           accessModes:
-            - "ReadWriteOnce"
+            - ReadWriteOnce
           persistentVolumeReclaimPolicy: Recycle
           hostPath:
             path: /k8s
