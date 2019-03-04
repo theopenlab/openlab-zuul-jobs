@@ -233,6 +233,34 @@
         '{{ ansible_user_dir }}/workspace/test_results/'
     executable: /bin/bash
 
+- name: tensorflow serving ENV prepare and check
+  when: framework.stdout == "tensorflow" and runtime_name.stdout in ["python"]
+  shell:
+    cmd: |
+      set -xe
+      echo "deb [arch=amd64] http://storage.googleapis.com/tensorflow-serving-apt stable tensorflow-model-server tensorflow-model-server-universal" | sudo tee /etc/apt/sources.list.d/tensorflow-serving.list && \
+      curl https://storage.googleapis.com/tensorflow-serving-apt/tensorflow-serving.release.pub.gpg | sudo apt-key add -
+      apt update
+      apt install -y tensorflow-model-server
+      git clone https://github.com/tensorflow/serving.git
+      cd serving
+      #python tensorflow_serving/example/mnist_saved_model.py /tmp/mnist
+      #tensorflow_model_server --port=8500 --model_base_path="/tmp/mnist" --model_name=mnist &
+      #sleep 3
+      pip install tensorflow-serving-api
+      #python tensorflow_serving/example/mnist_client.py --num_tests=1000 --server=127.0.0.1:8500
+      #tmp=`ps -ef | grep tensorflow_model_server | awk '{print $2}' | xargs kill -9`
+    executable: /bin/bash
+
+- name: Setup tensorflow serving
+  when:
+    - framework.stdout == "tensorflow" and runtime_name.stdout in ["python"]
+    - stat_ouput_folder.stat.exists and stat_ouput_folder.stat.isdir
+  shell:
+    cmd: |
+      tensorflow_model_server --port=8500 --model_base_path="{{ ansible_user_dir }}/workspace/test_results/" --model_name=training_model &
+    executable: /bin/bash
+
 - name: ENV keeping
   when: env_keeping
   shell:
