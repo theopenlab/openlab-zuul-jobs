@@ -47,6 +47,7 @@
           hostPath:
             path: /k8s
         EOF
+
         kubectl create -f /root/local-pv.yaml
         kubectl get pv
 
