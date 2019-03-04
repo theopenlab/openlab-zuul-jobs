@@ -238,5 +238,5 @@
   shell:
     cmd: |
       set -xe
-      sleep 1800
+      sleep 3600
     executable: /bin/bash
