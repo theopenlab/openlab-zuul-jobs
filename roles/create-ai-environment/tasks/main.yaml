@@ -249,7 +249,7 @@
       sleep 3
       pip install tensorflow-serving-api
       python tensorflow_serving/example/mnist_client.py --num_tests=1000 --server=127.0.0.1:8500
-      ps -ef | grep tensorflow_model_server | awk '{print $2}' | xargs kill -9 | exit 0
+      tmp=`ps -ef | grep tensorflow_model_server | awk '{print $2}' | xargs kill -9`
     executable: /bin/bash
 
 - name: Setup tensorflow serving
@@ -258,7 +258,7 @@
     - stat_ouput_folder.stat.exists and stat_ouput_folder.stat.isdir
   shell:
     cmd: |
-      tensorflow_model_server --port=8500 --model_base_path="{{ ansible_user_dir }}/workspace/test_results/{{ output_folder_name.stdout }}" --model_name=training_model &
+      tensorflow_model_server --port=8500 --model_base_path="{{ ansible_user_dir }}/workspace/test_results/" --model_name=training_model &
     executable: /bin/bash
 
 - name: ENV keeping
