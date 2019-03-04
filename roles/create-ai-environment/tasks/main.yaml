@@ -244,12 +244,12 @@
       apt install -y tensorflow-model-server
       git clone https://github.com/tensorflow/serving.git
       cd serving
-      python tensorflow_serving/example/mnist_saved_model.py /tmp/mnist
-      tensorflow_model_server --port=8500 --model_base_path="/tmp/mnist" --model_name=mnist &
-      sleep 3
+      #python tensorflow_serving/example/mnist_saved_model.py /tmp/mnist
+      #tensorflow_model_server --port=8500 --model_base_path="/tmp/mnist" --model_name=mnist &
+      #sleep 3
       pip install tensorflow-serving-api
-      python tensorflow_serving/example/mnist_client.py --num_tests=1000 --server=127.0.0.1:8500
-      tmp=`ps -ef | grep tensorflow_model_server | awk '{print $2}' | xargs kill -9`
+      #python tensorflow_serving/example/mnist_client.py --num_tests=1000 --server=127.0.0.1:8500
+      #tmp=`ps -ef | grep tensorflow_model_server | awk '{print $2}' | xargs kill -9`
     executable: /bin/bash
 
 - name: Setup tensorflow serving
