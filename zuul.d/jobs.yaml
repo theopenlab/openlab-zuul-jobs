@@ -1170,6 +1170,7 @@
     nodeset: ubuntu-xenial
     vars:
       is_gpu_enabled: false
+      env_keeping: false
 
 - job:
     name: ai-on-openlab-test-vm-with-gpu
@@ -1182,6 +1183,33 @@
     nodeset: ubuntu-xenial-gpu
     vars:
       is_gpu_enabled: true
+      env_keeping: false
+
+- job:
+    name: ai-on-openlab-test-vm-env-keeping
+    parent: init-test
+    description: |
+      Train and inference AI model in openlab VM. Training ENV can be logined.
+    pre-run: playbooks/ai-on-openlab/pre.yaml
+    run: playbooks/ai-on-openlab/run.yaml
+    post-run: playbooks/ai-on-openlab/post.yaml
+    nodeset: ubuntu-xenial
+    vars:
+      is_gpu_enabled: false
+      env_keeping: true
+
+- job:
+    name: ai-on-openlab-test-vm-with-gpu-env-keeping
+    parent: init-test
+    description: |
+      Train and inference AI model on GPU in openlab VM. Training ENV can be logined.
+    pre-run: playbooks/ai-on-openlab/pre.yaml
+    run: playbooks/ai-on-openlab/run.yaml
+    post-run: playbooks/ai-on-openlab/post.yaml
+    nodeset: ubuntu-xenial-gpu
+    vars:
+      is_gpu_enabled: true
+      env_keeping: true
 
 - job:
     name: arm-on-openlab-test
@@ -1206,3 +1234,10 @@
       Run integration tests of spark of v2.4.0 with k8s cluster deployed by minikube
     run: playbooks/spark-integration-test-minikube-k8s/run.yaml
     override-checkout: branch-2.4
+
+- job:
+    name: helm-integration-test-kubeadm-k8s
+    parent: init-test
+    description: |
+      Run integration tests of helm of master with k8s cluster deployed by kubeadm
+    run: playbooks/helm-integration-test-kubeadm-k8s/run.yaml

@@ -6,6 +6,16 @@
       shell: echo '{{zuul.build}}' | cut -c 1-7
       register: build_id
 
+    - name: Set Default Hardware type Parameters
+      set_fact:
+        user_file: "user_data"
+      when: not is_gpu_enabled
+
+    - name: Split Hardware type Parameters for GPU
+      set_fact:
+        user_file: "user_data_gpu"
+      when: is_gpu_enabled
+
     - name: Get IP and Credential
       shell:
         cmd: |
@@ -20,10 +30,19 @@
           sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
           service sshd restart
 
+          if {{ env_keeping | lower }};then
+            result_url=""
+          else
+            result_url="http://80.158.7.210/logs/{{ zuul.change }}/{{ zuul.change }}/{{ zuul.patchset }}/check/{{ zuul.job }}/{{ build_id.stdout }}/test_results/"
+          fi
+
           cat > '{{ zuul.patchset }}.json' <<EOF
           {
-            "ip": "{{ ansible_all_ipv4_addresses }}",
-            "build_id": "{{ build_id.stdout }}"
+            "patch_set": "{{ zuul.patchset }}"
+            "ip": "{{ ansible_all_ipv4_addresses | first }}",
+            "credentail": "demo/demo",
+            "result_url": "$result_url",
+            "endpoint": ""
           }
           EOF
         executable: /bin/bash
@@ -34,27 +53,63 @@
           apt install -y python-pip
           pip install pygithub
 
+          source_file=`ls "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/" | grep moo-job`
+          job_name=$(echo $source_file | cut -d . -f1)
+          job_name=${job_name/_sleep/}
+          if {{ env_keeping | lower }};then
+            result_url=""
+            endpoint="{{ ansible_all_ipv4_addresses | first }}:8500"
+          else
+            change_num="{{ zuul.change }}"
+            change_prefix=`echo ${change_num:0-2}`
+            result_url="http://80.158.7.210/logs/$change_prefix/$change_num/{{ zuul.patchset }}/check/{{ zuul.job }}/{{ build_id.stdout }}/test_results/"
+            endpoint=""
+          fi
+          wget https://raw.githubusercontent.com/moo-ai/moo-ai.github.io/master/env_info/task_list.json
+
+          cat > 'json_output.py' <<EOF
+          import json
+          exist_data = None
+          with open('task_list.json') as json_file:
+              exist_data = json.load(json_file)
+
+          ip_addr = "{{ ansible_all_ipv4_addresses | first }}"
+
+          exist_data["$job_name"] = {
+              "patch_set": "{{ zuul.patchset }}",
+              "ip": "{{ ansible_all_ipv4_addresses | first }}",
+              "credential": "demo/demo",
+              "result_url": "$result_url",
+              "endpoint": "$endpoint"
+          }
+          with open('task_list.json_tmp', 'w') as file:
+              json.dump(exist_data, file)
+          EOF
+
+          python json_output.py
+          cat task_list.json_tmp | python -m json.tool > task_list.json
+
           cat > 'upload_env_info.py' <<EOF
           import github
           import sys
 
           file_name = sys.argv[1]
 
+          with open(file_name) as f:
+              cont = f.read()
+
           github_obj = github.Github('moo-ai', 'mooopenlab1')
           repo = github_obj.get_user().get_repo('moo-ai.github.io')
           try:
-              repo.get_file_contents('env_info/{{ zuul.patchset }}.json')
+              contents = repo.get_contents('env_info/task_list.json', ref="master")
           except github.UnknownObjectException:
-              with open(file_name, 'rb') as env_info:
-                  data = env_info.read()
-                  repo.create_file(path='env_info/' + file_name,
-                                   message='Upload env info',
-                                   content=data,
-                                   branch='master')
+              exit(1)
+
+          repo.update_file(contents.path, "upload $job_name ci job", cont, contents.sha, branch="master")
           EOF
 
-          python upload_env_info.py '{{ zuul.patchset }}.json'
-          curl -L "https://github.com/moo-ai/moo-ai.github.io/raw/master/env_info/{{ zuul.patchset }}.json"
+          python upload_env_info.py task_list.json
+          curl -L "https://github.com/moo-ai/moo-ai.github.io/raw/master/env_info/task_list.json"
         executable: /bin/bash
 
     - name: debug var

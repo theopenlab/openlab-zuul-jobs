@@ -1,12 +1,12 @@
 - name: Set Default Hardware type Parameters
   set_fact:
     user_file: "user_data"
-  when: not is_gpu_enable
+  when: not is_gpu_enabled
 
 - name: Split Hardware type Parameters for GPU
   set_fact:
     user_file: "user_data_gpu"
-  when: is_gpu_enable
+  when: is_gpu_enabled
 
 - name: Get User Metadata Zip or Url
   shell:
@@ -110,7 +110,7 @@
     executable: /bin/bash
 
 - name: Prepare GPU env (GPU driver and CUDA)
-  when: is_gpu_enable
+  when: is_gpu_enabled
   shell:
     cmd: |
       set -xe
@@ -118,6 +118,7 @@
       wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_9.1.85-1_amd64.deb
       cd /var/
       apt purge -y cuda*
+      apt-get remove -y --purge nvidia-418 nvidia-modprobe nvidia-settings
       cd -
       apt install -y ./cuda-repo-ubuntu1604_9.1.85-1_amd64.deb
       wget http://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1604/x86_64/nvidia-machine-learning-repo-ubuntu1604_1.0.0-1_amd64.deb
@@ -148,7 +149,7 @@
 
       if [ $framework == "tensorflow" ];then
         if [ $runtime_name == "python" ];then
-          if {{ is_gpu_enabled }};then
+          if {{ is_gpu_enabled | lower }} ;then
             pip install tensorflow-gpu=={{ framework_version.stdout }}
           else
             pip install tensorflow=={{ framework_version.stdout }}
@@ -230,3 +231,40 @@
 
       mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/{{ output_folder_name.stdout }}' \
         '{{ ansible_user_dir }}/workspace/test_results/'
+    executable: /bin/bash
+
+- name: tensorflow serving ENV prepare and check
+  when: framework.stdout == "tensorflow" and runtime_name.stdout in ["python"]
+  shell:
+    cmd: |
+      set -xe
+      echo "deb [arch=amd64] http://storage.googleapis.com/tensorflow-serving-apt stable tensorflow-model-server tensorflow-model-server-universal" | sudo tee /etc/apt/sources.list.d/tensorflow-serving.list && \
+      curl https://storage.googleapis.com/tensorflow-serving-apt/tensorflow-serving.release.pub.gpg | sudo apt-key add -
+      apt update
+      apt install -y tensorflow-model-server
+      git clone https://github.com/tensorflow/serving.git
+      cd serving
+      #python tensorflow_serving/example/mnist_saved_model.py /tmp/mnist
+      #tensorflow_model_server --port=8500 --model_base_path="/tmp/mnist" --model_name=mnist &
+      #sleep 3
+      pip install tensorflow-serving-api
+      #python tensorflow_serving/example/mnist_client.py --num_tests=1000 --server=127.0.0.1:8500
+      #tmp=`ps -ef | grep tensorflow_model_server | awk '{print $2}' | xargs kill -9`
+    executable: /bin/bash
+
+- name: Setup tensorflow serving
+  when:
+    - framework.stdout == "tensorflow" and runtime_name.stdout in ["python"]
+    - stat_ouput_folder.stat.exists and stat_ouput_folder.stat.isdir
+  shell:
+    cmd: |
+      tensorflow_model_server --port=8500 --model_base_path="{{ ansible_user_dir }}/workspace/test_results/" --model_name=training_model &
+    executable: /bin/bash
+
+- name: ENV keeping
+  when: env_keeping
+  shell:
+    cmd: |
+      set -xe
+      sleep 3600
+    executable: /bin/bash
