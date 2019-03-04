@@ -77,7 +77,7 @@
           mysql_version=$(openstack datastore version list ${OS_DB_DATASTORE_TYPE} -f value -c Name --sort-column Name |head -n 1)
           export OS_DB_DATASTORE_VERSION=${mysql_version}
           sudo chown stack.stack /opt/stack/data -R
-          sleep 10800
+          sleep 36000
           testcases=`go test ./openstack/ -v -list 'Acc'`
           testcases=`echo "$testcases" | sed '$d' | grep Database`
           echo "$testcases" | xargs -t -n100 sh -c 'OS_DEBUG=1 TF_LOG=DEBUG TF_ACC=1 go test ./openstack -v -timeout 120m -run $(echo "$@" | tr " " "|")' argv0 2>&1 | tee $TEST_RESULTS_TXT
