@@ -55,7 +55,7 @@
 
           source_file=`ls "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/" | grep moo-job`
           job_name=$(echo $source_file | cut -d . -f1)
-
+          job_name=${job_name/_sleep/}
           if {{ env_keeping | lower }};then
             result_url=""
           else
@@ -71,12 +71,14 @@
           with open('task_list.json') as json_file:
               exist_data = json.load(json_file)
 
+          ip_addr = "{{ ansible_all_ipv4_addresses | first }}"
+          endpoint = ip_addr + ":8500"
           exist_data["$job_name"] = {
               "patch_set": "{{ zuul.patchset }}",
               "ip": "{{ ansible_all_ipv4_addresses | first }}",
               "credential": "demo/demo",
               "result_url": "$result_url",
-              "endpoint": ""
+              "endpoint": endpoint
           }
           with open('task_list.json_tmp', 'w') as file:
               json.dump(exist_data, file)
