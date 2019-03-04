@@ -39,7 +39,7 @@
           cat > '{{ zuul.patchset }}.json' <<EOF
           {
             "patch_set": "{{ zuul.patchset }}"
-            "ip": "{{ ansible_all_ipv4_addresses }}",
+            "ip": "{{ ansible_all_ipv4_addresses | first }}",
             "credentail": "demo/demo",
             "result_url": "$result_url",
             "endpoint": ""
@@ -73,7 +73,7 @@
 
           exist_data["$job_name"] = {
               "patch_set": "{{ zuul.patchset }}",
-              "ip": "{{ ansible_all_ipv4_addresses }}",
+              "ip": "{{ ansible_all_ipv4_addresses | first }}",
               "credential": "demo/demo",
               "result_url": "$result_url",
               "endpoint": ""
