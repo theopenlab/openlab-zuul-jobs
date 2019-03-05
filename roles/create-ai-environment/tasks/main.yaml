@@ -222,6 +222,10 @@
       '{{ runtime.stdout }}' $py_file | tee ${result_folder}"/process_log.txt"
     executable: /bin/bash
 
+- name: Get build id
+  shell: echo '{{zuul.build}}' | cut -c 1-7
+  register: build_id
+
 - name: Collect Traning or Inference Result if needed
   when: stat_ouput_folder.stat.exists and stat_ouput_folder.stat.isdir
   shell:
