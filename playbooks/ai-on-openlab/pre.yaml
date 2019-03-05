@@ -88,7 +88,7 @@
       when: env_keeping
       shell:
         cmd: |
-        rm -rf ./{{ key_file_name }}
+          rm -rf "./{{ key_file_name }}"
         executable: /bin/bash
 
     - name: Get IP and Credential
