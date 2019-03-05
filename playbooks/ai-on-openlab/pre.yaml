@@ -79,8 +79,8 @@
           sudo iptables -t nat -N "{{ zuul.change }}-{{ build_id.stdout }}-snat"
           sudo iptables -t nat -A test-ai -j "{{ zuul.change }}-{{ build_id.stdout }}"
           sudo iptables -t nat -A test-ai-snat -j "{{ zuul.change }}-{{ build_id.stdout }}-snat"
-          sudo iptables -t nat -A "{{ zuul.change }}-{{ build_id.stdout }}" -i ens3 -p tcp -m tcp --dport {{ ext_port.stdout }} -j DNAT --to-destination "{{ ansible_all_ipv4_addresses | first }}":22
-          sudo iptables -t nat -A "{{ zuul.change }}-{{ build_id.stdout }}-snat" -d "{{ ansible_all_ipv4_addresses | first }}" -o ens3 -p tcp -m tcp --dport 22 -j SNAT --to-source "{{ ai_otc_forwarding_host.fqdn }}"
+          sudo iptables -t nat -A "{{ zuul.change }}-{{ build_id.stdout }}" -i ens3 -p tcp -m tcp --dport "{{ ext_port.stdout }} -j DNAT --to-destination {{ ansible_all_ipv4_addresses | first }}:22"
+          sudo iptables -t nat -A "{{ zuul.change }}-{{ build_id.stdout }}-snat" -d "{{ ansible_all_ipv4_addresses | first }} -o ens3 -p tcp -m tcp --dport 22 -j SNAT --to-source {{ ai_otc_forwarding_host.fqdn }}"
           EOF
           ssh -o StrictHostKeyChecking=no {{ ai_otc_forwarding_host.ssh_username }}@{{ ai_otc_forwarding_host.fqdn }} -i ./{{ key_file_name }} 'bash -s' < setup_iptables.sh
         executable: /bin/bash
