@@ -231,6 +231,7 @@
 
       mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/{{ output_folder_name.stdout }}' \
         '{{ ansible_user_dir }}/workspace/test_results/'
+      mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/tf_js.html' '{{ ansible_user_dir }}/workspace/test_results/index.html'
     executable: /bin/bash
 
 - name: tensorflow serving ENV prepare and check
