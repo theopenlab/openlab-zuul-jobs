@@ -158,7 +158,7 @@
 
           exist_data["$job_name"] = {
               "patch_set": "{{ zuul.patchset }}",
-              "ip": "{{ ansible_all_ipv4_addresses | first }}",
+              "ip": "80.158.7.210:{{ ext_port.stdout }}",
               "credential": "demo/demo",
               "result_url": "$result_url",
               "endpoint": "$endpoint"
