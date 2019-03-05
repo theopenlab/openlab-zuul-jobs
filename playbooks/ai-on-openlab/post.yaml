@@ -1,6 +1,10 @@
 - hosts: all
   become: yes
   tasks:
+    - name: Get build id
+      shell: echo '{{zuul.build}}' | cut -c 1-7
+      register: build_id
+
     - name: Clean up remote repo resources
       shell:
         cmd: |
@@ -34,4 +38,22 @@
           EOF
 
           python clean_repo_resource.py
+        executable: /bin/bash
+
+    - name: Clean up forwarding host rules
+      shell:
+        cmd: |
+          echo "{{ ai_otc_forwarding_host.ssh_private_key }}" > "./tmp_pem"
+          set -xe
+          cat > delete_iptables.sh <<EOF
+          sudo su - root
+          sudo iptables -t nat -F "{{ zuul.change }}-{{ build_id.std_out }}"
+          sudo iptables -t nat -F "{{ zuul.change }}-{{ build_id.std_out }}-snat"
+          sudo iptables -t nat -D test-ai -j "{{ zuul.change }}-{{ build_id.std_out }}"
+          sudo iptables -t nat -D test-ai-snat -j "{{ zuul.change }}-{{ build_id.std_out }}-snat"
+          sudo iptables -t nat -X "{{ zuul.change }}-{{ build_id.std_out }}"
+          sudo iptables -t nat -X "{{ zuul.change }}-{{ build_id.std_out }}-snat"
+          EOF
+          ssh -o StrictHostKeyChecking=no {{ ai_otc_forwarding_host.ssh_username }}@{{ ai_otc_forwarding_host.fqdn }} -i ./tmp_pem 'bash -s' < delete_iptables.sh
+          rm -rf ./tmp_pem
         executable: /bin/bash
