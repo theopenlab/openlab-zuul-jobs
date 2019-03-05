@@ -41,6 +41,8 @@
         executable: /bin/bash
 
     - name: Clean up forwarding host rules
+      when: env_keeping
+      no_log: yes
       shell:
         cmd: |
           set -xe
