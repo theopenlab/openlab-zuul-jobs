@@ -231,7 +231,8 @@
       pip install tensorflowjs
 
       tensorflowjs_converter --input_format keras \
-      '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/{{ output_folder_name.stdout }}/my_model.h5' tfjs
+        '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/{{ output_folder_name.stdout }}/my_model.h5' \
+        '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/{{ output_folder_name.stdout }}/tfjs'
 
 
       mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/{{ output_folder_name.stdout }}' \
