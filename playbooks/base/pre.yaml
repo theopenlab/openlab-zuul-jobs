@@ -1,14 +1,18 @@
 - hosts: all
-  pre_tasks:
+  roles:
+    - add-build-sshkey
+    - start-zuul-console
+
+- hosts: all
+  tasks:
     - name: Config DNS to fix unbound cache mechanism
       shell: echo "nameserver 8.8.8.8" >> /etc/resolv.conf
       args:
         executable: /bin/bash
       become: yes
 
+- hosts: all
   roles:
-    - add-build-sshkey
-    - start-zuul-console
     - validate-host
     - use-cached-repos
     - mirror-workspace-git-repos
