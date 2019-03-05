@@ -40,7 +40,7 @@
           echo "{{ ai_otc_forwarding_host.ssh_private_key }}" > "./{{ key_file_name }}"
           chmod 400 "./{{ key_file_name }}"
           cat > get_external_ports.sh <<EOF
-          cat /home/zuul/ai_nat_outside_ports
+          cat /home/ubuntu/ai_nat_outside_ports
           EOF
 
           result=`ssh -o StrictHostKeyChecking=no {{ ai_otc_forwarding_host.ssh_username }}@{{ ai_otc_forwarding_host.fqdn }} -i ./{{ key_file_name }} 'bash -s' < get_external_ports.sh`
