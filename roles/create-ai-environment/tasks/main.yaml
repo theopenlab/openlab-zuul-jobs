@@ -236,7 +236,7 @@
 
       mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/{{ output_folder_name.stdout }}' \
         '{{ ansible_user_dir }}/workspace/test_results/'
-      mkdir '{{ ansible_user_dir }}/workspace/test_results/web_page/
+      mkdir '{{ ansible_user_dir }}/workspace/test_results/web_page/'
       mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/tf_js.html' '{{ ansible_user_dir }}/workspace/test_results/web_page/index.html'
       mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/{{ output_folder_name.stdout }}/tfjs/' \
         '{{ ansible_user_dir }}/workspace/test_results/web_page/'
