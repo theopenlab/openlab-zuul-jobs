@@ -29,7 +29,6 @@
 
     - name: Process available internal and external forwarding ports
       when: env_keeping
-      no_log: yes
       shell:
         cmd: |
           set -xe
@@ -64,7 +63,6 @@
 
     - name: Setup internal forwarding rules
       when: env_keeping
-      no_log: yes
       shell:
         cmd: |
           set -xe
