@@ -17,7 +17,6 @@
       when: is_gpu_enabled
 
     - name: Cleanup wrong iptables rules locally
-      when: env_keeping
       no_log: yes
       shell:
         cmd: |
@@ -32,10 +31,8 @@
       no_log: yes
       set_fact:
         key_file_name: "tmp_key"
-      when: env_keeping
 
     - name: Process available internal and external forwarding ports
-      when: env_keeping
       no_log: yes
       shell:
         cmd: |
@@ -68,11 +65,9 @@
 
     - name: Get availave external ports
       shell: cat choosed_port
-      when: env_keeping
       register: ext_port
 
     - name: Setup internal forwarding rules
-      when: env_keeping
       no_log: yes
       shell:
         cmd: |
@@ -96,7 +91,6 @@
         executable: /bin/bash
 
     - name: Clean up key file
-      when: env_keeping
       no_log: yes
       shell:
         cmd: |
