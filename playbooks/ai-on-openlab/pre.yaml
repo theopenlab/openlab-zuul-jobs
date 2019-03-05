@@ -36,7 +36,7 @@
           cat /home/zuul/ai_nat_outside_ports
           EOF
 
-          result=`ssh {{ ai-otc-forwarding-host.ssh_username }}@{{ ai-otc-forwarding-host.fqdn }} -i {{ ai-otc-forwarding-host.ssh_private_key }} 'bash -s' < get_external_ports.sh`
+          result=`ssh {{ ai_otc_forwarding_host.ssh_username }}@{{ ai_otc_forwarding_host.fqdn }} -i {{ ai_otc_forwarding_host.ssh_private_key }} 'bash -s' < get_external_ports.sh`
 
           while :
           do
@@ -53,7 +53,7 @@
           cat > upload_external_ports.sh <<EOF
           echo $choose >> /home/zuul/ai_nat_outside_ports
           EOF
-          ssh {{ ai-otc-forwarding-host.ssh_username }}@{{ ai-otc-forwarding-host.fqdn }} -i {{ ai-otc-forwarding-host.ssh_private_key }} 'bash -s' < upload_external_ports.sh
+          ssh {{ ai_otc_forwarding_host.ssh_username }}@{{ ai_otc_forwarding_host.fqdn }} -i {{ ai_otc_forwarding_host.ssh_private_key }} 'bash -s' < upload_external_ports.sh
         executable: /bin/bash
 
     - name: Get availave external ports
@@ -69,9 +69,9 @@
           cat > setup_iptables.sh <<EOF
           sudo su - root
           sudo iptables -t nat -A test-ai -i ens3 -p tcp -m tcp --dport {{ ext_port.std_out }} -j DNAT --to-destination "{{ ansible_all_ipv4_addresses | first }}":22
-          sudo iptables -t nat -A test-ai-snat -d "{{ ansible_all_ipv4_addresses | first }}" -o ens3 -p tcp -m tcp --dport 22 -j SNAT --to-source "{{ ai-otc-forwarding-host.fqdn }}"
+          sudo iptables -t nat -A test-ai-snat -d "{{ ansible_all_ipv4_addresses | first }}" -o ens3 -p tcp -m tcp --dport 22 -j SNAT --to-source "{{ ai_otc_forwarding_host.fqdn }}"
           EOF
-          ssh {{ ai-otc-forwarding-host.ssh_username }}@{{ ai-otc-forwarding-host.fqdn }} -i {{ ai-otc-forwarding-host.ssh_private_key }} 'bash -s' < setup_iptables.sh
+          ssh {{ ai_otc_forwarding_host.ssh_username }}@{{ ai_otc_forwarding_host.fqdn }} -i {{ ai_otc_forwarding_host.ssh_private_key }} 'bash -s' < setup_iptables.sh
         executable: /bin/bash
 
     - name: Get IP and Credential
