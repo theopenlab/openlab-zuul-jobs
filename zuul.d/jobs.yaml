@@ -1168,6 +1168,8 @@
     run: playbooks/ai-on-openlab/run.yaml
     post-run: playbooks/ai-on-openlab/post.yaml
     nodeset: ubuntu-xenial
+    secrets:
+      - ai-otc-forwarding-host
     vars:
       is_gpu_enabled: false
       env_keeping: false
@@ -1181,6 +1183,8 @@
     run: playbooks/ai-on-openlab/run.yaml
     post-run: playbooks/ai-on-openlab/post.yaml
     nodeset: ubuntu-xenial-gpu
+    secrets:
+      - ai-otc-forwarding-host
     vars:
       is_gpu_enabled: true
       env_keeping: false
@@ -1194,6 +1198,8 @@
     run: playbooks/ai-on-openlab/run.yaml
     post-run: playbooks/ai-on-openlab/post.yaml
     nodeset: ubuntu-xenial
+    secrets:
+      - ai-otc-forwarding-host
     vars:
       is_gpu_enabled: false
       env_keeping: true
@@ -1207,6 +1213,8 @@
     run: playbooks/ai-on-openlab/run.yaml
     post-run: playbooks/ai-on-openlab/post.yaml
     nodeset: ubuntu-xenial-gpu
+    secrets:
+      - ai-otc-forwarding-host
     vars:
       is_gpu_enabled: true
       env_keeping: true

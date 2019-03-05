@@ -16,6 +16,66 @@
         user_file: "user_data_gpu"
       when: is_gpu_enabled
 
+    - name: Cleanup wrong iptables rules locally
+      when: env_keeping
+      shell:
+        cmd: |
+          set -xe
+          exist=`iptables -S | grep openstack-INPUT`
+          if [ ! -z "$exist" ];then
+            iptables -F
+          fi
+        executable: /bin/bash
+
+    - name: Process available internal and external forwarding ports
+      when: env_keeping
+      no_log: yes
+      shell:
+        cmd: |
+          set -xe
+          cat > get_external_ports.sh <<EOF
+          cat /home/zuul/ai_nat_outside_ports
+          EOF
+
+          result=`ssh {{ ai-otc-forwarding-host.ssh_username }}@{{ ai-otc-forwarding-host.fqdn }} -i {{ ai-otc-forwarding-host.ssh_private_key }} 'bash -s' < get_external_ports.sh`
+
+          while :
+          do
+            choose=`shuf -i 60000-61000 -n 1`
+            for i in $result;
+            do
+              if [ $i == $choose ];then
+                break
+              fi
+            done
+            break
+          done
+          echo $choose > choosed_port
+          cat > upload_external_ports.sh <<EOF
+          echo $choose >> /home/zuul/ai_nat_outside_ports
+          EOF
+          ssh {{ ai-otc-forwarding-host.ssh_username }}@{{ ai-otc-forwarding-host.fqdn }} -i {{ ai-otc-forwarding-host.ssh_private_key }} 'bash -s' < upload_external_ports.sh
+        executable: /bin/bash
+
+    - name: Get availave external ports
+      shell: cat choosed_port
+      when: env_keeping
+      register: ext_port
+
+    - name: Setup internal forwarding rules
+      when: env_keeping
+      no_log: yes
+      shell:
+        cmd: |
+          set -xe
+          cat > setup_iptables.sh <<EOF
+          sudo su - root
+          sudo iptables -t nat -A test-ai -i ens3 -p tcp -m tcp --dport {{ ext_port.std_out }} -j DNAT --to-destination "{{ ansible_all_ipv4_addresses | first }}":22
+          sudo iptables -t nat -A test-ai-snat -d "{{ ansible_all_ipv4_addresses | first }}" -o ens3 -p tcp -m tcp --dport 22 -j SNAT --to-source "{{ ai-otc-forwarding-host.fqdn }}"
+          EOF
+          ssh {{ ai-otc-forwarding-host.ssh_username }}@{{ ai-otc-forwarding-host.fqdn }} -i {{ ai-otc-forwarding-host.ssh_private_key }} 'bash -s' < setup_iptables.sh
+        executable: /bin/bash
+
     - name: Get IP and Credential
       shell:
         cmd: |
