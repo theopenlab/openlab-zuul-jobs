@@ -38,6 +38,7 @@
         cmd: |
           set -xe
           echo "{{ ai_otc_forwarding_host.ssh_private_key }}" > "./{{ key_file_name }}"
+          chmod 400 "./{{ key_file_name }}"
           cat > get_external_ports.sh <<EOF
           cat /home/zuul/ai_nat_outside_ports
           EOF

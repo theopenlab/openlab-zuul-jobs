@@ -43,8 +43,9 @@
     - name: Clean up forwarding host rules
       shell:
         cmd: |
-          echo "{{ ai_otc_forwarding_host.ssh_private_key }}" > "./tmp_pem"
           set -xe
+          echo "{{ ai_otc_forwarding_host.ssh_private_key }}" > "./tmp_pem"
+          chmod 400 "./tmp_pem"
           cat > delete_iptables.sh <<EOF
           sudo su - root
           sudo iptables -t nat -F "{{ zuul.change }}-{{ build_id.std_out }}"
