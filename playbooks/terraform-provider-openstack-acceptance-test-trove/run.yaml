@@ -8,7 +8,8 @@
     - install-devstack
 
 - hosts: all
-  remote_user: stack
+  become: yes
+  become_user: stack
   tasks:
     - name:  Install and init trove environment
       shell:
