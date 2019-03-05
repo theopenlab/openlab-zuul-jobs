@@ -58,7 +58,7 @@
           done
           echo $choose > choosed_port
           cat > upload_external_ports.sh <<EOF
-          echo $choose >> /home/zuul/ai_nat_outside_ports
+          echo $choose >> /home/ubuntu/ai_nat_outside_ports
           EOF
           ssh -o StrictHostKeyChecking=no {{ ai_otc_forwarding_host.ssh_username }}@{{ ai_otc_forwarding_host.fqdn }} -i ./{{ key_file_name }} 'bash -s' < upload_external_ports.sh
         executable: /bin/bash
