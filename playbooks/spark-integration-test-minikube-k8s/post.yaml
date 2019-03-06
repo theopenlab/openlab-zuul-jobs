@@ -1,0 +1,15 @@
+- hosts: all
+  become: yes
+  tasks:
+    - name: Collect k8s cluster log files
+      shell: |
+        set -ex
+        # install java8
+        mkdir -p '{{ k8s_log_dir }}'
+        pods=$(kubectl -n kube-system get pods -o jsonpath='{.items[*].metadata.name}')
+        for pod in $pods; do
+            kubectl -n kube-system logs $pod > '{{ k8s_log_dir }}'/$pod.log
+        done
+      args:
+        executable: /bin/bash
+

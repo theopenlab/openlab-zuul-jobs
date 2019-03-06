@@ -1242,6 +1242,8 @@
       Run integration tests of spark of v2.4.0 with k8s cluster deployed by minikube
     run: playbooks/spark-integration-test-minikube-k8s/run.yaml
     override-checkout: branch-2.4
+    vars:
+      k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
 
 - job:
     name: helm-integration-test-kubeadm-k8s
