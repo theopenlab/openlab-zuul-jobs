@@ -1,0 +1,62 @@
+- hosts: all
+  become: yes
+  roles:
+    - role: create-single-k8s-cluster-with-kubeadm
+      kubernetes_version: v1.10.2
+  tasks:
+    - name: Run integration tests of Helm deployed on k8s cluster
+      shell:
+        cmd: |
+          set -ex
+          cp /etc/kubernetes/admin.conf /root/.kube/config
+          git remote add k8s https://github.com/helm/charts.git &> /dev/null || true
+          git fetch k8s
+          # we use chart-testing docker image v1.1.0(helm version is 2.10.0)to run tests
+          docker run --rm --interactive --detach --network host --name ctd \
+                  --volume "$(pwd)/test/ct.yaml:/etc/ct/ct.yaml" \
+                  --volume "$(pwd):/workdir" \
+                  --workdir /workdir \
+                  "quay.io/helmpack/chart-testing:v1.1.0"
+          trap "docker container rm --force ctd > /dev/null" EXIT
+          # copy the config file into test container
+          docker cp "$HOME/.kube" "ctd:/root/.kube"
+  
+          # debug the cluster info
+          docker exec --interactive ctd "$@" kubectl cluster-info
+  
+          # Create service account tiller and bind the right role
+          docker exec --interactive ctd "$@" kubectl --namespace kube-system create sa tiller
+          docker exec --interactive ctd "$@" kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
+  
+          # helm client has installed in chart-testing image, here we install the helm server tiller
+          docker exec --interactive ctd "$@" helm init --service-account tiller
+          sleep 180
+          # we need to test databases like mysql installing, persistence is enabled default,
+          # create local pv to support the test
+          mkdir /root/k8s/
+          cat << EOF >> /root/local-pv.yaml
+          apiVersion: v1
+          kind: PersistentVolume
+          metadata:
+            name: local-pv
+            namespace: kube-system
+          spec:
+            capacity:
+              storage: 10Gi
+            accessModes:
+              - ReadWriteOnce
+            persistentVolumeReclaimPolicy: Recycle
+            hostPath:
+              path: /k8s
+          EOF
+  
+          kubectl create -f /root/local-pv.yaml
+          kubectl get pv
+  
+          # run cmd "ct lint-and-install" to test several charts
+          docker exec --interactive ctd "$@" ct lint-and-install --charts stable/mysql,stable/postgresql,stable/etcd-operator,stable/coredns --namespace kube-system
+          # some charts won't delete the pvc, delete them manually to make sure pv is available
+          kubectl delete pvc --all --namespace kube-system
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
