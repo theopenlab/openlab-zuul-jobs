@@ -8,23 +8,20 @@
     - install-devstack
 
 - hosts: all
-  become: yes
-  become_user: stack
   tasks:
     - name:  Install and init trove environment
       shell:
         cmd: |
           set -e
           set -x
-          whoami
+          sudo chown zuul.zuul /opt/stack/new/trove/ -R
+          sudo chown zuul.zuul /etc/trove/ -R
           export BRIDGE_IP=10.0.0.1
           export DEST='/opt/stack/new'
           export PATH_DEVSTACK_SRC=$DEST/devstack
           export TROVE_RESIZE_TIME_OUT=''
           cd $DEST/trove
           sed -i 's/\/opt\/stack\/trove\/test-upper-constraints.txt/{toxinidir}\/test-upper-constraints.txt/' tox.ini
-          env
-          sleep 21600
           tox -etrovestack -vv -- kick-start mysql
           source $PATH_DEVSTACK_SRC/openrc admin admin
 
@@ -50,7 +47,6 @@
           set -e
           set -o pipefail
           set -x
-          whoami
           pushd /opt/stack/new/devstack
           source openrc admin admin
           openstack flavor create m1.acctest --id 99 --ram 512 --disk 5 --vcpu 1 --ephemeral 10
