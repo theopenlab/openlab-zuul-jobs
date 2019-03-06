@@ -5,6 +5,10 @@
       shell: echo '{{zuul.build}}' | cut -c 1-7
       register: build_id
 
+    - name: Get availave external ports
+      shell: cat choosed_port
+      register: ext_port
+
     - name: Clean up remote repo resources
       shell:
         cmd: |
@@ -40,20 +44,42 @@
           python clean_repo_resource.py
         executable: /bin/bash
 
-    - name: Clean up forwarding host rules
+    - name: Setup key for release resource
+      no_log: yes
       shell:
         cmd: |
           set -xe
           echo "{{ ai_otc_forwarding_host.ssh_private_key }}" > "./tmp_pem"
           chmod 400 "./tmp_pem"
+        executable: /bin/bash
+
+    - name: Release External Port
+      shell:
+        cmd: |
+          set -xe
+          port="{{ ext_port.stdout }}"
+          cat > release_external_ports.sh <<EOF
+          new=`cat /home/ubuntu/ai_nat_outside_ports | grep -v $port`
+          echo $new > /home/ubuntu/ai_nat_outside_ports
+          EOF
+          ssh -o StrictHostKeyChecking=no {{ ai_otc_forwarding_host.ssh_username }}@{{ ai_otc_forwarding_host.fqdn }} -i ./tmp_pem 'bash -s' < release_external_ports.sh
+        executable: /bin/bash
+
+    - name: Clean up forwarding host rules
+      no_log: yes
+      shell:
+        cmd: |
+          set -xe
+          dnat_chain="{{ zuul.change }}-{{ build_id.stdout }}"
+          snat_chain="{{ zuul.change }}-{{ build_id.stdout }}-snat"
           cat > delete_iptables.sh <<EOF
           sudo su - root
-          sudo iptables -t nat -F "{{ zuul.change }}-{{ build_id.stdout }}"
-          sudo iptables -t nat -F "{{ zuul.change }}-{{ build_id.stdout }}-snat"
-          sudo iptables -t nat -D test-ai -j "{{ zuul.change }}-{{ build_id.stdout }}"
-          sudo iptables -t nat -D test-ai-snat -j "{{ zuul.change }}-{{ build_id.stdout }}-snat"
-          sudo iptables -t nat -X "{{ zuul.change }}-{{ build_id.stdout }}"
-          sudo iptables -t nat -X "{{ zuul.change }}-{{ build_id.stdout }}-snat"
+          sudo iptables -t nat -F $dnat_chain
+          sudo iptables -t nat -F $snat_chain
+          sudo iptables -t nat -D test-ai -j $dnat_chain
+          sudo iptables -t nat -D test-ai-snat -j $snat_chain
+          sudo iptables -t nat -X $dnat_chain
+          sudo iptables -t nat -X $snat_chain
           EOF
           ssh -o StrictHostKeyChecking=no {{ ai_otc_forwarding_host.ssh_username }}@{{ ai_otc_forwarding_host.fqdn }} -i ./tmp_pem 'bash -s' < delete_iptables.sh
           rm -rf ./tmp_pem

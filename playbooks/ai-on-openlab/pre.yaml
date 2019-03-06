@@ -17,7 +17,7 @@
       when: is_gpu_enabled
 
     - name: Cleanup wrong iptables rules locally
-      when: env_keeping
+      no_log: yes
       shell:
         cmd: |
           set -xe
@@ -28,12 +28,12 @@
         executable: /bin/bash
 
     - name: Temp Key File Name
+      no_log: yes
       set_fact:
         key_file_name: "tmp_key"
-      when: env_keeping
 
     - name: Process available internal and external forwarding ports
-      when: env_keeping
+      no_log: yes
       shell:
         cmd: |
           set -xe
@@ -65,34 +65,39 @@
 
     - name: Get availave external ports
       shell: cat choosed_port
-      when: env_keeping
       register: ext_port
 
     - name: Setup internal forwarding rules
-      when: env_keeping
+      no_log: yes
       shell:
         cmd: |
           set -xe
+          dnat_chain="{{ zuul.change }}-{{ build_id.stdout }}"
+          snat_chain="{{ zuul.change }}-{{ build_id.stdout }}-snat"
+          dst_ip="{{ ansible_all_ipv4_addresses | first }}"
+          snat_ip="{{ ai_otc_forwarding_host.fqdn }}"
+          dst_ext_port="{{ ext_port.stdout }}"
+          dnat_ip_port=$dst_ip:22
           cat > setup_iptables.sh <<EOF
           sudo su - root
-          sudo iptables -t nat -N "{{ zuul.change }}-{{ build_id.stdout }}"
-          sudo iptables -t nat -N "{{ zuul.change }}-{{ build_id.stdout }}-snat"
-          sudo iptables -t nat -A test-ai -j "{{ zuul.change }}-{{ build_id.stdout }}"
-          sudo iptables -t nat -A test-ai-snat -j "{{ zuul.change }}-{{ build_id.stdout }}-snat"
-          sudo iptables -t nat -A "{{ zuul.change }}-{{ build_id.stdout }}" -i ens3 -p tcp -m tcp --dport "{{ ext_port.stdout }} -j DNAT --to-destination {{ ansible_all_ipv4_addresses | first }}:22"
-          sudo iptables -t nat -A "{{ zuul.change }}-{{ build_id.stdout }}-snat" -d "{{ ansible_all_ipv4_addresses | first }} -o ens3 -p tcp -m tcp --dport 22 -j SNAT --to-source {{ ai_otc_forwarding_host.fqdn }}"
+          sudo iptables -t nat -N $dnat_chain
+          sudo iptables -t nat -N $snat_chain
+          sudo iptables -t nat -A test-ai -j $dnat_chain
+          sudo iptables -t nat -A test-ai-snat -j $snat_chain
+          sudo iptables -t nat -A $dnat_chain -i ens3 -p tcp -m tcp --dport $dst_ext_port -j DNAT --to-destination $dnat_ip_port
+          sudo iptables -t nat -A $snat_chain -d $dst_ip -o ens3 -p tcp -m tcp --dport 22 -j SNAT --to-source $snat_ip
           EOF
           ssh -o StrictHostKeyChecking=no {{ ai_otc_forwarding_host.ssh_username }}@{{ ai_otc_forwarding_host.fqdn }} -i ./{{ key_file_name }} 'bash -s' < setup_iptables.sh
         executable: /bin/bash
 
     - name: Clean up key file
-      when: env_keeping
+      no_log: yes
       shell:
         cmd: |
           rm -rf "./{{ key_file_name }}"
         executable: /bin/bash
 
-    - name: Get IP and Credential
+    - name: Shape login Demo User
       shell:
         cmd: |
           set -x
@@ -105,22 +110,6 @@
           chown demo:demo /home/demo
           sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
           service sshd restart
-
-          if {{ env_keeping | lower }};then
-            result_url=""
-          else
-            result_url="http://80.158.7.210/logs/{{ zuul.change }}/{{ zuul.change }}/{{ zuul.patchset }}/check/{{ zuul.job }}/{{ build_id.stdout }}/test_results/"
-          fi
-
-          cat > '{{ zuul.patchset }}.json' <<EOF
-          {
-            "patch_set": "{{ zuul.patchset }}"
-            "ip": "{{ ansible_all_ipv4_addresses | first }}",
-            "credentail": "demo/demo",
-            "result_url": "$result_url",
-            "endpoint": ""
-          }
-          EOF
         executable: /bin/bash
 
     - name: Upload Environment Info to Web
@@ -134,12 +123,10 @@
           job_name=${job_name/_sleep/}
           if {{ env_keeping | lower }};then
             result_url=""
-            endpoint="{{ ansible_all_ipv4_addresses | first }}:8500"
           else
             change_num="{{ zuul.change }}"
             change_prefix=`echo ${change_num:0-2}`
             result_url="http://80.158.7.210/logs/$change_prefix/$change_num/{{ zuul.patchset }}/check/{{ zuul.job }}/{{ build_id.stdout }}/test_results/"
-            endpoint=""
           fi
           wget https://raw.githubusercontent.com/moo-ai/moo-ai.github.io/master/env_info/task_list.json
 
@@ -153,10 +140,9 @@
 
           exist_data["$job_name"] = {
               "patch_set": "{{ zuul.patchset }}",
-              "ip": "{{ ansible_all_ipv4_addresses | first }}",
+              "ip": "80.158.7.210:{{ ext_port.stdout }}",
               "credential": "demo/demo",
-              "result_url": "$result_url",
-              "endpoint": "$endpoint"
+              "result_url": "$result_url"
           }
           with open('task_list.json_tmp', 'w') as file:
               json.dump(exist_data, file)
