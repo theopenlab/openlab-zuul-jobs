@@ -59,7 +59,8 @@
           set -xe
           port="{{ ext_port.stdout }}"
           cat > release_external_ports.sh <<EOF
-          cat /home/ubuntu/ai_nat_outside_ports | grep -v $port > /home/ubuntu/ai_nat_outside_ports
+          new=`cat /home/ubuntu/ai_nat_outside_ports | grep -v $port`
+          echo $new > /home/ubuntu/ai_nat_outside_ports
           EOF
           ssh -o StrictHostKeyChecking=no {{ ai_otc_forwarding_host.ssh_username }}@{{ ai_otc_forwarding_host.fqdn }} -i ./tmp_pem 'bash -s' < release_external_ports.sh
         executable: /bin/bash
