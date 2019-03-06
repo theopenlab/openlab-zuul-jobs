@@ -23,14 +23,15 @@
           export TROVE_RESIZE_TIME_OUT=''
           cd $DEST/trove
           sed -i 's/\/opt\/stack\/trove\/test-upper-constraints.txt/{toxinidir}\/test-upper-constraints.txt/' tox.ini
-          sleep 10800
+          env
+          sleep 21600
           tox -etrovestack -vv -- kick-start mysql
           source $PATH_DEVSTACK_SRC/openrc admin admin
 
           # Following commands show some info for debugging
           trove datastore-list
           openstack image list
-          openstack image show ubuntu-mysql-5.7
+          openstack image show ubuntu-mysql-5.7 || true
           trove flavor-list
           df -h
 
