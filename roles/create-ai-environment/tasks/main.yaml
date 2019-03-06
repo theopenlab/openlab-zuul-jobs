@@ -249,7 +249,7 @@
         '{{ ansible_user_dir }}/workspace/test_results/web_page/'
       mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/js' \
         '{{ ansible_user_dir }}/workspace/test_results/web_page/'
-      mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/mnist_images.png' \
+      mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/media' \
         '{{ ansible_user_dir }}/workspace/test_results/web_page/'
       change_num="{{ zuul.change }}"
       change_prefix=`echo ${change_num:0-2}`
