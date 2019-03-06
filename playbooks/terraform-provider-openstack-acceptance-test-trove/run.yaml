@@ -14,7 +14,7 @@
         cmd: |
           set -e
           set -x
-          sudo chown zuul.zuul /opt/stack/ -R
+          sudo chown zuul.zuul /opt/stack/new/trove/ -R
           sudo chown zuul.zuul /etc/trove/ -R
           export BRIDGE_IP=10.0.0.1
           export DEST='/opt/stack/new'
@@ -28,7 +28,6 @@
           # Following commands show some info for debugging
           trove datastore-list
           openstack image list
-          openstack image show ubuntu-mysql-5.7
           trove flavor-list
           df -h
 
