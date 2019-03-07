@@ -36,7 +36,8 @@
       cat /etc/resolv.conf
 
       ## Initializing master
-      kubeadm init --pod-network-cidr=192.168.0.0/16
+      sleep 3600
+      kubeadm init --pod-network-cidr=192.168.0.0/16 --kubernetes-version="{{ kubernetes_version }}"
 
       export KUBECONFIG=/etc/kubernetes/admin.conf
 
