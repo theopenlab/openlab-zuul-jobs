@@ -1,0 +1,25 @@
+---
+galaxy_info:
+  author: Andrew Rothstein
+  description: installs bazel.build
+  company: BlackRock
+  license:
+    - MIT
+  min_ansible_version: 2.0
+  platforms:
+    - name: Ubuntu
+      versions:
+        - all
+    - name: EL
+      version:
+        - all
+    - name: Fedora
+      version:
+        - all
+  galaxy_tags:
+    - development
+    - build
+
+dependencies:
+  - role: andrewrothstein.java-oracle-jdk
+    version: v2.1.0

@@ -1,0 +1,34 @@
+---
+galaxy_info:
+  author: Andrew Rothstein
+  description: installs Oracle Java JDK
+  company: BlackRock
+  license:
+    - MIT
+  min_ansible_version: 2.0
+  platforms:
+    - name: EL
+      versions:
+        - all
+    - name: Fedora
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - all
+    - name: Debian
+      version:
+        - jessie
+    - name: Alpine
+      version:
+        - all
+
+  galaxy_tags:
+    - java
+    - jdk
+    - oracle
+
+dependencies:
+  - role: andrewrothstein.java-oracle
+    version: v1.1.0
+    java_oracle_prefix: jdk

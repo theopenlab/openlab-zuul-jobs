@@ -1,0 +1,24 @@
+---
+# 8u131
+java_oracle_ver_abbrev: '{{java_oracle_ver.major}}u{{java_oracle_ver.patch}}'
+
+# jre-8u131-linux-x64
+java_oracle_fname: '{{java_oracle_prefix}}-{{java_oracle_ver_abbrev}}-{{java_oracle_platform}}'
+java_oracle_tgz: '{{java_oracle_fname}}.tar.gz'
+
+java_oracle_post_patch: '{{java_oracle_ver.post_patches[java_oracle_ver_abbrev]}}'
+java_oracle_uuid: '{{java_oracle_ver.uuids[java_oracle_ver_abbrev]}}'
+
+# http://download.oracle.com/otn-pub/java/jdk/8u162-b12/0da788060d494f5095bf8624735fa2f1
+java_oracle_url_prefix: '{{java_oracle_mirror}}/{{java_oracle_ver_abbrev}}-{{java_oracle_post_patch}}/{{java_oracle_uuid}}'
+
+# http://download.oracle.com/otn-pub/java/jdk/8u192-b12/750e1c8617c5452694857ad95c3ee230/jdk-8u192-linux-x64.tgz
+java_oracle_tgz_url: '{{java_oracle_url_prefix}}/{{java_oracle_tgz}}'
+
+java_oracle_checksum: '{{java_oracle_ver["checksums"][java_oracle_ver_abbrev][java_oracle_prefix][java_oracle_platform]}}'
+
+# jre1.8.0_161
+java_oracle_subdir: '{{java_oracle_prefix}}1.{{java_oracle_ver.major}}.{{java_oracle_ver.minor}}_{{java_oracle_ver.patch}}'
+
+java_oracle_install_dir: '{{java_oracle_parent_install_dir}}/{{java_oracle_subdir}}'
+java_oracle_link_dir: '{{java_oracle_parent_install_dir}}/java'

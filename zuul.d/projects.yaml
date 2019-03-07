@@ -4,6 +4,13 @@
         - openlab-zuul-jobs-check
 
 - project:
+    name: kubernetes-sigs/kind
+    periodic:
+      jobs:
+        - kind-integration-test-arm64:
+            branches: master
+
+- project:
     name: ansible/ansible
     periodic:
       jobs:

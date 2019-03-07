@@ -31,6 +31,12 @@
         label: ubuntu-bionic-vxh-arm64
 
 - nodeset:
+    name: ubuntu-xenial-arm64
+    nodes:
+      - name: ubuntu-xenial-arm64
+        label: ubuntu-xenial-arm64
+
+- nodeset:
     name: ubuntu-xenial-huaweicloud
     nodes:
       - name: ubuntu-xenial-huaweicloud

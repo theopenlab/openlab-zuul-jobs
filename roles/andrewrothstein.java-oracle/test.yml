@@ -1,0 +1,15 @@
+---
+- hosts: all
+  roles:
+    - role: '{{playbook_dir}}'
+      java_oracle_prefix: jdk
+  tasks:
+    - name: confirm javac is executable
+      command: /usr/local/java/bin/javac -version
+- hosts: all
+  roles:
+    - role: '{{playbook_dir}}'
+      java_oracle_prefix: jre
+  tasks:
+    - name: confirm java is executable
+      command: /usr/local/java/bin/java -version

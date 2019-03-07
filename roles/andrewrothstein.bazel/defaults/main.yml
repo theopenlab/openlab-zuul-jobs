@@ -1,0 +1,48 @@
+---
+bazel_ver: '0.21.0'
+bazel_platform: linux-x86_64
+bazel_mirror: https://github.com/bazelbuild/bazel/releases/download
+
+bazel_checksums:
+  '0.4.1':
+    # curl -sSL https://github.com/bazelbuild/bazel/releases/download/0.4.1/bazel-0.4.1-installer-linux-x86_64.sh.sha256
+    linux-x86_64: sha256:186f22ea776fba7dd5931241700f60974a681e90eb5831d40257baac9a58e436
+  '0.11.0':
+    # curl -sSL https://github.com/bazelbuild/bazel/releases/download/0.11.0/bazel-0.11.0-installer-linux-x86_64.sh.sha256
+    linux-x86_64: sha256:687305c38a7786f3f4d74e13f31a05ae2a5ef50ef1736f85b749ec047a97e73b
+  '0.11.1':
+    # curl -sSL https://github.com/bazelbuild/bazel/releases/download/0.11.1/bazel-0.11.1-installer-linux-x86_64.sh.sha256
+    linux-x86_64: sha256:58966c52584088c65769f9c5f1f417a0fa804759af8fda4525b2c270bf07e8b2
+  '0.12.0':
+    # curl -sSL https://github.com/bazelbuild/bazel/releases/download/0.12.0/bazel-0.12.0-installer-linux-x86_64.sh.sha256
+    linux-x86_64: sha256:1af7a70cc2c5180765ed2f0da366c625fac89e6656dedc008320d46eb1f75e20
+  '0.13.0':
+    # curl -sSL https://github.com/bazelbuild/bazel/releases/download/0.13.0/bazel-0.13.0-installer-linux-x86_64.sh.sha256
+    linux-x86_64: sha256:c90ed6d8478fd543d936702d2eb3ed034f46b2223fac790598db70c161552418
+  '0.13.1':
+    # curl -sSL https://github.com/bazelbuild/bazel/releases/download/0.13.1/bazel-0.13.1-installer-linux-x86_64.sh.sha256
+    linux-x86_64: sha256:a2f2ef984193119663afeb4b8cecf2847bfec578d2f1f9256c403589cc52465d
+  '0.14.0':
+    # curl -sSL https://github.com/bazelbuild/bazel/releases/download/0.14.0/bazel-0.14.0-installer-linux-x86_64.sh.sha256
+    linux-x86_64: sha256:34488cd55f95668cfad45874d9d58a220ea8233beede60ade1b036ebc661c1d0
+  '0.15.0':
+    # curl -sSL https://github.com/bazelbuild/bazel/releases/download/0.15.0/bazel-0.15.0-installer-linux-x86_64.sh.sha256
+    linux-x86_64: sha256:7f6748b48a7ea6bdf00b0e1967909ce2181ebe6f377638aa454a7d09a0e3ea7b
+  '0.16.0':
+    # curl -sSL https://github.com/bazelbuild/bazel/releases/download/0.16.0/bazel-0.16.0-installer-linux-x86_64.sh.sha256
+    linux-x86_64: sha256:bdef5499ea21baa69e707391b463105b32c4a2fbf1ab045da53f4023c1a033be
+  '0.18.0':
+    # curl -sSL https://github.com/bazelbuild/bazel/releases/download/0.18.0/bazel-0.18.0-installer-linux-x86_64.sh.sha256
+    linux-x86_64: sha256:48ddaa9c9fef73dbe68517f274f09b33c3c8fdf3410638808b609f82b177d397
+  '0.18.1':
+    # curl -sSL https://github.com/bazelbuild/bazel/releases/download/0.18.1/bazel-0.18.1-installer-linux-x86_64.sh.sha256
+    linux-x86_64: sha256:8073657ced2bb323dd2e7ba6e39011ca56b856cae475b476e9b77d30123582e5
+  '0.19.0':
+    # curl -sSL https://github.com/bazelbuild/bazel/releases/download/0.19.0/bazel-0.19.0-installer-linux-x86_64.sh.sha256
+    linux-x86_64: sha256:b9e988643b10444d6d8eb04461418b7b80e3d171e12d1c8b6e2a50f541e739e7
+  '0.20.0':
+    # curl -sSL https://github.com/bazelbuild/bazel/releases/download/0.20.0/bazel-0.20.0-installer-linux-x86_64.sh.sha256
+    linux-x86_64: sha256:44aed3bd8e58a889ee36f187a4b1cb573a2b4cc7a3d7c0cf0696205764e45dec
+  '0.21.0':
+    linux-x86_64: sha256:328d5fa87a61e1f6e674a8f88c5ae54b8987eaf5a6c944257600c5029c8feef8
+    darwin-x86_64: sha256:5e40dcf12a18990ffe5830fb5c83297aed090fd6e6c7c5b2eb720c19a33044fc
