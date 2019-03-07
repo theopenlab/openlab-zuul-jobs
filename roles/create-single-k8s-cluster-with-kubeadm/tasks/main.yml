@@ -17,7 +17,14 @@
       EOF
 
       apt-get update
-      apt-get install -y kubelet kubeadm kubectl
+      if [[ "{{ kubernetes_version }}" == "latest" ]]; then
+          apt-get install -y kubelet kubeadm kubectl
+      else
+          install_version=$(apt-cache madison kubelet |grep "{{ kubernetes_version }}" | head -n 1 | awk '{print $3}')
+          apt-get install -y kubelet=$install_version kubeadm=$install_version kubectl=$install_version
+      fi
+
+      kubelet --version
       apt-mark hold kubelet kubeadm kubectl
 
       # Creating a single master cluster with kubeadm:
@@ -27,9 +34,10 @@
       cat /etc/resolv.conf
 
       ## Initializing master
-      kubeadm init --pod-network-cidr=192.168.0.0/16
+      kubeadm init --pod-network-cidr=192.168.0.0/16 --kubernetes-version="{{ kubernetes_version }}"
 
-      export KUBECONFIG=/etc/kubernetes/admin.conf
+      mkdir -p $HOME/.kube
+      sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 
       ## Installing a pod network add-on.
       kubectl apply -f https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/rbac-kdd.yaml
