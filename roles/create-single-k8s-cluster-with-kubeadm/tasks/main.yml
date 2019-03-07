@@ -1,8 +1,9 @@
 - name: Install Runtime Docker CE
   include_role:
     name: install-docker-ce
-    vars:
-      docker_ce_version: "{{ docker_ce_version }}"
+  vars:
+    docker_ce_version: "{{ docker_ce_version }}"
+    docker_vcgroupdriver: "{{ docker_vcgroupdriver }}"
 
 - name: Create a single k8s master cluster by kubeadm
   shell:
@@ -36,9 +37,10 @@
       cat /etc/resolv.conf
 
       ## Initializing master
-      kubeadm init --pod-network-cidr=192.168.0.0/16
+      kubeadm init --pod-network-cidr=192.168.0.0/16 --kubernetes-version="{{ kubernetes_version }}"
 
-      export KUBECONFIG=/etc/kubernetes/admin.conf
+      mkdir -p $HOME/.kube
+      sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 
       ## Installing a pod network add-on.
       kubectl apply -f https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/rbac-kdd.yaml
