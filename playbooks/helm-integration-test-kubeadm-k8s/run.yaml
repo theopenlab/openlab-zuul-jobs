@@ -12,7 +12,6 @@
           set -ex
           git remote add k8s https://github.com/helm/charts.git &> /dev/null || true
           git fetch k8s
-          sleep 10800
           # we use chart-testing docker image v2.2.0 to run tests
           docker run --rm --interactive --detach --network host --name ctd \
                   --volume "$(pwd)/test/ct.yaml:/etc/ct/ct.yaml" \
@@ -59,6 +58,7 @@
           docker exec --interactive ctd "$@" ct lint-and-install --charts stable/mysql,stable/postgresql,stable/etcd-operator,stable/coredns --namespace kube-system
           # some charts won't delete the pvc, delete them manually to make sure pv is available
           kubectl delete pvc --all --namespace kube-system
+          sleep 10800
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ global_env }}'
