@@ -4,11 +4,13 @@
     - name: Collect k8s cluster log
       shell: |
         set -ex
-        mkdir -p '{{ k8s_log_dir }}'
         export KUBECONFIG=/etc/kubernetes/admin.conf
+        mkdir -p '{{ k8s_log_dir }}'
         pods=$(kubectl -n kube-system get pods -o jsonpath='{.items[*].metadata.name}')
         for pod in $pods; do
-            kubectl -n kube-system logs --all-containers=true $pod > '{{ k8s_log_dir }}'/$pod.log
+            for co in $(kubectl -n kube-system get pods $pod -o jsonpath='{.spec.containers[*].name}'); do
+                kubectl -n kube-system logs $pod  -c $co > '{{ k8s_log_dir }}'/$pod-$co.log
+            done
         done
       args:
         executable: /bin/bash
