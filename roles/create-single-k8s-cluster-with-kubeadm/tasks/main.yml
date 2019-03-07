@@ -28,8 +28,6 @@
       fi
 
       kubelet --version
-      kubeadm version
-      kubectl version
       apt-mark hold kubelet kubeadm kubectl
 
       # Creating a single master cluster with kubeadm:
