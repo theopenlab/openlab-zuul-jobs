@@ -51,6 +51,7 @@
       enable_plugin trove git://git.openstack.org/openstack/trove
       PATH_TROVE="/opt/stack/new/trove"
       TROVESTACK_SCRIPTS="/opt/stack/new/trove/integration/scripts"
+      SSH_DIR="/opt/stack/new/.ssh"
       EOF
     executable: /bin/bash
   when:
@@ -273,8 +274,8 @@
       set -x
       cat << EOF >> /tmp/dg-local.conf
       enable_plugin ironic https://git.openstack.org/openstack/ironic
-      DEFAULT_INSTANCE_TYPE: baremetal
-      OVERRIDE_PUBLIC_BRIDGE_MTU: 1400
+      DEFAULT_INSTANCE_TYPE=baremetal
+      OVERRIDE_PUBLIC_BRIDGE_MTU=1400
       VIRT_DRIVER=ironic
       BUILD_TIMEOUT=720
       IRONIC_BAREMETAL_BASIC_OPS=True
@@ -291,11 +292,9 @@
       IRONIC_VM_LOG_DIR=/opt/stack/new/ironic-bm-logs
       IRONIC_VM_SPECS_RAM=384
       IRONIC_DEFAULT_DEPLOY_INTERFACE=direct
-      IRONIC_ENABLED_DEPLOY_INTERFACES=iscsi,direct,ansible
+      IRONIC_ENABLED_DEPLOY_INTERFACES=iscsi,direct
       SWIFT_ENABLE_TEMPURLS=True
       SWIFT_TEMPURL_KEY=secretkey
-      Q_AGENT=openvswitch
-      Q_ML2_TENANT_NETWORK_TYPE=vxlan
       EOF
     executable: /bin/bash
   when:
