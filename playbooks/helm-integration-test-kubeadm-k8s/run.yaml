@@ -3,6 +3,7 @@
   roles:
     - role: create-single-k8s-cluster-with-kubeadm
       kubernetes_version: 1.10.2
+      docker_ce_version: 18.06
   tasks:
     - name: Run integration tests of Helm deployed on k8s cluster
       shell:

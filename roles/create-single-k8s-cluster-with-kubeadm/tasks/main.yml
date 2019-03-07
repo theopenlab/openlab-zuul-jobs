@@ -1,6 +1,8 @@
 - name: Install Runtime Docker CE
   include_role:
     name: install-docker-ce
+    vars:
+      docker_ce_version: {{ docker_ce_version }}
 
 - name: Create a single k8s master cluster by kubeadm
   shell:
