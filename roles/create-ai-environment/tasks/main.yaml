@@ -73,9 +73,27 @@
   register: output_folder_name
 
 - name: Check output folder exists
+  when: output_folder_name is defined
+  set_fact:
+    training_output_folder_name: "{{ output_folder_name.stdout }}"
   stat:
     path: '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/{{ output_folder_name.stdout }}'
   register: stat_ouput_folder
+
+
+- name: Create output folder if non-exist
+  when: output_folder_name is defined and not stat_ouput_folder.stat.exists
+  file:
+    path: '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/{{ output_folder_name.stdout }}'
+    state: directory
+
+- name: Generate new output folder if non-exist
+  when: output_folder_name is not defined
+  file:
+    path: '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/training_result'
+    state: directory
+  set_fact:
+    training_output_folder_name: "training_result"
 
 - name: Install {{ runtime.stdout }} Runtime
   when: runtime_name != ''
@@ -222,12 +240,8 @@
       '{{ runtime.stdout }}' $py_file | tee ${result_folder}"/process_log.txt"
     executable: /bin/bash
 
-- name: Get build id
-  shell: echo '{{zuul.build}}' | cut -c 1-7
-  register: build_id
-
-- name: Collect Traning or Inference Result if needed
-  when: stat_ouput_folder.stat.exists and stat_ouput_folder.stat.isdir
+- name: Install tensorflow.js and convert training model
+  when: framework.stdout == "tensorflow"
   shell:
     cmd: |
       set -x
@@ -235,11 +249,17 @@
       pip install tensorflowjs
 
       tensorflowjs_converter --input_format keras \
-        '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/{{ output_folder_name.stdout }}/my_model.h5' \
+        '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/{{ training_output_folder_name }}/my_model.h5' \
         '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/tfjs'
+    executable: /bin/bash
 
+- name: Collect Traning or Inference Result
+  shell:
+    cmd: |
+      set -x
+      set -e
 
-      mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/{{ output_folder_name.stdout }}' \
+      mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/{{ training_output_folder_name }}' \
         '{{ ansible_user_dir }}/workspace/test_results/'
       mkdir '{{ ansible_user_dir }}/workspace/test_results/web_page/'
       mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/tf_js.html' '{{ ansible_user_dir }}/workspace/test_results/web_page/index.html'
@@ -251,9 +271,11 @@
         '{{ ansible_user_dir }}/workspace/test_results/web_page/'
       mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/media' \
         '{{ ansible_user_dir }}/workspace/test_results/web_page/'
+
       change_num="{{ zuul.change }}"
       change_prefix=`echo ${change_num:0-2}`
-      model_path="http:\/\/80.158.7.210\/logs\/$change_prefix\/$change_num\/{{ zuul.patchset }}\/check\/{{ zuul.job }}\/{{ build_id.stdout }}\/test_results\/web_page\/tfjs\/model.json"
+      build_id = `echo '{{ zuul.build }}' | cut -c 1-7`
+      model_path="http:\/\/80.158.7.210\/logs\/$change_prefix\/$change_num\/{{ zuul.patchset }}\/check\/{{ zuul.job }}\/$build_id\/test_results\/web_page\/tfjs\/model.json"
       sed -i "s/replace.me/$model_path/" \
         '{{ ansible_user_dir }}/workspace/test_results/web_page/index.html'
     executable: /bin/bash
