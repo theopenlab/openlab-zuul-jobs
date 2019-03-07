@@ -29,6 +29,7 @@
           $sg_cmd_prefix icmp $sg_id
           neutron subnet-update --dns-nameserver 8.8.8.8 private-subnet
           openstack flavor create --vcpus 1 --ram 1024 --disk 10 --id 11 docker-machine-test
+          sleep 100000000
 
           pushd '{{ ansible_user_dir }}/src/github.com/docker/machine'
           export OS_FLAVOR_ID=11
