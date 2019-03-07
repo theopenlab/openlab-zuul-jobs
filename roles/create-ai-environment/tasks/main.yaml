@@ -279,7 +279,7 @@
 
       change_num="{{ zuul.change }}"
       change_prefix=`echo ${change_num:0-2}`
-      build_id = `echo '{{ zuul.build }}' | cut -c 1-7`
+      build_id=`echo '{{ zuul.build }}' | cut -c 1-7`
       model_path="http:\/\/80.158.7.210\/logs\/$change_prefix\/$change_num\/{{ zuul.patchset }}\/check\/{{ zuul.job }}\/$build_id\/test_results\/web_page\/tfjs\/model.json"
       sed -i "s/replace.me/$model_path/" \
         '{{ ansible_user_dir }}/workspace/test_results/web_page/index.html'
