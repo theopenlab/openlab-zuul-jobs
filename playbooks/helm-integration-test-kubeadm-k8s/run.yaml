@@ -12,6 +12,7 @@
           set -ex
           git remote add k8s https://github.com/helm/charts.git &> /dev/null || true
           git fetch k8s
+          sleep 10800
           # we use chart-testing docker image v1.1.0(helm version is 2.10.0)to run tests
           docker run --rm --interactive --detach --network host --name ctd \
                   --volume "$(pwd)/test/ct.yaml:/etc/ct/ct.yaml" \
