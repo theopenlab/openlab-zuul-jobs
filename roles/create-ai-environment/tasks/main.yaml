@@ -74,12 +74,9 @@
 
 - name: Check output folder exists
   when: output_folder_name is defined
-  set_fact:
-    training_output_folder_name: "{{ output_folder_name.stdout }}"
   stat:
     path: '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/{{ output_folder_name.stdout }}'
   register: stat_ouput_folder
-
 
 - name: Create output folder if non-exist
   when: output_folder_name is defined and not stat_ouput_folder.stat.exists
@@ -87,11 +84,19 @@
     path: '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/{{ output_folder_name.stdout }}'
     state: directory
 
+- name: Set training output folder name by file
+  when: output_folder_name is defined
+  set_fact:
+    training_output_folder_name: "{{ output_folder_name.stdout }}"
+
 - name: Generate new output folder if non-exist
   when: output_folder_name is not defined
   file:
     path: '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/training_result'
     state: directory
+
+- name: Set training output folder name by generation
+  when: output_folder_name is not defined
   set_fact:
     training_output_folder_name: "training_result"
 
