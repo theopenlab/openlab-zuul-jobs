@@ -8,7 +8,7 @@
         export KUBECONFIG=/etc/kubernetes/admin.conf
         pods=$(kubectl -n kube-system get pods -o jsonpath='{.items[*].metadata.name}')
         for pod in $pods; do
-            kubectl -n kube-system logs $pod > '{{ k8s_log_dir }}'/$pod.log
+            kubectl -n kube-system logs --all-containers=true $pod > '{{ k8s_log_dir }}'/$pod.log
         done
       args:
         executable: /bin/bash

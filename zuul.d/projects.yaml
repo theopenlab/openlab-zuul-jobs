@@ -211,7 +211,7 @@
     name: liu-sheng/spark
     check:
       jobs:
-        # - spark-integration-test-kubeadm-k8s
+        - spark-integration-test-kubeadm-k8s
         - spark-integration-test-minikube-k8s
 
 - project:
