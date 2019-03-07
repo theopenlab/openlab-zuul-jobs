@@ -4,12 +4,12 @@
     - role: create-single-k8s-cluster-with-kubeadm
       kubernetes_version: 1.10.2
       docker_ce_version: 17.03
+      docker_vcgroupdriver: "cgroupfs"
   tasks:
     - name: Run integration tests of Helm deployed on k8s cluster
       shell:
         cmd: |
           set -ex
-          cp /etc/kubernetes/admin.conf /root/.kube/config
           git remote add k8s https://github.com/helm/charts.git &> /dev/null || true
           git fetch k8s
           # we use chart-testing docker image v1.1.0(helm version is 2.10.0)to run tests
