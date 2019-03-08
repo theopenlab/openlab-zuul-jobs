@@ -8,8 +8,6 @@
       shell:
         cmd: |
           set -ex
-          git remote add k8s https://github.com/helm/charts.git &> /dev/null || true
-          git fetch k8s
           # we use chart-testing docker image latest (now is v2.2.0) to run tests
           docker run --rm --interactive --detach --network host --name ctd \
                   --volume "$(pwd)/test/ct.yaml:/etc/ct/ct.yaml" \
@@ -33,8 +31,8 @@
           sleep 180
           # we need to test databases like mysql installing, persistence is enabled default,
           # create local pv to support the test
-          mkdir /root/k8s/
-          cat << EOF >> /root/local-pv.yaml
+          mkdir /home/zuul/k8s/
+          cat << EOF >> /home/zuul/k8s/local-pv.yaml
           apiVersion: v1
           kind: PersistentVolume
           metadata:
@@ -47,17 +45,16 @@
               - ReadWriteOnce
             persistentVolumeReclaimPolicy: Recycle
             hostPath:
-              path: /k8s
+              path: /home/zuul/k8s
           EOF
   
-          kubectl create -f /root/local-pv.yaml
+          kubectl create -f /home/zuul/k8s/local-pv.yaml
           kubectl get pv
   
           # run cmd "ct lint-and-install" to test several charts
           docker exec --interactive ctd "$@" ct lint-and-install --charts stable/mysql,stable/postgresql,stable/etcd-operator,stable/coredns --namespace kube-system
           # some charts won't delete the pvc, delete them manually to make sure pv is available
           kubectl delete pvc --all --namespace kube-system
-          sleep 10800
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ global_env }}'

@@ -1,3 +1,2 @@
 ---
 kubernetes_version: "latest"
-docker_ce_version: "latest"
