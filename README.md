@@ -1,6 +1,6 @@
 OpenLab CI jobs definitions
 ===========================
-
+test CI
 This repo contains a set of Ansible playbooks which are used by the OpenLab CI
 system. Any 3rd project want to integrate with the OpenLab CI, need to add
 jobs definitions into this repo firstly.
