@@ -35,7 +35,7 @@
       file:
         path: "/home/ubuntu/.ssh/authorized_keys"
         group: ubuntu
-        ower: ubuntu
+        owner: ubuntu
         state: file
         mode: 0600
 
