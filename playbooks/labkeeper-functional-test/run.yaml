@@ -23,7 +23,6 @@
         executable: /bin/bash
 
     - name: Run labkeeper functional test
-      become: yes
       shell: |
         sudo cp /home/ubuntu/.ssh/id_rsa ./openlab.pem
         sudo chmod 600 openlab.pem
