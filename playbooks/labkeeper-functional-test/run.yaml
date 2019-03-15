@@ -26,16 +26,14 @@
 
     - name: Run labkeeper functional test
       become: yes
-      shell: |
-        ls -l /home/ubuntu/.ssh/
-      args:
-        executable: /bin/bash
+      command: "cat /home/ubuntu/.ssh/id_rsa.pub"
+      register: ubuntu_key
 
     - name: Ensure SSH public key is authorized
       become: true
       authorized_key:
         user: "ubuntu"
-        key: "{{ lookup('file', '/home/ubuntu/.ssh/id_rsa.pub') }}"
+        key: ubuntu_key.stdout
 
     - name: Run labkeeper functional test
       become: yes
