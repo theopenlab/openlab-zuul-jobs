@@ -28,9 +28,7 @@
       become: yes
       command: "cat /home/ubuntu/.ssh/id_rsa.pub"
       register: ubuntu_key
-
-    - name: show key contents
-      debug: var=ubuntu_key.stdout
+      no_log: yes
 
     - name: Ensure SSH public key is authorized
       become: true
