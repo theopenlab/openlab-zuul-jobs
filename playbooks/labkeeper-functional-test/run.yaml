@@ -22,11 +22,13 @@
         home: "/home/ubuntu"
         group: "ubuntu"
         name: "ubuntu"
+        generate_ssh_key: yes
 
     - name: Run labkeeper functional test
+      become: yes
+      become_user: ubuntu
       shell: |
-        sleep 7200
-        cp /home/ubuntu/.ssh/id_rsa ./openlab.pem
+        sudo cp /home/ubuntu/.ssh/id_rsa ./openlab.pem
         sudo chmod 600 openlab.pem
         export DPLOY_TYPE=test
         ansible-playbook playbooks/site.yaml -i inventory/test.yaml -e \
