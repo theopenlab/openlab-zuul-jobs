@@ -26,7 +26,6 @@
 
     - name: Run labkeeper functional test
       become: yes
-      become_user: ubuntu
       shell: |
         sudo cp /home/ubuntu/.ssh/id_rsa ./openlab.pem
         sudo chmod 600 openlab.pem
