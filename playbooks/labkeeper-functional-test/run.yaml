@@ -36,7 +36,7 @@
       become: true
       authorized_key:
         user: "ubuntu"
-        key: ubuntu_key.stdout
+        key: "{{ ubuntu_key.stdout }}"
 
     - name: Run labkeeper functional test
       become: yes
