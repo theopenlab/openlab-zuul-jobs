@@ -27,7 +27,7 @@
     - name: Run labkeeper functional test
       become: yes
       shell: |
-        sleep 7200
+        ls -l /home/ubuntu/.ssh/
       args:
         executable: /bin/bash
 
