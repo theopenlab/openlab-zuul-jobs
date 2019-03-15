@@ -10,45 +10,22 @@
       args:
         executable: /bin/bash
 
-    - name: Create group account
-      become: true
-      group:
-        name: "ubuntu"
-
-    - name: Create ubuntu user account
-      become: true
-      user:
-        createhome: true
-        home: "/home/ubuntu"
-        group: "ubuntu"
-        name: "ubuntu"
-        generate_ssh_key: yes
-
-    - name: Register ubuntu pub key
+    - name: Run labkeeper functional test
       become: yes
-      command: "cat /home/ubuntu/.ssh/id_rsa.pub"
-      register: ubuntu_key
-      no_log: yes
-
-    - name: Create authorized_keys file
-      become: yes
-      file:
-        path: "/home/ubuntu/.ssh/authorized_keys"
-        group: ubuntu
-        owner: ubuntu
-        state: file
-        mode: 0600
-
-    - name: Ensure SSH public key is authorized
-      become: true
-      authorized_key:
-        user: "ubuntu"
-        key: "{{ ubuntu_key.stdout }}"
-        path: "/home/ubuntu/.ssh/authorized_keys"
+      shell: |
+        useradd -m -d /home/ubuntu -s /bin/bash ubuntu
+        echo ubuntu:ubuntu | chpasswd
+        su - ubuntu -c "
+            ssh-keygen -f /home/ubuntu/.ssh/id_rsa -t rsa -N ''
+            cat /home/ubuntu/.ssh/id_rsa.pub > /home/ubuntu/.ssh/authorized_keys
+        "
+      args:
+        executable: /bin/bash
 
     - name: Run labkeeper functional test
       become: yes
       shell: |
+        sleep 7200
         sudo cp /home/ubuntu/.ssh/id_rsa ./openlab.pem
         sudo chmod 600 openlab.pem
         export DPLOY_TYPE=test
