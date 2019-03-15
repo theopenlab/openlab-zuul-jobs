@@ -159,7 +159,6 @@
       set -e
       set -x
       cat << EOF >> /tmp/dg-local.conf
-      enable_service designate,designate-central,designate-api,designate-pool-manager,designate-zone-manager,designate-mdns
       enable_plugin designate git://git.openstack.org/openstack/designate
       EOF
     executable: /bin/bash
