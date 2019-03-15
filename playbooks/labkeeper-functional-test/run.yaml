@@ -25,6 +25,7 @@
         generate_ssh_key: yes
 
     - name: Ensure SSH public key is authorized
+      become: true
       authorized_key:
         user: "ubuntu"
         key: "{{ lookup('file', '/home/ubuntu/.ssh/id_rsa.pub') }}"
