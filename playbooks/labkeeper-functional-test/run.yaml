@@ -24,6 +24,11 @@
         name: "ubuntu"
         generate_ssh_key: yes
 
+    - name: Ensure SSH public key is authorized
+      authorized_key:
+        user: "ubuntu"
+        key: "{{ lookup('file', '/home/ubuntu/.ssh/id_rsa.pub') }}"
+
     - name: Run labkeeper functional test
       become: yes
       shell: |
