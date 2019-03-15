@@ -40,6 +40,7 @@
     - name: Run labkeeper functional test
       become: yes
       shell: |
+        sleep 7200
         sudo cp /home/ubuntu/.ssh/id_rsa ./openlab.pem
         sudo chmod 600 openlab.pem
         export DPLOY_TYPE=test
