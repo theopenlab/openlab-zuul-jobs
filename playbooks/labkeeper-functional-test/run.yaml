@@ -24,10 +24,13 @@
         name: "ubuntu"
         generate_ssh_key: yes
 
-    - name: Run labkeeper functional test
+    - name: Register ubuntu pub key
       become: yes
       command: "cat /home/ubuntu/.ssh/id_rsa.pub"
       register: ubuntu_key
+
+    - name: show key contents
+      debug: var=ubuntu_key.stdout
 
     - name: Ensure SSH public key is authorized
       become: true
