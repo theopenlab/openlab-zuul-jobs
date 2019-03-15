@@ -35,6 +35,7 @@
       authorized_key:
         user: "ubuntu"
         key: "{{ ubuntu_key.stdout }}"
+        path: "/home/ubuntu/.ssh/authorized_keys"
 
     - name: Run labkeeper functional test
       become: yes
@@ -42,7 +43,6 @@
         sudo cp /home/ubuntu/.ssh/id_rsa ./openlab.pem
         sudo chmod 600 openlab.pem
         export DPLOY_TYPE=test
-        sleep 7200
         ansible-playbook playbooks/site.yaml -i inventory/test.yaml -e \
             "zuul_user_name=zuul-test zuul_user_group=zuul-test"
       args:
