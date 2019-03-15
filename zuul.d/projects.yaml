@@ -3,6 +3,12 @@
       jobs:
         - openlab-zuul-jobs-check
 
+- project:
+    name: liu-sheng/labkeeper
+    check:
+      jobs:
+        - labkeeper-functional-test
+
 # Shared zuul config specific to the OpenStack Project
 # Contains project pipeline definitions
 

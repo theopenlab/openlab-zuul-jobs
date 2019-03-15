@@ -1,0 +1,30 @@
+- hosts: all
+  tasks:
+    - name: install required packages
+      become: true
+      shell: |
+        apt update -y
+        apt install python python-pip python3 python3-pip kpartx qemu-utils curl python-yaml \
+            debootstrap libffi-dev libssl-dev -y
+        pip install ansible
+      args:
+        executable: /bin/bash
+
+    - name: Create ubuntu user account
+      become: true
+      user:
+        createhome: true
+        home: "/home/ubuntu"
+        group: "ubuntu"
+        name: "ubuntu"
+
+    - name: Run labkeeper functional test
+      shell: |
+        sleep 7200
+        cp /home/ubuntu/.ssh/id_rsa ./openlab.pem
+        export DPLOY_TYPE=test
+        ansible-playbook playbooks/site.yaml -i inventory/test.yaml -e \
+            "zuul_user_name=zuul-test zuul_user_group=zuul-test"
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
