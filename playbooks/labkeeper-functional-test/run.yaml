@@ -24,6 +24,13 @@
         name: "ubuntu"
         generate_ssh_key: yes
 
+    - name: Run labkeeper functional test
+      become: yes
+      shell: |
+        sleep 7200
+      args:
+        executable: /bin/bash
+
     - name: Ensure SSH public key is authorized
       become: true
       authorized_key:
