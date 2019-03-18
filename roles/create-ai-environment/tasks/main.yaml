@@ -1,0 +1,292 @@
+- name: Set Default Hardware type Parameters
+  set_fact:
+    user_file: "user_data"
+  when: not is_gpu_enabled
+
+- name: Split Hardware type Parameters for GPU
+  set_fact:
+    user_file: "user_data_gpu"
+  when: is_gpu_enabled
+
+- name: Get User Metadata Zip or Url
+  shell:
+    cmd: |
+      set -x
+      set -e
+
+      apt install -y unzip
+      pip install pyyaml
+
+      result_folder="{{ ansible_user_dir }}/workspace/test_results/"
+      mkdir -p $result_folder
+
+      user_data_folder='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/'
+
+      cd $user_data_folder
+
+      if ls | grep txt;then
+        txt_file=`ls | grep txt`
+        url=`cat $txt_file`
+        if [ -n "$url" ];then
+          wget $url
+        fi
+      fi
+
+      zip_file=`ls | grep zip`
+
+      unzip $zip_file
+      python '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/tools/analysis_yaml.py'
+    executable: /bin/bash
+
+- name: Get Runtime Info
+  shell: cat '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/framework_runtime.txt'
+  register: runtime
+
+- name: Defind Parameters - runtime_name
+  shell: echo "{{ runtime.stdout | regex_findall('[java|go|python|c|c++]') | join("") }}"
+  register: runtime_name
+
+- name: Defind Parameters - runtime_version
+  shell: echo "{{ runtime.stdout | regex_replace('[java|go|python|c|c++]') }}"
+  register: runtime_version
+
+- name: Get Framework Name
+  shell: cat '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/framework_name.txt'
+  register: framework
+
+- name: Get Framework Version
+  shell: cat '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/framework_version.txt'
+  register: framework_version
+
+- name: Get User Entry Point
+  shell: cat '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/entry_point.txt'
+  register: entrypoint
+
+- name: Check output folder variable exists
+  stat:
+    path: '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/output_folder.txt'
+  register: stat_ouput_folder_variable
+
+- name: Get output folder variable value
+  when: stat_ouput_folder_variable.stat.exists
+  shell: cat '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/output_folder.txt'
+  register: output_folder_name
+
+- name: Check output folder exists
+  when: output_folder_name is defined
+  stat:
+    path: '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/{{ output_folder_name.stdout }}'
+  register: stat_ouput_folder
+
+- name: Create output folder if non-exist
+  when: output_folder_name is defined and not stat_ouput_folder.stat.exists
+  file:
+    path: '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/{{ output_folder_name.stdout }}'
+    state: directory
+
+- name: Set training output folder name by file
+  when: output_folder_name is defined
+  set_fact:
+    training_output_folder_name: "{{ output_folder_name.stdout }}"
+
+- name: Generate new output folder if non-exist
+  when: output_folder_name is not defined
+  file:
+    path: '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/training_result'
+    state: directory
+
+- name: Set training output folder name by generation
+  when: output_folder_name is not defined
+  set_fact:
+    training_output_folder_name: "training_result"
+
+- name: Install {{ runtime.stdout }} Runtime
+  when: runtime_name != ''
+  shell:
+    cmd: |
+      set -x
+      set -e
+      runtime_name={{ runtime_name.stdout }}
+      runtime_version={{ runtime_version.stdout }}
+      add-apt-repository -y ppa:deadsnakes/ppa
+      apt-key adv --keyserver keyserver.ubuntu.com --recv-keys F60F4B3D7FA2AF80
+      apt update
+      if [ $runtime_name == 'python' ];then
+        apt install -y $runtime_name$runtime_version
+        apt install -y python2.7 python3.5 python3.6 python3.7
+      fi
+
+      if [ $runtime_name == 'java' ];then
+        apt install -y default-jre default-jdk
+        apt install -y openjdk-7-jre openjdk-8-jdk
+      fi
+
+      if [ $runtime_name == 'c' ];then
+        apt install -y gcc=$runtime_version g++=$runtime_version
+        apt install -y gcc-7 g++-7 gcc-8 g++-8 gcc-9 g++-9
+      fi
+
+      if [ $runtime_name == 'go' ];then
+        apt install -y golang-go=$runtime_version
+      fi
+
+    executable: /bin/bash
+
+- name: Prepare GPU env (GPU driver and CUDA)
+  when: is_gpu_enabled
+  shell:
+    cmd: |
+      set -xe
+      apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub
+      wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_9.1.85-1_amd64.deb
+      cd /var/
+      apt purge -y cuda*
+      apt-get remove -y --purge nvidia-418 nvidia-modprobe nvidia-settings
+      cd -
+      apt install -y ./cuda-repo-ubuntu1604_9.1.85-1_amd64.deb
+      wget http://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1604/x86_64/nvidia-machine-learning-repo-ubuntu1604_1.0.0-1_amd64.deb
+      apt install -y ./nvidia-machine-learning-repo-ubuntu1604_1.0.0-1_amd64.deb
+      apt update
+      apt install -y cuda9.0 cuda-cublas-9-0 cuda-cufft-9-0 cuda-curand-9-0 cuda-cusolver-9-0 cuda-cusparse-9-0 libcudnn7=7.2.1.38-1+cuda9.0 libnccl2=2.2.13-1+cuda9.0 cuda-command-line-tools-9-0
+      apt install -y linux-headers-4.4.0-142-generic
+      wget http://us.download.nvidia.com/tesla/384.81/NVIDIA-Linux-x86_64-384.81.run
+      chmod +x ./NVIDIA-Linux-x86_64-384.81.run
+      cat > 'input' <<EOF
+      yes
+      yes
+      EOF
+      ./NVIDIA-Linux-x86_64-384.81.run -a --ui=none < ./input
+    executable: /bin/bash
+
+- name: Install {{ framework.stdout }}-{{ framework_version.stdout }}
+  when:
+    ( framework.stdout == "tensorflow" and runtime_name.stdout in ["python", "c", "java", "go"] ) or
+    ( framework.stdout == "pytorch" and runtime_name.stdout in ["python", "c"] )
+  shell:
+    cmd: |
+      set -x
+      set -e
+      framework={{ framework.stdout }}
+      framework_version={{ framework_version.stdout }}
+      runtime_name={{ runtime_name.stdout }}
+
+      if [ $framework == "tensorflow" ];then
+        if [ $runtime_name == "python" ];then
+          if {{ is_gpu_enabled | lower }} ;then
+            pip install tensorflow-gpu=={{ framework_version.stdout }}
+          else
+            pip install tensorflow=={{ framework_version.stdout }}
+          fi
+        fi
+        if [ $runtime_name == "java" ];then
+          wget https://storage.googleapis.com/tensorflow/libtensorflow_jni-cpu-linux-x86_64-{{ framework_version.stdout }}.tar.gz
+          tar -xvf libtensorflow_jni-cpu-linux-x86_64-{{ framework_version.stdout }}.tar.gz
+        fi
+        if [ $runtime_name == "go" ];then
+          mkdir ./download
+          export GOPATH=`pwd`/download
+          apt install -y git-core
+          go get github.com/tensorflow/tensorflow/tensorflow/go
+          go test github.com/tensorflow/tensorflow/tensorflow/go
+          git checkout tags/{{ framework_version.stdout }}
+
+        fi
+        if [ $runtime_name == "c" ];then
+          wget https://storage.googleapis.com/tensorflow/libtensorflow-cpu-linux-x86_64-{{ framework_version.stdout }}.tar.gz
+          tar -xz libtensorflow-cpu-linux-x86_64-{{ framework_version.stdout }}.tar.gz /usr/local
+          ldconfig
+        fi
+      fi
+
+      if [ $framework == 'pythorch' ];then
+        if [ $runtime_name == "python" ];then
+          pip install torch=={{ framework_version.stdout }} torchvision
+        fi
+        if [ $runtime_name == "c" ];then
+          wget https://download.pytorch.org/libtorch/cu90/libtorch-shared-with-deps-latest.zip
+          apt install zip
+          unzip libtorch-shared-with-deps-latest.zip
+        fi
+      fi
+
+    executable: /bin/bash
+
+- name: Run Tensorflow Python Job
+  when: framework.stdout == "tensorflow" and runtime_name.stdout in ["python", "java", "go", "c"]
+  shell:
+    cmd: |
+      set -x
+      set -e
+
+      user_data_folder='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/'
+      cd $user_data_folder
+
+      py_file={{ entrypoint.stdout }}
+
+      result_folder="{{ ansible_user_dir }}/workspace/test_results/"
+
+      '{{ runtime.stdout }}' $py_file | tee ${result_folder}"/process_log.txt"
+    executable: /bin/bash
+
+- name: Run PyTorch Python Job
+  when: framework.stdout == "pytorch" and runtime_name.stdout in ["python", "c"]
+  shell:
+    cmd: |
+      set -x
+      set -e
+
+      user_data_folder='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/'
+      cd $user_data_folder
+
+      py_file=`cat entry_point.txt`
+
+      result_folder="{{ ansible_user_dir }}/workspace/test_results/"
+
+      '{{ runtime.stdout }}' $py_file | tee ${result_folder}"/process_log.txt"
+    executable: /bin/bash
+
+- name: Install tensorflow.js and convert training model
+  when: framework.stdout == "tensorflow"
+  shell:
+    cmd: |
+      set -x
+      set -e
+      pip install tensorflowjs
+
+      tensorflowjs_converter --input_format keras \
+        '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/{{ training_output_folder_name }}/my_model.h5' \
+        '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/tfjs'
+    executable: /bin/bash
+
+- name: Collect Traning or Inference Result
+  shell:
+    cmd: |
+      set -x
+      set -e
+
+      mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/{{ training_output_folder_name }}' \
+        '{{ ansible_user_dir }}/workspace/test_results/'
+      mkdir '{{ ansible_user_dir }}/workspace/test_results/web_page/'
+      mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/tf_js.html' '{{ ansible_user_dir }}/workspace/test_results/web_page/index.html'
+      mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/tfjs/' \
+        '{{ ansible_user_dir }}/workspace/test_results/web_page/'
+      mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/css' \
+        '{{ ansible_user_dir }}/workspace/test_results/web_page/'
+      mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/js' \
+        '{{ ansible_user_dir }}/workspace/test_results/web_page/'
+
+      change_num="{{ zuul.change }}"
+      change_prefix=`echo ${change_num:0-2}`
+      build_id=`echo '{{ zuul.build }}' | cut -c 1-7`
+      model_path="http:\/\/status.openlabtesting.org\/logs\/$change_prefix\/$change_num\/{{ zuul.patchset }}\/check\/{{ zuul.job }}\/$build_id\/test_results\/web_page\/tfjs\/model.json"
+      sed -i "s/replace.me/$model_path/" \
+        '{{ ansible_user_dir }}/workspace/test_results/web_page/index.html'
+    executable: /bin/bash
+
+- name: ENV keeping
+  when: env_keeping
+  shell:
+    cmd: |
+      set -xe
+      sleep 48000
+    executable: /bin/bash

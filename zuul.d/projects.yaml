@@ -180,3 +180,20 @@
             branches: master
         - spark-integration-test-minikube-k8s:
             branches: master
+
+- project:
+    name: moo-ai/moo-ai.github.io
+    check:
+      jobs:
+        - ai-on-openlab-test-vm:
+            files:
+              - ^user_data/(?!.*?sleep).*?$
+        - ai-on-openlab-test-vm-env-keeping:
+            files:
+              - ^user_data/.*sleep.*
+        - ai-on-openlab-test-vm-with-gpu:
+            files:
+              - ^user_data_gpu/(?!.*?sleep).*?$
+        - ai-on-openlab-test-vm-with-gpu-env-keeping:
+            files:
+              - ^user_data_gpu/.*sleep.*
