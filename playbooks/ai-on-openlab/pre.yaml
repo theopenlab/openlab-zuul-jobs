@@ -144,6 +144,9 @@
               "credential": "demo/demo",
               "result_url": "$result_url"
           }
+          if '{{ env_keeping | lower }}' == 'true':
+              exist_data["$job_name"]["result_url"] = ''
+
           with open('task_list.json_tmp', 'w') as file:
               json.dump(exist_data, file)
           EOF
