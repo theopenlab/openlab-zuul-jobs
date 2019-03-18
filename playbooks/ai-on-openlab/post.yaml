@@ -5,9 +5,9 @@
       shell: echo '{{zuul.build}}' | cut -c 1-7
       register: build_id
 
-    - name: Get availave external ports
-      shell: cat choosed_port
-      register: ext_port
+#    - name: Get availave external ports
+#      shell: cat choosed_port
+#      register: ext_port
 
     - name: Clean up remote repo resources
       shell:
