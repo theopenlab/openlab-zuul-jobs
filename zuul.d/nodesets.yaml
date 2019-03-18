@@ -59,3 +59,9 @@
     nodes:
       - name: ubuntu-xenial-gpu
         label: ubuntu-xenial-gpu
+
+- nodeset:
+    name: wxy-admin-cirros
+    nodes:
+      - name: wxy-admin-cirros
+        label: wxy-admin-cirros

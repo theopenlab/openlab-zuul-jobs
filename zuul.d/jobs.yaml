@@ -1227,6 +1227,14 @@
     run: playbooks/arm-on-openlab/run.yaml
     nodeset: ubuntu-xenial-arm64
 
+- job:
+    name: check-test-ha
+    parent: init-test
+    description: |
+      Check HA.
+    run: playbooks/openlab-ha/run.yaml
+    nodeset: wxy-admin-cirros
+
 
 - job:
     name: spark-integration-test-kubeadm-k8s
