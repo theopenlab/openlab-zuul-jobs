@@ -1,0 +1,11 @@
+- hosts: wxy666
+  become: yes
+  connection: ssh
+  remote_user: root
+  password: openstack@
+  roles:
+    - deploy-openlab-ha
+  vars:
+    ansible_connection: ssh
+    ansible_user: root
+    ansible_password: openstack@
