@@ -10,7 +10,7 @@
       doesn't validate the node and does not generate an ARA report.
       These tasks, if required, can be included by the dependant jobs
       themselves on a need basis.
-    attempts: 1
+    attempts: 2
     pre-run: playbooks/base/pre.yaml
     post-run:
       - playbooks/base/post-ssh.yaml
