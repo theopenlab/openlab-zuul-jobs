@@ -3,3 +3,6 @@
   connection: local
   roles:
     - deploy-openlab-ha
+  vars:
+    ansible_ssh_user: root
+    ansible_ssh_pass: openstack@
