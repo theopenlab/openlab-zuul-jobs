@@ -65,3 +65,9 @@
     nodes:
       - name: wxy-admin-cirros
         label: wxy-admin-cirros
+
+- nodeset:
+    name: wxy-admin-ubuntu-16-04
+    nodes:
+      - name: wxy-admin-ubuntu-16-04
+        label: wxy-admin-ubuntu-16-04
