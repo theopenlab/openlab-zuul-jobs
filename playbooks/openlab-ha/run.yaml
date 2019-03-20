@@ -1,4 +1,4 @@
-- hosts: wxy666
+- hosts: all
   become: yes
   connection: local
 #  connection: ssh
