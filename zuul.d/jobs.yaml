@@ -1289,3 +1289,23 @@
     description: |
       Tru to deploy openlab CI environment with labkeeper
     run: playbooks/labkeeper-functional-test/run.yaml
+
+- job:
+    name: labkeeper-functional-test
+    parent: init-test
+    description: |
+      Tru to deploy allinone openlab CI environment with labkeeper
+    run: playbooks/labkeeper-functional-test/run.yaml
+
+- job:
+    name: labkeeper-multi-nodes-functional-test
+    parent: init-test
+    description: |
+      Tru to deploy multi-nodes openlab CI environment with labkeeper
+    run: playbooks/labkeeper-multi-nodes-functional-test/run.yaml
+    nodeset:
+      nodes:
+      - name: zuul01
+        label: ubuntu-xenial
+      - name: nodepool01
+        label: ubuntu-xenial
