@@ -34,9 +34,9 @@
     name: apache/spark
     periodic-0/12:
       jobs:
-        - spark-integration-test-kubeadm-k8s:
+        - spark-integration-test-kubeadm-k8s-v1.14.0:
             branches: master
-        - spark-integration-test-minikube-k8s:
+        - spark-integration-test-minikube-k8s-v1.10.0:
             branches: master
             
 - project:
