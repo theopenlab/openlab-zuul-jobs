@@ -47,3 +47,9 @@
     nodes:
       - name: ubuntu-xenial-huaweicloud
         label: ubuntu-xenial-huaweicloud
+
+- nodeset:
+    name: ubuntu-xenial-gpu
+    nodes:
+      - name: ubuntu-xenial-gpu
+        label: ubuntu-xenial-gpu
