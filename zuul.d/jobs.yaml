@@ -1291,21 +1291,21 @@
     run: playbooks/labkeeper-functional-test/run.yaml
 
 - job:
-    name: labkeeper-functional-test
+    name: labkeeper-allinone-deployment-test
     parent: init-test
     description: |
       Tru to deploy allinone openlab CI environment with labkeeper
-    run: playbooks/labkeeper-functional-test/run.yaml
+    run: playbooks/labkeeper-allinone-deployment-test/run.yaml
 
 - job:
-    name: labkeeper-multi-nodes-functional-test
+    name: labkeeper-allinone-ha-deployment-test
     parent: init-test
     description: |
       Tru to deploy multi-nodes openlab CI environment with labkeeper
-    run: playbooks/labkeeper-multi-nodes-functional-test/run.yaml
+    run: playbooks/labkeeper-allinone-ha-deployment-test/run.yaml
     nodeset:
       nodes:
-      - name: zuul01
+      - name: allinone-master
         label: ubuntu-xenial
-      - name: nodepool01
+      - name: allinone-slave
         label: ubuntu-xenial

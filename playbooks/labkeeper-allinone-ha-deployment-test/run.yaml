@@ -10,6 +10,8 @@
       args:
         executable: /bin/bash
 
+- hosts: allinone-master
+  tasks:
     - name: Prepare ubuntu user for running labkeeper
       become: yes
       shell: |
