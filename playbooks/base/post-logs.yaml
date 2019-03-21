@@ -10,4 +10,4 @@
     - role: upload-logs
       # NOTE: because we use same host for zuul status and logs server, added
       # a '/logs' suffix for the convenience to routing request
-      zuul_log_url: "http://185.52.159.57/logs"
+      zuul_log_url: "http://80.158.17.129/logs"
