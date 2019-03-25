@@ -1262,6 +1262,9 @@
     override-checkout: branch-2.4
     vars:
       k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
+      minikube_version: "v0.30.0"
+      kubectl_version: "v1.10.0"
+      kubernetes_version: "v1.10.0"
 
 - job:
     name: helm-integration-test-kubeadm-k8s

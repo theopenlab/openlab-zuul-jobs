@@ -6,7 +6,11 @@
     # Download kubectl binary
     curl -Lo /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/"{{ kubectl_version }}"/bin/linux/amd64/kubectl && chmod +x /usr/local/bin/kubectl
     sed -i 's/nameserver 127.0.0.1/nameserver 8.8.8.8/' /etc/resolv.conf
-    minikube start --cpus 4 --memory 6144 --vm-driver=none
+    if [[ "{{ kubernetes_version }}" == "latest" ]]; then
+        minikube start --cpus 4 --memory 6144 --vm-driver=none
+    else
+        minikube start --cpus 4 --memory 6144 --vm-driver=none --kubernetes-version {{ kubernetes_version }}
+    fi
     # sleep for waiting cluster ready
     sleep 180
     timeout 300 bash -c '
