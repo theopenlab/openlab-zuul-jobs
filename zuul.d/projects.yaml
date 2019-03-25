@@ -110,3 +110,9 @@
 #      jobs:
 #        - helm-integration-test-kubeadm-k8s
 #        - helm-integration-test-kubeadm-k8s-v1.12.6
+
+- project:
+    name: liu-sheng/cloud-provider-openstack
+    periodic:
+      jobs:
+        - cloud-provider-openstack-unittest
