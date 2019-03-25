@@ -34,7 +34,8 @@
     name: ubuntu-xenial-vexxhost
     nodes:
       - name: ubuntu-xenial-vexxhost
-        label: ubuntu-xenial-vexxhost
+        label: ubuntu-xenial
+        #label: ubuntu-xenial-vexxhost
 
 - nodeset:
     name: ubuntu-xenial-huaweicloud
