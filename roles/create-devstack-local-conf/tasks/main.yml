@@ -25,7 +25,7 @@
       EOF
     executable: /bin/bash
   when:
-    - DISABLE_HTTPD_MOD_WSGI|default(false)|bool == true
+    - DISABLE_HTTPD_MOD_WSGI|default(false)|bool
 
 # Populate local conf with heat service enabled
 - name: create devstack local conf with Heat enabled
@@ -159,7 +159,6 @@
       set -e
       set -x
       cat << EOF >> /tmp/dg-local.conf
-      enable_service designate,designate-central,designate-api,designate-pool-manager,designate-zone-manager,designate-mdns
       enable_plugin designate git://git.openstack.org/openstack/designate
       EOF
     executable: /bin/bash
@@ -266,3 +265,36 @@
     executable: /bin/bash
   when:
     - '"ceph" in enable_services'
+
+- name: create devstack local conf with ironic enabled
+  shell:
+    cmd: |
+      set -e
+      set -x
+      cat << EOF >> /tmp/dg-local.conf
+      enable_plugin ironic https://git.openstack.org/openstack/ironic
+      DEFAULT_INSTANCE_TYPE=baremetal
+      OVERRIDE_PUBLIC_BRIDGE_MTU=1400
+      VIRT_DRIVER=ironic
+      BUILD_TIMEOUT=720
+      IRONIC_BAREMETAL_BASIC_OPS=True
+      IRONIC_BUILD_DEPLOY_RAMDISK=False
+      IRONIC_AUTOMATED_CLEAN_ENABLED=False
+      IRONIC_CALLBACK_TIMEOUT=600
+      IRONIC_DEPLOY_DRIVER=ipmi
+      IRONIC_INSPECTOR_BUILD_RAMDISK=False
+      IRONIC_RAMDISK_TYPE=tinyipa
+      IRONIC_TEMPEST_BUILD_TIMEOUT=720
+      IRONIC_TEMPEST_WHOLE_DISK_IMAGE=False
+      IRONIC_VM_COUNT=1
+      IRONIC_VM_EPHEMERAL_DISK=1
+      IRONIC_VM_LOG_DIR=/opt/stack/new/ironic-bm-logs
+      IRONIC_VM_SPECS_RAM=384
+      IRONIC_DEFAULT_DEPLOY_INTERFACE=direct
+      IRONIC_ENABLED_DEPLOY_INTERFACES=iscsi,direct
+      SWIFT_ENABLE_TEMPURLS=True
+      SWIFT_TEMPURL_KEY=secretkey
+      EOF
+    executable: /bin/bash
+  when:
+    - '"ironic" in enable_services'

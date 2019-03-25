@@ -5,14 +5,8 @@
 
 - name: Install master of Packer from source
   shell: |
-    # path workaround
-    cd '{{ ansible_user_dir }}'
-    mkdir -p src/github.com/hashicorp/
-    cp -r '{{ zuul.project.src_dir }}' src/github.com/hashicorp/
-    cd src/github.com/hashicorp/packer
-
     set -ex
-    make dev
+    make bin
     packer version
   environment: '{{ global_env }}'
   args:

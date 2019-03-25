@@ -1,4 +1,3 @@
 ---
-minikube_version: "latest"
-kubectl_version: "latest"
-kubernetes_version: "latest"
+minikube_version: "v0.30.0"
+kubectl_version: "v1.10.0"
