@@ -2,12 +2,11 @@
   become: yes
   roles:
     - config-golang
+    - install-k8s
     - clone-devstack-gate-to-workspace
-    - create-devstack-local-conf
     - role: install-devstack
       environment:
         OVERRIDE_ENABLED_SERVICES: 'key,c-sch,c-api,c-vol,rabbit,mysql'
-    - install-k8s
   tasks:
     - name: Run cinder standalone acceptance tests with cloud-provider-openstack
       shell:
@@ -31,7 +30,7 @@
           region = $OS_REGION_NAME
 
           [BlockStorage]
-          bs-version = v2
+          bs-version = v3
           ignore-volume-az = yes
           EOF
 

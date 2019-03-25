@@ -29,7 +29,7 @@
           region = $OS_REGION_NAME
 
           [BlockStorage]
-          bs-version = v2
+          bs-version = v3
           ignore-volume-az = yes
           EOF
 
@@ -119,7 +119,7 @@
               --deployment=local \
               --provider=local \
               --ginkgo-parallel=1 \
-              --test_args="--ginkgo.focus=\\[Conformance\\] --ginkgo.noColor=true" \
+              --test_args="--ginkgo.focus=\\[Conformance\\] --ginkgo.noColor=true --ginkgo.skip=\\[sig\\-apps\\]\\sDaemon\\sset\\s\\[Serial\\]\\sshould\\srollback\\swithout\\sunnecessary\\srestarts\\s\\[Conformance\\]" \
               --timeout=150m | tee $LOG_DIR/e2e.log
         executable: /bin/bash
         chdir: '{{ k8s_os_provider_src_dir }}'
@@ -127,15 +127,29 @@
     - name: Run image build and publish for cloud-provider-openstack
       shell:
         cmd: |
-          set -x
-          set -e
-          set -o pipefail
+          if [ '{{ zuul.pipeline }}' == 'periodic' ] && [ '{{ zuul.branch }}' == 'master' ]; then
+            export LOG_DIR='{{ k8s_log_dir }}'
+            docker login -u {{dockerhub.username}} -p {{dockerhub.password}}
+            export REGISTRY=docker.io/k8scloudprovider
+            export VERSION=latest
 
-          if [ '{{ zuul.pipeline }}' != 'periodic' ]; then
-              exit 0;
+            set -x
+            set -e
+            set -o pipefail
+
+            make images 2>&1 | tee $LOG_DIR/image-build-upload.log
+
+            docker push ${REGISTRY}/openstack-cloud-controller-manager:${VERSION} | tee $LOG_DIR/image-build-upload.log
+            docker push ${REGISTRY}/cinder-flex-volume-driver:${VERSION} | tee $LOG_DIR/image-build-upload.log
+            docker push ${REGISTRY}/cinder-provisioner:${VERSION} | tee $LOG_DIR/image-build-upload.log
+            docker push ${REGISTRY}/cinder-csi-plugin:${VERSION} | tee $LOG_DIR/image-build-upload.log
+            docker push ${REGISTRY}/k8s-keystone-auth:${VERSION} | tee $LOG_DIR/image-build-upload.log
+            docker push ${REGISTRY}/octavia-ingress-controller:${VERSION} | tee $LOG_DIR/image-build-upload.log
+            docker push ${REGISTRY}/manila-provisioner:${VERSION} | tee $LOG_DIR/image-build-upload.log
+          else
+            exit 0;
           fi
 
-          DOCKER_USERNAME={{dockerhub.username}} DOCKER_PASSWORD={{dockerhub.password}} REGISTRY=docker.io/k8scloudprovider VERSION=latest make upload-images 2>&1 | tee $LOG_DIR/image-build-upload.log
         executable: /bin/bash
         chdir: '{{ k8s_os_provider_src_dir }}'
       environment: '{{ global_env }}'

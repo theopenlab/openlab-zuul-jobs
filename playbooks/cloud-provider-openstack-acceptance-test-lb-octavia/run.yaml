@@ -32,10 +32,10 @@
           region = $OS_REGION_NAME
           [LoadBalancer]
           use-octavia = true
-          floating-network-id = $(openstack network show public -f value -c id)
-          subnet-id = $(openstack network show int-net -f value -c subnets)
+          floating-network-id = $(openstack network list --external -f value -c ID | head -n 1)
+          subnet-id = $(openstack network list --internal -f value -c Subnets | head -n 1)
           [BlockStorage]
-          bs-version = v2
+          bs-version = v3
           ignore-volume-az = yes
           EOF
 

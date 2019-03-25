@@ -28,7 +28,7 @@
           username = $OS_USERNAME
           region = $OS_REGION_NAME
           [BlockStorage]
-          bs-version = v2
+          bs-version = v3
           ignore-volume-az = yes
           EOF
 
@@ -64,7 +64,6 @@
           export MAX_TIME_FOR_URL_API_SERVER=5
 
           # Requirements to deploy the csi cinder driver
-          export FEATURE_GATES="CSIPersistentVolume=true,MountPropagation=true"
           export RUNTIME_CONFIG="storage.k8s.io/v1alpha1=true"
 
           # -E preserves the current env vars, but we need to special case PATH
@@ -87,12 +86,12 @@
           '{{ kubectl }}' create clusterrolebinding --user system:kube-controller-manager  kube-system-cluster-admin-6 --clusterrole cluster-admin
 
           # Where csi provisioner reads instance id from
+          # Where csi provisioner reads instance id from
           if [ -d /mnt/config/openstack ]; then
               INSTANCE_UUID=$(python -c "import json;print json.load(open('/mnt/config/openstack/latest/meta_data.json', 'r'))['uuid']")
           else
               INSTANCE_UUID=$(curl http://169.254.169.254/openstack/latest/meta_data.json | python -c "import sys, json; print json.load(sys.stdin)['uuid']")
           fi
-
           echo "$INSTANCE_UUID" > /var/lib/cloud/data/instance-id
 
           # Build latest images from source
@@ -110,22 +109,10 @@
           EOF
           docker build -t docker.io/k8scloudprovider/cinder-csi-plugin:latest .
 
-          git clone https://github.com/kubernetes-csi/external-provisioner ${GOPATH}/src/github.com/kubernetes-csi/external-provisioner
-          make -C ${GOPATH}/src/github.com/kubernetes-csi/external-provisioner container
-          docker tag quay.io/k8scsi/csi-provisioner:canary docker.io/k8scsi/csi-provisioner:latest
-
-          git clone https://github.com/kubernetes-csi/external-attacher ${GOPATH}/src/github.com/kubernetes-csi/external-attacher
-          make -C ${GOPATH}/src/github.com/kubernetes-csi/external-attacher container
-          docker tag quay.io/k8scsi/csi-attacher:canary docker.io/k8scsi/csi-attacher:latest
-
-          git clone https://github.com/kubernetes-csi/driver-registrar ${GOPATH}/src/github.com/kubernetes-csi/driver-registrar
-          make -C ${GOPATH}/src/github.com/kubernetes-csi/driver-registrar container
-          docker tag quay.io/k8scsi/driver-registrar:canary docker.io/k8scsi/driver-registrar:latest
-
           # Replace custom cloud config
           {
               cloud_cfg=$(base64 -w 0 ${CLOUD_CONFIG})
-              sed "s/cloud.conf.*$/cloud.conf: $cloud_cfg/g" -i manifests/cinder-csi-plugin/csi-secret-cinderplugin.yaml
+              sed "s/cloud\.conf:.*$/cloud.conf: $cloud_cfg/g" -i manifests/cinder-csi-plugin/csi-secret-cinderplugin.yaml
           } > /dev/null 2>&1
 
           # Enable services

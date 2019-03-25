@@ -2,36 +2,26 @@
   become: yes
   roles:
     - config-golang
-    - role: export-cloud-openrc
-      vars:
-        cloud_name: 'vexxhost'
     - install-k8s
+    - clone-devstack-gate-to-workspace
+    - role: create-devstack-local-conf
+      enable_services:
+        - 'manila'
+        - 'ceph'
+    - role: install-devstack
+      environment:
+        OVERRIDE_ENABLED_SERVICES: 'dstat,g-api,g-reg,key,mysql,n-api,n-api-meta,n-cauth,n-cond,n-cpu,n-novnc,n-obj,n-sch,placement-api,q-agt,q-dhcp,q-l3,q-meta,q-metering,q-svc,rabbit'
+        PROJECTS: 'openstack/devstack-plugin-ceph'
   tasks:
-    - name: Run kubernetes cinder acceptance tests with cloud-provider-openstack
+    - name: Run Manila provisioner acceptance tests
       shell:
         cmd: |
           set -x
           set -e
           set -o pipefail
 
-          # Build cloud-provider-openstack binaries
-          make build
-
-          # Create cloud-config
-          mkdir -p /etc/kubernetes/
-          cat << EOF >> /etc/kubernetes/cloud-config
-          [Global]
-          domain-name = $OS_USER_DOMAIN_NAME
-          tenant-id = $OS_PROJECT_ID
-          auth-url = $OS_AUTH_URL
-          password = $OS_PASSWORD
-          username = $OS_USERNAME
-          region = $OS_REGION_NAME
-
-          [BlockStorage]
-          bs-version = v3
-          ignore-volume-az = yes
-          EOF
+          # Build manila-provisioner binary
+          make manila-provisioner
 
           export API_HOST_IP=$(ip route get 1.1.1.1 | awk '{print $7}')
           export KUBELET_HOST="0.0.0.0"
@@ -41,14 +31,6 @@
           export ENABLE_SINGLE_CA_SIGNER=true
           export KUBE_ENABLE_CLUSTER_DNS=false
           export LOG_LEVEL=4
-          # We want to use the openstack cloud provider
-          export CLOUD_PROVIDER=openstack
-          # We want to run a separate cloud-controller-manager for openstack
-          export EXTERNAL_CLOUD_PROVIDER=true
-          # DO NOT change the location of the cloud-config file. It is important for the old cinder provider to work
-          export CLOUD_CONFIG=/etc/kubernetes/cloud-config
-          # Specify the OCCM binary
-          export EXTERNAL_CLOUD_PROVIDER_BINARY="$PWD/openstack-cloud-controller-manager"
 
           # location of where the kubernetes processes log their output
           mkdir -p '{{ k8s_log_dir }}'
@@ -57,11 +39,7 @@
           export ALLOW_PRIVILEGED=true
           # Just kick off all the processes and drop down to the command line
           export ENABLE_DAEMON=true
-          if [ -d /mnt/config/openstack ]; then
-              export HOSTNAME_OVERRIDE=$(hostname)
-          else
-              export HOSTNAME_OVERRIDE=$(curl http://169.254.169.254/openstack/latest/meta_data.json | python -c "import sys, json; print json.load(sys.stdin)['name']")
-          fi
+          export HOSTNAME_OVERRIDE=127.0.0.1
           export MAX_TIME_FOR_URL_API_SERVER=5
 
           # -E preserves the current env vars, but we need to special case PATH
@@ -69,7 +47,8 @@
           pushd '{{ k8s_src_dir }}'
           sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
           popd
-          nohup ./cinder-provisioner --cloud-config "$CLOUD_CONFIG" --kubeconfig /var/run/kubernetes/admin.kubeconfig --id cinder > "$LOG_DIR/cinder-provisioner.log" 2>&1 &
+
+          nohup ./manila-provisioner --provisioner=manila-provisioner --kubeconfig /var/run/kubernetes/admin.kubeconfig > "$LOG_DIR/manila-provisioner.log" 2>&1 &
 
           # set up the config we need for kubectl to work
           '{{ kubectl }}' config set-cluster local --server=https://localhost:6443 --certificate-authority=/var/run/kubernetes/server-ca.crt
@@ -85,13 +64,30 @@
           '{{ kubectl }}' create clusterrolebinding --user system:kube-controller-manager  kube-system-cluster-admin-6 --clusterrole cluster-admin
 
           # Sleep to wait for creating serviceaccount default/default complete
-          sleep 30
-          # Remove node taint
-          '{{ kubectl }}' taint nodes "$HOSTNAME_OVERRIDE" node.cloudprovider.kubernetes.io/uninitialized- || true
-          # Cinder test
-          '{{ kubectl }}' apply -f examples/persistent-volume-provisioning/cinder/cinder-in-tree-full.yaml
+          sleep 5
 
-          # If test passed
+          # OpenStack credentials for manila-provisioner
+          '{{ kubectl }}' create secret generic manila-provisioner-secret --from-literal=os-authURL=$OS_AUTH_URL --from-literal=os-domainID=$OS_USER_DOMAIN_ID --from-literal=os-userName=$OS_USERNAME --from-literal=os-password=$OS_PASSWORD --from-literal=os-projectName=$OS_PROJECT_NAME --from-literal=os-region=$OS_REGION_NAME
+
+          # Create StorageClass
+          cat <<EOF | '{{ kubectl }}' create -f -
+          apiVersion: storage.k8s.io/v1beta1
+          kind: StorageClass
+          metadata:
+            name: manila-cephfs-share
+          provisioner: manila-provisioner
+          parameters:
+            osSecretName: manila-provisioner-secret
+            type: cephfstype
+            protocol: CEPHFS
+            backend: cephfs
+          EOF
+
+          # Create a PVC for a CephFS share and a test pod that mounts it
+          '{{ kubectl }}' create -f examples/manila-provisioner/cephfs/user-deploy/pvc.yaml
+          '{{ kubectl }}' create -f examples/manila-provisioner/cephfs/user-deploy/pod.yaml
+
+          # Check for status
           if timeout 300 bash -c '
               while :
               do
@@ -103,7 +99,8 @@
               echo 'Run test successful'
           else
               echo 'Run test failed'
-              '{{ kubectl }}' describe pods web
+              '{{ kubectl }}' describe pod manila-cephfs-pod
+              '{{ kubectl }}' describe pvc manila-cephfs-pvc
               exit 1
           fi
         executable: /bin/bash

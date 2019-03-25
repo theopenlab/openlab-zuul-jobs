@@ -1,6 +1,7 @@
 - hosts: all
   roles:
     - config-golang
+    - install-k8s
     - clone-devstack-gate-to-workspace
     - role: install-devstack
       environment:
@@ -32,7 +33,7 @@
           region = $OS_REGION_NAME
 
           [BlockStorage]
-          bs-version = v2
+          bs-version = v3
           ignore-volume-az = yes
           EOF
 
@@ -116,9 +117,15 @@
           '{{ kubectl }}' config set-credentials myself --client-key=/var/run/kubernetes/client-admin.key --client-certificate=/var/run/kubernetes/client-admin.crt
           '{{ kubectl }}' config set-context local --cluster=local --user=myself
           '{{ kubectl }}' config use-context local
-          sleep 10
           # Hack for RBAC for all for the new cloud-controller process, we need to do better than this
-          '{{ kubectl }}' create clusterrolebinding --user system:serviceaccount:kube-system:default kube-system-cluster-admin-1 --clusterrole cluster-admin
+          # It looks like we need to wait the Kubernetes services get ready before binding roles, so add a retry mechanism here
+          timeout 120 bash -c '
+              while :
+              do
+                  {{ kubectl }} create clusterrolebinding --user system:serviceaccount:kube-system:default kube-system-cluster-admin-1 --clusterrole cluster-admin && break
+                  sleep 5
+              done
+          '
           '{{ kubectl }}' create clusterrolebinding --user system:serviceaccount:kube-system:pvl-controller kube-system-cluster-admin-2 --clusterrole cluster-admin
           '{{ kubectl }}' create clusterrolebinding --user system:serviceaccount:kube-system:cloud-node-controller kube-system-cluster-admin-3 --clusterrole cluster-admin
           '{{ kubectl }}' create clusterrolebinding --user system:serviceaccount:kube-system:cloud-controller-manager kube-system-cluster-admin-4 --clusterrole cluster-admin

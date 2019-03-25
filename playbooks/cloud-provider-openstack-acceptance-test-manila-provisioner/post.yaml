@@ -1,0 +1,21 @@
+- hosts: all
+  become: yes
+  tasks:
+    - name: Clean up resources for Manila provisioner acceptance tests
+      shell:
+        cmd: |
+          set -e
+          set -x
+          '{{ kubectl }}' config use-context local
+
+          '{{ kubectl }}' delete -f examples/manila-provisioner/cephfs/user-deploy/pod.yaml
+          '{{ kubectl }}' delete -f examples/manila-provisioner/cephfs/user-deploy/pvc.yaml
+
+          # wait a bit - we need the storageclass and secrets for deletion
+          sleep 10
+
+          '{{ kubectl }}' delete storageclass manila-cephfs-share
+          '{{ kubectl }}' delete secret manila-provisioner-secret
+        executable: /bin/bash
+        chdir: '{{ k8s_os_provider_src_dir }}'
+      environment: '{{ global_env }}'

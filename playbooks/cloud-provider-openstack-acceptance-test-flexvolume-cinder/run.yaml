@@ -8,6 +8,7 @@
         executable: /bin/bash
   roles:
     - config-golang
+    - install-k8s
     - clone-devstack-gate-to-workspace
     - role: create-devstack-local-conf
       enable_services:
@@ -16,7 +17,6 @@
       environment:
         OVERRIDE_ENABLED_SERVICES: 'key,c-sch,c-api,c-vol,rabbit,mysql'
         PROJECTS: 'openstack/devstack-plugin-ceph'
-    - install-k8s
   tasks:
     - name: Run flexvolume cinder conformance tests with cloud-provider-openstack
       shell:
@@ -40,7 +40,7 @@
           region = $OS_REGION_NAME
 
           [BlockStorage]
-          bs-version = v2
+          bs-version = v3
           ignore-volume-az = yes
           EOF
 
@@ -94,7 +94,8 @@
           # Sleep to wait for creating serviceaccount default/default complete
           sleep 5
           # Run test
-          export VOLUME_ID=$(cinder create 1 | awk '/ id / {print $4}')
+          VOLUME_ID=$(cinder create 1 | awk '/ id / {print $4}')
+          sed -i 's/$VOLUME_ID/'"$VOLUME_ID"'/' examples/cinder-flexvolume/nginx.yaml
           '{{ kubectl }}' create -f examples/cinder-flexvolume/nginx.yaml
 
           # If test passed
