@@ -248,14 +248,14 @@
     description: |
       Run Kubernetes openstack-cloud-controller-manager unit test in devstack instance
     run: playbooks/cloud-provider-openstack-unittest-nested/run.yaml
-    nodeset: ubuntu-xenial-otc
+    nodeset: ubuntu-xenial
 
 # Kubernetes cloud-provider-openstack jobs
 - job:
     name: cloud-provider-openstack-test
     parent: golang-test
     description: |
-      Run unit test of cloud-provider-openstack repo against vexxhost cloud
+      Base job for all types of cloud-provider-openstack test jobs
     pre-run: playbooks/cloud-provider-openstack-test/pre.yaml
     post-run: playbooks/cloud-provider-openstack-test/post.yaml
     nodeset: ubuntu-xenial-vexxhost
@@ -278,12 +278,11 @@
 
 - job:
     name: cloud-provider-openstack-format
-    parent: golang-test
+    parent: cloud-provider-openstack-test
     description: |
       Run gofmt and typo checking of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-format/run.yaml
-    vars:
-      k8s_os_provider_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack'
+    nodeset: ubuntu-xenial-ut
 
 - job:
     name: cloud-provider-openstack-acceptance-test-k8s-cinder
@@ -300,10 +299,14 @@
     parent: cloud-provider-openstack-test
     description: |
       Run Kubernetes E2E Conformance tests against Kubernetes master
+    vars:
+      go_version: '1.12.1'
     run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/post.yaml
     secrets:
       - vexxhost_credentials
+      - gcp_account
+      - dockerhub
 
 - job:
     name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.10
@@ -311,7 +314,44 @@
     description: |
       Run Kubernetes E2E Conformance tests against Kubernetes v1.10
     vars:
-      k8s_version: 'v1.10.0'
+      go_version: '1.9.3'
+      k8s_version: 'release-1.10'
+
+- job:
+    name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.11
+    parent: cloud-provider-openstack-acceptance-test-e2e-conformance
+    description: |
+      Run Kubernetes E2E Conformance tests against Kubernetes v1.11
+    vars:
+      go_version: '1.10.3'
+      k8s_version: 'release-1.11'
+
+- job:
+    name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.12
+    parent: cloud-provider-openstack-acceptance-test-e2e-conformance
+    description: |
+      Run Kubernetes E2E Conformance tests against Kubernetes v1.12
+    vars:
+      go_version: '1.10.8'
+      k8s_version: 'release-1.12'
+
+- job:
+    name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.13
+    parent: cloud-provider-openstack-acceptance-test-e2e-conformance
+    description: |
+      Run Kubernetes E2E Conformance tests against Kubernetes v1.13
+    vars:
+      go_version: '1.11.5'
+      k8s_version: 'release-1.13'
+
+- job:
+    name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.14
+    parent: cloud-provider-openstack-acceptance-test-e2e-conformance
+    description: |
+      Run Kubernetes E2E Conformance tests against Kubernetes v1.14
+    vars:
+      go_version: '1.12.1'
+      k8s_version: 'release-1.14'
 
 - job:
     name: cloud-provider-openstack-acceptance-test-standalone-cinder
@@ -331,6 +371,15 @@
     post-run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/post.yaml
     secrets:
       - vexxhost_credentials
+
+- job:
+    name: cloud-provider-openstack-acceptance-test-manila-provisioner
+    parent: cloud-provider-openstack-test
+    description: |
+      Run Manila provisioner acceptance tests of cloud-provider-openstack
+    run: playbooks/cloud-provider-openstack-acceptance-test-manila-provisioner/run.yaml
+    post-run: playbooks/cloud-provider-openstack-acceptance-test-manila-provisioner/post.yaml
+    nodeset: ubuntu-xenial
 
 - job:
     name: cloud-provider-openstack-acceptance-test-lb-octavia
