@@ -116,3 +116,4 @@
     periodic:
       jobs:
         - cloud-provider-openstack-unittest
+        - cloud-provider-openstack-acceptance-test-e2e-conformance
