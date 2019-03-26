@@ -1363,9 +1363,9 @@
         label: ubuntu-xenial
 
 - job:
-    name: containerd-build
+    name: containerd-build-arm
     parent: init-test
     description: |
       Containerd build in openlab cluster.
     run: playbooks/containerd-build/run.yaml
-    nodeset: ubuntu-xenial
+    nodeset: ubuntu-xenial-arm

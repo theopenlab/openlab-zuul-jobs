@@ -101,7 +101,7 @@
     name: Yikun/containerd
     check:
       jobs:
-        - containerd-build
+        - containerd-build-arm
 
 - project:
     name: liu-sheng/spark
