@@ -78,10 +78,42 @@
 #        - openshift-origin-functional-test-huaweicloud:
 #            branches: master
 
-# placehold for
-# gophercloud/gophercloud
-# cloudfoundry/bosh-openstack-cpi-release
-# kubernetes/cloud-provider-openstack
+- project:
+    name: gophercloud/gophercloud
+    periodic-4/16:
+      jobs:
+        - gophercloud-unittest:
+            branches: master
+        - gophercloud-acceptance-test:
+            branches: master
+
+- project:
+    name: cloudfoundry/bosh-openstack-cpi-release
+    periodic-4/16:
+      jobs:
+        - bosh-openstack-cpi-release-acceptance-test:
+            branches: master
+        - bosh-openstack-cpi-release-acceptance-test-rocky:
+            branches: master
+        - bosh-openstack-cpi-release-acceptance-test-queens:
+            branches: master
+        - bosh-openstack-cpi-release-acceptance-test-pike:
+            branches: master
+        - bosh-openstack-cpi-release-acceptance-test-ocata:
+            branches: master
+
+- project:
+    name: kubernetes/cloud-provider-openstack
+    periodic-4/16:
+      jobs:
+        - cloud-provider-openstack-acceptance-test-e2e-conformance:
+            branches: master
+        - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.12:
+            branches: release-1.12
+        - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.13:
+            branches: release-1.13
+        - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.14:
+            branches: master # TODO update to release-1.14 when cpo cuts it - k8s already has release-1.14 branch
 
 ####################### periodic jobs on 06:00/18:00 ##########################
 - project:
