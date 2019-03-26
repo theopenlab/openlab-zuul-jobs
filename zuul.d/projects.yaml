@@ -98,6 +98,12 @@
         - arm-on-openlab-test
 
 - project:
+    name: Yikun/contianerd
+    check:
+      jobs:
+        - contianerd-build
+
+- project:
     name: liu-sheng/spark
     check:
       jobs:

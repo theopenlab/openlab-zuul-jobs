@@ -1,7 +1,7 @@
 - hosts: all
   become: yes
   tasks:
-    - name: Build containerd
+    - name: Deploy bosh and prepare for testing
       shell:
         cmd: |
           set -xe
