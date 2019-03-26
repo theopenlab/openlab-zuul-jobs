@@ -1366,6 +1366,6 @@
     name: containerd-build
     parent: init-test
     description: |
-      Contianerd build in openlab cluster.
+      Containerd build in openlab cluster.
     run: playbooks/containerd-build/run.yaml
     nodeset: ubuntu-xenial
