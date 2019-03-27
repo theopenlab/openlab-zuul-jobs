@@ -15,6 +15,6 @@
           make | tee make.txt
           make test | tee make_test.txt
           mkdir -p '{{ ansible_user_dir }}/workspace/build_results'
-          cp make*.txt {{ ansible_user_dir }}/workspace/build_results
-          cp -r ./bin {{ ansible_user_dir }}/workspace/build_results
+          cp make*.txt '{{ ansible_user_dir }}/workspace/build_results'
+          cp -r ./bin '{{ ansible_user_dir }}/workspace/build_results'
         executable: /bin/bash
