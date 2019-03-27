@@ -8,10 +8,13 @@
           apt-get update
           apt-get install -y btrfs-tools libseccomp-dev git pkg-config
           apt-get install -y golang-1.10-go
-          ln -s ../lib/go-1.10/bin/go /usr/bin/go
+          ln -sf ../lib/go-1.10/bin/go /usr/bin/go
 
           go get github.com/containerd/containerd
           cd ~/go/src/github.com/containerd/containerd/
-          make
-          make test
+          make | tee make.txt
+          make test | tee make_test.txt
+          mkdir -p '{{ ansible_user_dir }}/workspace/build_results
+          cp make*.txt {{ ansible_user_dir }}/workspace/build_results
+          cp -r ./bin {{ ansible_user_dir }}/workspace/build_results
         executable: /bin/bash
