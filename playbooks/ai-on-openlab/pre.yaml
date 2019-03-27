@@ -141,7 +141,7 @@
               exist_data["$job_name"]["ip"] = ip_addr
               exist_data["$job_name"]["credential"] = "demo/demo"
           else:
-              result_url="http://logs.openlabtesting.org/logs/{{ zuul.change[:2] }}/{{ zuul.change }}/{{ zuul.patchset }}/check/{{ zuul.job }}/{{ build_id.stdout }}/test_results/"
+              result_url="http://logs.openlabtesting.org/logs/{{ zuul.change[-2:] }}/{{ zuul.change }}/{{ zuul.patchset }}/check/{{ zuul.job }}/{{ build_id.stdout }}/test_results/"
               exist_data["$job_name"]["result_url"] = result_url
 
           with open('env.json_tmp', 'w') as file:
