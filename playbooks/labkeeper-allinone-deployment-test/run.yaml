@@ -27,7 +27,7 @@
         sudo cp /home/ubuntu/.ssh/id_rsa ./openlab.pem
         sudo chmod 600 openlab.pem
         sudo chown ubuntu.ubuntu openlab.pem
-        export DPLOY_TYPE=test
+        export DPLOY_TYPE=test-allinone
         export ANSIBLE_HOST_KEY_CHECKING=False
         ansible-playbook playbooks/site.yaml -i inventory/test.yaml -e \
             "zuul_user_name=zuul-test zuul_user_group=zuul-test"

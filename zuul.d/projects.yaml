@@ -7,8 +7,8 @@
     name: liu-sheng/labkeeper-1
     check:
       jobs:
-        #- labkeeper-allinone-deployment-test
-        - labkeeper-allinone-ha-deployment-test
+        - labkeeper-allinone-deployment-test
+        #- labkeeper-allinone-ha-deployment-test
 
 #- project:
 #    name: liu-sheng/packer
