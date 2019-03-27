@@ -7,8 +7,8 @@
     name: liu-sheng/labkeeper-1
     check:
       jobs:
-        #- labkeeper-allinone-deployment-test
-        - labkeeper-allinone-ha-deployment-test
+        - labkeeper-allinone-deployment-test
+        #- labkeeper-allinone-ha-deployment-test
 
 #- project:
 #    name: liu-sheng/packer
@@ -83,13 +83,6 @@
         - ai-on-openlab-test-vm-with-gpu-env-keeping:
             files:
               - ^user_data_gpu/.*sleep.*
-
-- project:
-    name: moo-ai/test_openlab_ha
-    check:
-      jobs:
-        - check-test-ha
-
 
 - project:
     name: Yikun/arm-openlab-test
