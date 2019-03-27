@@ -1274,7 +1274,7 @@
     description: |
       Test arm in openlab cluster.
     run: playbooks/arm-on-openlab/run.yaml
-    nodeset: ubuntu-xenial-arm64
+    nodeset: centos-arm64
 
 - job:
     name: spark-integration-test-kubeadm-k8s

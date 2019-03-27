@@ -72,3 +72,9 @@
     nodes:
       - name: wxy-admin-ubuntu-16-04
         label: wxy-admin-ubuntu-16-04
+
+- nodeset:
+    name: centos-arm64
+    nodes:
+      - name: centos-arm64
+        label: centos-arm64
