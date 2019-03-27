@@ -122,37 +122,35 @@
           job_name=$(echo $source_file | cut -d . -f1)
           job_name=${job_name/_sleep/}
           if {{ env_keeping | lower }};then
-            result_url=""
+            wget https://raw.githubusercontent.com/moo-ai/moo-ai.github.io/master/env_info/task_list_sleep.json -O env.json
           else
-            change_num="{{ zuul.change }}"
-            change_prefix=`echo ${change_num:0-2}`
-            result_url="http://logs.openlabtesting.org/logs/$change_prefix/$change_num/{{ zuul.patchset }}/check/{{ zuul.job }}/{{ build_id.stdout }}/test_results/"
+            wget https://raw.githubusercontent.com/moo-ai/moo-ai.github.io/master/env_info/task_list.json -O env.json
           fi
-          wget https://raw.githubusercontent.com/moo-ai/moo-ai.github.io/master/env_info/task_list.json
-
           cat > 'json_output.py' <<EOF
           import json
           exist_data = None
-          with open('task_list.json') as json_file:
+          json_file_name =
+          with open('env.json') as json_file:
               exist_data = json.load(json_file)
 
           ip_addr = "{{ nodepool.public_ipv4 }}"
 
           exist_data["$job_name"] = {
               "patch_set": "{{ zuul.patchset }}",
-              "ip": ip_addr,
-              "credential": "demo/demo",
-              "result_url": "$result_url"
           }
           if '{{ env_keeping | lower }}' == 'true':
-              exist_data["$job_name"]["result_url"] = ''
+              exist_data["$job_name"]["ip"] = ip_addr
+              exist_data["$job_name"]["credential"] = "demo/demo"
+          else:
+              result_url="http://logs.openlabtesting.org/logs/{{ zuul.change[:2] }}/{{ zuul.change }}/{{ zuul.patchset }}/check/{{ zuul.job }}/{{ build_id.stdout }}/test_results/"
+              exist_data["$job_name"]["result_url"] = "$result_url"
 
-          with open('task_list.json_tmp', 'w') as file:
+          with open('env.json_tmp', 'w') as file:
               json.dump(exist_data, file)
           EOF
 
           python json_output.py
-          cat task_list.json_tmp | python -m json.tool > task_list.json
+          cat env.json_tmp | python -m json.tool > env.json
 
           cat > 'upload_env_info.py' <<EOF
           import github
@@ -165,14 +163,17 @@
 
           github_obj = github.Github('moo-ai', 'mooopenlab1')
           repo = github_obj.get_user().get_repo('moo-ai.github.io')
+          env_file_name = 'env_info/task_list.json'
+          if '{{ env_keeping | lower }}' == 'true':
+              env_file_name = 'env_info/task_list_sleep.json'
           try:
-              contents = repo.get_contents('env_info/task_list.json', ref="master")
+              contents = repo.get_contents(env_file_name, ref="master")
           except github.UnknownObjectException:
               exit(1)
 
           repo.update_file(contents.path, "upload $job_name ci job", cont, contents.sha, branch="master")
           EOF
 
-          python upload_env_info.py task_list.json
+          python upload_env_info.py env.json
           curl -L "https://github.com/moo-ai/moo-ai.github.io/raw/master/env_info/task_list.json"
         executable: /bin/bash
