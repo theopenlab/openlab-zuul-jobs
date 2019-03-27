@@ -12,6 +12,7 @@
 
     - name: Prepare ubuntu user for running labkeeper
       become: yes
+      no_log: yes
       shell: |
         useradd -m -d /home/ubuntu -s /bin/bash ubuntu
         echo ubuntu:ubuntu | chpasswd
