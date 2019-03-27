@@ -85,13 +85,6 @@
               - ^user_data_gpu/.*sleep.*
 
 - project:
-    name: moo-ai/test_openlab_ha
-    check:
-      jobs:
-        - check-test-ha
-
-
-- project:
     name: Yikun/arm-openlab-test
     check:
       jobs:

@@ -1277,21 +1277,6 @@
     nodeset: ubuntu-xenial-arm64
 
 - job:
-    name: check-test-ha
-    parent: init-test
-    description: |
-      Check HA.
-    run: playbooks/openlab-ha/run.yaml
-#    nodeset: wxy-admin-cirros
-    nodeset: wxy-admin-ubuntu-16-04
-#    host-vars:
-#      ansible_connection: ssh
-#      ansible_user: root
-#      ansible_password: openstack@
-
-
-
-- job:
     name: spark-integration-test-kubeadm-k8s
     parent: init-test
     description: |
@@ -1334,13 +1319,6 @@
       chart_testing_version: v2.2.0
       kubernetes_version: 1.12.6
       docker_ce_version: 18.06
-
-- job:
-    name: labkeeper-functional-test
-    parent: init-test
-    description: |
-      Tru to deploy openlab CI environment with labkeeper
-    run: playbooks/labkeeper-functional-test/run.yaml
 
 - job:
     name: labkeeper-allinone-deployment-test
