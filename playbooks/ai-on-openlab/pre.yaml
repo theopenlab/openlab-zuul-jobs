@@ -129,7 +129,6 @@
           cat > 'json_output.py' <<EOF
           import json
           exist_data = None
-          json_file_name =
           with open('env.json') as json_file:
               exist_data = json.load(json_file)
 
