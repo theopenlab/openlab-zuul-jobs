@@ -8,6 +8,7 @@
       [[local|localrc]]
       NETWORK_GATEWAY=10.0.0.1
       enable_plugin neutron git://git.openstack.org/openstack/neutron
+      SWIFT_LOOPBACK_DISK_SIZE=10G
       EOF
     executable: /bin/bash
 
