@@ -70,7 +70,6 @@
     name: moo-ai/moo-ai.github.io
     check:
       jobs:
-        # - ai-on-openlab-test-tensorflow-k8s
         - ai-on-openlab-test-vm:
             files:
               - ^user_data/(?!.*?sleep).*?$
