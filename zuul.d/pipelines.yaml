@@ -174,9 +174,13 @@
         status: 'failure'
       mysql:
 
+# NOTES: Deprecated, don't accept any new jobs, but please don't remove it,
+#        some outside projects refer name "periodic" in repository.
 - pipeline:
     name: periodic
-    description: Jobs in this queue are triggered on a timer. UTC-0 04:00, 09:00 and 16:00
+    description: |
+      Deprecated.
+      Jobs in this queue are triggered on a timer. UTC-0 04:00, 09:00 and 16:00
     manager: independent
     precedence: low
     trigger:
@@ -188,28 +192,88 @@
       mysql:
 
 - pipeline:
-    name: periodic-2
-    description: Jobs in this queue are triggered on a timer. UTC-0 22:00
+    name: periodic-0/12
+    description: |
+      Jobs in this queue are triggered on a timer. UTC-0 00:00 and 12:00
     manager: independent
-    precedence: low
+    precedence: high
     trigger:
       timer:
-        - time: '0 22 * * *'
+        - time: '0 0,12 * * *'
     success:
       mysql:
     failure:
       mysql:
 
 - pipeline:
-    name: merge-check
-    description: >
-      Each time a change merges, this pipeline verifies that all open changes
-      on the same project are still mergeable.
-    failure-message: Build failed (merge-check pipeline).
+    name: periodic-2/14
+    description: |
+      Jobs in this queue are triggered on a timer. UTC-0 02:00 and 14:00
     manager: independent
-    ignore-dependencies: true
-    precedence: low
-    trigger: {}
+    precedence: high
+    trigger:
+      timer:
+        - time: '0 2,14 * * *'
+    success:
+      mysql:
+    failure:
+      mysql:
+
+- pipeline:
+    name: periodic-4/16
+    description: |
+      Jobs in this queue are triggered on a timer. UTC-0 04:00 and 16:00
+    manager: independent
+    precedence: high
+    trigger:
+      timer:
+        - time: '0 4,16 * * *'
+    success:
+      mysql:
+    failure:
+      mysql:
+
+- pipeline:
+    name: periodic-6/18
+    description: |
+      Jobs in this queue are triggered on a timer. UTC-0 06:00 and 18:00
+    manager: independent
+    precedence: high
+    trigger:
+      timer:
+        - time: '0 6,18 * * *'
+    success:
+      mysql:
+    failure:
+      mysql:
+
+- pipeline:
+    name: periodic-8/20
+    description: |
+      Jobs in this queue are triggered on a timer. UTC-0 08:00 and 20:00
+    manager: independent
+    precedence: high
+    trigger:
+      timer:
+        - time: '0 8,20 * * *'
+    success:
+      mysql:
+    failure:
+      mysql:
+
+- pipeline:
+    name: periodic-10/22
+    description: |
+      Jobs in this queue are triggered on a timer. UTC-0 10:00 and 22:00
+    manager: independent
+    precedence: high
+    trigger:
+      timer:
+        - time: '0 10,22 * * *'
+    success:
+      mysql:
+    failure:
+      mysql:
 
 - pipeline:
     name: recheck-designate

@@ -1,26 +1,16 @@
+############################## check jobs #####################################
 - project:
     check:
       jobs:
         - openlab-zuul-jobs-check
 
-- project:
-    name: kubernetes-sigs/kind
-    periodic:
-      jobs:
-        - kind-integration-test-arm64:
-            branches: master
-
+####################### periodic jobs on 00:00/12:00 ##########################
 - project:
     name: ansible/ansible
-    periodic:
+    periodic-0/12:
       jobs:
         - openstacksdk-ansible-functional-opentelekomcloud:
             branches: stable-2.7
-        - openstacksdk-ansible-functional-orange:
-            branches: stable-2.7
-#        NOTES: Telefonica account is disable
-#        - openstacksdk-ansible-functional-telefonica:
-#            branches: stable-2.7
         - openstacksdk-ansible-functional-huaweicloud:
             branches: stable-2.7
         - openstacksdk-ansible-functional-devstack:
@@ -39,18 +29,93 @@
             branches: stable-2.7
         - openstacksdk-ansible-devel-functional-devstack:
             branches: devel
+- project:
+    name: apache/spark
+    periodic-0/12:
+      jobs:
+        - spark-integration-test-kubeadm-k8s:
+            branches: master
+        - spark-integration-test-minikube-k8s:
+            branches: master
+            
+- project:
+    name: kubernetes-sigs/kind
+    periodic:
+      jobs:
+        - kind-integration-test-arm64:
+            branches: master
+
+####################### periodic jobs on 02:00/14:00 ##########################
+- project:
+    name: terraform-providers/terraform-provider-openstack
+    periodic-2/14:
+      jobs:
+        - terraform-provider-openstack-acceptance-test-opentelekomcloud:
+            branches: master
+        - terraform-provider-openstack-acceptance-test-huaweicloud:
+            branches: master
 
 - project:
+    name: terraform-providers/terraform-provider-huaweicloud
+    periodic-2/14:
+      jobs:
+        - terraform-provider-huaweicloud-acceptance-test-fusioncloud:
+            branches: master
+
+####################### periodic jobs on 04:00/16:00 ##########################
+#- project:
+#    name: huaweicloud/openshift-ansible
+#    periodic-4/16:
+#      jobs:
+#        - openshift-origin-functional-test-opentelekomcloud:
+#            branches: master
+#        - openshift-origin-functional-test-huaweicloud:
+#            branches: master
+
+- project:
+    name: gophercloud/gophercloud
+    periodic-4/16:
+      jobs:
+        - gophercloud-unittest:
+            branches: master
+        - gophercloud-acceptance-test:
+            branches: master
+
+- project:
+    name: cloudfoundry/bosh-openstack-cpi-release
+    periodic-4/16:
+      jobs:
+        - bosh-openstack-cpi-release-acceptance-test:
+            branches: master
+        - bosh-openstack-cpi-release-acceptance-test-rocky:
+            branches: master
+        - bosh-openstack-cpi-release-acceptance-test-queens:
+            branches: master
+        - bosh-openstack-cpi-release-acceptance-test-pike:
+            branches: master
+        - bosh-openstack-cpi-release-acceptance-test-ocata:
+            branches: master
+
+- project:
+    name: kubernetes/cloud-provider-openstack
+    periodic-4/16:
+      jobs:
+        - cloud-provider-openstack-acceptance-test-e2e-conformance:
+            branches: master
+        - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.12:
+            branches: release-1.12
+        - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.13:
+            branches: release-1.13
+        - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.14:
+            branches: master # TODO update to release-1.14 when cpo cuts it - k8s already has release-1.14 branch
+
+####################### periodic jobs on 06:00/18:00 ##########################
+- project:
     name: hashicorp/packer
-    periodic:
+    periodic-6/18:
       jobs:
         - packer-functional-opentelekomcloud:
             branches: master
-        - packer-functional-orange:
-            branches: master
-#        NOTES: Telefonica account is disable
-#        - packer-functional-telefonica:
-#            branches: master
         - packer-functional-huaweicloud:
             branches: master
         - packer-master-functional-devstack:
@@ -71,16 +136,19 @@
             branches: master
 
 - project:
-    name: docker/machine
+    name: kubernetes-sigs/kind
     periodic:
+      jobs:
+        - kind-integration-test-arm64:
+            branches: master
+
+####################### periodic jobs on 08:00/20:00 ##########################
+- project:
+    name: docker/machine
+    periodic-8/20:
       jobs:
         - docker-machine-functional-opentelekomcloud:
             branches: master
-        - docker-machine-functional-orange:
-            branches: master
-#        NOTES: Telefonica account is disable
-#        - docker-machine-functional-telefonica:
-#            branches: master
         - docker-machine-functional-huaweicloud:
             branches: master
         - docker-machine-functional-devstack-mitaka:
@@ -96,50 +164,17 @@
         - docker-machine-functional-devstack-rocky:
             branches: master
 
+####################### periodic jobs on 10:00/22:00 ##########################
 - project:
     name: kubernetes-sigs/cluster-api-provider-openstack
-    periodic:
+    periodic-10/22:
       jobs:
         - cluster-api-provider-openstack-image-build:
             branches: master
 
 - project:
-    name: terraform-providers/terraform-provider-openstack
-    periodic:
-      jobs:
-#        NOTES: Telefonica account is disable
-#        - terraform-provider-openstack-acceptance-test-telefonica:
-#            branches: master
-        - terraform-provider-openstack-acceptance-test-opentelekomcloud:
-            branches: master
-        - terraform-provider-openstack-acceptance-test-orange:
-            branches: master
-        - terraform-provider-openstack-acceptance-test-huaweicloud:
-            branches: master
-
-- project:
-    name: terraform-providers/terraform-provider-huaweicloud
-    periodic:
-      jobs:
-        - terraform-provider-huaweicloud-acceptance-test-fusioncloud:
-            branches: master
-
-- project:
-    name: cloudfoundry-incubator/bosh-huaweicloud-cpi-release
-    check-generic-cloud:
-      jobs:
-        - bosh-huaweicloud-cpi-release-validator-test-huaweicloud
-        - bosh-huaweicloud-cpi-release-acceptance-test-huaweicloud
-
-- project:
-    name: huaweicloud/huaweicloud-service-broker
-    check-generic-cloud:
-      jobs:
-        - osb-checker-test-huaweicloud
-
-- project:
     name: manageiq/manageiq-providers-openstack
-    periodic-2:
+    periodic-10/22:
       jobs:
         - manageiq-providers-openstack-test-devstack-master:
             branches: master
@@ -158,32 +193,4 @@
         - manageiq-providers-openstack-test-huaweicloud:
             branches: master
         - manageiq-providers-openstack-test-opentelekomcloud:
-            branches: master
-        - manageiq-providers-openstack-test-orange:
-            branches: master
-#        NOTES: Telefonica account is disable
-#        - manageiq-providers-openstack-test-telefonica:
-#            branches: master
-
-#- project:
-#    name: huaweicloud/openshift-ansible
-#    periodic-2:
-#      jobs:
-#        - openshift-origin-functional-test-huaweicloud:
-#            branches: master
-#        - openshift-origin-functional-test-opentelekomcloud:
-#            branches: master
-##        NOTES: Telefonica account is disable
-##        - openshift-origin-functional-test-telefonica:
-##            branches: master
-#        - openshift-origin-functional-test-orange:
-#            branches: master
-
-- project:
-    name: apache/spark
-    periodic:
-      jobs:
-        - spark-integration-test-kubeadm-k8s:
-            branches: master
-        - spark-integration-test-minikube-k8s:
             branches: master

@@ -1,9 +1,8 @@
 - hosts: all
-  roles:
-    #- export-kind-gcp-account
+  # TODO create a role export-kind-gcp-account and add here
   become: yes
   tasks:
-    - name: #TODO Upload E2E conformance test result to kubernetes testgrid
+    - name: Upload conformance test result to testgrid
       shell:
         cmd: |
           set -e
