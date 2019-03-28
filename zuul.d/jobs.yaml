@@ -1277,7 +1277,7 @@
     nodeset: centos-arm64
 
 - job:
-    name: spark-integration-test-kubeadm-k8s
+    name: spark-integration-test-kubeadm-k8s-latest
     parent: init-test
     description: |
       Run integration tests of spark of master with k8s cluster deployed by kubeadm
@@ -1287,7 +1287,7 @@
       k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
 
 - job:
-    name: spark-integration-test-minikube-k8s
+    name: spark-integration-test-minikube-k8s-v1.10.0
     parent: init-test
     description: |
       Run integration tests of spark of v2.4.0 with k8s cluster deployed by minikube
@@ -1297,7 +1297,6 @@
     vars:
       k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
       minikube_version: "v0.30.0"
-      kubectl_version: "v1.10.0"
       kubernetes_version: "v1.10.0"
 
 - job:
