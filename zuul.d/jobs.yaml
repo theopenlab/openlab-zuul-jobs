@@ -1277,7 +1277,7 @@
     nodeset: centos-arm64
 
 - job:
-    name: spark-integration-test-kubeadm-k8s-latest
+    name: spark-integration-test-kubeadm-k8s-v1.14.0
     parent: init-test
     description: |
       Run integration tests of spark of master with k8s cluster deployed by kubeadm
@@ -1285,6 +1285,7 @@
     post-run: playbooks/spark-integration-test-kubeadm-k8s/post.yaml
     vars:
       k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
+      kubernetes_version: v1.14.0
 
 - job:
     name: spark-integration-test-minikube-k8s-v1.10.0
@@ -1300,13 +1301,14 @@
       kubernetes_version: "v1.10.0"
 
 - job:
-    name: helm-integration-test-kubeadm-k8s
+    name: helm-integration-test-kubeadm-k8s-v1.14.0
     parent: init-test
     description: |
-      Run integration tests of helm charts with k8s cluster deployed by kubeadm
+      Run integration tests of helm charts with v1.14.0 k8s cluster deployed by kubeadm
     run: playbooks/helm-integration-test-kubeadm-k8s/run.yaml
     vars:
       chart_testing_version: v2.2.0
+      kubernetes_version: v1.14.0
     
 - job:
     name: helm-integration-test-kubeadm-k8s-v1.12.6
@@ -1316,7 +1318,7 @@
     run: playbooks/helm-integration-test-kubeadm-k8s/run.yaml
     vars:
       chart_testing_version: v2.2.0
-      kubernetes_version: 1.12.6
+      kubernetes_version: v1.12.6
       docker_ce_version: 18.06
 
 - job:
