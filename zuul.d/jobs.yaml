@@ -1308,7 +1308,7 @@
     run: playbooks/helm-integration-test-kubeadm-k8s/run.yaml
     vars:
       chart_testing_version: v2.2.0
-      kubernetes_version: v1.14.0
+      kubernetes_version: 1.14.0
     
 - job:
     name: helm-integration-test-kubeadm-k8s-v1.12.6
@@ -1318,7 +1318,7 @@
     run: playbooks/helm-integration-test-kubeadm-k8s/run.yaml
     vars:
       chart_testing_version: v2.2.0
-      kubernetes_version: v1.12.6
+      kubernetes_version: 1.12.6
       docker_ce_version: 18.06
 
 - job:
