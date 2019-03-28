@@ -108,4 +108,4 @@
     check:
       jobs:
         - helm-integration-test-kubeadm-k8s-v1.14.0
-        - helm-integration-test-kubeadm-k8s-v1.12.6
+        - helm-integration-test-kubeadm-k8s-v1.12.7

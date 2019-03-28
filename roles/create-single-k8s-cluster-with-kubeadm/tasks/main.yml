@@ -36,7 +36,8 @@
       ## Initializing master
       kubeadm init --pod-network-cidr=192.168.0.0/16 --kubernetes-version="{{ kubernetes_version }}"
 
-      export KUBECONFIG=/etc/kubernetes/admin.conf
+      mkdir -p $HOME/.kube
+      sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 
       ## Installing a pod network add-on.
       kubectl apply -f https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/rbac-kdd.yaml

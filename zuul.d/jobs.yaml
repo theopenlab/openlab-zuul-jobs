@@ -1311,14 +1311,14 @@
       kubernetes_version: 1.14.0
     
 - job:
-    name: helm-integration-test-kubeadm-k8s-v1.12.6
+    name: helm-integration-test-kubeadm-k8s-v1.12.7
     parent: init-test
     description: |
-      Run integration tests of helm charts with v1.12.6 k8s cluster deployed by kubeadm
+      Run integration tests of helm charts with v1.12.7 k8s cluster deployed by kubeadm
     run: playbooks/helm-integration-test-kubeadm-k8s/run.yaml
     vars:
       chart_testing_version: v2.2.0
-      kubernetes_version: 1.12.6
+      kubernetes_version: 1.12.7
       docker_ce_version: 18.06
 
 - job:
