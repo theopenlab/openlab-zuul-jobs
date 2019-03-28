@@ -51,6 +51,10 @@
           kubectl create -f /home/zuul/k8s/local-pv.yaml
           kubectl get pv
 
+          # the default value of remote is k8s of test/ct.yaml of charts repo, so add the k8s remote, otherwise
+          # lint will fail
+          docker exec --interactive ctd "$@" git remote add k8s https://github.com/helm/charts
+          docker exec --interactive ctd "$@" git fetch k8s
           # run cmd "ct lint-and-install" to test several charts
           docker exec --interactive ctd "$@" ct lint-and-install --charts stable/mysql,stable/postgresql,stable/etcd-operator,stable/coredns --namespace kube-system
           # some charts won't delete the pvc, delete them manually to make sure pv is available
