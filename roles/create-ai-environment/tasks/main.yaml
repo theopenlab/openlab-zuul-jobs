@@ -37,7 +37,7 @@
       python '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/tools/update_env_info.py' \
       --job $job_name --patch "{{ zuul.patchset }}" --user {{ moo_github_account.user_name }} \
       --password {{ moo_github_account.user_password }} \
-      --url "http://logs.openlabtesting.org/logs/{{ zuul.change[-2:] }}/{{ zuul.change }}/{{ zuul.patchset }}/check/{{ zuul.job }}/{{ build_id.stdout }}/test_results/" \
+      --url "http://logs.openlabtesting.org/logs/{{ zuul.change[-2:] }}/{{ zuul.change }}/{{ zuul.patchset }}/check/{{ zuul.job }}/{{ zuul.build[:7] }}/test_results/" \
       --ip "{{ nodepool.public_ipv4 }}" --keeping '{{ env_keeping | lower }}'
 
       curl -L "https://github.com/moo-ai/moo-ai.github.io/raw/master/env_info/task_list.json"
