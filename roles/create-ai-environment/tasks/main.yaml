@@ -1,12 +1,47 @@
-- name: Set Default Hardware type Parameters
+- name: Set Hardware Folder Name
   set_fact:
-    user_file: "user_data"
-  when: not is_gpu_enabled
+    hardware_folder: "{{ is_gpu_enabled | bool | ternary('user_data_gpu', 'user_data') }}"
 
-- name: Split Hardware type Parameters for GPU
+- name: Set Global Vars
   set_fact:
-    user_file: "user_data_gpu"
-  when: is_gpu_enabled
+    user_data_folder: "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ hardware_folder }}"
+    env_file: "{{ env_keeping | bool | ternary('task_list_sleep.json', 'task_list.json') }}"
+
+- name: Create Demo User
+  when: env_keeping
+  user:
+    name: demo
+    group: demo
+    password: $6$tBuTR6GsY$2uMKM5A2rhwCE0a30HpFlmBzmBkf5HyqxoI1SgLx8jR0fpiRBh4xSvtqEXueZeNwgwJsAj6DnSCZYr6e2eBbM/
+
+
+- name: Allow login with pasword
+  when: env_keeping
+  shell:
+    cmd: |
+      sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
+      service sshd restart
+    executable: /bin/bash
+
+- name: Upload Environment Info to Web
+  shell:
+    cmd: |
+      apt install -y python-pip
+      pip install pygithub
+
+      source_file=`ls "{{ user_data_folder }}" | grep moo-job`
+      job_name=$(echo $source_file | cut -d . -f1)
+      job_name=${job_name/_sleep/}
+      wget "https://raw.githubusercontent.com/moo-ai/moo-ai.github.io/master/env_info/{{ env_file }}" -O env.json
+
+      python '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/tools/update_env_info.py' \
+      --job $job_name --patch "{{ zuul.patchset }}" --user {{ moo_github_account.user_name }} \
+      --password {{ moo_github_account.user_password }} \
+      --url "http://logs.openlabtesting.org/logs/{{ zuul.change[-2:] }}/{{ zuul.change }}/{{ zuul.patchset }}/check/{{ zuul.job }}/{{ build_id.stdout }}/test_results/" \
+      --ip "{{ nodepool.public_ipv4 }}" --keeping '{{ env_keeping | lower }}'
+
+      curl -L "https://github.com/moo-ai/moo-ai.github.io/raw/master/env_info/task_list.json"
+    executable: /bin/bash
 
 - name: Get User Metadata Zip or Url
   shell:
@@ -20,9 +55,7 @@
       result_folder="{{ ansible_user_dir }}/workspace/test_results/"
       mkdir -p $result_folder
 
-      user_data_folder='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/'
-
-      cd $user_data_folder
+      cd '{{ user_data_folder }}'
 
       if ls | grep txt;then
         txt_file=`ls | grep txt`
@@ -39,49 +72,49 @@
     executable: /bin/bash
 
 - name: Get Runtime Info
-  shell: cat '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/framework_runtime.txt'
+  shell: cat '{{ user_data_folder }}/framework_runtime.txt'
   register: runtime
 
-- name: Defind Parameters - runtime_name
+- name: Define Parameters - runtime_name
   shell: echo "{{ runtime.stdout | regex_findall('[java|go|python|c|c++]') | join("") }}"
   register: runtime_name
 
-- name: Defind Parameters - runtime_version
+- name: Define Parameters - runtime_version
   shell: echo "{{ runtime.stdout | regex_replace('[java|go|python|c|c++]') }}"
   register: runtime_version
 
 - name: Get Framework Name
-  shell: cat '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/framework_name.txt'
+  shell: cat '{{ user_data_folder }}/framework_name.txt'
   register: framework
 
 - name: Get Framework Version
-  shell: cat '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/framework_version.txt'
+  shell: cat '{{ user_data_folder }}/framework_version.txt'
   register: framework_version
 
 - name: Get User Entry Point
-  shell: cat '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/entry_point.txt'
+  shell: cat '{{ user_data_folder }}/entry_point.txt'
   register: entrypoint
 
 - name: Check output folder variable exists
   stat:
-    path: '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/output_folder.txt'
+    path: '{{ user_data_folder }}/output_folder.txt'
   register: stat_ouput_folder_variable
 
 - name: Get output folder variable value
   when: stat_ouput_folder_variable.stat.exists
-  shell: cat '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/output_folder.txt'
+  shell: cat '{{ user_data_folder }}/output_folder.txt'
   register: output_folder_name
 
 - name: Check output folder exists
   when: output_folder_name is defined
   stat:
-    path: '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/{{ output_folder_name.stdout }}'
+    path: '{{ user_data_folder }}/{{ output_folder_name.stdout }}'
   register: stat_ouput_folder
 
 - name: Create output folder if non-exist
   when: output_folder_name is defined and not stat_ouput_folder.stat.exists
   file:
-    path: '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/{{ output_folder_name.stdout }}'
+    path: '{{ user_data_folder }}/{{ output_folder_name.stdout }}'
     state: directory
 
 - name: Set training output folder name by file
@@ -92,7 +125,7 @@
 - name: Generate new output folder if non-exist
   when: output_folder_name is not defined
   file:
-    path: '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/training_result'
+    path: '{{ user_data_folder }}/training_result'
     state: directory
 
 - name: Set training output folder name by generation
@@ -101,7 +134,7 @@
     training_output_folder_name: "training_result"
 
 - name: Install {{ runtime.stdout }} Runtime
-  when: runtime_name != ''
+  when: runtime_name
   shell:
     cmd: |
       set -x
@@ -127,7 +160,7 @@
       fi
 
       if [ $runtime_name == 'go' ];then
-        apt install -y golang-go=$runtime_version
+        apt install -y golang-$runtime_version-go
       fi
 
     executable: /bin/bash
@@ -218,8 +251,8 @@
       set -x
       set -e
 
-      user_data_folder='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/'
-      cd $user_data_folder
+      user_user_data_folder='{{ user_data_folder }}/'
+      cd $user_user_data_folder
 
       py_file={{ entrypoint.stdout }}
 
@@ -235,8 +268,8 @@
       set -x
       set -e
 
-      user_data_folder='{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/'
-      cd $user_data_folder
+      user_user_data_folder='{{ user_data_folder }}/'
+      cd $user_user_data_folder
 
       py_file=`cat entry_point.txt`
 
@@ -254,8 +287,8 @@
       pip install tensorflowjs
 
       tensorflowjs_converter --input_format keras \
-        '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/{{ training_output_folder_name }}/my_model.h5' \
-        '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/tfjs'
+        '{{ user_data_folder }}/{{ training_output_folder_name }}/my_model.h5' \
+        '{{ user_data_folder }}/tfjs'
     executable: /bin/bash
 
 - name: Collect Traning or Inference Result
@@ -264,57 +297,23 @@
       set -x
       set -e
 
-      mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/{{ training_output_folder_name }}' \
+      mv '{{ user_data_folder }}/{{ training_output_folder_name }}' \
         '{{ ansible_user_dir }}/workspace/test_results/'
       mkdir '{{ ansible_user_dir }}/workspace/test_results/web_page/'
       mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/tf_js.html' '{{ ansible_user_dir }}/workspace/test_results/web_page/index.html'
-      mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ user_file }}/tfjs/' \
+      mv '{{ user_data_folder }}/tfjs/' \
         '{{ ansible_user_dir }}/workspace/test_results/web_page/'
       mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/css' \
         '{{ ansible_user_dir }}/workspace/test_results/web_page/'
       mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/js' \
         '{{ ansible_user_dir }}/workspace/test_results/web_page/'
 
-      change_num="{{ zuul.change }}"
-      change_prefix=`echo ${change_num:0-2}`
-      build_id=`echo '{{ zuul.build }}' | cut -c 1-7`
-      model_path="http:\/\/status.openlabtesting.org\/logs\/$change_prefix\/$change_num\/{{ zuul.patchset }}\/check\/{{ zuul.job }}\/$build_id\/test_results\/web_page\/tfjs\/model.json"
+      model_path="http:\/\/status.openlabtesting.org\/logs\/{{ zuul.change[-2:] }}\/{{ zuul.change }}\/{{ zuul.patchset }}\/check\/{{ zuul.job }}\/{{ zuul.build[:7] }}\/test_results\/web_page\/tfjs\/model.json"
       sed -i "s/replace.me/$model_path/" \
         '{{ ansible_user_dir }}/workspace/test_results/web_page/index.html'
     executable: /bin/bash
 
-#- name: tensorflow serving ENV prepare and check
-#  when: framework.stdout == "tensorflow" and runtime_name.stdout in ["python"]
-#  shell:
-#    cmd: |
-#      set -xe
-#      echo "deb [arch=amd64] http://storage.googleapis.com/tensorflow-serving-apt stable tensorflow-model-server tensorflow-model-server-universal" | sudo tee /etc/apt/sources.list.d/tensorflow-serving.list && \
-#      curl https://storage.googleapis.com/tensorflow-serving-apt/tensorflow-serving.release.pub.gpg | sudo apt-key add -
-#      apt update
-#      apt install -y tensorflow-model-server
-#      git clone https://github.com/tensorflow/serving.git
-#      cd serving
-#      #python tensorflow_serving/example/mnist_saved_model.py /tmp/mnist
-#      #tensorflow_model_server --port=8500 --model_base_path="/tmp/mnist" --model_name=mnist &
-#      #sleep 3
-#      pip install tensorflow-serving-api
-#      #python tensorflow_serving/example/mnist_client.py --num_tests=1000 --server=127.0.0.1:8500
-#      #tmp=`ps -ef | grep tensorflow_model_server | awk '{print $2}' | xargs kill -9`
-#    executable: /bin/bash
-#
-#- name: Setup tensorflow serving
-#  when:
-#    - framework.stdout == "tensorflow" and runtime_name.stdout in ["python"]
-#    - stat_ouput_folder.stat.exists and stat_ouput_folder.stat.isdir
-#  shell:
-#    cmd: |
-#      tensorflow_model_server --port=8500 --model_base_path="{{ ansible_user_dir }}/workspace/test_results/" --model_name=training_model &
-#    executable: /bin/bash
-
 - name: ENV keeping
   when: env_keeping
-  shell:
-    cmd: |
-      set -xe
-      sleep 48000
-    executable: /bin/bash
+  pause:
+    minutes: 60
