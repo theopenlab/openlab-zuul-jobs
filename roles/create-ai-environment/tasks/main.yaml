@@ -6,6 +6,7 @@
   set_fact:
     user_data_folder: "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ hardware_folder }}"
     env_file: "{{ env_keeping | bool | ternary('task_list_sleep.json', 'task_list.json') }}"
+    training_output_folder_name: "training_result"
 
 - name: Create Demo User
   when: env_keeping
@@ -13,7 +14,6 @@
     name: demo
     group: demo
     password: $6$tBuTR6GsY$2uMKM5A2rhwCE0a30HpFlmBzmBkf5HyqxoI1SgLx8jR0fpiRBh4xSvtqEXueZeNwgwJsAj6DnSCZYr6e2eBbM/
-
 
 - name: Allow login with pasword
   when: env_keeping
@@ -46,8 +46,7 @@
 - name: Get User Metadata Zip or Url
   shell:
     cmd: |
-      set -x
-      set -e
+      set -xe
 
       apt install -y unzip
       pip install pyyaml
@@ -57,6 +56,7 @@
 
       cd '{{ user_data_folder }}'
 
+      # Get the zip link from url
       if ls | grep txt;then
         txt_file=`ls | grep txt`
         url=`cat $txt_file`
@@ -68,72 +68,24 @@
       zip_file=`ls | grep zip`
 
       unzip $zip_file
-      python '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/tools/analysis_yaml.py'
     executable: /bin/bash
 
-- name: Get Runtime Info
-  shell: cat '{{ user_data_folder }}/framework_runtime.txt'
-  register: runtime
+- name: Split User Metadata
+  shell: 'cat {{ user_data_folder }}/metadata.yaml'
+  register: user_meta
+
+- set_fact:
+    user_meta_dict: "{{ user_meta.stdout | from_json }}"
 
 - name: Define Parameters - runtime_name
-  shell: echo "{{ runtime.stdout | regex_findall('[java|go|python|c|c++]') | join("") }}"
+  shell: echo "{{ user_meta_dict.framework.runtime | regex_findall('[java|go|python|c|c++]') | join("") }}"
   register: runtime_name
 
 - name: Define Parameters - runtime_version
-  shell: echo "{{ runtime.stdout | regex_replace('[java|go|python|c|c++]') }}"
+  shell: echo "{{ user_meta_dict.framework.runtime | regex_replace('[java|go|python|c|c++]') }}"
   register: runtime_version
 
-- name: Get Framework Name
-  shell: cat '{{ user_data_folder }}/framework_name.txt'
-  register: framework
-
-- name: Get Framework Version
-  shell: cat '{{ user_data_folder }}/framework_version.txt'
-  register: framework_version
-
-- name: Get User Entry Point
-  shell: cat '{{ user_data_folder }}/entry_point.txt'
-  register: entrypoint
-
-- name: Check output folder variable exists
-  stat:
-    path: '{{ user_data_folder }}/output_folder.txt'
-  register: stat_ouput_folder_variable
-
-- name: Get output folder variable value
-  when: stat_ouput_folder_variable.stat.exists
-  shell: cat '{{ user_data_folder }}/output_folder.txt'
-  register: output_folder_name
-
-- name: Check output folder exists
-  when: output_folder_name is defined
-  stat:
-    path: '{{ user_data_folder }}/{{ output_folder_name.stdout }}'
-  register: stat_ouput_folder
-
-- name: Create output folder if non-exist
-  when: output_folder_name is defined and not stat_ouput_folder.stat.exists
-  file:
-    path: '{{ user_data_folder }}/{{ output_folder_name.stdout }}'
-    state: directory
-
-- name: Set training output folder name by file
-  when: output_folder_name is defined
-  set_fact:
-    training_output_folder_name: "{{ output_folder_name.stdout }}"
-
-- name: Generate new output folder if non-exist
-  when: output_folder_name is not defined
-  file:
-    path: '{{ user_data_folder }}/training_result'
-    state: directory
-
-- name: Set training output folder name by generation
-  when: output_folder_name is not defined
-  set_fact:
-    training_output_folder_name: "training_result"
-
-- name: Install {{ runtime.stdout }} Runtime
+- name: Install {{ user_meta_dict.runtime }} Runtime
   when: runtime_name
   shell:
     cmd: |
@@ -191,29 +143,29 @@
       ./NVIDIA-Linux-x86_64-384.81.run -a --ui=none < ./input
     executable: /bin/bash
 
-- name: Install {{ framework.stdout }}-{{ framework_version.stdout }}
+- name: Install {{ user_meta_dict.framework.name }}-{{ user_meta_dict.framework.version }}
   when:
-    ( framework.stdout == "tensorflow" and runtime_name.stdout in ["python", "c", "java", "go"] ) or
-    ( framework.stdout == "pytorch" and runtime_name.stdout in ["python", "c"] )
+    ( user_meta_dict.framework.name == "tensorflow" and runtime_name.stdout in ["python", "c", "java", "go"] ) or
+    ( user_meta_dict.framework.name == "pytorch" and runtime_name.stdout in ["python", "c"] )
   shell:
     cmd: |
       set -x
       set -e
-      framework={{ framework.stdout }}
-      framework_version={{ framework_version.stdout }}
+      framework={{ user_meta_dict.framework.name }}
+      framework_version={{ user_meta_dict.framework.version }}
       runtime_name={{ runtime_name.stdout }}
 
       if [ $framework == "tensorflow" ];then
         if [ $runtime_name == "python" ];then
           if {{ is_gpu_enabled | lower }} ;then
-            pip install tensorflow-gpu=={{ framework_version.stdout }}
+            pip install tensorflow-gpu==$framework_version
           else
-            pip install tensorflow=={{ framework_version.stdout }}
+            pip install tensorflow==$framework_version
           fi
         fi
         if [ $runtime_name == "java" ];then
-          wget https://storage.googleapis.com/tensorflow/libtensorflow_jni-cpu-linux-x86_64-{{ framework_version.stdout }}.tar.gz
-          tar -xvf libtensorflow_jni-cpu-linux-x86_64-{{ framework_version.stdout }}.tar.gz
+          wget https://storage.googleapis.com/tensorflow/libtensorflow_jni-cpu-linux-x86_64-$framework_version.tar.gz
+          tar -xvf libtensorflow_jni-cpu-linux-x86_64-$framework_version.tar.gz
         fi
         if [ $runtime_name == "go" ];then
           mkdir ./download
@@ -221,19 +173,19 @@
           apt install -y git-core
           go get github.com/tensorflow/tensorflow/tensorflow/go
           go test github.com/tensorflow/tensorflow/tensorflow/go
-          git checkout tags/{{ framework_version.stdout }}
+          git checkout tags/$framework_version
 
         fi
         if [ $runtime_name == "c" ];then
-          wget https://storage.googleapis.com/tensorflow/libtensorflow-cpu-linux-x86_64-{{ framework_version.stdout }}.tar.gz
-          tar -xz libtensorflow-cpu-linux-x86_64-{{ framework_version.stdout }}.tar.gz /usr/local
+          wget https://storage.googleapis.com/tensorflow/libtensorflow-cpu-linux-x86_64-$framework_version.tar.gz
+          tar -xz libtensorflow-cpu-linux-x86_64-$framework_version.tar.gz /usr/local
           ldconfig
         fi
       fi
 
       if [ $framework == 'pythorch' ];then
         if [ $runtime_name == "python" ];then
-          pip install torch=={{ framework_version.stdout }} torchvision
+          pip install torch==$framework_version torchvision
         fi
         if [ $runtime_name == "c" ];then
           wget https://download.pytorch.org/libtorch/cu90/libtorch-shared-with-deps-latest.zip
@@ -244,17 +196,15 @@
 
     executable: /bin/bash
 
-- name: Run Tensorflow Python Job
-  when: framework.stdout == "tensorflow" and runtime_name.stdout in ["python", "java", "go", "c"]
+- name: Run Tensorflow Job
+  when: user_meta_dict.framework.name == "tensorflow" and runtime_name.stdout in ["python", "java", "go", "c"]
   shell:
     cmd: |
-      set -x
-      set -e
+      set -xe
 
-      user_user_data_folder='{{ user_data_folder }}/'
-      cd $user_user_data_folder
+      cd '{{ user_data_folder }}/'
 
-      py_file={{ entrypoint.stdout }}
+      py_file={{ user_meta_dict.entry_point }}
 
       result_folder="{{ ansible_user_dir }}/workspace/test_results/"
 
@@ -262,14 +212,12 @@
     executable: /bin/bash
 
 - name: Run PyTorch Python Job
-  when: framework.stdout == "pytorch" and runtime_name.stdout in ["python", "c"]
+  when: user_meta_dict.framework.name == "pytorch" and runtime_name.stdout in ["python", "c"]
   shell:
     cmd: |
-      set -x
-      set -e
+      set -xe
 
-      user_user_data_folder='{{ user_data_folder }}/'
-      cd $user_user_data_folder
+      cd '{{ user_data_folder }}/'
 
       py_file=`cat entry_point.txt`
 
@@ -279,11 +227,10 @@
     executable: /bin/bash
 
 - name: Install tensorflow.js and convert training model
-  when: framework.stdout == "tensorflow"
+  when: user_meta_dict.framework.name == "tensorflow"
   shell:
     cmd: |
-      set -x
-      set -e
+      set -xe
       pip install tensorflowjs
 
       tensorflowjs_converter --input_format keras \
@@ -294,8 +241,7 @@
 - name: Collect Traning or Inference Result
   shell:
     cmd: |
-      set -x
-      set -e
+      set -xe
 
       mv '{{ user_data_folder }}/{{ training_output_folder_name }}' \
         '{{ ansible_user_dir }}/workspace/test_results/'
