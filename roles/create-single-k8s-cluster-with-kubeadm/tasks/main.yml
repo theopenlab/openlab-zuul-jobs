@@ -17,6 +17,7 @@
       EOF
 
       apt-get update
+      sleep 600
       if [[ "{{ kubernetes_version }}" == "latest" ]]; then
           apt-get install -y kubelet kubeadm kubectl
       else
