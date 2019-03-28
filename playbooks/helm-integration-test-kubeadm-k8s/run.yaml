@@ -52,6 +52,7 @@
           kubectl get pv
   
           # run cmd "ct lint-and-install" to test several charts
+          sleep 3600
           docker exec --interactive ctd "$@" ct lint-and-install --charts stable/mysql,stable/postgresql,stable/etcd-operator,stable/coredns --namespace kube-system
           # some charts won't delete the pvc, delete them manually to make sure pv is available
           kubectl delete pvc --all --namespace kube-system
