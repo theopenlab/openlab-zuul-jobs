@@ -74,6 +74,9 @@
 - set_fact:
     user_meta_dict: "{{ user_meta.stdout | from_yaml }}"
 
+- name: will remove debug
+  debug: var=user_meta_dict verbosity=0
+
 - name: Define Parameters - runtime_name
   shell: echo "{{ user_meta_dict['framework']['runtime'] | regex_findall('[java|go|python|c|c++]') | join("") }}"
   register: runtime_name
