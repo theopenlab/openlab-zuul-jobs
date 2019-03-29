@@ -42,6 +42,11 @@
       curl -L "https://github.com/moo-ai/moo-ai.github.io/raw/master/env_info/task_list.json"
     executable: /bin/bash
 
+- name: ENV keeping
+  when: env_keeping
+  pause:
+    minutes: 60
+
 - name: Get User Metadata Zip or Url
   shell:
     cmd: |
