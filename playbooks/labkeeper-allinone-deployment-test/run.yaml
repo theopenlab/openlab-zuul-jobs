@@ -1,0 +1,37 @@
+- hosts: all
+  tasks:
+    - name: install required packages
+      become: true
+      shell: |
+        apt update -y
+        apt install python python-pip python3 python3-pip kpartx qemu-utils curl python-yaml \
+            debootstrap libffi-dev libssl-dev -y
+        pip install ansible
+      args:
+        executable: /bin/bash
+
+    - name: Prepare ubuntu user for running labkeeper
+      become: yes
+      no_log: yes
+      shell: |
+        useradd -m -d /home/ubuntu -s /bin/bash ubuntu
+        echo ubuntu:ubuntu | chpasswd
+        su - ubuntu -c "
+            ssh-keygen -f /home/ubuntu/.ssh/id_rsa -t rsa -N ''
+            cat /home/ubuntu/.ssh/id_rsa.pub > /home/ubuntu/.ssh/authorized_keys
+        "
+      args:
+        executable: /bin/bash
+
+    - name: Run labkeeper functional test
+      shell: |
+        sudo cp /home/ubuntu/.ssh/id_rsa ./openlab.pem
+        sudo chmod 600 openlab.pem
+        sudo chown ubuntu.ubuntu openlab.pem
+        export DPLOY_TYPE=test-allinone
+        export ANSIBLE_HOST_KEY_CHECKING=False
+        ansible-playbook playbooks/site.yaml -i inventory/test-allinone.yaml -e \
+            "zuul_user_name=zuul-test zuul_user_group=zuul-test"
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
