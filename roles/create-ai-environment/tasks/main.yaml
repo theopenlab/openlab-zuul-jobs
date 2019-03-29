@@ -75,14 +75,14 @@
     user_meta_dict: "{{ user_meta.stdout | from_yaml }}"
 
 - name: Define Parameters - runtime_name
-  shell: echo "{{ user_meta_dict.framework.runtime | regex_findall('[java|go|python|c|c++]') | join("") }}"
+  shell: echo "{{ user_meta_dict['framework']['runtime'] | regex_findall('[java|go|python|c|c++]') | join("") }}"
   register: runtime_name
 
 - name: Define Parameters - runtime_version
-  shell: echo "{{ user_meta_dict.framework.runtime | regex_replace('[java|go|python|c|c++]') }}"
+  shell: echo "{{ user_meta_dict['framework']['runtime'] | regex_replace('[java|go|python|c|c++]') }}"
   register: runtime_version
 
-- name: Install {{ user_meta_dict.runtime }} Runtime
+- name: Install {{ user_meta_dict['runtime'] }} Runtime
   when: runtime_name
   shell:
     cmd: |
@@ -140,16 +140,16 @@
       ./NVIDIA-Linux-x86_64-384.81.run -a --ui=none < ./input
     executable: /bin/bash
 
-- name: Install {{ user_meta_dict.framework.name }}-{{ user_meta_dict.framework.version }}
+- name: Install {{ user_meta_dict['framework']['name'] }}-{{ user_meta_dict['framework']['version'] }}
   when:
-    ( user_meta_dict.framework.name == "tensorflow" and runtime_name.stdout in ["python", "c", "java", "go"] ) or
-    ( user_meta_dict.framework.name == "pytorch" and runtime_name.stdout in ["python", "c"] )
+    ( user_meta_dict['framework']['name'] == "tensorflow" and runtime_name.stdout in ["python", "c", "java", "go"] ) or
+    ( user_meta_dict['framework']['name'] == "pytorch" and runtime_name.stdout in ["python", "c"] )
   shell:
     cmd: |
       set -x
       set -e
-      framework={{ user_meta_dict.framework.name }}
-      framework_version={{ user_meta_dict.framework.version }}
+      framework={{ user_meta_dict['framework']['name'] }}
+      framework_version={{ user_meta_dict['framework']['version'] }}
       runtime_name={{ runtime_name.stdout }}
 
       if [ $framework == "tensorflow" ];then
@@ -194,14 +194,14 @@
     executable: /bin/bash
 
 - name: Run Tensorflow Job
-  when: user_meta_dict.framework.name == "tensorflow" and runtime_name.stdout in ["python", "java", "go", "c"]
+  when: user_meta_dict['framework']['name'] == "tensorflow" and runtime_name.stdout in ["python", "java", "go", "c"]
   shell:
     cmd: |
       set -xe
 
       cd '{{ user_data_folder }}/'
 
-      py_file={{ user_meta_dict.entry_point }}
+      py_file={{ user_meta_dict['entry_point'] }}
 
       result_folder="{{ ansible_user_dir }}/workspace/test_results/"
 
@@ -209,7 +209,7 @@
     executable: /bin/bash
 
 - name: Run PyTorch Python Job
-  when: user_meta_dict.framework.name == "pytorch" and runtime_name.stdout in ["python", "c"]
+  when: user_meta_dict['framework']['name'] == "pytorch" and runtime_name.stdout in ["python", "c"]
   shell:
     cmd: |
       set -xe
@@ -224,7 +224,7 @@
     executable: /bin/bash
 
 - name: Install tensorflow.js and convert training model
-  when: user_meta_dict.framework.name == "tensorflow"
+  when: user_meta_dict['framework']['name'] == "tensorflow"
   shell:
     cmd: |
       set -xe
