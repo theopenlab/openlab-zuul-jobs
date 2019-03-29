@@ -5,7 +5,6 @@
 - name: Set Global Vars
   set_fact:
     user_data_folder: "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ hardware_folder }}"
-    env_file: "{{ env_keeping | bool | ternary('task_list_sleep.json', 'task_list.json') }}"
     training_output_folder_name: "training_result"
 
 - name: Create Demo User
@@ -26,12 +25,11 @@
   shell:
     cmd: |
       apt install -y python-pip
-      pip install pygithub
+      pip install pygithub wget
 
       source_file=`ls "{{ user_data_folder }}" | grep moo-job`
       job_name=$(echo $source_file | cut -d . -f1)
       job_name=${job_name/_sleep/}
-      wget "https://raw.githubusercontent.com/moo-ai/moo-ai.github.io/master/env_info/{{ env_file }}" -O env.json
 
       python '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/tools/update_env_info.py' \
       --job $job_name --patch "{{ zuul.patchset }}" --user '{{ moo_github_account.user_name }}' \
@@ -41,11 +39,6 @@
 
       curl -L "https://github.com/moo-ai/moo-ai.github.io/raw/master/env_info/task_list.json"
     executable: /bin/bash
-
-- name: ENV keeping
-  when: env_keeping
-  pause:
-    minutes: 60
 
 - name: Get User Metadata Zip or Url
   shell:
