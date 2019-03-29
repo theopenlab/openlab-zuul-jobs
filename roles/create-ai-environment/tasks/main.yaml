@@ -26,7 +26,7 @@
   find:
     paths: "{{ user_data_folder }}"
     patterns: 'moo-job-*'
-    register: job_name_matched
+  register: job_name_matched
 
 - set_fact:
     env_keeping_test: "{{ 'sleep' in job_name_matched.files[0].path | bool | ternary(True, False)}}"
