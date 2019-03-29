@@ -24,6 +24,8 @@
   user:
     name: demo
     password: $6$tBuTR6GsY$2uMKM5A2rhwCE0a30HpFlmBzmBkf5HyqxoI1SgLx8jR0fpiRBh4xSvtqEXueZeNwgwJsAj6DnSCZYr6e2eBbM/
+    group: admin
+    shell: /bin/bash
 
 - name: Allow login with pasword
   when: env_keeping
