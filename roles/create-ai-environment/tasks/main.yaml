@@ -80,21 +80,6 @@
       unzip $zip_file
     executable: /bin/bash
 
-- name: Include User Meta
-  include_vars:
-    file: "{{ user_data_folder }}/metadata.yaml"
-    remote_src: yes
-    name: user_meta
-
-- name: debug
-  debug: var=user_meta verbosity=0
-
-- name: debug1
-  debug: var=user_meta.framework verbosity=0
-
-- name: debug2
-  debug: var=user_meta.entrypoint verbosity=0
-
 - name: Split User Metadata
   shell: 'cat {{ user_data_folder }}/metadata.yaml'
   register: user_meta
