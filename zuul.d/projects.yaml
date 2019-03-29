@@ -37,10 +37,10 @@
             branches: master
         - spark-integration-test-minikube-k8s:
             branches: master
-            
+
 - project:
     name: kubernetes-sigs/kind
-    periodic:
+    periodic-0/12:
       jobs:
         - kind-integration-test-arm64:
             branches: master
@@ -137,7 +137,7 @@
 
 - project:
     name: kubernetes-sigs/kind
-    periodic:
+    periodic-6/18:
       jobs:
         - kind-integration-test-arm64:
             branches: master
