@@ -5,6 +5,7 @@
 - name: Set Global Vars
   set_fact:
     user_data_folder: "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ hardware_folder }}"
+    result_folder: "{{ ansible_user_dir }}/workspace/test_results"
     training_output_folder_name: "training_result"
 
 - name: Create Demo User
@@ -53,8 +54,7 @@
       apt install -y unzip
       pip install pyyaml
 
-      result_folder="{{ ansible_user_dir }}/workspace/test_results/"
-      mkdir -p $result_folder
+      mkdir -p "{{ result_folder }}"
 
       cd '{{ user_data_folder }}'
 
@@ -209,9 +209,7 @@
 
       py_file={{ user_meta['user_meta']['entry_point'] }}
 
-      result_folder="{{ ansible_user_dir }}/workspace/test_results/"
-
-      '{{ runtime.stdout }}' $py_file | tee ${result_folder}"/process_log.txt"
+      '{{ runtime.stdout }}' $py_file | tee "{{ result_folder }}/process_log.txt"
     executable: /bin/bash
 
 - name: Run PyTorch Python Job
@@ -224,9 +222,7 @@
 
       py_file=`cat entry_point.txt`
 
-      result_folder="{{ ansible_user_dir }}/workspace/test_results/"
-
-      '{{ runtime.stdout }}' $py_file | tee ${result_folder}"/process_log.txt"
+      '{{ runtime.stdout }}' $py_file | tee "{{ result_folder }}/process_log.txt"
     executable: /bin/bash
 
 - name: Install tensorflow.js and convert training model
@@ -250,20 +246,16 @@
       # Serve inference function via openlab log server for each job. Users can
       # visit log page to test inference directly.
 
-      mv '{{ user_data_folder }}/{{ training_output_folder_name }}' \
-        '{{ ansible_user_dir }}/workspace/test_results/'
-      mkdir '{{ ansible_user_dir }}/workspace/test_results/web_page/'
-      mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/tf_js.html' '{{ ansible_user_dir }}/workspace/test_results/web_page/index.html'
-      mv '{{ user_data_folder }}/tfjs/' \
-        '{{ ansible_user_dir }}/workspace/test_results/web_page/'
-      mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/css' \
-        '{{ ansible_user_dir }}/workspace/test_results/web_page/'
-      mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/js' \
-        '{{ ansible_user_dir }}/workspace/test_results/web_page/'
+      mkdir '{{ result_folder }}/web_page/'
+
+      mv '{{ user_data_folder }}/{{ training_output_folder_name }}' '{{ result_folder }}'
+      mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/tf_js.html' '{{ result_folder }}/web_page/index.html'
+      mv '{{ user_data_folder }}/tfjs/' '{{ result_folder }}/web_page/'
+      mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/css' '{{ result_folder }}/web_page/'
+      mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/js' '{{ result_folder }}/web_page/'
 
       model_path="http:\/\/status.openlabtesting.org\/logs\/{{ zuul.change[-2:] }}\/{{ zuul.change }}\/{{ zuul.patchset }}\/check\/{{ zuul.job }}\/{{ zuul.build[:7] }}\/test_results\/web_page\/tfjs\/model.json"
-      sed -i "s/replace.me/$model_path/" \
-        '{{ ansible_user_dir }}/workspace/test_results/web_page/index.html'
+      sed -i "s/replace.me/$model_path/" '{{ result_folder }}/web_page/index.html'
     executable: /bin/bash
 
 - name: ENV keeping
