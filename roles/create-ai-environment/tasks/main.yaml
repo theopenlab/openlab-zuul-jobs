@@ -39,7 +39,7 @@
   shell:
     cmd: |
       apt install -y python-pip
-      pip install pygithub wget
+      pip install pygithub
 
       python '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/tools/update_env_info.py' \
       --job {{ job_name }} --patch "{{ zuul.patchset }}" --user '{{ moo_github_account.user_name }}' \
@@ -86,7 +86,8 @@
   shell: 'cat {{ user_data_folder }}/metadata.yaml'
   register: user_meta
 
-- set_fact:
+- name: Get ML metadata yaml content
+  set_fact:
     user_meta: "{{ user_meta.stdout | from_yaml }}"
 
 - name: Define Parameters - runtime_name
