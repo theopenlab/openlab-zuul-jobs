@@ -36,8 +36,13 @@
       --password '{{ moo_github_account.user_password }}' \
       --url "http://logs.openlabtesting.org/logs/{{ zuul.change[-2:] }}/{{ zuul.change }}/{{ zuul.patchset }}/check/{{ zuul.job }}/{{ zuul.build[:7] }}/test_results/" \
       --ip '{{ nodepool.public_ipv4 }}' --keeping '{{ env_keeping | lower }}'
+    executable: /bin/bash
 
+- name: Generate github raw file link for MOO
+  shell:
+    cmd: |
       curl -L "https://github.com/moo-ai/moo-ai.github.io/raw/master/env_info/task_list.json"
+      curl -L "https://github.com/moo-ai/moo-ai.github.io/raw/master/env_info/task_list_sleep.json"
     executable: /bin/bash
 
 - name: Get User Metadata Zip or Url
@@ -53,7 +58,8 @@
 
       cd '{{ user_data_folder }}'
 
-      # Get the zip link from url
+      # txt file contains a url refer to remote input data. zip file contains
+      # loacl input data.
       if ls | grep txt;then
         txt_file=`ls | grep txt`
         url=`cat $txt_file`
@@ -180,7 +186,7 @@
         fi
       fi
 
-      if [ $framework == 'pythorch' ];then
+      if [ $framework == 'pytorch' ];then
         if [ $runtime_name == "python" ];then
           pip install torch==$framework_version torchvision
         fi
@@ -230,6 +236,7 @@
       set -xe
       pip install tensorflowjs
 
+      # Use tensorflow.js to show inference result via MOO web page
       tensorflowjs_converter --input_format keras \
         '{{ user_data_folder }}/{{ training_output_folder_name }}/my_model.h5' \
         '{{ user_data_folder }}/tfjs'
@@ -239,6 +246,9 @@
   shell:
     cmd: |
       set -xe
+
+      # Serve inference function via openlab log server for each job. Users can
+      # visit log page to test inference directly.
 
       mv '{{ user_data_folder }}/{{ training_output_folder_name }}' \
         '{{ ansible_user_dir }}/workspace/test_results/'
