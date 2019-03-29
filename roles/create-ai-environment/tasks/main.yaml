@@ -8,13 +8,14 @@
     result_folder: "{{ ansible_user_dir }}/workspace/test_results"
     training_output_folder_name: "training_result"
 
-- name: Find MOO job name
+- name: Find MOO job
   find:
     paths: "{{ user_data_folder }}"
     patterns: 'moo-job-*'
   register: job_name_matched
 
-- set_fact:
+- name: Set MOO job Info
+  set_fact:
     env_keeping: "{{ job_name_matched.files[0].path | search('sleep') | bool | ternary(True, False)}}"
     job_name: "{{ job_name_matched.files[0].path.split('/')[-1].split('.')[0].split('_')[0] }}"
 
@@ -37,10 +38,6 @@
     cmd: |
       apt install -y python-pip
       pip install pygithub wget
-
-      source_file=`ls "{{ user_data_folder }}" | grep moo-job`
-      job_name=$(echo $source_file | cut -d . -f1)
-      job_name=${job_name/_sleep/}
 
       python '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/tools/update_env_info.py' \
       --job {{ job_name }} --patch "{{ zuul.patchset }}" --user '{{ moo_github_account.user_name }}' \
