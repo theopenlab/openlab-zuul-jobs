@@ -4,6 +4,19 @@
       jobs:
         - openlab-zuul-jobs-check
 
+- project:
+    name: cloudfoundry-incubator/bosh-huaweicloud-cpi-release
+    check-generic-cloud:
+      jobs:
+        - bosh-huaweicloud-cpi-release-validator-test-huaweicloud
+        - bosh-huaweicloud-cpi-release-acceptance-test-huaweicloud
+
+- project:
+    name: huaweicloud/huaweicloud-service-broker
+    check-generic-cloud:
+      jobs:
+        - osb-checker-test-huaweicloud
+
 ####################### periodic jobs on 00:00/12:00 ##########################
 - project:
     name: ansible/ansible
@@ -36,13 +49,6 @@
         - spark-integration-test-kubeadm-k8s:
             branches: master
         - spark-integration-test-minikube-k8s:
-            branches: master
-            
-- project:
-    name: kubernetes-sigs/kind
-    periodic:
-      jobs:
-        - kind-integration-test-arm64:
             branches: master
 
 ####################### periodic jobs on 02:00/14:00 ##########################
@@ -133,13 +139,6 @@
         - packer-functional-devstack-newton:
             branches: master
         - packer-functional-devstack-mitaka:
-            branches: master
-
-- project:
-    name: kubernetes-sigs/kind
-    periodic:
-      jobs:
-        - kind-integration-test-arm64:
             branches: master
 
 ####################### periodic jobs on 08:00/20:00 ##########################

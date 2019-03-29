@@ -1106,11 +1106,3 @@
     override-checkout: branch-2.4
     vars:
       k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
-
-- job:
-    name: kind-integration-test-arm64
-    parent: init-test
-    description: |
-      Run integration tests of Kubernetes IN Docker against ARM64 architecture
-    run: playbooks/kind-integration-test-arm64/run.yaml
-    nodeset: ubuntu-xenial-arm64

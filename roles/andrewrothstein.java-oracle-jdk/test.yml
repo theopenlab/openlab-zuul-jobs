@@ -1,8 +1,0 @@
----
-- hosts: all
-  roles:
-    - role: '{{playbook_dir}}'
-      java_oracle_cleanup: True
-  tasks:
-    - name: test javac
-      command: /usr/local/java/bin/javac -version
