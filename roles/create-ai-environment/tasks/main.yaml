@@ -12,7 +12,6 @@
   when: env_keeping
   user:
     name: demo
-    group: demo
     password: $6$tBuTR6GsY$2uMKM5A2rhwCE0a30HpFlmBzmBkf5HyqxoI1SgLx8jR0fpiRBh4xSvtqEXueZeNwgwJsAj6DnSCZYr6e2eBbM/
 
 - name: Allow login with pasword
