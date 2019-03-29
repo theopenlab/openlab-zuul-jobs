@@ -22,6 +22,22 @@
       service sshd restart
     executable: /bin/bash
 
+- name: Find MOO job name
+  find:
+    paths: "{{ user_data_folder }}"
+    patterns: 'moo-job-*'
+    register: job_name_matched
+
+- set_fact:
+    env_keeping_test: "{{ 'sleep' in job_name_matched.files[0].path | bool | ternary(True, False)}}"
+    job_name_test: "{{ job_name_matched.files[0].path.split('/')[-1].split('.')[0].split('_')[0] }}"
+
+- debug:
+    msg: " {{ env_keeping_test }}"
+
+- debug:
+    msg: " {{ job_name_test }}"
+
 - name: Upload Environment Info to Web
   shell:
     cmd: |
