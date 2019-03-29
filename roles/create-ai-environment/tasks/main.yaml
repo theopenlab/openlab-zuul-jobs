@@ -83,6 +83,7 @@
 - name: Include User Meta
   include_vars:
     file: "{{ user_data_folder }}/metadata.yaml"
+    remote_src: yes
     name: user_meta
 
 - name: debug
