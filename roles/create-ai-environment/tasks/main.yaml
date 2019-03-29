@@ -87,6 +87,9 @@
 - set_fact:
     user_meta: "{{ user_meta.stdout | from_yaml }}"
 
+- name: debug
+  debug: var=user_meta
+
 - name: Define Parameters - runtime_name
   shell: echo "{{ user_meta['user_meta']['framework']['runtime'] | regex_findall('[java|go|python|c|c++]') | join("") }}"
   register: runtime_name
