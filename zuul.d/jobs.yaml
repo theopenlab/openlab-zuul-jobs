@@ -1140,6 +1140,6 @@
     name: labkeeper-allinone-deployment-test
     parent: init-test
     description: |
-      Tru to deploy allinone openlab CI environment with labkeeper
+      Try to deploy allinone openlab CI environment with labkeeper
     run: playbooks/labkeeper-allinone-deployment-test/run.yaml
 
