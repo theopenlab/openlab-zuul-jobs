@@ -89,18 +89,6 @@
 - set_fact:
     user_meta: "{{ user_meta.stdout | from_yaml }}"
 
-- name: debug
-  debug: var=user_meta
-
-- name: debug
-  debug: var=user_meta.framework
-
-- name: debug1
-  debug: var=user_meta['framework']
-
-- name: debug2
-  debug: var=user_meta.framework.name
-
 - name: Define Parameters - runtime_name
   shell: echo "{{ user_meta.framework.runtime | regex_findall('[java|go|python|c|c++]') | join("") }}"
   register: runtime_name
@@ -230,7 +218,7 @@
 
       py_file={{ user_meta.entry_point }}
 
-      '{{ runtime.stdout }}' $py_file | tee "{{ result_folder }}/process_log.txt"
+      '{{ user_meta.framework.runtime }}' $py_file | tee "{{ result_folder }}/process_log.txt"
     executable: /bin/bash
 
 - name: Run PyTorch Python Job
@@ -243,7 +231,7 @@
 
       py_file=`cat entry_point.txt`
 
-      '{{ runtime.stdout }}' $py_file | tee "{{ result_folder }}/process_log.txt"
+      '{{ user_meta.framework.runtime }}' $py_file | tee "{{ result_folder }}/process_log.txt"
     executable: /bin/bash
 
 - name: Install tensorflow.js and convert training model
