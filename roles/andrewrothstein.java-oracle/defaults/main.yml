@@ -1,0 +1,38 @@
+---
+# defaults file for java-oracle
+
+# jre or jdk
+java_oracle_prefix: jre
+
+java_oracle_mirror: http://download.oracle.com/otn-pub/java/jdk
+java_oracle_platform: linux-x64
+
+java_oracle_ver:
+  major: 8
+  minor: 0
+  patch: 192
+  post_patches:
+    '8u181': b13
+    '8u192': b12
+  uuids:
+    '8u181': '96a7b8442fe848ef90c96a2fad6ed6d1'
+    '8u192': '750e1c8617c5452694857ad95c3ee230'
+  checksums:
+    '8u181':
+      # https://www.oracle.com/webfolder/s/digest/8u181checksum.html
+      jre:
+        linux-x64: sha256:0b26c7fcfad20029e6e0989e678efcd4a81f0fe502a478b4972215533867de1b
+      jdk:
+        linux-x64: sha256:1845567095bfbfebd42ed0d09397939796d05456290fb20a83c476ba09f991d3
+    '8u192':
+      # https://www.oracle.com/webfolder/s/digest/8u192checksum.html
+      jre:
+        linux-x64: sha256:f23a3e2b9decef82b74f850157580d929ab35e9f19be5e0a10c779b68be51d43
+      jdk:
+        linux-x64: sha256:6d34ae147fc5564c07b913b467de1411c795e290356538f22502f28b76a323c2
+      server-jre:
+        linux-x64: sha256:3d811a5ec65dc6fc261f488757bae86ecfe285a79992363b016f60cdb4dbe7e6
+
+
+java_oracle_parent_install_dir: /usr/local
+java_oracle_timeout_seconds: 600

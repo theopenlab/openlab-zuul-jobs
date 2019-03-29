@@ -1,0 +1,49 @@
+---
+- name: resolve platform specific vars
+  include_vars: "{{ item }}"
+  with_first_found:
+    - files:
+        - "{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml"
+        - "{{ ansible_distribution }}.yml"
+        - "{{ ansible_os_family }}.yml"
+      skip: true
+      paths:
+        - '{{ role_path }}/vars'
+
+- name: install os pkgs...
+  become: yes
+  become_user: root
+  with_items: '{{ bazel_os_pkgs }}'
+  package:
+    name: '{{ item }}'
+    state: present
+
+- name: check for installation...
+  become: yes
+  stat:
+    path: '{{ bazel_installed }}'
+  changed_when: False
+  register: bazel_binary
+
+- when: not bazel_binary.stat.exists
+  block:
+    - name: download installer
+      become: yes
+      become_user: root
+      get_url:
+        url: '{{ bazel_installer_url }}'
+        dest: /tmp/{{ bazel_installer }}
+        checksum: '{{ bazel_checksum }}'
+        mode: 0755
+
+    - name: run installer
+      become: yes
+      become_user: root
+      command: /tmp/{{ bazel_installer }}
+      args:
+        creates: '{{ bazel_installed }}'
+
+    - name: first bazel run / finalize installation
+      become: yes
+      become_user: root
+      command: '{{ bazel_installed }} version'

@@ -1,0 +1,6 @@
+---
+# vars file for bazel
+bazel_installer: bazel-{{ bazel_ver }}-installer-{{ bazel_platform }}.sh
+bazel_installer_url: '{{ bazel_mirror }}/{{ bazel_ver }}/{{ bazel_installer }}'
+bazel_checksum: '{{ bazel_checksums[bazel_ver][bazel_platform] }}'
+bazel_installed: /usr/local/bin/bazel
