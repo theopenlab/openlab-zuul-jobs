@@ -29,7 +29,7 @@
   register: job_name_matched
 
 - set_fact:
-    env_keeping_test: "{{ 'sleep' in job_name_matched.files[0].path | bool | ternary(True, False)}}"
+    env_keeping_test: "{{ job_name_matched.files[0].path | search('sleep') | bool | ternary(True, False)}}"
     job_name_test: "{{ job_name_matched.files[0].path.split('/')[-1].split('.')[0].split('_')[0] }}"
 
 - debug:
