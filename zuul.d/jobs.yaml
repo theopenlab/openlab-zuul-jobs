@@ -1142,4 +1142,3 @@
     description: |
       Try to deploy allinone openlab CI environment with labkeeper
     run: playbooks/labkeeper-allinone-deployment-test/run.yaml
-
