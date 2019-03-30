@@ -12,18 +12,18 @@
 
     - name: Prepare ubuntu user for running labkeeper
       no_log: yes
-      shell: |
-        useradd -m -d /home/ubuntu -s /bin/bash ubuntu
-        echo ubuntu:ubuntu | chpasswd
-        cat > /etc/sudoers.d/ubuntu << EOF
-        ubuntu ALL=(ALL) NOPASSWD:ALL
-        EOF
-        chmod 0440 /etc/sudoers.d/ubuntu
-        su - ubuntu -c "
-            ssh-keygen -f /home/ubuntu/.ssh/id_rsa -t rsa -N ''
-            cat /home/ubuntu/.ssh/id_rsa.pub > /home/ubuntu/.ssh/authorized_keys
-        "
-      args:
+      shell:
+        cmd: |
+          useradd -m -d /home/ubuntu -s /bin/bash ubuntu
+          echo ubuntu:ubuntu | chpasswd
+          cat > /etc/sudoers.d/ubuntu << EOF
+          ubuntu ALL=(ALL) NOPASSWD:ALL
+          EOF
+          chmod 0440 /etc/sudoers.d/ubuntu
+          su - ubuntu -c "
+              ssh-keygen -f /home/ubuntu/.ssh/id_rsa -t rsa -N ''
+              cat /home/ubuntu/.ssh/id_rsa.pub > /home/ubuntu/.ssh/authorized_keys
+          "
         executable: /bin/bash
 
     - name: Run labkeeper functional test
