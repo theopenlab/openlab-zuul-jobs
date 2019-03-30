@@ -15,6 +15,10 @@
       shell: |
         useradd -m -d /home/ubuntu -s /bin/bash ubuntu
         echo ubuntu:ubuntu | chpasswd
+        cat > /etc/sudoers.d/ubuntu << EOF
+        ubuntu ALL=(ALL) NOPASSWD:ALL
+        EOF
+        chmod 0440 /etc/sudoers.d/ubuntu
         su - ubuntu -c "
             ssh-keygen -f /home/ubuntu/.ssh/id_rsa -t rsa -N ''
             cat /home/ubuntu/.ssh/id_rsa.pub > /home/ubuntu/.ssh/authorized_keys
@@ -31,7 +35,6 @@
         echo 'youneverknow' > vault-password.txt
         # Because ansible will not load ansible.cfg autommatically because this directory is world writable
         export ANSIBLE_CONFIG=ansible.cfg
-        sleep 7200
         ansible-playbook -vvvv playbooks/site.yaml -i inventory/test-allinone.yaml -e \
             "zuul_user_name=zuul-test zuul_user_group=zuul-test"
       args:
