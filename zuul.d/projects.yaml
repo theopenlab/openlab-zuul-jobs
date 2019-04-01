@@ -4,6 +4,12 @@
       jobs:
         - openlab-zuul-jobs-check
 
+- project:
+    name: theopenlab/labkeeper
+    check:
+      jobs:
+        - labkeeper-allinone-deployment-test
+
 ####################### periodic jobs on 00:00/12:00 ##########################
 - project:
     name: ansible/ansible
