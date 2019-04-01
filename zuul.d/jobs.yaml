@@ -1114,3 +1114,31 @@
       Run integration tests of Kubernetes IN Docker against ARM64 architecture
     run: playbooks/kind-integration-test-arm64/run.yaml
     nodeset: ubuntu-xenial-arm64
+
+- job:
+    name: helm-integration-test-kubeadm-k8s-v1.14.0
+    parent: init-test
+    description: |
+      Run integration tests of helm charts with v1.14.0 k8s cluster deployed by kubeadm, and using docker image of v2.2.0 chart-testing tool which installed with helm v2.12.2
+    run: playbooks/helm-integration-test-kubeadm-k8s/run.yaml
+    vars:
+      chart_testing_version: v2.2.0
+      kubernetes_version: 1.14.0
+
+- job:
+    name: helm-integration-test-kubeadm-k8s-v1.12.7
+    parent: init-test
+    description: |
+      Run integration tests of helm charts with v1.12.7 k8s cluster deployed by kubeadm, and using docker image of v2.2.0 chart-testing tool which installed with helm v2.12.2
+    run: playbooks/helm-integration-test-kubeadm-k8s/run.yaml
+    vars:
+      chart_testing_version: v2.2.0
+      kubernetes_version: 1.12.7
+      docker_ce_version: 18.06
+
+- job:
+    name: labkeeper-allinone-deployment-test
+    parent: init-test
+    description: |
+      Try to deploy allinone openlab CI environment with labkeeper
+    run: playbooks/labkeeper-allinone-deployment-test/run.yaml

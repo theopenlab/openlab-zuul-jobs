@@ -1,0 +1,42 @@
+- hosts: all
+  become: yes
+  tasks:
+    - name: install required packages
+      shell: |
+        apt update -y
+        apt install python python-pip python3 python3-pip kpartx qemu-utils curl python-yaml \
+            debootstrap libffi-dev libssl-dev -y
+        pip install ansible
+      args:
+        executable: /bin/bash
+
+    - name: Prepare ubuntu user for running labkeeper
+      no_log: yes
+      shell:
+        cmd: |
+          useradd -m -d /home/ubuntu -s /bin/bash ubuntu
+          echo ubuntu:ubuntu | chpasswd
+          cat > /etc/sudoers.d/ubuntu << EOF
+          ubuntu ALL=(ALL) NOPASSWD:ALL
+          EOF
+          chmod 0440 /etc/sudoers.d/ubuntu
+          su - ubuntu -c "
+              ssh-keygen -f /home/ubuntu/.ssh/id_rsa -t rsa -N ''
+              cat /home/ubuntu/.ssh/id_rsa.pub > /home/ubuntu/.ssh/authorized_keys
+          "
+        executable: /bin/bash
+
+    - name: Run labkeeper functional test
+      shell: |
+        set -ex
+        cp /home/ubuntu/.ssh/id_rsa ./openlab.pem
+        chmod 600 openlab.pem
+        chown ubuntu.ubuntu openlab.pem
+        echo 'youneverknow' > vault-password.txt
+        # Ansible will not load ansible.cfg automatically because this directory is world writable
+        export ANSIBLE_CONFIG=ansible.cfg
+        ansible-playbook playbooks/site.yaml -i inventory/test-allinone.yaml -e \
+            "zuul_user_name=zuul-test zuul_user_group=zuul-test"
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'

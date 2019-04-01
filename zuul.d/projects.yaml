@@ -4,6 +4,12 @@
       jobs:
         - openlab-zuul-jobs-check
 
+- project:
+    name: theopenlab/labkeeper
+    check:
+      jobs:
+        - labkeeper-allinone-deployment-test
+
 ####################### periodic jobs on 00:00/12:00 ##########################
 - project:
     name: ansible/ansible
@@ -29,6 +35,7 @@
             branches: stable-2.7
         - openstacksdk-ansible-devel-functional-devstack:
             branches: devel
+
 - project:
     name: apache/spark
     periodic-0/12:
@@ -60,6 +67,15 @@
     periodic-2/14:
       jobs:
         - terraform-provider-huaweicloud-acceptance-test-fusioncloud:
+            branches: master
+
+- project:
+    name: helm/charts
+    periodic-2/14:
+      jobs:
+        - helm-integration-test-kubeadm-k8s-v1.14.0:
+            branches: master
+        - helm-integration-test-kubeadm-k8s-v1.12.7:
             branches: master
 
 ####################### periodic jobs on 04:00/16:00 ##########################
