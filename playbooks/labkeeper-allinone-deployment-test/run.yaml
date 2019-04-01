@@ -33,7 +33,11 @@
         chmod 600 openlab.pem
         chown ubuntu.ubuntu openlab.pem
         echo 'youneverknow' > vault-password.txt
+<<<<<<< HEAD
         # Ansible will not load ansible.cfg automatically because this directory is world writable
+=======
+        # Ansible will not load ansible.cfg autommatically because this directory is world writable
+>>>>>>> rebase with master
         export ANSIBLE_CONFIG=ansible.cfg
         ansible-playbook playbooks/site.yaml -i inventory/test-allinone.yaml -e \
             "zuul_user_name=zuul-test zuul_user_group=zuul-test"
