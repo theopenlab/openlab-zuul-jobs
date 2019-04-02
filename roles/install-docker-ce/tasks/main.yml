@@ -45,14 +45,24 @@
           "storage-driver": "overlay2"
         }
         EOF
-
-        mkdir -p /etc/systemd/system/docker.service.d
-
-        iptables -F
-        # Restart docker.
-        systemctl daemon-reload
-        systemctl restart docker
+      else
+        cat > /etc/docker/daemon.json <<EOF
+        {
+          "log-driver": "json-file",
+          "log-opts": {
+            "max-size": "100m"
+          },
+          "storage-driver": "overlay2"
+        }
+        EOF
       fi
+
+      mkdir -p /etc/systemd/system/docker.service.d
+
+      iptables -F
+      # Restart docker.
+      systemctl daemon-reload
+      systemctl restart docker
 
     executable: /bin/bash
 
