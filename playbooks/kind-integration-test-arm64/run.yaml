@@ -7,6 +7,7 @@
     - andrewrothstein.bazel
   vars:
     - go_version: 1.12
+    - arch: arm64
     - bazel_ver: '0.23.1'
 
   tasks:
@@ -16,7 +17,7 @@
           go get sigs.k8s.io/kind
           go get k8s.io/kubeadm
           go get k8s.io/kubernetes
-          go get k8s.io/test-infra
+          go get k8s.io/test-infra/kubetest
         executable: /bin/bash
       environment: '{{ global_env }}'
     - name: build KIND against k/k master using bazel
@@ -24,7 +25,6 @@
         cmd: |
           cd $GOPATH/src/sigs.k8s.io/kind && go install .
           kind build base-image --image kindest/base:latest --source $GOPATH/src/sigs.k8s.io/kind/images/base --loglevel debug
-          kind build node-image --type bazel --image kindest/node:latest --base-image kindest/base:latest --kube-root=$GOPATH/src/k8s.io/kubernetes/ --loglevel debug
         executable: /bin/bash
       environment: '{{ global_env }}'
 
