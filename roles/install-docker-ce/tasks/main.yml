@@ -33,11 +33,10 @@
           apt-get install docker-ce=$(apt-cache madison docker-ce |grep "{{ docker_ce_version }}" | head -n 1 | awk '{print $3}') -y
       fi
 
-      if [[ "{{ arch }}" == "amd64" ]]; then
+      if [[ "{{ arch }}" == "arm64" ]]; then
         # Setup daemon.
         cat > /etc/docker/daemon.json <<EOF
         {
-          "exec-opts": ["native.cgroupdriver={{ docker_vcgroupdriver }}"],
           "log-driver": "json-file",
           "log-opts": {
             "max-size": "100m"
@@ -48,6 +47,7 @@
       else
         cat > /etc/docker/daemon.json <<EOF
         {
+          "exec-opts": ["native.cgroupdriver={{ docker_vcgroupdriver }}"],
           "log-driver": "json-file",
           "log-opts": {
             "max-size": "100m"
