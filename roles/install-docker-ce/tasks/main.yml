@@ -21,7 +21,7 @@
 
       ## Add docker apt repository.
       add-apt-repository \
-         "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+         "deb [arch="{{ arch }}"] https://download.docker.com/linux/ubuntu \
          $(lsb_release -cs) \
          stable"
 
@@ -33,25 +33,26 @@
           apt-get install docker-ce=$(apt-cache madison docker-ce |grep "{{ docker_ce_version }}" | head -n 1 | awk '{print $3}') -y
       fi
 
+      if [[ "{{ arch }}" == "amd64" ]]; then
+        # Setup daemon.
+        cat > /etc/docker/daemon.json <<EOF
+        {
+          "exec-opts": ["native.cgroupdriver={{ docker_vcgroupdriver }}"],
+          "log-driver": "json-file",
+          "log-opts": {
+            "max-size": "100m"
+          },
+          "storage-driver": "overlay2"
+        }
+        EOF
 
-      # Setup daemon.
-      cat > /etc/docker/daemon.json <<EOF
-      {
-        "exec-opts": ["native.cgroupdriver={{ docker_vcgroupdriver }}"],
-        "log-driver": "json-file",
-        "log-opts": {
-          "max-size": "100m"
-        },
-        "storage-driver": "overlay2"
-      }
-      EOF
+        mkdir -p /etc/systemd/system/docker.service.d
 
-      mkdir -p /etc/systemd/system/docker.service.d
-
-      iptables -F
-      # Restart docker.
-      systemctl daemon-reload
-      systemctl restart docker
+        iptables -F
+        # Restart docker.
+        systemctl daemon-reload
+        systemctl restart docker
+      fi
 
     executable: /bin/bash
 
