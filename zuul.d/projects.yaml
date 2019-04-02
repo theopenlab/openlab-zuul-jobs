@@ -4,6 +4,12 @@
       jobs:
         - openlab-zuul-jobs-check
 
+- project:
+    name: theopenlab/labkeeper
+    check:
+      jobs:
+        - labkeeper-allinone-deployment-test
+
 ####################### periodic jobs on 00:00/12:00 ##########################
 - project:
     name: ansible/ansible
@@ -37,13 +43,6 @@
         - spark-integration-test-kubeadm-k8s-v1.14.0:
             branches: master
         - spark-integration-test-minikube-k8s-v1.10.0:
-            branches: master
-            
-- project:
-    name: kubernetes-sigs/kind
-    periodic:
-      jobs:
-        - kind-integration-test-arm64:
             branches: master
 
 ####################### periodic jobs on 02:00/14:00 ##########################
@@ -117,7 +116,7 @@
         - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.13:
             branches: release-1.13
         - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.14:
-            branches: master # TODO update to release-1.14 when cpo cuts it - k8s already has release-1.14 branch
+            branches: release-1.14
 
 ####################### periodic jobs on 06:00/18:00 ##########################
 - project:
@@ -147,7 +146,7 @@
 
 - project:
     name: kubernetes-sigs/kind
-    periodic:
+    periodic-6/18:
       jobs:
         - kind-integration-test-arm64:
             branches: master
