@@ -1,0 +1,3 @@
+---
+bazel_platform: dist
+bazel_installer: bazel-{{ bazel_ver }}-{{ bazel_platform }}.zip

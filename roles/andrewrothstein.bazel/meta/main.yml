@@ -19,7 +19,3 @@ galaxy_info:
   galaxy_tags:
     - development
     - build
-
-dependencies:
-  - role: andrewrothstein.java-oracle-jdk
-    version: v2.1.0

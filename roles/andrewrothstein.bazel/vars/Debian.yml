@@ -5,3 +5,4 @@ bazel_os_pkgs:
   - g++
   - zlib1g-dev
   - unzip
+  - openjdk-8-jdk
