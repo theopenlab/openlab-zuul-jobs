@@ -7,7 +7,7 @@
     - andrewrothstein.bazel
   vars:
     - go_version: 1.12
-    - arch: arm64
+    - arch: 'arm64'
     - bazel_ver: '0.23.1'
 
   tasks:
