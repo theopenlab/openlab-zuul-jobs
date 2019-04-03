@@ -3,12 +3,14 @@
   become: yes
   roles:
     - config-golang
+    vars:
+        go_version: 1.12
     - install-docker-ce
+    vars:
+        arch: arm64
     - andrewrothstein.bazel
-  vars:
-    - go_version: 1.12
-    - arch: arm64
-    - bazel_ver: '0.23.1'
+    vars:
+        bazel_ver: '0.23.1'
 
   tasks:
     - name: git required repositories
