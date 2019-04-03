@@ -2,13 +2,12 @@
 - hosts: all
   become: yes
   roles:
-    - config-golang
-    - install-docker-ce
-    - andrewrothstein.bazel
-  vars:
-    - go_version: 1.12
-    - arch: arm64
-    - bazel_ver: '0.23.1'
+    - role: config-golang
+      go_version: 1.12
+    - role: install-docker-ce
+      arch: arm64
+    - role: andrewrothstein.bazel
+      bazel_ver: '0.23.1'
 
   tasks:
     - name: git required repositories
