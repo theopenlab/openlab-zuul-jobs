@@ -83,11 +83,11 @@
       jobs:
         - arm-on-openlab-test
 
-- project:
-    name: Yikun/containerd
-    check:
-      jobs:
-        - containerd-build-arm
+#- project:
+#    name: Yikun/containerd
+#    check:
+#      jobs:
+#        - containerd-build-arm
 
 - project:
     name: liu-sheng/spark
