@@ -10,6 +10,17 @@
       jobs:
         - labkeeper-allinone-deployment-test
 
+- project:
+    name: moo-ai/moo-ai.github.io
+    check:
+      jobs:
+        - ai-on-openlab-test-vm:
+            files:
+              - ^user_data/*.*
+        - ai-on-openlab-test-vm-with-gpu:
+            files:
+              - ^user_data_gpu/*.*
+
 ####################### periodic jobs on 00:00/12:00 ##########################
 - project:
     name: ansible/ansible

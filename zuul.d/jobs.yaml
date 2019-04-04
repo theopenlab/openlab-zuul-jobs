@@ -1147,3 +1147,27 @@
     description: |
       Try to deploy allinone openlab CI environment with labkeeper
     run: playbooks/labkeeper-allinone-deployment-test/run.yaml
+
+- job:
+    name: ai-on-openlab-test-vm
+    parent: init-test
+    description: |
+      Train and inference AI model in openlab VM.
+    run: playbooks/ai-on-openlab/run.yaml
+    nodeset: ubuntu-xenial
+    secrets:
+      - moo_github_account
+    vars:
+      is_gpu_enabled: false
+
+- job:
+    name: ai-on-openlab-test-vm-with-gpu
+    parent: init-test
+    description: |
+      Train and inference AI model on GPU in openlab VM.
+    run: playbooks/ai-on-openlab/run.yaml
+    nodeset: ubuntu-xenial-gpu
+    secrets:
+      - moo_github_account
+    vars:
+      is_gpu_enabled: true
