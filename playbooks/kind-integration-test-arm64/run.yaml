@@ -6,8 +6,8 @@
       go_version: 1.12
     - role: install-docker-ce
       arch: arm64
-    - role: andrewrothstein.bazel
-      bazel_ver: '0.23.1'
+    #- role: andrewrothstein.bazel
+    #  bazel_ver: '0.23.1'
 
   tasks:
     - name: git required repositories
