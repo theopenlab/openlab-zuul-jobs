@@ -10,4 +10,4 @@
     - role: upload-logs
       # NOTE: because we use same host for zuul status and logs server, added
       # a '/logs' suffix for the convenience to routing request
-      zuul_log_url: "http://logs.openlabtesting.org/logs"
+      zuul_log_url: "https://logs.openlabtesting.org/logs"
