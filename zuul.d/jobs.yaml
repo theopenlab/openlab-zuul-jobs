@@ -1226,7 +1226,7 @@
     description: |
       Train and inference AI model on GPU in openlab VM.
     run: playbooks/ai-on-openlab/run.yaml
-    nodeset: ubuntu-xenial-gpu-for-P100-hwcloud
+    nodeset: ubuntu-xenial-gpu-P100-hwcloud
     secrets:
       - moo_github_account
     vars:
