@@ -60,6 +60,8 @@
     nodes:
       - name: ubuntu-xenial-gpu
         label: ubuntu-xenial-gpu
+      - name: ubuntu-xenial-gpu-for-P100-hwcloud
+        label: ubuntu-xenial-gpu-for-P100-hwcloud
 
 - nodeset:
     name: wxy-admin-cirros
