@@ -131,7 +131,7 @@
     executable: /bin/bash
 
 - name: Config new pip source
-  when: is_gpu_enabled and nodepool.cloud == 'huaweicloud' and nodepool.label != 'ubuntu-xenial-gpu-for-P100-hwcloud'
+  when: is_gpu_enabled and nodepool.cloud == 'huaweicloud' and nodepool.label != 'ubuntu-xenial-gpu-P100-hwcloud'
   shell:
     cmd: |
       set -xe
@@ -146,7 +146,7 @@
     executable: /bin/bash
 
 - name: Config new apt source
-  when: is_gpu_enabled and nodepool.cloud == 'huaweicloud' and nodepool.label != 'ubuntu-xenial-gpu-for-P100-hwcloud'
+  when: is_gpu_enabled and nodepool.cloud == 'huaweicloud' and nodepool.label != 'ubuntu-xenial-gpu-P100-hwcloud'
   lineinfile:
     dest: /etc/apt/sources.list
     line: "{{ item }}"
@@ -158,7 +158,7 @@
 
 
 - name: Prepare GPU env (GPU driver and CUDA)
-  when: is_gpu_enabled and nodepool.cloud != 'huaweicloud' and nodepool.label != 'ubuntu-xenial-gpu-for-P100-hwcloud'
+  when: is_gpu_enabled and nodepool.cloud != 'huaweicloud' and nodepool.label != 'ubuntu-xenial-gpu-P100-hwcloud'
   shell:
     cmd: |
       set -xe
