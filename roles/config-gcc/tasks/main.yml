@@ -10,7 +10,7 @@
     # Install the g++-{{ gcc_version }} packages
     apt-get install -y software-properties-common
     add-apt-repository -y ppa:ubuntu-toolchain-r/test
-    apt update
+    apt update || true
     apt install "g++-{{ gcc_version }}" -y
 
     # Set it up so the symbolic links gcc, g++ point to the newer version
