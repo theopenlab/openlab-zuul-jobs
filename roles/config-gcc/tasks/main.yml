@@ -7,15 +7,15 @@
   shell: |
     set -ex
 
-    # Install the g++-{{ go_version }} packages
+    # Install the g++-{{ gcc_version }} packages
     apt-get install -y software-properties-common
     add-apt-repository -y ppa:ubuntu-toolchain-r/test
     apt update
-    apt install "g++-{{ go_version }}" -y
+    apt install "g++-{{ gcc_version }}" -y
 
     # Set it up so the symbolic links gcc, g++ point to the newer version
-    update-alternatives --install /usr/bin/gcc gcc "/usr/bin/gcc-{{ go_version }}" 60 \
-                             --slave /usr/bin/g++ g++ "/usr/bin/g++-{{ go_version }}"
+    update-alternatives --install /usr/bin/gcc gcc "/usr/bin/gcc-{{ gcc_version }}" 60 \
+                             --slave /usr/bin/g++ g++ "/usr/bin/g++-{{ gcc_version }}"
     update-alternatives --config gcc
 
     # print g++ version
