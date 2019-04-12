@@ -44,6 +44,6 @@
             --check-version-skew=false \
             --down \
             --test_args="--ginkgo.focus=\[Conformance\] --ginkgo.skip=\[Serial\]|Alpha|Kubectl|\[(Disruptive|Feature:[^\]]+|Flaky)\] --num-nodes=3" \
-            --timeout=120m
+            --timeout=240m
         executable: /bin/bash
       environment: '{{ global_env }}'
