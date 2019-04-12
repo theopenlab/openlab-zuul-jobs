@@ -15,7 +15,6 @@
           set -o pipefail
 
           # Build cloud-provider-openstack binaries
-          sleep 14400
           make build
 
           # Create cloud-config
@@ -69,6 +68,7 @@
 
           # -E preserves the current env vars, but we need to special case PATH
           # Must run local-up-cluster.sh under kubernetes root directory
+          sleep 14400
           pushd '{{ k8s_src_dir }}'
           sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
           popd
