@@ -1,6 +1,0 @@
----
-- name: installing java with homebrew cask...
-  with_items: '{{java_oracle_brew_casks|default(["java"])}}'
-  homebrew_cask:
-    name: java
-    state: present
