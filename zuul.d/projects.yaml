@@ -16,10 +16,10 @@
       jobs:
         - ai-on-openlab-test-vm:
             files:
-              - ^user_data/*.*
+              - ^user_data/.*
         - ai-on-openlab-test-vm-with-gpu:
             files:
-              - ^user_data_gpu/*.*
+              - ^user_data_gpu/.*
 
 ####################### periodic jobs on 00:00/12:00 ##########################
 - project:
