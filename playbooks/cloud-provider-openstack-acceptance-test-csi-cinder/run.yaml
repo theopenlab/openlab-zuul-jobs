@@ -67,9 +67,9 @@
           export RUNTIME_CONFIG="storage.k8s.io/v1alpha1=true"
 
           # -E preserves the current env vars, but we need to special case PATH
-          # Must run local-up-cluster.sh under kubernetes root directory
-          sleep 14400
+          # Must run local-up-cluster.sh under kubernetes root director
           pushd '{{ k8s_src_dir }}'
+          sed -i '674d' hack/local-up-cluster.sh
           sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
           popd
 
