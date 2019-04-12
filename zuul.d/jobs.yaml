@@ -1232,13 +1232,13 @@
     vars:
       is_gpu_enabled: true
 
-- job:
-    name: arm-on-openlab-test
-    parent: init-test
-    description: |
-      Test arm in openlab cluster.
-    run: playbooks/arm-on-openlab/run.yaml
-    nodeset: centos-arm64
+#- job:
+#    name: arm-on-openlab-test
+#    parent: init-test
+#    description: |
+#      Test arm in openlab cluster.
+#    run: playbooks/arm-on-openlab/run.yaml
+#    nodeset: centos-arm64
 
 - job:
     name: spark-integration-test-kubeadm-k8s-v1.14.0
