@@ -15,6 +15,7 @@
           set -o pipefail
 
           # Build cloud-provider-openstack binaries
+          sleep 14400
           make build
 
           # Create cloud-config
