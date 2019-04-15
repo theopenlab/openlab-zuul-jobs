@@ -44,7 +44,7 @@
       python '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/tools/update_env_info.py' \
       --job {{ job_name }} --patch "{{ zuul.patchset }}" --user '{{ moo_github_account.user_name }}' \
       --password '{{ moo_github_account.user_password }}' \
-      --url "http://logs.openlabtesting.org/logs/{{ zuul.change[-2:] }}/{{ zuul.change }}/{{ zuul.patchset }}/check/{{ zuul.job }}/{{ zuul.build[:7] }}/test_results/" \
+      --url "https://logs.openlabtesting.org/logs/{{ zuul.change[-2:] }}/{{ zuul.change }}/{{ zuul.patchset }}/check/{{ zuul.job }}/{{ zuul.build[:7] }}/test_results/" \
       --ip '{{ nodepool.public_ipv4 }}' --keeping '{{ env_keeping | lower }}'
     executable: /bin/bash
 
@@ -245,7 +245,7 @@
       mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/css' '{{ result_folder }}/web_page/'
       mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/js' '{{ result_folder }}/web_page/'
 
-      model_path="http:\/\/status.openlabtesting.org\/logs\/{{ zuul.change[-2:] }}\/{{ zuul.change }}\/{{ zuul.patchset }}\/check\/{{ zuul.job }}\/{{ zuul.build[:7] }}\/test_results\/web_page\/tfjs\/model.json"
+      model_path="https:\/\/status.openlabtesting.org\/logs\/{{ zuul.change[-2:] }}\/{{ zuul.change }}\/{{ zuul.patchset }}\/check\/{{ zuul.job }}\/{{ zuul.build[:7] }}\/test_results\/web_page\/tfjs\/model.json"
       sed -i "s/replace.me/$model_path/" '{{ result_folder }}/web_page/index.html'
     executable: /bin/bash
 
