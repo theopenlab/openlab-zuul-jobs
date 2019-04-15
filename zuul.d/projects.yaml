@@ -26,10 +26,8 @@
     name: ansible/ansible
     periodic-0/12:
       jobs:
-        - openstacksdk-ansible-functional-opentelekomcloud:
-            branches: stable-2.7
-        - openstacksdk-ansible-functional-huaweicloud:
-            branches: stable-2.7
+#        - openstacksdk-ansible-functional-huaweicloud:
+#            branches: stable-2.7
         - openstacksdk-ansible-functional-devstack:
             branches: stable-2.7
         - openstacksdk-ansible-functional-devstack-rocky:
@@ -57,14 +55,12 @@
             branches: master
 
 ####################### periodic jobs on 02:00/14:00 ##########################
-- project:
-    name: terraform-providers/terraform-provider-openstack
-    periodic-2/14:
-      jobs:
-        - terraform-provider-openstack-acceptance-test-opentelekomcloud:
-            branches: master
-        - terraform-provider-openstack-acceptance-test-huaweicloud:
-            branches: master
+#- project:
+#    name: terraform-providers/terraform-provider-openstack
+#    periodic-2/14:
+#      jobs:
+#        - terraform-provider-openstack-acceptance-test-huaweicloud:
+#            branches: master
 
 - project:
     name: terraform-providers/terraform-provider-huaweicloud
@@ -87,8 +83,6 @@
 #    name: huaweicloud/openshift-ansible
 #    periodic-4/16:
 #      jobs:
-#        - openshift-origin-functional-test-opentelekomcloud:
-#            branches: master
 #        - openshift-origin-functional-test-huaweicloud:
 #            branches: master
 
@@ -134,12 +128,8 @@
     name: hashicorp/packer
     periodic-6/18:
       jobs:
-        - packer-functional-opentelekomcloud:
-            branches: master
-        - packer-functional-huaweicloud:
-            branches: master
-        - packer-master-functional-devstack:
-            branches: master
+#        - packer-functional-huaweicloud:
+#            branches: master
         - packer-functional-devstack:
             branches: master
         - packer-functional-devstack-rocky:
@@ -154,6 +144,8 @@
             branches: master
         - packer-functional-devstack-mitaka:
             branches: master
+        - packer-master-functional-devstack:
+            branches: master
 
 - project:
     name: kubernetes-sigs/kind
@@ -167,21 +159,19 @@
     name: docker/machine
     periodic-8/20:
       jobs:
-        - docker-machine-functional-opentelekomcloud:
-            branches: master
-        - docker-machine-functional-huaweicloud:
-            branches: master
-        - docker-machine-functional-devstack-mitaka:
-            branches: master
-        - docker-machine-functional-devstack-newton:
-            branches: master
-        - docker-machine-functional-devstack-ocata:
-            branches: master
-        - docker-machine-functional-devstack-pike:
+#        - docker-machine-functional-huaweicloud:
+#            branches: master
+        - docker-machine-functional-devstack-rocky:
             branches: master
         - docker-machine-functional-devstack-queens:
             branches: master
-        - docker-machine-functional-devstack-rocky:
+        - docker-machine-functional-devstack-pike:
+            branches: master
+        - docker-machine-functional-devstack-ocata:
+            branches: master
+        - docker-machine-functional-devstack-newton:
+            branches: master
+        - docker-machine-functional-devstack-mitaka:
             branches: master
 
 ####################### periodic jobs on 10:00/22:00 ##########################
@@ -196,21 +186,19 @@
     name: manageiq/manageiq-providers-openstack
     periodic-10/22:
       jobs:
+#        - manageiq-providers-openstack-test-huaweicloud:
+#            branches: master
         - manageiq-providers-openstack-test-devstack-master:
-            branches: master
-        - manageiq-providers-openstack-test-devstack-mitaka:
-            branches: master
-        - manageiq-providers-openstack-test-devstack-newton:
-            branches: master
-        - manageiq-providers-openstack-test-devstack-ocata:
-            branches: master
-        - manageiq-providers-openstack-test-devstack-pike:
-            branches: master
-        - manageiq-providers-openstack-test-devstack-queens:
             branches: master
         - manageiq-providers-openstack-test-devstack-rocky:
             branches: master
-        - manageiq-providers-openstack-test-huaweicloud:
+        - manageiq-providers-openstack-test-devstack-queens:
             branches: master
-        - manageiq-providers-openstack-test-opentelekomcloud:
+        - manageiq-providers-openstack-test-devstack-pike:
+            branches: master
+        - manageiq-providers-openstack-test-devstack-ocata:
+            branches: master
+        - manageiq-providers-openstack-test-devstack-newton:
+            branches: master
+        - manageiq-providers-openstack-test-devstack-mitaka:
             branches: master
