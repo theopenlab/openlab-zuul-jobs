@@ -90,7 +90,6 @@
           '{{ kubectl }}' create clusterrolebinding --user system:kube-controller-manager  kube-system-cluster-admin-6 --clusterrole cluster-admin
 
           # Run test
-          sleep 14400
           for test_case in internal external
           do
             test_file="examples/loadbalancers/${test_case}-http-nginx.yaml"
