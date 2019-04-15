@@ -1,7 +1,0 @@
----
-bazel_os_pkgs:
-  - pkg-config
-  - zip
-  - g++
-  - zlib1g-dev
-  - unzip
