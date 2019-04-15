@@ -1,0 +1,14 @@
+- name: Prepare workspace directory
+  file:
+    path: '{{ ansible_user_dir }}/workspace'
+    state: directory
+
+- name: Prepare logs directory
+  file:
+    path: '{{ ansible_user_dir }}/workspace/logs'
+    state: directory
+
+- name: Prepare results directory
+  file:
+    path: '{{ ansible_user_dir }}/workspace/test_results'
+    state: directory
