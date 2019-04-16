@@ -1,0 +1,26 @@
+- name: Prepare workspace directory
+  file:
+    path: '{{ ansible_user_dir }}/workspace'
+    state: directory
+
+- name: Prepare logs directory
+  file:
+    path: '{{ ansible_user_dir }}/workspace/logs'
+    state: directory
+
+- name: Prepare results directory
+  file:
+    path: '{{ ansible_user_dir }}/workspace/test_results'
+    state: directory
+
+- name: Set workspace env vars
+  set_fact:
+    workspace_env:
+      LOGS_PATH: '{{ ansible_user_dir }}/workspace/logs'
+      RESULTS_PATH: '{{ ansible_user_dir }}/workspace/test_results'
+  no_log: yes
+
+- name: Merge workspace env vars into global env
+  set_fact:
+    global_env: '{{ global_env | combine(workspace_env) }}'
+  no_log: yes
