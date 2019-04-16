@@ -34,6 +34,8 @@
     vars:
       global_env:
         OS_BRANCH: master
+        LOGS_PATH: '{{ ansible_user_dir }}/workspace/logs'
+        RESULTS_PATH: '{{ ansible_user_dir }}/workspace/test_results'
 
 # Golang test base job
 - job:
