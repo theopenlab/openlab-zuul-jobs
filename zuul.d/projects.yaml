@@ -77,11 +77,11 @@
             files:
               - ^user_data_gpu/.*
 
-- project:
-    name: Yikun/arm-openlab-test
-    check:
-      jobs:
-        - arm-on-openlab-test
+#- project:
+#    name: Yikun/arm-openlab-test
+#    check:
+#      jobs:
+#        - arm-on-openlab-test
 
 #- project:
 #    name: Yikun/containerd
