@@ -82,6 +82,13 @@
         - helm-integration-test-kubeadm-k8s-v1.12.7:
             branches: master
 
+- project:
+    name: containerd/containerd
+    periodic-2/14:
+      jobs:
+        - containerd-build-arm64:
+            branches: master
+
 ####################### periodic jobs on 04:00/16:00 ##########################
 #- project:
 #    name: huaweicloud/openshift-ansible
@@ -128,6 +135,13 @@
             branches: release-1.13
         - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.14:
             branches: release-1.14
+
+- project:
+    name: envoyproxy/envoy
+    periodic-4/16:
+      jobs:
+        - envoy-build-arm64:
+            branches: master
 
 ####################### periodic jobs on 06:00/18:00 ##########################
 - project:
