@@ -64,6 +64,15 @@
     run: playbooks/terraform-provider-openstack-acceptance-test/run.yaml
 
 - job:
+    name: terraform-provider-openstack-acceptance-test-stein
+    parent: terraform-provider-openstack-acceptance-test
+    description: |
+      Run terraform provider openstack acceptance test on stein branch
+    vars:
+      global_env:
+        OS_BRANCH: stable/stein
+
+- job:
     name: terraform-provider-openstack-acceptance-test-rocky
     parent: terraform-provider-openstack-acceptance-test
     description: |
@@ -458,6 +467,20 @@
       os_sdk: openstacksdk
 
 - job:
+    name: openstacksdk-ansible-functional-devstack-stein
+    parent: init-test
+    description: |
+      Run openstacksdk ansible functional tests against a stein devstack using git stable-2.7 branch version of ansible.
+    run: playbooks/ansible-functional-devstack/run.yaml
+    required-projects:
+      - openstack/openstacksdk
+    override-checkout: stable-2.7
+    vars:
+      os_sdk: openstacksdk
+      global_env:
+        OS_BRANCH: stable/stein
+
+- job:
     name: openstacksdk-ansible-functional-devstack-rocky
     parent: init-test
     description: |
@@ -687,6 +710,17 @@
     override-checkout: v1.3.3
 
 - job:
+    name: packer-functional-devstack-stein
+    parent: init-test
+    description: |
+      Test image building functionality of Packer of v1.3.3 against stein devstack.
+    run: playbooks/packer-functional-devstack/run.yaml
+    vars:
+      global_env:
+        OS_BRANCH: stable/stein
+    override-checkout: v1.3.3
+
+- job:
     name: packer-functional-devstack-rocky
     parent: init-test
     description: |
@@ -876,6 +910,18 @@
         OS_BRANCH: stable/rocky
     override-checkout: v0.16.1
 
+- job:
+    name: docker-machine-functional-devstack-stein
+    parent: init-test
+    description: |
+      Test image building functionality of Docker machine of v0.16.1 version against
+      devstack of Stein.
+    run: playbooks/docker-machine-functional-devstack/run.yaml
+    vars:
+      global_env:
+        OS_BRANCH: stable/stein
+    override-checkout: v0.16.1
+
 # bosh huaweicloud cpi jobs
 - job:
     name: bosh-huaweicloud-cpi-release-validator-test-huaweicloud
@@ -981,6 +1027,16 @@
     vars:
       global_env:
         OS_BRANCH: stable/rocky
+
+- job:
+    name: manageiq-providers-openstack-test-devstack-stein
+    parent: init-test
+    description: |
+      This job run tests of manageiq-providers-openstack aganist devstack of Stein.
+    run: playbooks/manageiq-providers-openstack-test-devstack/run.yaml
+    vars:
+      global_env:
+        OS_BRANCH: stable/stein
 
 - job:
     name: manageiq-providers-openstack-test-huaweicloud
