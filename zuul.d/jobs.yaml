@@ -34,7 +34,10 @@
     vars:
       global_env:
         OS_BRANCH: master
-
+        # LOGS/RESULTS_PATH is created in roles.prepare_workspace, we enable
+        # these two vars in here for cross playbook usage.
+        LOGS_PATH: '{{ ansible_user_dir }}/workspace/logs'
+        RESULTS_PATH: '{{ ansible_user_dir }}/workspace/test_results'
 
 # Golang test base job
 - job:
