@@ -1276,8 +1276,8 @@
       chart_testing_version: v2.2.0
       kubernetes_version: 1.14.0
     tags:
-      - CNCF
-      - Kubernetes
+      - CNCF: true
+      - Kubernetes: true
     
 - job:
     name: helm-integration-test-kubeadm-k8s-v1.12.7
