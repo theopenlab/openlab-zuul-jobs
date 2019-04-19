@@ -288,7 +288,7 @@
   delegate_to: localhost
   become_user: zuul
   get_url:
-    url: https://raw.githubusercontent.com/moo-ai/moo-ai.github.io/master/tf_js.htm
+    url: https://raw.githubusercontent.com/moo-ai/moo-ai.github.io/master/tf_js.html
     dest: /tmp/tf_js.html
     mode: 0644
 
