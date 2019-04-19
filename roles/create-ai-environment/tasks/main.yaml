@@ -284,8 +284,7 @@
         '{{ user_data_folder }}/tfjs'
     executable: /bin/bash
 
-- name: Prepare web pages
-  hosts: all
+- hosts: all
   become: yes
   tasks:
     - name: Create web dir
