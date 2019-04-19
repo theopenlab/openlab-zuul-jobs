@@ -272,7 +272,7 @@
     executable: /bin/bash
 
 - name: Install tensorflow.js and convert training model
-  when: user_meta.framework.name == "tensorflow" and user_meta.dataset.name != 'EMNIST'
+  when: user_meta.framework.name == "tensorflow" and user_meta.model.name != 'EMNIST'
   shell:
     cmd: |
       set -xe
