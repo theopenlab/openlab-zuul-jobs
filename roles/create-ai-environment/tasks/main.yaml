@@ -272,7 +272,7 @@
     executable: /bin/bash
 
 - name: Install tensorflow.js and convert training model
-  when: user_meta.framework.name == "tensorflow"
+  when: user_meta.framework.name == "tensorflow" and user_meta.dataset.name != 'emnist'
   shell:
     cmd: |
       set -xe
@@ -283,6 +283,11 @@
         '{{ user_data_folder }}/{{ training_output_folder_name }}/my_model.h5' \
         '{{ user_data_folder }}/tfjs'
     executable: /bin/bash
+
+- name: Copy backend inference page by Jinja
+  template:
+    src: '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/tf_js.html'
+    dst: '{{ result_folder }}/web_page/index.html'
 
 - name: Collect Traning or Inference Result
   shell:
@@ -295,7 +300,7 @@
       mkdir '{{ result_folder }}/web_page/'
 
       mv '{{ user_data_folder }}/{{ training_output_folder_name }}' '{{ result_folder }}'
-      mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/tf_js.html' '{{ result_folder }}/web_page/index.html'
+#      mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/tf_js.html' '{{ result_folder }}/web_page/index.html'
       mv '{{ user_data_folder }}/tfjs/' '{{ result_folder }}/web_page/'
       mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/css' '{{ result_folder }}/web_page/'
       mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/js' '{{ result_folder }}/web_page/'
