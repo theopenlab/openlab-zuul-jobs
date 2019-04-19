@@ -216,7 +216,7 @@
     executable: /bin/bash
 
 - name: Install tensorflow.js and convert training model
-  when: user_meta.framework.name == "tensorflow"
+  when: user_meta.framework.name == "tensorflow" and user_meta.model.name != 'EMNIST'
   shell:
     cmd: |
       set -xe
@@ -228,8 +228,21 @@
         '{{ user_data_folder }}/tfjs'
     executable: /bin/bash
 
-- name: Servering inference web page
-  when: user_meta.framework.name == "tensorflow"
+- name: Get web template
+  local_action: command /usr/bin/wget https://raw.githubusercontent.com/moo-ai/moo-ai.github.io/master/tf_js.html -O /tmp/tf_js.html
+  become_user: zuul
+
+- name: Create web dir
+  file:
+    path: '{{ result_folder }}/web_page/'
+    state: directory
+
+- name: Copy backend inference page by Jinja
+  template:
+    src: /tmp/tf_js.html
+    dest: '{{ result_folder }}/web_page/index.html'
+
+- name: Collect Traning or Inference Result
   shell:
     cmd: |
       set -xe
@@ -237,11 +250,10 @@
       # Serve inference function via openlab log server for each job. Users can
       # visit log page to test inference directly.
 
-      mkdir '{{ result_folder }}/web_page/'
-
       mv '{{ user_data_folder }}/{{ training_output_folder_name }}' '{{ result_folder }}'
-      mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/tf_js.html' '{{ result_folder }}/web_page/index.html'
-      mv '{{ user_data_folder }}/tfjs/' '{{ result_folder }}/web_page/'
+      if [ -d "{{ user_data_folder }}/tfjs" ]; then
+          mv '{{ user_data_folder }}/tfjs/' '{{ result_folder }}/web_page/'
+      fi
       mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/css' '{{ result_folder }}/web_page/'
       mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/js' '{{ result_folder }}/web_page/'
 
