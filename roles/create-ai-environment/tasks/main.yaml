@@ -284,10 +284,16 @@
         '{{ user_data_folder }}/tfjs'
     executable: /bin/bash
 
+- name: Create web dir
+  file:
+    path: '{{ result_folder }}/web_page/'
+    state: directory
+
 - name: Copy backend inference page by Jinja
   template:
     src: '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/tf_js.html'
     dest: '{{ result_folder }}/web_page/index.html'
+    remote_src: yes
 
 - name: Collect Traning or Inference Result
   shell:
@@ -296,8 +302,6 @@
 
       # Serve inference function via openlab log server for each job. Users can
       # visit log page to test inference directly.
-
-      mkdir '{{ result_folder }}/web_page/'
 
       mv '{{ user_data_folder }}/{{ training_output_folder_name }}' '{{ result_folder }}'
       mv '{{ user_data_folder }}/tfjs/' '{{ result_folder }}/web_page/'
