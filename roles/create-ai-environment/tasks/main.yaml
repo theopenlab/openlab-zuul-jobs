@@ -229,8 +229,12 @@
     executable: /bin/bash
 
 - name: Get web template
-  local_action: command /usr/bin/wget https://raw.githubusercontent.com/moo-ai/moo-ai.github.io/master/tf_js.html -O /tmp/tf_js.html
+  delegate_to: localhost
   become_user: zuul
+  get_url:
+    url: https://raw.githubusercontent.com/moo-ai/moo-ai.github.io/master/tf_js.html
+    dest: /tmp/tf_js.html
+    mode: 0644
 
 - name: Create web dir
   file:
