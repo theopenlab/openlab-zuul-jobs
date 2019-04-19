@@ -286,6 +286,7 @@
 
 - name: Get web template
   delegate_to: localhost
+  become_user: zuul
   get_url:
     url: https://raw.githubusercontent.com/moo-ai/moo-ai.github.io/master/tf_js.htm
     dest: /tmp/tf_js.html
