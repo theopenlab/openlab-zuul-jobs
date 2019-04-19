@@ -300,7 +300,6 @@
       mkdir '{{ result_folder }}/web_page/'
 
       mv '{{ user_data_folder }}/{{ training_output_folder_name }}' '{{ result_folder }}'
-#      mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/tf_js.html' '{{ result_folder }}/web_page/index.html'
       mv '{{ user_data_folder }}/tfjs/' '{{ result_folder }}/web_page/'
       mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/css' '{{ result_folder }}/web_page/'
       mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/js' '{{ result_folder }}/web_page/'
