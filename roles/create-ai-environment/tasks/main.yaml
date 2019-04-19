@@ -307,7 +307,9 @@
       # visit log page to test inference directly.
 
       mv '{{ user_data_folder }}/{{ training_output_folder_name }}' '{{ result_folder }}'
-      mv '{{ user_data_folder }}/tfjs/' '{{ result_folder }}/web_page/'
+      if [ -d "{{ user_data_folder }}/tfjs" ]; then
+          mv '{{ user_data_folder }}/tfjs/' '{{ result_folder }}/web_page/'
+      fi
       mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/css' '{{ result_folder }}/web_page/'
       mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/js' '{{ result_folder }}/web_page/'
 
