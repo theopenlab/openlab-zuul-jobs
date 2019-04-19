@@ -285,18 +285,15 @@
     executable: /bin/bash
 
 - name: Create web dir
-  hosts: all
-  become: yes
   file:
     path: '{{ result_folder }}/web_page/'
     state: directory
 
 - name: Copy backend inference page by Jinja
-  hosts: all
-  become: yes
   template:
     src: '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/tf_js.html'
     dest: '{{ result_folder }}/web_page/index.html'
+    remote_src: yes
 
 - name: Collect Traning or Inference Result
   shell:
