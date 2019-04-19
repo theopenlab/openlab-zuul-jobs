@@ -284,16 +284,19 @@
         '{{ user_data_folder }}/tfjs'
     executable: /bin/bash
 
-- name: Create web dir
-  file:
-    path: '{{ result_folder }}/web_page/'
-    state: directory
+- name: Prepare web pages
+  hosts: all
+  become: yes
+  tasks:
+    - name: Create web dir
+      file:
+        path: '{{ result_folder }}/web_page/'
+        state: directory
 
-- name: Copy backend inference page by Jinja
-  template:
-    src: '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/tf_js.html'
-    dest: '{{ result_folder }}/web_page/index.html'
-    remote_src: yes
+    - name: Copy backend inference page by Jinja
+      template:
+        src: '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/tf_js.html'
+        dest: '{{ result_folder }}/web_page/index.html'
 
 - name: Collect Traning or Inference Result
   shell:
