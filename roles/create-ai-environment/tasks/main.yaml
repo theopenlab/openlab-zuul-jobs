@@ -287,7 +287,7 @@
 - name: Copy backend inference page by Jinja
   template:
     src: '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/tf_js.html'
-    dst: '{{ result_folder }}/web_page/index.html'
+    dest: '{{ result_folder }}/web_page/index.html'
 
 - name: Collect Traning or Inference Result
   shell:
