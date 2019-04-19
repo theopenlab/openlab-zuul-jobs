@@ -286,6 +286,7 @@
 
 - name: Get web template
   local_action: command /usr/bin/wget https://raw.githubusercontent.com/moo-ai/moo-ai.github.io/master/tf_js.html -O /tmp/tf_js.html
+  become_user: zuul
 
 - name: Create web dir
   file:
