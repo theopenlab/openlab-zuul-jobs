@@ -285,9 +285,10 @@
     executable: /bin/bash
 
 - name: Get web template
-  win_get_url:
+  get_url:
     url: https://raw.githubusercontent.com/moo-ai/moo-ai.github.io/master/tf_js.html
     dest: /tmp/tf_js.html
+    mode: 0644
 
 - name: Create web dir
   file:
