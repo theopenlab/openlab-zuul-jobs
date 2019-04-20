@@ -1252,6 +1252,12 @@
     vars:
       k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
       kubernetes_version: 1.14.0
+    tags:
+      - "Area:BigData"
+      - "KeyTech:Spark"
+      - "BaseName:Kubernetes"
+      - "BaseVersion:V1.14.0"
+      - "TestType:Integration"
 
 - job:
     name: spark-integration-test-minikube-k8s-v1.10.0
