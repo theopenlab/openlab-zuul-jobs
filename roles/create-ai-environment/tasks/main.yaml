@@ -216,7 +216,7 @@
     executable: /bin/bash
 
 - name: Install tensorflow.js and convert training model
-  when: user_meta.framework.name == "tensorflow" and user_meta.model.name != 'EMNIST'
+  when: user_meta.framework.name == "tensorflow" and user_meta.model.name == 'MNIST'
   shell:
     cmd: |
       set -xe
@@ -228,6 +228,7 @@
         '{{ user_data_folder }}/tfjs'
     executable: /bin/bash
 
+#TODO(bzhao) This task needs to be deleted after hands on show.
 - name: Get web template
   delegate_to: localhost
   become_user: zuul
