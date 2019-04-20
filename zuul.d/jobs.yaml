@@ -1254,7 +1254,7 @@
       kubernetes_version: 1.14.0
     tags:
       - "Area:BigData"
-      - "KeyTech:Spark"
+      - "App:Spark"
       - "BaseName:Kubernetes"
       - "BaseVersion:V1.14.0"
       - "TestType:Integration"
