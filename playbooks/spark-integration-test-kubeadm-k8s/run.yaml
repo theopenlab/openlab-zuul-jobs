@@ -5,7 +5,7 @@
   tasks:
     - name: Run integration tests of Spark with k8s cluster manager
       shell: |
-        #set -ex
+        set -ex
         export KUBECONFIG=/etc/kubernetes/admin.conf
         # install java8
         apt-get install openjdk-8-jdk -y
@@ -22,6 +22,7 @@
         docker login -u {{openlab_dockerhub.username}} -p {{openlab_dockerhub.password}}
 
         pushd resource-managers/kubernetes/integration-tests
+        sleep 100000
         dev/dev-run-integration-tests.sh --deploy-mode cloud --spark-master k8s://$(kubectl config view -o jsonpath='{.clusters[0].cluster.server}') --spark-tgz $(realpath ../../../spark-*.tgz) --image-repo openlabtesting --namespace default --service-account spark
         popd
       args:
