@@ -1,3 +1,3 @@
 - hosts: all
   roles:
-    - ensure-legacy-workspace-directory
+    - prepare-workspace
