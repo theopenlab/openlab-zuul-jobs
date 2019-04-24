@@ -3,6 +3,10 @@
   roles:
     - create-single-k8s-cluster-with-kubeadm
   tasks:
+    - name: Login dockerhub
+      shell: docker login -u {{openlab_dockerhub.username}} -p {{openlab_dockerhub.password}}
+      no_log: yes
+
     - name: Run integration tests of Spark with k8s cluster manager
       shell: |
         set -ex
@@ -19,7 +23,6 @@
 
         # NOTE: the distribution step may fail due to dependencies downloading failure, so we support retry
         for i in $(seq 1 3); do ./dev/make-distribution.sh --tgz -Pkubernetes && s=0 && break || s=$? && sleep 5; done; (exit $s)
-        docker login -u {{openlab_dockerhub.username}} -p {{openlab_dockerhub.password}} > /dev/null 2>&1
 
         pushd resource-managers/kubernetes/integration-tests
         dev/dev-run-integration-tests.sh --deploy-mode cloud --spark-master k8s://$(kubectl config view -o jsonpath='{.clusters[0].cluster.server}') --spark-tgz $(realpath ../../../spark-*.tgz) --image-repo openlabtesting --namespace default --service-account spark
