@@ -1,26 +1,16 @@
 - hosts: all
   become: yes
-  pre_tasks:
-    - name: Prepare local conf for cf validation tests
-      shell:
-        cmd: |
-          set -e
-          set -x
-          cat << EOF >> /tmp/dg-local.conf
-          [[local|localrc]]
-          NETWORK_GATEWAY=10.0.0.1
-          ENABLE_HTTPD_MOD_WSGI_SERVICES="False"
-          KEYSTONE_USE_MOD_WSGI="False"
-          NOVA_USE_MOD_WSGI="False"
-          SWIFT_USE_MOD_WSGI="False"
-          HEAT_USE_MOD_WSGI="False"
-          CINDER_USE_MOD_WSGI="False"
-          EOF
-        executable: /bin/bash
+  vars:
+    #NOTES: manageiq-providers-openstack don't support OpenStack version discovery, so enable legacy endpoint format.
+    DISABLE_HTTPD_MOD_WSGI: true
   roles:
     - config-ruby
     - clone-devstack-gate-to-workspace
+    - role: create-devstack-local-conf
+      enable_services:
+        - 'heat'
     - install-devstack
+    - clean-devstack-default-resources
   tasks:
     - name: Install specifc packages and config Neutron for Ubuntu 14.04
       shell:
@@ -40,7 +30,7 @@
         chdir: '{{ zuul.project.src_dir }}'
       when:
         - global_env.OS_BRANCH == 'stable/mitaka'
-
+  
     - name: Install specifc packages and config Neutron for Ubuntu 16.04
       shell:
         cmd: |
@@ -53,7 +43,7 @@
         chdir: '{{ zuul.project.src_dir }}'
       when:
         - global_env.OS_BRANCH != 'stable/mitaka'
-
+  
     - name: Run Integration tests of manageiq-providers-openstack against devstack
       shell:
         cmd: |
@@ -66,44 +56,45 @@
           apt install -y g++                              # For unf Gem
           apt install -y libcurl4-gnutls-dev              # For Curb
           apt install -y cmake
-
+          apt install -y pkg-config
+      
           # Install nodejs
           curl -sL https://deb.nodesource.com/setup_10.x | sudo bash -
           curl -sL https://deb.nodesource.com/setup_8.x | sudo bash -
           apt-get install -y nodejs
-
+      
           # Configure PostgreSQL
-          grep -q '^local\s' /etc/postgresql/9.5/main/pg_hba.conf || echo "local all all trust" | sudo tee -a /etc/postgresql/9.5/main/pg_hba.conf
-          sed -i.bak 's/\(^local\s*\w*\s*\w*\s*\)\(peer$\)/\1trust/' /etc/postgresql/9.5/main/pg_hba.conf
-          systemctl restart postgresql
+          grep -q '^local\s' /etc/postgresql/*/main/pg_hba.conf || echo "local all all trust" | sudo tee -a /etc/postgresql/9.5/main/pg_hba.conf
+          sed -i.bak 's/\(^local\s*\w*\s*\w*\s*\)\(peer$\)/\1trust/' /etc/postgresql/*/main/pg_hba.conf
+          service postgresql restart
           su postgres -c "psql -c \"CREATE ROLE root SUPERUSER LOGIN PASSWORD 'smartvm'\""
-
+      
           # Ubuntu fix for failing Bundler
           wget -t 10 -T 2 ftp://ftp.us.debian.org/debian/pool/main/o/openssl1.0/libssl1.0-dev_1.0.2?-?_amd64.deb
           wget -t 10 -T 2 ftp://ftp.us.debian.org/debian/pool/main/o/openssl1.0/libssl1.0.2_1.0.2?-?_amd64.deb
           apt remove -y libssl-dev
           dpkg -i libssl1.0-dev_1.0.2*-*_amd64.deb libssl1.0.2_1.0.2*-*_amd64.deb
-
-          apt-get install -y postgresql python-psycopg2 libpq-dev
-
+          apt-get install -y python-psycopg2 libpq-dev
+      
           # Prepare openstack_environments.yml
+          my_ip=$(ip route get 1.1.1.1 | awk '{print $7}')
           cat << EOF >> openstack_environments.yml
           ---
-          - test_env_1:
-              ip: $(ip route get 1.1.1.1 | awk '{print $7}')
+          - liberty_keystone_v3:
+              ip: $my_ip
               password: secretadmin
               user: admin
           EOF
           openstack role create heat_stack_owner
           openstack role create SwiftOperator
-
+      
           # NOTES: source to add ruby/rbenv into PATH
           source ~/.bash_profile
           bin/setup
           bundle install
           rbenv rehash
           cp openstack_environments.yml spec/manageiq/
-
+      
           #NOTES: Build ManageIQ environment for devstack
           pushd spec/manageiq/
           sed -i "/admin_role =/ s|:domain_id => domain_id||"  spec/tools/environment_builders/openstack/services/identity/builder/keystone_v3.rb
@@ -113,12 +104,11 @@
           bundle exec rake db:setup
           bundle exec rails r spec/tools/environment_builders/openstack.rb
           popd
-
+      
           #NOTES: Only run liberty+ and keystone v3 cases
           rm spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_havana_errors_spec.rb
           rm spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_liberty_spec.rb
           bundle exec rake vcr:rerecord
-          bundle exec rake
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ global_env }}'
