@@ -27,8 +27,7 @@
         kubectl create clusterrolebinding spark-role --clusterrole=edit --serviceaccount=default:spark --namespace=default
 
         pushd resource-managers/kubernetes/integration-tests
-        sleep 100000
-        dev/dev-run-integration-tests.sh --spark-tgz $(realpath ../../../spark-*.tgz) --image-repo kubespark --namespace default --service-account spark
+        dev/dev-run-integration-tests.sh --spark-tgz $(realpath ../../../spark-*.tgz) --image-repo theopenlabtesting --namespace default --service-account spark
         popd
       args:
         executable: /bin/bash
