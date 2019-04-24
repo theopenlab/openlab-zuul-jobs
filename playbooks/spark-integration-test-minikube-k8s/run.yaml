@@ -22,7 +22,7 @@
         kubectl create serviceaccount spark
         kubectl create clusterrolebinding spark-role --clusterrole=edit --serviceaccount=default:spark --namespace=default
 
-        #docker login -u {{openlab_dockerhub.username}} -p {{openlab_dockerhub.password}}
+        #docker login -u {{openlab_dockerhub.username}} -p {{openlab_dockerhub.password}} > /dev/null 2>&1
         pushd resource-managers/kubernetes/integration-tests
         dev/dev-run-integration-tests.sh --spark-tgz $(realpath ../../../spark-*.tgz) --image-repo kubespark --namespace default --service-account spark
         popd
