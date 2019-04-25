@@ -70,8 +70,8 @@
           su postgres -c "psql -c \"CREATE ROLE root SUPERUSER LOGIN PASSWORD 'smartvm'\""
       
           # Ubuntu fix for failing Bundler
-          wget -t 10 -T 2 ftp://ftp.us.debian.org/debian/pool/main/o/openssl1.0/libssl1.0-dev_1.0.2?-?_amd64.deb
-          wget -t 10 -T 2 ftp://ftp.us.debian.org/debian/pool/main/o/openssl1.0/libssl1.0.2_1.0.2?-?_amd64.deb
+          wget -t 10 -T 2 ftp://ftp.us.debian.org/debian/pool/main/o/openssl1.0/libssl1.0-dev_1.0.2?-*_amd64.deb
+          wget -t 10 -T 2 ftp://ftp.us.debian.org/debian/pool/main/o/openssl1.0/libssl1.0.2_1.0.2?-*_amd64.deb
           apt remove -y libssl-dev
           dpkg -i libssl1.0-dev_1.0.2*-*_amd64.deb libssl1.0.2_1.0.2*-*_amd64.deb
           apt-get install -y python-psycopg2 libpq-dev
