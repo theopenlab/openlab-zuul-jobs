@@ -6,9 +6,6 @@
       docker_vcgroupdriver: "cgroupfs"
     - create-single-k8s-cluster-with-minikube
   tasks:
-    - name: Login dockerhub
-      shell: docker login -u {{openlab_dockerhub.username}} -p {{openlab_dockerhub.password}}
-      no_log: yes
 
     - name: Run integration tests of Spark with k8s cluster manager
       shell: |
@@ -27,7 +24,7 @@
         kubectl create clusterrolebinding spark-role --clusterrole=edit --serviceaccount=default:spark --namespace=default
 
         pushd resource-managers/kubernetes/integration-tests
-        dev/dev-run-integration-tests.sh --spark-tgz $(realpath ../../../spark-*.tgz) --image-repo theopenlabtesting --namespace default --service-account spark
+        dev/dev-run-integration-tests.sh --spark-tgz $(realpath ../../../spark-*.tgz) --namespace default --service-account spark
         popd
       args:
         executable: /bin/bash
