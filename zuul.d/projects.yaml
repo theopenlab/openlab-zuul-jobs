@@ -51,6 +51,12 @@
         - manageiq-providers-openstack-test-devstack
 
 - project:
+    name: h00130372/manageiq-providers-openstack
+    check:
+      jobs:
+        - manageiq-providers-openstack-test-devstack
+
+- project:
     name: liu-sheng/terraform-provider-huaweicloud
     check:
       jobs:
