@@ -27,7 +27,7 @@
     name: liu-sheng/machine
     check:
       jobs:
-        - docker-machine-functional-devstack-mitaka
+        # - docker-machine-functional-devstack-mitaka
         #- docker-machine-functional-devstack-newton
         #- docker-machine-functional-devstack-pike
         #- docker-machine-functional-devstack-ocata
@@ -37,6 +37,7 @@
         #- docker-machine-functional-opentelekomcloud
         #- docker-machine-functional-orange
         #- docker-machine-functional-telefonica
+        - tensorflow-volcano-kubeflow-k8s-v1.14.0
 
 - project:
     name: liu-sheng/huaweicloud-service-broker
