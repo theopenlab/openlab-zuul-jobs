@@ -63,6 +63,7 @@
     kubelet --version
     apt-mark hold kubelet kubeadm kubectl
     "{{ kubeadm_join_cmd }}" --node-name "{{ inventory_hostname }}"
+    sleep 100000
   args:
     executable: /bin/bash
 
@@ -72,6 +73,5 @@
     set -ex
     export KUBECONFIG=/etc/kubernetes/admin.conf
     kubectl get nodes
-    sleep 100000
   args:
     executable: /bin/bash
