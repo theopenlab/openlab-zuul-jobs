@@ -4,7 +4,8 @@
     #NOTES: manageiq-providers-openstack don't support OpenStack version discovery, so enable legacy endpoint format.
     DISABLE_HTTPD_MOD_WSGI: true
   roles:
-    - config-ruby
+    - role: config-ruby
+      ruby_version: '2.4.0'
     - clone-devstack-gate-to-workspace
     - role: create-devstack-local-conf
       enable_services:
@@ -101,7 +102,7 @@
           ln -s $(readlink -f ../../spec/models/manageiq/providers/openstack) spec/models/manageiq/providers/openstack
           bundle install
           rbenv rehash
-          bundle exec rake db:setup
+          bin/rake evm:db:reset db:seed
           bundle exec rails r spec/tools/environment_builders/openstack.rb
           popd
       

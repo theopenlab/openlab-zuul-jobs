@@ -10,15 +10,15 @@
         - labkeeper-allinone-deployment-test
         #- labkeeper-allinone-ha-deployment-test
 
-#- project:
-#    name: liu-sheng/packer
-#    check:
-#      jobs:
+- project:
+    name: liu-sheng/packer
+    check:
+      jobs:
 #        - packer-functional-opentelekomcloud
 ##        - packer-functional-orange
 ##        - packer-functional-telefonica
 #        #- packer-functional-huaweicloud
-##        - packer-master-functional-devstack
+        - packer-master-functional-devstack
 #        #- packer-functional-devstack
 #        - packer-functional-devstack-rocky
 #        - packer-functional-devstack-queens
