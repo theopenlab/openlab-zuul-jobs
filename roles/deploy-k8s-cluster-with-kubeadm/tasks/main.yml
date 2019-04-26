@@ -65,12 +65,3 @@
     {{ kubeadm_join_cmd }} --node-name "{{ inventory_hostname }}"
   args:
     executable: /bin/bash
-
-- name: Make sure the nodes has joined
-  when: '"master" in k8s_role_to_deploy'
-  shell: |
-    set -ex
-    export KUBECONFIG=/etc/kubernetes/admin.conf
-    kubectl get nodes
-  args:
-    executable: /bin/bash
