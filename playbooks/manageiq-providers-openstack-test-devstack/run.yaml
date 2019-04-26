@@ -4,8 +4,7 @@
     #NOTES: manageiq-providers-openstack don't support OpenStack version discovery, so enable legacy endpoint format.
     DISABLE_HTTPD_MOD_WSGI: true
   roles:
-    - role: config-ruby
-      ruby_version: '2.4.0'
+    - config-ruby
     - clone-devstack-gate-to-workspace
     - role: create-devstack-local-conf
       enable_services:
