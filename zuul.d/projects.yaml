@@ -3,11 +3,11 @@
       jobs:
         - openlab-zuul-jobs-check
 
-- project:
-    name: liu-sheng/labkeeper-1
-    check:
-      jobs:
-        - labkeeper-allinone-deployment-test
+#- project:
+#    name: liu-sheng/labkeeper-1
+#    check:
+#      jobs:
+#        - labkeeper-allinone-deployment-test
         #- labkeeper-allinone-ha-deployment-test
 
 - project:
@@ -39,17 +39,17 @@
         #- docker-machine-functional-telefonica
         - tensorflow-volcano-kubeflow-k8s-v1.14.0
 
-- project:
-    name: liu-sheng/huaweicloud-service-broker
-    check:
-      jobs:
-        - osb-checker-test-huaweicloud
+#- project:
+#    name: liu-sheng/huaweicloud-service-broker
+#    check:
+#      jobs:
+#        - osb-checker-test-huaweicloud
 
-- project:
-    name: liu-sheng/manageiq-providers-openstack
-    check:
-      jobs:
-        - manageiq-providers-openstack-test-devstack
+#- project:
+#    name: liu-sheng/manageiq-providers-openstack
+#    check:
+#      jobs:
+#        - manageiq-providers-openstack-test-devstack
 
 - project:
     name: h00130372/manageiq-providers-openstack
@@ -57,19 +57,19 @@
       jobs:
         - manageiq-providers-openstack-test-devstack
 
-- project:
-    name: liu-sheng/terraform-provider-huaweicloud
-    check:
-      jobs:
-        - terraform-provider-huaweicloud-v1.2.0-acceptance-test-fusioncloud
+#- project:
+#    name: liu-sheng/terraform-provider-huaweicloud
+#    check:
+#      jobs:
+#        - terraform-provider-huaweicloud-v1.2.0-acceptance-test-fusioncloud
 
-- project:
-    name: liu-sheng/origin
-    check:
-      jobs:
-        - openshift-origin-v3.9.0-functional-test-fusioncloud
+#- project:
+#    name: liu-sheng/origin
+#    check:
+#      jobs:
+#        - openshift-origin-v3.9.0-functional-test-fusioncloud
 #        - openshift-origin-v3.9.0-functional-test-huaweicloud
-        - openshift-origin-v3.9.0-functional-test-opentelekomcloud
+#        - openshift-origin-v3.9.0-functional-test-opentelekomcloud
 #        - openshift-origin-v3.9.0-functional-test-telefonica
 #        - openshift-origin-v3.9.0-functional-test-orange
 
