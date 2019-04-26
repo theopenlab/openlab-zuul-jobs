@@ -20,7 +20,6 @@
   when: '"master" in k8s_role_to_deploy'
   shell: |
     set -ex
-    sleep 1000000
     if [[ "{{ kubernetes_version }}" == "latest" ]]; then
         apt-get install -y kubelet kubeadm kubectl
     else
@@ -37,8 +36,8 @@
     cat /etc/resolv.conf
 
     ## Initializing master
-    kubeadm init --pod-network-cidr=192.168.0.0/16 --kubernetes-version="{{ kubernetes_version }}"
-
+    kubeadm init --pod-network-cidr=192.168.0.0/16 --kubernetes-version="{{ kubernetes_version }}" \
+        --node-name "{{ inventory_hostname }}"
     mkdir -p $HOME/.kube
     sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 
@@ -55,7 +54,6 @@
   when: '"node" in k8s_role_to_deploy'
   shell: |
     set -ex
-    sleep 1000000
     if [[ "{{ kubernetes_version }}" == "latest" ]]; then
         apt-get install -y kubelet kubeadm kubectl
     else
@@ -64,25 +62,16 @@
     fi
     kubelet --version
     apt-mark hold kubelet kubeadm kubectl
-
-    # Creating a single master cluster with kubeadm:
-    ## to avoid coredns crashloopbackoff, we set nameserver to 8.8.8.8 instead of 127.0.0.1
-    cat /etc/resolv.conf
-    sed -i 's/nameserver 127.0.0.1/nameserver 8.8.8.8/' /etc/resolv.conf
-    cat /etc/resolv.conf
-
-    ## Initializing master
-    kubeadm init --pod-network-cidr=192.168.0.0/16 --kubernetes-version="{{ kubernetes_version }}"
-
-    mkdir -p $HOME/.kube
-    sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-
-    ## Installing a pod network add-on.
-    kubectl apply -f https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/rbac-kdd.yaml
-    kubectl apply -f https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/kubernetes-datastore/calico-networking/1.7/calico.yaml
-
-    # make sure we can schedule pods on the master.
-    kubectl taint nodes --all node-role.kubernetes.io/master-
+    {{ kubeadm_join_cmd }} --node-name "{{ inventory_hostname }}"
+    sleep 100000
   args:
     executable: /bin/bash
 
+- name: Make sure the nodes has joined
+  when: '"master" in k8s_role_to_deploy'
+  shell: |
+    set -ex
+    export KUBECONFIG=/etc/kubernetes/admin.conf
+    kubectl get nodes
+  args:
+    executable: /bin/bash

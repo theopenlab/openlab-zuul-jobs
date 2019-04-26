@@ -4,6 +4,10 @@
     - role: deploy-k8s-cluster-with-kubeadm
       k8s_role_to_deploy:
         - master
+  tasks:
+    - name: get kubeadm join command
+      shell: kubeadm token create --print-join-command
+      register: kubeadm_join_cmd
 
 - hosts: k8s-node-1
   become: yes
@@ -11,3 +15,4 @@
     - role: deploy-k8s-cluster-with-kubeadm
       k8s_role_to_deploy:
         - node
+      kubeadm_join_cmd: "{{ hostvars['k8s-master']['kubeadm_join_cmd']['stdout'] }}"
