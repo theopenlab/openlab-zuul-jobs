@@ -20,7 +20,6 @@
   when: '"master" in k8s_role_to_deploy'
   shell: |
     set -ex
-    sleep 1000000
     if [[ "{{ kubernetes_version }}" == "latest" ]]; then
         apt-get install -y kubelet kubeadm kubectl
     else
