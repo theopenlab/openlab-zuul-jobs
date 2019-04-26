@@ -1,0 +1,5 @@
+---
+kubernetes_version: "latest"
+k8s_role_to_deploy:
+  - master
+  - node
