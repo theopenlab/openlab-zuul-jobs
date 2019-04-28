@@ -9,7 +9,7 @@
       shell: kubeadm token create --print-join-command
       register: kubeadm_join_cmd
 
-- hosts: k8s-node-1
+- hosts: k8s-node-1,k8s-node-2
   become: yes
   roles:
     - role: deploy-k8s-cluster-with-kubeadm
@@ -22,5 +22,16 @@
   tasks:
     - name: deploy kubeflow
       shell: |
-        kubeadm token create --print-join-command
-      register: kubeadm_join_cmd
+        set -ex
+        wget https://github.com/kubeflow/kubeflow/releases/download/v0.5.0/kfctl_v0.5.0_linux.tar.gz
+        tar -zxvf kfctl_*.tar.gz -C /usr/local/bin/
+        export KUBECONFIG=/etc/kubernetes/admin.conf
+        export KFAPP="mykfapp"
+        kfctl init ${KFAPP}
+        cd ${KFAPP}
+        kfctl generate all -V
+        kfctl apply all -V
+        sleep 100000
+      args:
+        executable: /bin/bash
+        chdir: '{{ ansible_user_dir }}/workspace'

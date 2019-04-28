@@ -1355,3 +1355,5 @@
         label: ubuntu-xenial
       - name: k8s-node-1
         label: ubuntu-xenial
+      - name: k8s-node-2
+        label: ubuntu-xenial
