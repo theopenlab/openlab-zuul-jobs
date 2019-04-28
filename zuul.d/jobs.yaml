@@ -1255,12 +1255,13 @@
     secrets:
       - openlab_dockerhub
     tags:
-      - "Area:BigData"
-      - "App:Spark"
-      - "BaseName:Kubernetes"
-      - "BaseVersion:V1.14.0"
-      - "TestType:Integration"
-      
+      - Area:BigData
+      - AppName:apache/spark
+      - AppVer:master
+      - PlatFormName:Kubernetes
+      - PlatFormVer:v1.14.0
+      - Arch:X86
+      - TestType:Integration
 
 - job:
     name: spark-integration-test-minikube-k8s-v1.10.0
@@ -1275,6 +1276,14 @@
       k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
       minikube_version: "v0.30.0"
       kubernetes_version: "v1.10.0"
+    tags:
+      - Area:BigData
+      - AppName:apache/spark
+      - AppVer:branch-2.4
+      - PlatFormName:Kubernetes
+      - PlatFormVer:v1.10.0
+      - Arch:X86
+      - TestType:Integration
 
 - job:
     name: helm-integration-test-kubeadm-k8s-v1.14.0
