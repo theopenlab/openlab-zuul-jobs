@@ -22,5 +22,14 @@
   tasks:
     - name: deploy kubeflow
       shell: |
-        kubeadm token create --print-join-command
-      register: kubeadm_join_cmd
+        curl -O https://github.com/kubeflow/kubeflow/releases/download/v0.5.0/kfctl_v0.5.0_linux.tar.gz
+        tar -xvf kfctl_*.tar.gz
+        sleep 1000000
+        export KFAPP="{{ ansible_user_dir }}/workspace/kfapp"
+        kfctl init ${KFAPP}
+        cd ${KFAPP}
+        kfctl generate all -v
+        kfctl apply all -v
+      args:
+        executable: /bin/bash
+        chdir: '{{ ansible_user_dir }}/workspace'
