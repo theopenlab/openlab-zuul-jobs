@@ -22,6 +22,7 @@
   tasks:
     - name: deploy kubeflow
       shell: |
+        set -ex
         wget https://github.com/kubeflow/kubeflow/releases/download/v0.5.0/kfctl_v0.5.0_linux.tar.gz
         tar -zxvf kfctl_*.tar.gz -C /usr/local/bin/
         export KUBECONFIG=/etc/kubernetes/admin.conf
