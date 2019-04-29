@@ -36,14 +36,18 @@
     cat /etc/resolv.conf
 
     ## Initializing master
-    kubeadm init --pod-network-cidr=192.168.0.0/16 --kubernetes-version="{{ kubernetes_version }}" \
+    # kubeadm init --pod-network-cidr=192.168.0.0/16 --kubernetes-version="{{ kubernetes_version }}" \
+    #    --node-name "{{ inventory_hostname }}"
+    sysctl net.bridge.bridge-nf-call-iptables=1
+    kubeadm init --pod-network-cidr=10.244.0.0/16 --kubernetes-version="{{ kubernetes_version }}" \
         --node-name "{{ inventory_hostname }}"
     mkdir -p $HOME/.kube
     sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 
     ## Installing a pod network add-on.
-    kubectl apply -f https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/rbac-kdd.yaml
-    kubectl apply -f https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/kubernetes-datastore/calico-networking/1.7/calico.yaml
+    # kubectl apply -f https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/rbac-kdd.yaml
+    # kubectl apply -f https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/kubernetes-datastore/calico-networking/1.7/calico.yaml
+    kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/bc79dd1505b0c8681ece4de4c0d86c5cd2643275/Documentation/kube-flannel.yml
 
     # make sure we can schedule pods on the master.
     kubectl taint nodes --all node-role.kubernetes.io/master-
