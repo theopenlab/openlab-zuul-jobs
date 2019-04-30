@@ -37,9 +37,9 @@
                 name: kubeflow-pv$i
               spec:
                 capacity:
-                  storage: 11Gi
+                  storage: 20Gi
                 accessModes:
-                  - ReadWriteOnce
+                  - ReadWriteMany
                 nfs:
                   server: {{ ansible_host }}
                   path: /nfs-data/kubeflow-pv$i
