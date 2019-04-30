@@ -25,6 +25,7 @@
         cmd: |
           set -ex
           apt-get install -y nfs-server
+          export KUBECONFIG=/etc/kubernetes/admin.conf
           for i in `seq 1 3`;do
               mkdir -p /nfs-data/kubeflow-pv$i
               echo "/nfs-data/kubeflow-pv$i *(rw,sync,no_root_squash,no_subtree_check)" >> /etc/exports
@@ -36,14 +37,13 @@
                 name: kubeflow-p$i
               spec:
                 capacity:
-                  storage: 5Gi
+                  storage: 10Gi
                 accessModes:
                   - ReadWriteOnce
                 nfs:
                   server: {{ ansible_host }}
                   path: /nfs-data/kubeflow-pv$i
           EOF
-              export KUBECONFIG=/etc/kubernetes/admin.conf
               kubectl create -f kubeflow-pv$i.yaml
           done
 
