@@ -25,10 +25,9 @@
         set -ex
         wget https://github.com/kubeflow/kubeflow/releases/download/v0.5.0/kfctl_v0.5.0_linux.tar.gz
         tar -zxvf kfctl_*.tar.gz -C /usr/local/bin/
-        sleep 100000
         export KUBECONFIG=/etc/kubernetes/admin.conf
         export KFAPP="mykfapp"
-        kfctl init ${KFAPP}
+        kfctl init ${KFAPP} -v v0.5.0
         cd ${KFAPP}
         kfctl generate all -V
         kfctl apply all -V
