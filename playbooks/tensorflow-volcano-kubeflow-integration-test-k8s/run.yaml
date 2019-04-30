@@ -21,17 +21,37 @@
   become: yes
   tasks:
     - name: deploy kubeflow
-      shell: |
-        set -ex
-        wget https://github.com/kubeflow/kubeflow/releases/download/v0.5.0/kfctl_v0.5.0_linux.tar.gz
-        tar -zxvf kfctl_*.tar.gz -C /usr/local/bin/
-        export KUBECONFIG=/etc/kubernetes/admin.conf
-        export KFAPP="mykfapp"
-        kfctl init ${KFAPP} -v v0.5.0
-        cd ${KFAPP}
-        kfctl generate all -V
-        kfctl apply all -V
-        sleep 100000
-      args:
+      shell:
+        cmd: |
+          set -ex
+          apt-get install -y nfs-server
+          mkdir -p /nfs-data/kubeflow-pv1
+          echo '/nfs-data/kubeflow-pv1 *(rw,sync,no_root_squash,no_subtree_check)' >> /etc/exports
+          systemctl restart nfs-kernel-server.service
+          cat << EOF >> vizier-pv.yaml
+          apiVersion: v1
+          kind: PersistentVolume
+          metadata:
+            name: vizier-pv
+          spec:
+            capacity:
+              storage: 20Gi
+            accessModes:
+              - ReadWriteOnce
+            nfs:
+              server: {{ ansible_host }}
+              path: /nfs-data/kubeflow-pv1
+          EOF
+          export KUBECONFIG=/etc/kubernetes/admin.conf
+          kubectl create -f vizier-pv.yaml
+
+          wget https://github.com/kubeflow/kubeflow/releases/download/v0.5.0/kfctl_v0.5.0_linux.tar.gz
+          tar -zxvf kfctl_*.tar.gz -C /usr/local/bin/
+          export KFAPP="mykfapp"
+          kfctl init ${KFAPP} -v v0.5.0
+          cd ${KFAPP}
+          kfctl generate all -V
+          kfctl apply all -V
+          sleep 100000
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'
