@@ -1255,13 +1255,12 @@
     secrets:
       - openlab_dockerhub
     tags:
-      - Area:BigData
-      - AppName:apache/spark
-      - AppVer:master
-      - PlatFormName:Kubernetes
-      - PlatFormVer:v1.14.0
+      - Category:BigData
+      - Project:apache/spark
+      - App:Spark@master
+      - App:Kubernetes@v1.14.0
       - Arch:X86
-      - TestType:Integration
+      - BuildType:Integration test
 
 - job:
     name: spark-integration-test-minikube-k8s-v1.10.0
@@ -1277,13 +1276,12 @@
       minikube_version: "v0.30.0"
       kubernetes_version: "v1.10.0"
     tags:
-      - Area:BigData
-      - AppName:apache/spark
-      - AppVer:branch-2.4
-      - PlatFormName:Kubernetes
-      - PlatFormVer:v1.10.0
+      - Category:BigData
+      - Project:apache/spark
+      - App:Spark@branch-2.4
+      - App:Kubernetes@v1.10.0
       - Arch:X86
-      - TestType:Integration
+      - BuildType:Integration test
 
 - job:
     name: helm-integration-test-kubeadm-k8s-v1.14.0
