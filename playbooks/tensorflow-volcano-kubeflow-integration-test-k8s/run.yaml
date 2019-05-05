@@ -20,7 +20,7 @@
 - hosts: k8s-master
   become: yes
   tasks:
-    - name: deploy kubeflow
+    - name: config PVs for kubeflow
       shell:
         cmd: |
           set -ex
@@ -39,21 +39,30 @@
                 capacity:
                   storage: 20Gi
                 accessModes:
-                  - ReadWriteMany
+                  - ReadWriteOnce
                 nfs:
                   server: {{ ansible_host }}
                   path: /nfs-data/kubeflow-pv$i
           EOF
               kubectl create -f kubeflow-pv$i.yaml
           done
+        executable: /bin/bash
+        chdir: '{{ ansible_user_dir }}/workspace'
 
-          wget https://github.com/kubeflow/kubeflow/releases/download/v0.5.0/kfctl_v0.5.0_linux.tar.gz
-          tar -zxvf kfctl_*.tar.gz -C /usr/local/bin/
-          export KFAPP="mykfapp"
-          kfctl init ${KFAPP} -v v0.5.0
-          cd ${KFAPP}
-          kfctl generate all -V
-          kfctl apply all -V
-          sleep 100000
+    - name: deploy kubeflow
+      shell: |
+        wget https://github.com/kubeflow/kubeflow/releases/download/v0.5.0/kfctl_v0.5.0_linux.tar.gz
+        tar -zxvf kfctl_*.tar.gz -C /usr/local/bin/
+        export KFAPP="mykfapp"
+        kfctl init ${KFAPP} -v v0.5.0
+        cd ${KFAPP}
+        kfctl generate all -V
+        kfctl apply all -V
+        wget https://github.com/ksonnet/ksonnet/releases/download/v0.13.1/ks_0.13.1_linux_amd64.tar.gz
+        tar -zxvf ks_*.tar.gz
+        cp ks_0.13.1_linux_amd64/ks /usr/local/bin/
+
+        sleep 100000
+      args:
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'
