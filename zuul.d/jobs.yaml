@@ -1355,3 +1355,20 @@
         label: ubuntu-xenial
 #      - name: k8s-node-2
 #        label: ubuntu-xenial
+
+- job:
+    name: debug-tensorflow-volcano-k8s-v1.14.0
+    parent: init-test
+    description: |
+      Test ingetration of tensorflow + volcano/kubeflow on k8s cluster
+    run: playbooks/tensorflow-volcano-kubeflow-integration-test-k8s/run-volcano.yaml
+    post-run: playbooks/tensorflow-volcano-kubeflow-integration-test-k8s/post.yaml
+    vars:
+      k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
+      kubernetes_version: 1.14.0
+    nodeset:
+      nodes:
+      - name: k8s-master
+        label: ubuntu-xenial
+      - name: k8s-node-1
+        label: ubuntu-xenial

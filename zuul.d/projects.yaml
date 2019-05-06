@@ -38,7 +38,9 @@
         #- docker-machine-functional-orange
         #- docker-machine-functional-telefonica
         - tensorflow-volcano-kubeflow-k8s-v1.14.0
-
+    recheck-pike:
+      jobs:
+        - debug-tensorflow-volcano-k8s-v1.14.0
 #- project:
 #    name: liu-sheng/huaweicloud-service-broker
 #    check:

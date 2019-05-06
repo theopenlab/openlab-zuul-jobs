@@ -16,3 +16,14 @@
       k8s_role_to_deploy:
         - node
       kubeadm_join_cmd: "{{ hostvars['k8s-master']['kubeadm_join_cmd']['stdout'] }}"
+
+- hosts: k8s-master
+  become: yes
+  tasks:
+    - name: Debug volcano
+      shell: |
+        set -ex
+        sleep 1000000
+      args:
+        executable: /bin/bash
+        chdir: '{{ ansible_user_dir }}/workspace'
