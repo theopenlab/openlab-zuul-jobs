@@ -52,7 +52,7 @@
 
     # make sure we can schedule pods on the master.
     kubectl taint nodes --all node-role.kubernetes.io/master-
-    sleep 300
+    sleep 60
     kubectl -n kube-system wait --timeout 300s --for condition=ready pod --all
   args:
     executable: /bin/bash
