@@ -9,7 +9,7 @@
       shell: kubeadm token create --print-join-command
       register: kubeadm_join_cmd
 
-- hosts: k8s-node-1,k8s-node-2
+- hosts: k8s-nodes
   become: yes
   roles:
     - role: deploy-k8s-cluster-with-kubeadm
@@ -49,7 +49,7 @@
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'
 
-    - name: deploy kubeflow
+    - name: deploy kubeflow and run tensorflow benchmarks
       shell: |
         set -ex
         wget https://github.com/kubeflow/kubeflow/releases/download/v0.5.0/kfctl_v0.5.0_linux.tar.gz
@@ -80,26 +80,33 @@
         wget https://github.com/ksonnet/ksonnet/releases/download/v0.13.1/ks_0.13.1_linux_amd64.tar.gz
         tar -zxvf ks_*.tar.gz
         cp ks_0.13.1_linux_amd64/ks /usr/local/bin/
-        CNN_JOB_NAME=tfcnnbenchmarks
-        KF_VERSION=v0.5.0
+        sleep 100000
+        export CNN_JOB_NAME=tfcnnbenchmarks
+        export KF_VERSION=v0.5.0
         export KF_ENV=default
         # workaround for API limit error of Github, see:
         # https://github.com/ksonnet/ksonnet/blob/master/docs/troubleshooting.md#github-rate-limiting-errors
         export GITHUB_TOKEN=c0250b662cfa40845058626ca47eb5accb586d27
+
         ks init ${CNN_JOB_NAME} --context tf-benchmarks
         pushd ${CNN_JOB_NAME}
-        ks registry add kubeflow-git github.com/kubeflow/kubeflow/tree/${KF_VERSION}/kubeflow
-        ks pkg install kubeflow-git/examples
+        ks registry add kubeflow github.com/kubeflow/kubeflow/tree/${KF_VERSION}/kubeflow
+        ks pkg install kubeflow/examples
         ks prototype list
         ks generate tf-job-simple-v1beta2 ${CNN_JOB_NAME} --name=${CNN_JOB_NAME}
         ks apply ${KF_ENV} -c ${CNN_JOB_NAME}
+
+        curl https://raw.githubusercontent.com/kubeflow/kubebench/master/scripts/install_quickstarter.sh | bash
+        kubectl -n tf-benchmarks get svc kubebench-nfs-file-server-svc -o wide
+        kubectl -n tf-benchmarks get svc kubebench-nfs-svc -o wide
+        ks pkg install kubeflow/kubebench@${KB_VERSION}
+
 
         kubectl -n tf-benchmarks wait --timeout 120s --for condition=ready pod --all
 
         kubectl -n tf-benchmarks logs ${CNN_JOB_NAME}-worker-0 -f || true
         ks delete ${KF_ENV} -c ${CNN_JOB_NAME}
         popd
-
       args:
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'

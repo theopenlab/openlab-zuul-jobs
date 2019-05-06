@@ -9,7 +9,7 @@
       shell: kubeadm token create --print-join-command
       register: kubeadm_join_cmd
 
-- hosts: k8s-node-1,k8s-node-2
+- hosts: k8s-nodes
   become: yes
   roles:
     - role: deploy-k8s-cluster-with-kubeadm
@@ -26,6 +26,15 @@
       shell: |
         set -ex
         sleep 1000000
+        go get -u github.com/volcano-sh/volcano
+        cd $GOPATH/src/github.com/volcano.sh/volcano
+        make images
+        docker images
+        curl -L https://git.io/get_helm.sh | bash
+        helm init
+        helm version
+        kubectl -n kube-system get pods
+
       args:
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'
