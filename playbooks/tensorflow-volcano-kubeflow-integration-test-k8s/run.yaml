@@ -51,16 +51,48 @@
 
     - name: deploy kubeflow
       shell: |
+        set -ex
         wget https://github.com/kubeflow/kubeflow/releases/download/v0.5.0/kfctl_v0.5.0_linux.tar.gz
         tar -zxvf kfctl_*.tar.gz -C /usr/local/bin/
-        export KFAPP="mykfapp"
+        export KFAPP="kfapp"
         kfctl init ${KFAPP} -v v0.5.0
-        cd ${KFAPP}
+        pushd ${KFAPP}
         kfctl generate all -V
         kfctl apply all -V
+        kubectl -n kubeflow get all
+        popd
+        # pushd ${KFAPP}
+        # kfctl delete all --delete_storage
+        # popd
+
+
+        timeout 300 bash -c '
+        while :
+        do
+            [ -z "$(kubectl -n kubeflow get pods --field-selector=status.phase!=Running)" ] && break
+            sleep 5
+        done
+        '
+
         wget https://github.com/ksonnet/ksonnet/releases/download/v0.13.1/ks_0.13.1_linux_amd64.tar.gz
         tar -zxvf ks_*.tar.gz
         cp ks_0.13.1_linux_amd64/ks /usr/local/bin/
+
+        CNN_JOB_NAME=tfcnnbenchmarks
+        KF_VERSION=v0.5.0
+        export KF_ENV=default
+        ks env set default --namespace kubeflow
+        ks init ${CNN_JOB_NAME}
+        cd ${CNN_JOB_NAME}
+        ks registry add kubeflow-git github.com/kubeflow/kubeflow/tree/${KF_VERSION}/kubeflow
+        ks pkg install kubeflow-git/examples
+        ks prototype list
+        ks generate tf-job-simple-v1beta2 ${CNN_JOB_NAME} --name=${CNN_JOB_NAME}
+        ks apply ${KF_ENV} -c ${CNN_JOB_NAME}
+
+        kubectl -n kubeflow get tf jobs
+
+        # ks delete ${KF_ENV} -c ${CNN_JOB_NAME}
 
         sleep 100000
       args:
