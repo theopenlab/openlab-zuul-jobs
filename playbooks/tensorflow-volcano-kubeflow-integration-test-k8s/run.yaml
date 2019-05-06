@@ -100,6 +100,14 @@
         ks generate tf-job-simple-v1beta2 ${CNN_JOB_NAME} --name=${CNN_JOB_NAME}
         ks apply ${KF_ENV} -c ${CNN_JOB_NAME}
 
+        timeout 300 bash -c '
+        while :
+        do
+            [ -z "$(kubectl -n tf-benchmarks get pods --field-selector=status.phase!=Running)" ] && break
+            sleep 5
+        done
+        '
+
         kubectl -n tf-benchmarks logs ${CNN_JOB_NAME}-worker-0 -f || true
         ks delete ${KF_ENV} -c ${CNN_JOB_NAME}
         popd
