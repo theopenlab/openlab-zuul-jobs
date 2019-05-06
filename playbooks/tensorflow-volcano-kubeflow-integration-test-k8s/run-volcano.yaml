@@ -19,12 +19,14 @@
 
 - hosts: k8s-master
   become: yes
+  roles:
+    - config-golang
   tasks:
     - name: Debug volcano
       shell: |
         set -ex
-        # kubectl -n kubeflow wait --timeout 300s --for condition=ready pod --all
         sleep 1000000
       args:
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'
+      environment: '{{ global_env }}'

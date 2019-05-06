@@ -52,6 +52,7 @@
 
     # make sure we can schedule pods on the master.
     kubectl taint nodes --all node-role.kubernetes.io/master-
+    kubectl -n kube-system wait --timeout 300s --for condition=ready pod --all
   args:
     executable: /bin/bash
 
@@ -68,6 +69,7 @@
     kubelet --version
     apt-mark hold kubelet kubeadm kubectl
     {{ kubeadm_join_cmd }} --node-name "{{ inventory_hostname }}"
+    kubectl -n kube-system wait --timeout 120s --for condition=ready "node/{{ inventory_hostname }}"
 
     # for NFS pvc
     apt-get install -y nfs-common
