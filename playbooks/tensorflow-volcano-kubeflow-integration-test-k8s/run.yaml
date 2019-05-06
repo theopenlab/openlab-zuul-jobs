@@ -76,7 +76,7 @@
         wget https://github.com/ksonnet/ksonnet/releases/download/v0.13.1/ks_0.13.1_linux_amd64.tar.gz
         tar -zxvf ks_*.tar.gz
         cp ks_0.13.1_linux_amd64/ks /usr/local/bin/
-
+        sleep 100000
         CNN_JOB_NAME=tfcnnbenchmarks
         KF_VERSION=v0.5.0
         export KF_ENV=default
