@@ -59,12 +59,11 @@
         pushd ${KFAPP}
         kfctl generate all -V
         kfctl apply all -V
-        kubectl -n kubeflow get all
+        kubectl -n kubeflow get all -o wide
         popd
         # pushd ${KFAPP}
         # kfctl delete all --delete_storage
         # popd
-
 
         timeout 300 bash -c '
         while :
@@ -81,8 +80,8 @@
         CNN_JOB_NAME=tfcnnbenchmarks
         KF_VERSION=v0.5.0
         export KF_ENV=default
-        ks env set default --namespace kubeflow
         ks init ${CNN_JOB_NAME}
+        ks env set default --namespace kubeflow
         cd ${CNN_JOB_NAME}
         ks registry add kubeflow-git github.com/kubeflow/kubeflow/tree/${KF_VERSION}/kubeflow
         ks pkg install kubeflow-git/examples
