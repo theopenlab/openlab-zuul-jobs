@@ -73,27 +73,37 @@
         done
         '
 
+        kubectl create namespace tf-benchmarks
+
+        CURRENT_CONTEXT=$(kubectl config current-context)
+        CURRENT_CLUSTER=$(kubectl config get-contexts $CURRENT_CONTEXT | tail -1 | awk '{print $3}')
+        CURRENT_USER=$(kubectl config get-contexts $CURRENT_CONTEXT | tail -1 | awk '{print $4}')
+        kubectl config set-context tf-benchmarks \
+          --namespace tf-benchmarks \
+          --cluster $CURRENT_CLUSTER \
+          --user $CURRENT_USER
+
         wget https://github.com/ksonnet/ksonnet/releases/download/v0.13.1/ks_0.13.1_linux_amd64.tar.gz
         tar -zxvf ks_*.tar.gz
         cp ks_0.13.1_linux_amd64/ks /usr/local/bin/
-        sleep 100000
         CNN_JOB_NAME=tfcnnbenchmarks
         KF_VERSION=v0.5.0
         export KF_ENV=default
-        ks init ${CNN_JOB_NAME}
-        ks env set default --namespace kubeflow
-        cd ${CNN_JOB_NAME}
+        # workaround for API limit error of Github, see:
+        # https://github.com/ksonnet/ksonnet/blob/master/docs/troubleshooting.md#github-rate-limiting-errors
+        export GITHUB_TOKEN=c0250b662cfa40845058626ca47eb5accb586d27
+        ks init ${CNN_JOB_NAME} --context tf-benchmarks
+        pushd ${CNN_JOB_NAME}
         ks registry add kubeflow-git github.com/kubeflow/kubeflow/tree/${KF_VERSION}/kubeflow
         ks pkg install kubeflow-git/examples
         ks prototype list
         ks generate tf-job-simple-v1beta2 ${CNN_JOB_NAME} --name=${CNN_JOB_NAME}
         ks apply ${KF_ENV} -c ${CNN_JOB_NAME}
 
-        kubectl -n kubeflow get tf jobs
+        kubectl -n tf-benchmarks logs ${CNN_JOB_NAME}-worker-0 -f || true
+        ks delete ${KF_ENV} -c ${CNN_JOB_NAME}
+        popd
 
-        # ks delete ${KF_ENV} -c ${CNN_JOB_NAME}
-
-        sleep 100000
       args:
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'
