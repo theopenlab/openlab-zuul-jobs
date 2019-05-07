@@ -18,10 +18,11 @@
 ##        - packer-functional-orange
 ##        - packer-functional-telefonica
 #        #- packer-functional-huaweicloud
-        - packer-master-functional-devstack
+        # - packer-master-functional-devstack
 #        #- packer-functional-devstack
 #        - packer-functional-devstack-rocky
 #        - packer-functional-devstack-queens
+         - debug-tensorflow-volcano-k8s-v1.14.0
 
 - project:
     name: liu-sheng/machine
@@ -38,9 +39,7 @@
         #- docker-machine-functional-orange
         #- docker-machine-functional-telefonica
         - tensorflow-volcano-kubeflow-k8s-v1.14.0
-    recheck-pike:
-      jobs:
-        - debug-tensorflow-volcano-k8s-v1.14.0
+
 #- project:
 #    name: liu-sheng/huaweicloud-service-broker
 #    check:

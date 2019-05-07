@@ -80,7 +80,6 @@
         wget https://github.com/ksonnet/ksonnet/releases/download/v0.13.1/ks_0.13.1_linux_amd64.tar.gz
         tar -zxvf ks_*.tar.gz
         cp ks_0.13.1_linux_amd64/ks /usr/local/bin/
-        sleep 100000
         export CNN_JOB_NAME=tfcnnbenchmarks
         export KF_VERSION=v0.5.0
         export KF_ENV=default
@@ -92,15 +91,34 @@
         ks registry add kubeflow github.com/kubeflow/kubeflow/tree/${KF_VERSION}/kubeflow
         ks pkg install kubeflow/examples
         ks prototype list
-        for i in $(seq 1 1); do
+        for i in $(seq 1 3); do
             ks generate tf-job-simple-v1beta2 ${CNN_JOB_NAME}-${i} --name=${CNN_JOB_NAME}-${i}
-            ks apply ${KF_ENV} -c ${CNN_JOB_NAME}-${i}
         done
+        ks apply ${KF_ENV}
         ks component list
         kubectl -n tf-benchmarks get pods -o wide
+        kubectl -n tf-benchmarks get tfjobs -o wide
 
-        kubectl -n tf-benchmarks wait --timeout 120s --for condition=ready pod --all
-        kubectl -n tf-benchmarks logs ${CNN_JOB_NAME}-worker-0 -f || true
+        function tfjobs_status() {
+            kubectl -n tf-benchmarks get tfjobs --no-headers | awk '{print $2}'|uniq
+        }
+        export -f tfjobs_status
+        timeout 7200 bash -c '
+            while :
+            do
+                if tfjobs_status |grep Failed; then
+                    echo "Some TFjobs has failed :("
+                    kubectl -n tf-benchmarks get tfjobs -o wide
+                    exit 1
+                fi
+                if [[ $(tfjobs_status) == Succeeded ]]; then
+                   echo "TFjobs running Succeeded :)"
+                   kubectl -n tf-benchmarks get tfjobs -o wide
+                   break
+                fi
+                sleep 20
+            done
+            '
         ks delete ${KF_ENV}
         popd
         rm -fr ${CNN_JOB_NAME}
