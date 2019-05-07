@@ -116,7 +116,9 @@
                    kubectl -n tf-benchmarks get tfjobs -o wide
                    break
                 fi
-                sleep 20
+                echo "Waiting for TF jobs running..."
+                kubectl -n tf-benchmarks logs --tail 10 tfcnnbenchmarks-1-worker-0
+                sleep 30
             done
             '
         ks delete ${KF_ENV}

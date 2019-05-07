@@ -25,16 +25,32 @@
     - name: Debug volcano
       shell: |
         set -ex
-        sleep 1000000
-        go get -u github.com/volcano-sh/volcano
-        cd $GOPATH/src/github.com/volcano.sh/volcano
+        mkdir -p $GOPATH/src/volcano.sh/
+        git clone https://github.com/volcano-sh/volcano $GOPATH/src/volcano.sh/volcano
+        pushd $GOPATH/src/volcano.sh/volcano
         make images
         docker images
         curl -L https://git.io/get_helm.sh | bash
         helm init
-        helm version
-        kubectl -n kube-system get pods
+        kubectl --namespace kube-system create serviceaccount tiller
+        kubectl create clusterrolebinding tiller-cluster-rule \
+         --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
+        kubectl --namespace kube-system patch deploy tiller-deploy \
+         -p '{"spec":{"template":{"spec":{"serviceAccount":"tiller"}}}}'
 
+        sleep 30
+        kubectl -n kube-system wait --timeout 300s --for condition=ready pod --all
+        helm version
+        helm plugin install installer/chart/volcano/plugins/gen-admission-secret
+        kubectl create namespace volcano-trial
+        helm gen-admission-secret --service volcano-trial-admission-service --namespace volcano-trial
+        helm install installer/chart/volcano --namespace volcano-trial --name volcano-trial
+        kubectl -n volcano-trial get pods
+        kubectl -n volcano-trial get svc
+        # kubectl -n volcano-trial wait --timeout 300s --for condition=ready pod --all
+        docker build example/integrations/tensorflow/ -t volcanosh/example-tf:0.0.1
+        kubectl -n volcano-trial create -f example/integrations/tensorflow/
+        popd
       args:
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'
