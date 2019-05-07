@@ -117,7 +117,6 @@
                    break
                 fi
                 echo "Waiting for TF jobs running..."
-                kubectl -n tf-benchmarks logs --tail 10 tfcnnbenchmarks-1-worker-0
                 sleep 30
             done
             '
