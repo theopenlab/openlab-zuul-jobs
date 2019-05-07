@@ -87,26 +87,23 @@
         # workaround for API limit error of Github, see:
         # https://github.com/ksonnet/ksonnet/blob/master/docs/troubleshooting.md#github-rate-limiting-errors
         export GITHUB_TOKEN=c0250b662cfa40845058626ca47eb5accb586d27
-
         ks init ${CNN_JOB_NAME} --context tf-benchmarks
         pushd ${CNN_JOB_NAME}
         ks registry add kubeflow github.com/kubeflow/kubeflow/tree/${KF_VERSION}/kubeflow
         ks pkg install kubeflow/examples
         ks prototype list
-        ks generate tf-job-simple-v1beta2 ${CNN_JOB_NAME} --name=${CNN_JOB_NAME}
-        ks apply ${KF_ENV} -c ${CNN_JOB_NAME}
-
-        curl https://raw.githubusercontent.com/kubeflow/kubebench/master/scripts/install_quickstarter.sh | bash
-        kubectl -n tf-benchmarks get svc kubebench-nfs-file-server-svc -o wide
-        kubectl -n tf-benchmarks get svc kubebench-nfs-svc -o wide
-        ks pkg install kubeflow/kubebench@${KB_VERSION}
-
+        for i in $(seq 1 1); do
+            ks generate tf-job-simple-v1beta2 ${CNN_JOB_NAME}-${i} --name=${CNN_JOB_NAME}-${i}
+            ks apply ${KF_ENV} -c ${CNN_JOB_NAME}-${i}
+        done
+        ks component list
+        kubectl -n tf-benchmarks get pods -o wide
 
         kubectl -n tf-benchmarks wait --timeout 120s --for condition=ready pod --all
-
         kubectl -n tf-benchmarks logs ${CNN_JOB_NAME}-worker-0 -f || true
-        ks delete ${KF_ENV} -c ${CNN_JOB_NAME}
+        ks delete ${KF_ENV}
         popd
+        rm -fr ${CNN_JOB_NAME}
       args:
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'

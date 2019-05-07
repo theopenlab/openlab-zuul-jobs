@@ -1353,13 +1353,16 @@
           label: ubuntu-xenial
         - name: k8s-node-1
           label: ubuntu-xenial
-        # - name: k8s-node-2
-        #   label: ubuntu-xenial
+        - name: k8s-node-2
+          label: ubuntu-xenial
+        - name: k8s-node-3
+          label: ubuntu-xenial
       groups:
         - name: k8s-nodes
           nodes:
             - k8s-node-1
-            # - k8s-node-2
+            - k8s-node-2
+            - k8s-node-3
 
 - job:
     name: debug-tensorflow-volcano-k8s-v1.14.0
