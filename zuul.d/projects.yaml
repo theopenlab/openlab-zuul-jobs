@@ -25,6 +25,12 @@
          - debug-tensorflow-volcano-k8s-v1.14.0
 
 - project:
+    name: h00130372/packer
+    check:
+      jobs:
+        - packer-master-functional-devstack
+
+- project:
     name: liu-sheng/machine
     check:
       jobs:
