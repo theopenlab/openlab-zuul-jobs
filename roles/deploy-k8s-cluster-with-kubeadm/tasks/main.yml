@@ -71,6 +71,7 @@
     apt-mark hold kubelet kubeadm kubectl
     {{ kubeadm_join_cmd }} --node-name "{{ inventory_hostname }}"
     sleep 20
+    kubectl get nodes
     kubectl wait --timeout 300s --for condition=ready node "{{ inventory_hostname }}"
     kubectl label node "{{ inventory_hostname }}" env=workload
 
