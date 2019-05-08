@@ -52,6 +52,7 @@
 
     # make sure we can schedule pods on the master.
     kubectl taint nodes --all node-role.kubernetes.io/master-
+    sleep 20
     kubectl label node k8s-master env=system
   args:
     executable: /bin/bash
@@ -69,6 +70,7 @@
     kubelet --version
     apt-mark hold kubelet kubeadm kubectl
     {{ kubeadm_join_cmd }} --node-name "{{ inventory_hostname }}"
+    sleep 20
     kubectl label node "{{ inventory_hostname }}" env=workload
 
     # for NFS pvc
