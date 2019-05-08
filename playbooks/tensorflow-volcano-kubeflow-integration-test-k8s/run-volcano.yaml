@@ -49,6 +49,7 @@
         kubectl -n volcano-trial get svc
         # kubectl -n volcano-trial wait --timeout 300s --for condition=ready pod --all
         docker build example/integrations/tensorflow/ -t volcanosh/example-tf:0.0.1
+        sleep 1000000
         kubectl -n volcano-trial create -f example/integrations/tensorflow/
         popd
       args:
