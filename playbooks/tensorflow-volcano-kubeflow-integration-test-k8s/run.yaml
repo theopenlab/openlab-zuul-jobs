@@ -49,6 +49,40 @@
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'
 
+    - name: prepare k8s namespaces
+      shell:
+        cmd: |
+          set -ex
+          cat <<EOF | kubectl create -f -
+          apiVersion: v1
+          kind: Namespace
+          metadata:
+           name: kubeflow
+           annotations:
+             scheduler.alpha.kubernetes.io/node-selector: env=system
+          spec: {}
+          status: {}
+          EOF
+
+          cat <<EOF | kubectl create -f -
+          apiVersion: v1
+          kind: Namespace
+          metadata:
+           name: tf-benchmarks
+           annotations:
+             scheduler.alpha.kubernetes.io/node-selector: env=workload
+          spec: {}
+          status: {}
+          EOF
+          CURRENT_CONTEXT=$(kubectl config current-context)
+          CURRENT_CLUSTER=$(kubectl config get-contexts $CURRENT_CONTEXT | tail -1 | awk '{print $3}')
+          CURRENT_USER=$(kubectl config get-contexts $CURRENT_CONTEXT | tail -1 | awk '{print $4}')
+          kubectl config set-context tf-benchmarks \
+            --namespace tf-benchmarks \
+            --cluster $CURRENT_CLUSTER \
+            --user $CURRENT_USER
+        executable: /bin/bash
+
     - name: deploy kubeflow and run tensorflow benchmarks
       shell: |
         set -ex
@@ -67,15 +101,6 @@
 
         kubectl -n kubeflow wait --timeout 300s --for condition=ready pod --all
 
-        kubectl create namespace tf-benchmarks
-
-        CURRENT_CONTEXT=$(kubectl config current-context)
-        CURRENT_CLUSTER=$(kubectl config get-contexts $CURRENT_CONTEXT | tail -1 | awk '{print $3}')
-        CURRENT_USER=$(kubectl config get-contexts $CURRENT_CONTEXT | tail -1 | awk '{print $4}')
-        kubectl config set-context tf-benchmarks \
-          --namespace tf-benchmarks \
-          --cluster $CURRENT_CLUSTER \
-          --user $CURRENT_USER
 
         wget https://github.com/ksonnet/ksonnet/releases/download/v0.13.1/ks_0.13.1_linux_amd64.tar.gz
         tar -zxvf ks_*.tar.gz
