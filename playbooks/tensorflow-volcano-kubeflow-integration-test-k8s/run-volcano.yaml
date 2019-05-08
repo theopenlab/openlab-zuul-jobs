@@ -26,7 +26,7 @@
       shell: |
         set -ex
         mkdir -p $GOPATH/src/volcano.sh/
-        git clone -b pre-0.1 https://github.com/volcano-sh/volcano $GOPATH/src/volcano.sh/volcano
+        git clone https://github.com/volcano-sh/volcano $GOPATH/src/volcano.sh/volcano
         pushd $GOPATH/src/volcano.sh/volcano
         make images
         docker images
