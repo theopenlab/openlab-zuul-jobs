@@ -98,6 +98,8 @@
         ks component list
         kubectl -n tf-benchmarks get pods -o wide
         kubectl -n tf-benchmarks get tfjobs -o wide
+        sleep 100000000000
+
 
         function tfjobs_status() {
             kubectl -n tf-benchmarks get tfjobs --no-headers | awk '{print $2}'|uniq
