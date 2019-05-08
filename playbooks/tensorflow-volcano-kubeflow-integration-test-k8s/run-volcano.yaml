@@ -22,7 +22,7 @@
   roles:
     - config-golang
   tasks:
-    - name: Debug volcano
+    - name: Deploy volcano and run tensorflow benchmarks
       shell: |
         set -ex
         mkdir -p $GOPATH/src/volcano.sh/
@@ -68,7 +68,7 @@
                     echo "Some TFjobs has failed :("
                     kubectl -n volcano-trial get job.batch.volcano.sh
                     exit 1
-                elif [[ ${job_status} == Succeeded ]]; then
+                elif [[ ${job_status} == Completed ]]; then
                    echo "TFjobs running Succeeded :)"
                    kubectl -n volcano-trial get job.batch.volcano.sh
                    break
