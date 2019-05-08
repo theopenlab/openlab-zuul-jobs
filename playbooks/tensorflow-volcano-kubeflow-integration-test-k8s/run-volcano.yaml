@@ -17,6 +17,24 @@
         - node
       kubeadm_join_cmd: "{{ hostvars['k8s-master']['kubeadm_join_cmd']['stdout'] }}"
 
+- hosts: k8s-nodes
+  become: yes
+  roles:
+    - config-golang
+  tasks:
+    - name: Debug volcano
+      shell: |
+        set -ex
+        mkdir -p $GOPATH/src/volcano.sh/
+        git clone https://github.com/volcano-sh/volcano $GOPATH/src/volcano.sh/volcano
+        pushd $GOPATH/src/volcano.sh/volcano
+        make images
+        docker build example/integrations/tensorflow/ -t volcanosh/example-tf:0.0.1
+        docker images
+      args:
+        executable: /bin/bash
+      environment: '{{ global_env }}'
+
 - hosts: k8s-master
   become: yes
   roles:
@@ -49,7 +67,7 @@
         kubectl -n volcano-trial get svc
         # kubectl -n volcano-trial wait --timeout 300s --for condition=ready pod --all
         docker build example/integrations/tensorflow/ -t volcanosh/example-tf:0.0.1
-        sleep 1000000
+        sleep 720000
         kubectl -n volcano-trial create -f example/integrations/tensorflow/
         popd
       args:
