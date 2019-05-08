@@ -70,8 +70,8 @@
     kubelet --version
     apt-mark hold kubelet kubeadm kubectl
     {{ kubeadm_join_cmd }} --node-name "{{ inventory_hostname }}"
-    sleep 1000000
     sleep 20
+    kubectl wait --timeout 300s --for condition=ready node "{{ inventory_hostname }}"
     kubectl label node "{{ inventory_hostname }}" env=workload
 
     # for NFS pvc
