@@ -106,20 +106,28 @@
         timeout 7200 bash -c '
             while :
             do
-                if tfjobs_status |grep Failed; then
+                job_status=$(tfjobs_status)
+                if [[ ${job_status} == Running ]]; then
+                    echo "Waiting for TF jobs running..."
+                elif echo ${job_status} |grep Failed;
                     echo "Some TFjobs has failed :("
                     kubectl -n tf-benchmarks get tfjobs -o wide
                     exit 1
-                fi
-                if [[ $(tfjobs_status) == Succeeded ]]; then
+                elif [[ ${job_status} == Succeeded ]]; then
                    echo "TFjobs running Succeeded :)"
                    kubectl -n tf-benchmarks get tfjobs -o wide
                    break
                 fi
-                echo "Waiting for TF jobs running..."
                 sleep 30
             done
             '
+
+        mkdir -p {{ RESULTS_PATH }}/tfjobs/
+        job_pods = $(kubectl -n tf-benchmarks get pods -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
+        for job_pod in ${job_pods}; do
+            kubectl -n tf-benchmarks logs ${job_pod} > {{ RESULTS_PATH }}/tfjobs/${job_pod}.log
+        done
+
         ks delete ${KF_ENV}
         popd
         rm -fr ${CNN_JOB_NAME}
