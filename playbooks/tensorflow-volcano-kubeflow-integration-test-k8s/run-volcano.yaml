@@ -17,23 +17,23 @@
         - node
       kubeadm_join_cmd: "{{ hostvars['k8s-master']['kubeadm_join_cmd']['stdout'] }}"
 
-- hosts: k8s-nodes
-  become: yes
-  roles:
-    - config-golang
-  tasks:
-    - name: Debug volcano
-      shell: |
-        set -ex
-        mkdir -p $GOPATH/src/volcano.sh/
-        git clone https://github.com/volcano-sh/volcano $GOPATH/src/volcano.sh/volcano
-        pushd $GOPATH/src/volcano.sh/volcano
-        make images
-        docker build example/integrations/tensorflow/ -t volcanosh/example-tf:0.0.1
-        docker images
-      args:
-        executable: /bin/bash
-      environment: '{{ global_env }}'
+#- hosts: k8s-nodes
+#  become: yes
+#  roles:
+#    - config-golang
+#  tasks:
+#    - name: Debug volcano
+#      shell: |
+#        set -ex
+#        mkdir -p $GOPATH/src/volcano.sh/
+#        git clone https://github.com/volcano-sh/volcano $GOPATH/src/volcano.sh/volcano
+#        pushd $GOPATH/src/volcano.sh/volcano
+#        make images
+#        docker build example/integrations/tensorflow/ -t volcanosh/example-tf:0.0.1
+#        docker images
+#      args:
+#        executable: /bin/bash
+#      environment: '{{ global_env }}'
 
 - hosts: k8s-master
   become: yes
@@ -46,8 +46,8 @@
         mkdir -p $GOPATH/src/volcano.sh/
         git clone https://github.com/volcano-sh/volcano $GOPATH/src/volcano.sh/volcano
         pushd $GOPATH/src/volcano.sh/volcano
-        make images
-        docker images
+        # make images
+        # docker images
         curl -L https://git.io/get_helm.sh | bash
         helm init
         kubectl --namespace kube-system create serviceaccount tiller
@@ -66,7 +66,7 @@
         kubectl -n volcano-trial get pods
         kubectl -n volcano-trial get svc
         # kubectl -n volcano-trial wait --timeout 300s --for condition=ready pod --all
-        docker build example/integrations/tensorflow/ -t volcanosh/example-tf:0.0.1
+        # docker build example/integrations/tensorflow/ -t volcanosh/example-tf:0.0.1
         sleep 720000
         kubectl -n volcano-trial create -f example/integrations/tensorflow/
         popd
