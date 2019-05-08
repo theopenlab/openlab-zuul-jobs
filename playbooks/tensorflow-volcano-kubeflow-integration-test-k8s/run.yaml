@@ -127,7 +127,7 @@
         mkdir -p '{{ ansible_user_dir }}/workspace/test_results/tfjobs/'
         job_pods = $(kubectl -n tf-benchmarks get pods -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
         for job_pod in ${job_pods}; do
-            kubectl -n tf-benchmarks logs ${job_pod} > {{ RESULTS_PATH }}/tfjobs/${job_pod}.log
+            kubectl -n tf-benchmarks logs ${job_pod} > "{{ ansible_user_dir }}/workspace/test_results/tfjobs/${job_pod}.log"
         done
 
         ks delete ${KF_ENV}
