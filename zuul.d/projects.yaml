@@ -22,7 +22,7 @@
 #        #- packer-functional-devstack
 #        - packer-functional-devstack-rocky
 #        - packer-functional-devstack-queens
-         - debug-tensorflow-volcano-k8s-v1.14.0
+         - tensorflow-benchmarks-volcano-k8s-v1.14.0
 
 - project:
     name: h00130372/packer
@@ -44,7 +44,7 @@
         #- docker-machine-functional-opentelekomcloud
         #- docker-machine-functional-orange
         #- docker-machine-functional-telefonica
-        - tensorflow-volcano-kubeflow-k8s-v1.14.0
+        - tensorflow-benchmarks-kubeflow-k8s-v1.14.0
 
 #- project:
 #    name: liu-sheng/huaweicloud-service-broker

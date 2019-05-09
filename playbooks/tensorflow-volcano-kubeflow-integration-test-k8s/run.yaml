@@ -235,7 +235,7 @@
         helm plugin install installer/chart/volcano/plugins/gen-admission-secret
         helm gen-admission-secret --service volcano-trial-admission-service --namespace volcano
         helm install installer/chart/volcano --namespace volcano --name volcano-trial
-        kubectl -n volcano get pods
+        kubectl -n volcano get pods -o wide
         kubectl -n volcano get svc
         sleep 30
         kubectl -n volcano wait --timeout 300s --for condition=ready pod --all
@@ -246,6 +246,7 @@
         function tfjobs_status() {
             kubectl -n vc-tfbenchmarks get job.batch.volcano.sh -o jsonpath='{.items[*].status.state.phase}'|uniq
         }
+        export -f tfjobs_status
 
         timeout 7200 bash -c '
             while :
