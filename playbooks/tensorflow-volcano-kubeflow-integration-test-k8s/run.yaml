@@ -209,11 +209,6 @@
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'
 
-#    - name: Install and config golang for volcano deployment
-#      when: run_volcano_tfbenchmarks|default(false)|bool
-#      include_role:
-#        name: config-golang
-
     - name: Deploy volcano and run tensorflow benchmarks
       when: run_volcano_tfbenchmarks|default(false)|bool
       shell: |
@@ -277,4 +272,3 @@
       args:
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'
-      #environment: '{{ global_env }}'
