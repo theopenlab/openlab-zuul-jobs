@@ -90,6 +90,8 @@
             --namespace tf-benchmarks \
             --cluster $CURRENT_CLUSTER \
             --user $CURRENT_USER
+          sed -i '/--enable-admission-plugins/ s/$/,PodNodeSelector/' /etc/kubernetes/manifests/kube-apiserver.yaml
+          sleep 30
         executable: /bin/bash
 
     - name: deploy kubeflow and run tensorflow benchmarks
