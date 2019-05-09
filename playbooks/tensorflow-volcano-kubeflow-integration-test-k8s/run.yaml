@@ -256,7 +256,7 @@
         sleep 30
         kubectl -n volcano wait --timeout 300s --for condition=ready pod --all
 
-        kubectl -n vc-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/tf-benchmars/"
+        kubectl -n vc-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/vc-tfbenchmars/"
 
         kubectl -n vc-tfbenchmarks get job.batch.volcano.sh
         kubectl -n vc-tfbenchmarks get pods -o wide
