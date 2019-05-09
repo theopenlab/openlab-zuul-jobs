@@ -62,7 +62,13 @@ spec:
               ports:
                 - containerPort: 2222
                   name: tfjob-port
-              resources: {}
+              resources:
+                limits:
+                  cpu: 4000M
+                  memory: 3000Mi
+                requests:
+                  cpu: 4000M
+                  memory: 3000Mi
               workingDir: /opt/tf-benchmarks/scripts/tf_cnn_benchmarks
           restartPolicy: OnFailure
     - replicas: {{ worker_replicas }}
@@ -87,6 +93,12 @@ spec:
               ports:
                 - containerPort: 2222
                   name: tfjob-port
-              resources: {}
+              resources:
+                limits:
+                  cpu: 4000M
+                  memory: 3000Mi
+                requests:
+                  cpu: 4000M
+                  memory: 3000Mi
               workingDir: /opt/tf-benchmarks/scripts/tf_cnn_benchmarks
           restartPolicy: OnFailure

@@ -211,23 +211,24 @@
 
     - name: create vc-tfbenchmarks directory
       when: run_volcano_tfbenchmarks|default(false)|bool
-      file: path="{{ ansible_user_dir }}/workspace/tf-benchmars/" state=directory
+      file: path="{{ ansible_user_dir }}/workspace/vc-tfbenchmars/" state=directory
 
     - name: customize volcano tfbenchmarks templates
       when: run_volcano_tfbenchmarks|default(false)|bool
       become: yes
       template:
-        dest: "{{ ansible_user_dir }}/workspace/tf-benchmars/{{ item.name }}.json"
+        dest: "{{ ansible_user_dir }}/workspace/vc-tfbenchmars/{{ item.name }}.yaml"
         src: "vc-tfbenchmarks.yaml.j2"
       vars:
         vc_tfbenchmars_name: "{{ item.name }}"
         ps_replicas: "{{ item.ps_replicas }}"
         worker_replicas: "{{ item.worker_replicas }}"
       with_items:
-        - { name: "vc-tfbenchmarks-1", ps_replicas: 1, worker_replicas: 3 }
-        - { name: "vc-tfbenchmarks-2", ps_replicas: 1, worker_replicas: 3 }
-        - { name: "vc-tfbenchmarks-3", ps_replicas: 1, worker_replicas: 3 }
-        - { name: "vc-tfbenchmarks-4", ps_replicas: 1, worker_replicas: 3 }
+        - { name: "vc-tfbenchmarks-1", ps_replicas: 1, worker_replicas: 2 }
+        - { name: "vc-tfbenchmarks-2", ps_replicas: 1, worker_replicas: 2 }
+        - { name: "vc-tfbenchmarks-3", ps_replicas: 1, worker_replicas: 2 }
+        - { name: "vc-tfbenchmarks-4", ps_replicas: 1, worker_replicas: 2 }
+        - { name: "vc-tfbenchmarks-5", ps_replicas: 1, worker_replicas: 2 }
 
     - name: Deploy volcano and run tensorflow benchmarks
       when: run_volcano_tfbenchmarks|default(false)|bool
@@ -295,18 +296,4 @@
       args:
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}'
-
-    - name: create vc-tfbenchmarks directory
-      file: path=/etc/openlab state=directory
-
-    - name: customize volcano tfbenchmarks templates
-      become: yes
-      template:
-        dest: "{{ zuul.project.src_dir }}/workspace/{{ item.name }}.json"
-        src: "vc-tfbenchmarks.yaml.j2"
-      with_items:
-        - { name: "vc-tfbenchmarks-1", ps_replicas: 1, worker_replicas: 3 }
-        - { name: "vc-tfbenchmarks-2", ps_replicas: 1, worker_replicas: 3 }
-        - { name: "vc-tfbenchmarks-3", ps_replicas: 1, worker_replicas: 3 }
-        - { name: "vc-tfbenchmarks-4", ps_replicas: 1, worker_replicas: 3 }
 
