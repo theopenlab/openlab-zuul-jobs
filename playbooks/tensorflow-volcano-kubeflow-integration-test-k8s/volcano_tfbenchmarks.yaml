@@ -91,7 +91,7 @@
       shell: |
         set -ex
         kubectl -n vc-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/vc-tfbenchmarks/"
-
+        sleep 10
         kubectl -n vc-tfbenchmarks get job.batch.volcano.sh
         kubectl -n vc-tfbenchmarks get pods -o wide
         sleep 10000000000

@@ -119,6 +119,7 @@
       shell: |
         set -ex
         kubectl -n kf-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/"
+        sleep 10
         kubectl -n kf-tfbenchmarks get tfjobs -o wide
         kubectl -n kf-tfbenchmarks get pods -o wide
         sleep 10000000000
