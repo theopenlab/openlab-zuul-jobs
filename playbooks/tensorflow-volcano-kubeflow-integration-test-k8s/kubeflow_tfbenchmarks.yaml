@@ -118,7 +118,7 @@
     - name: run tensorflow benchmarks
       shell: |
         set -ex
-        kubectl -n vc-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/"
+        kubectl -n kf-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/"
         kubectl -n kf-tfbenchmarks get tfjobs -o wide
         kubectl -n kf-tfbenchmarks get pods -o wide
         sleep 10000000000
@@ -152,13 +152,13 @@
 
     - name: kubeflow env cleanup
       shell: |
-        kubectl -n vc-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/"
+        kubectl -n kf-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/"
         mkdir -p '{{ ansible_user_dir }}/workspace/test_results/tfjobs/'
         job_pods = $(kubectl -n kf-tfbenchmarks get pods -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
         for job_pod in ${job_pods}; do
             kubectl -n kf-tfbenchmarks logs ${job_pod} > "{{ ansible_user_dir }}/workspace/test_results/tfjobs/${job_pod}.log"
         done
-        kubectl -n vc-tfbenchmarks delete -f "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/"
+        kubectl -n kf-tfbenchmarks delete -f "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/"
 
         export KFAPP="kfapp"
         pushd ${KFAPP}
