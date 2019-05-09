@@ -34,7 +34,7 @@ kind: Job
 metadata:
   name: {{ vc_tfbenchmars_name }}
 spec:
-  minAvailable: 2
+  minAvailable: {{ minavailable }}
   schedulerName: kube-batch
   plugins:
     env: []
@@ -64,11 +64,11 @@ spec:
                   name: tfjob-port
               resources:
                 limits:
-                  cpu: 4000m
-                  memory: 3000Mi
+                  cpu: {{ ps_cpu }}
+                  memory: {{ ps_mem }}
                 requests:
-                  cpu: 4000m
-                  memory: 3000Mi
+                  cpu: {{ ps_cpu }}
+                  memory: {{ ps_mem }}
               workingDir: /opt/tf-benchmarks/scripts/tf_cnn_benchmarks
           restartPolicy: OnFailure
     - replicas: {{ worker_replicas }}
@@ -95,10 +95,10 @@ spec:
                   name: tfjob-port
               resources:
                 limits:
-                  cpu: 4000m
-                  memory: 3000Mi
+                  cpu: {{ worker_cpu }}
+                  memory: {{ worker_mem }}
                 requests:
-                  cpu: 4000m
-                  memory: 3000Mi
+                  cpu: {{ worker_cpu }}
+                  memory: {{ worker_mem }}
               workingDir: /opt/tf-benchmarks/scripts/tf_cnn_benchmarks
           restartPolicy: OnFailure

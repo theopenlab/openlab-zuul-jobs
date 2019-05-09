@@ -224,12 +224,18 @@
         vc_tfbenchmars_name: "{{ item.name }}"
         ps_replicas: "{{ item.ps_replicas }}"
         worker_replicas: "{{ item.worker_replicas }}"
+        minavailable: 3
       with_items:
-        - { name: "vc-tfbenchmarks-1", ps_replicas: 1, worker_replicas: 2 }
-        - { name: "vc-tfbenchmarks-2", ps_replicas: 1, worker_replicas: 2 }
-        - { name: "vc-tfbenchmarks-3", ps_replicas: 1, worker_replicas: 2 }
-        - { name: "vc-tfbenchmarks-4", ps_replicas: 1, worker_replicas: 2 }
-        - { name: "vc-tfbenchmarks-5", ps_replicas: 1, worker_replicas: 2 }
+        - { name: "vc-tfbenchmarks-1", ps_replicas: 2, worker_replicas: 4,
+            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 2000Mi }
+        - { name: "vc-tfbenchmarks-2", ps_replicas: 2, worker_replicas: 4,
+            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 2000Mi }
+        - { name: "vc-tfbenchmarks-3", ps_replicas: 2, worker_replicas: 4,
+            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 2000Mi }
+        - { name: "vc-tfbenchmarks-4", ps_replicas: 2, worker_replicas: 4,
+            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 2000Mi }
+        - { name: "vc-tfbenchmarks-5", ps_replicas: 2, worker_replicas: 4,
+            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 2000Mi }
 
     - name: Deploy volcano and run tensorflow benchmarks
       when: run_volcano_tfbenchmarks|default(false)|bool
