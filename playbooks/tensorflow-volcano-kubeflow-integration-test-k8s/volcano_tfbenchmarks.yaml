@@ -31,12 +31,12 @@
         executable: /bin/bash
 
     - name: create vc-tfbenchmarks directory
-      file: path="{{ ansible_user_dir }}/workspace/vc-tfbenchmars/" state=directory
+      file: path="{{ ansible_user_dir }}/workspace/vc-tfbenchmarks/" state=directory
 
     - name: customize volcano tfbenchmarks templates
       become: yes
       template:
-        dest: "{{ ansible_user_dir }}/workspace/vc-tfbenchmars/{{ item.name }}.yaml"
+        dest: "{{ ansible_user_dir }}/workspace/vc-tfbenchmarks/{{ item.name }}.yaml"
         src: "vc-tfbenchmarks.yaml.j2"
       vars:
         vc_tfbenchmarks_name: "{{ item.name }}"
@@ -90,7 +90,7 @@
     - name: run tensorflow benchmarks
       shell: |
         set -ex
-        kubectl -n vc-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/vc-tfbenchmars/"
+        kubectl -n vc-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/vc-tfbenchmarks/"
 
         kubectl -n vc-tfbenchmarks get job.batch.volcano.sh
         kubectl -n vc-tfbenchmarks get pods -o wide

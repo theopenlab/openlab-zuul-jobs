@@ -117,7 +117,7 @@
     - name: run tensorflow benchmarks
       shell: |
         set -ex
-        kubectl -n vc-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/kf-tfbenchmars/"
+        kubectl -n vc-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/"
         kubectl -n kf-tfbenchmarks get tfjobs -o wide
         kubectl -n kf-tfbenchmarks get pods -o wide
         sleep 10000000000
