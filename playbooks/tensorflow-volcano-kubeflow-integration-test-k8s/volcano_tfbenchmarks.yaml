@@ -1,0 +1,132 @@
+- hosts: k8s-master
+  become: yes
+  tasks:
+    - name: prepare k8s namespaces for volcano and TFjobs
+      shell:
+        cmd: |
+          set -ex
+          cat <<EOF | kubectl create -f -
+          apiVersion: v1
+          kind: Namespace
+          metadata:
+           name: volcano
+           annotations:
+             scheduler.alpha.kubernetes.io/node-selector: env=system
+          spec: {}
+          status: {}
+          EOF
+
+          cat <<EOF | kubectl create -f -
+          apiVersion: v1
+          kind: Namespace
+          metadata:
+           name: vc-tfbenchmarks
+           annotations:
+             scheduler.alpha.kubernetes.io/node-selector: env=workload
+          spec: {}
+          status: {}
+          EOF
+          sed -i '/--enable-admission-plugins/ s/$/,PodNodeSelector/' /etc/kubernetes/manifests/kube-apiserver.yaml
+          sleep 30
+        executable: /bin/bash
+
+    - name: create vc-tfbenchmarks directory
+      file: path="{{ ansible_user_dir }}/workspace/vc-tfbenchmars/" state=directory
+
+    - name: customize volcano tfbenchmarks templates
+      become: yes
+      template:
+        dest: "{{ ansible_user_dir }}/workspace/vc-tfbenchmars/{{ item.name }}.yaml"
+        src: "vc-tfbenchmarks.yaml.j2"
+      vars:
+        vc_tfbenchmarks_name: "{{ item.name }}"
+        ps_replicas: "{{ item.ps_replicas }}"
+        worker_replicas: "{{ item.worker_replicas }}"
+        ps_cpu: "{{ item.ps_cpu }}"
+        ps_mem: "{{ item.ps_mem }}"
+        worker_cpu: "{{ item.worker_cpu }}"
+        worker_mem: "{{ item.worker_mem }}"
+        minavailable: 6
+      with_items:
+        - { name: "vc-tfbenchmarks-1", ps_replicas: 2, worker_replicas: 4,
+            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3000Mi }
+        - { name: "vc-tfbenchmarks-2", ps_replicas: 2, worker_replicas: 4,
+            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3000Mi }
+        - { name: "vc-tfbenchmarks-3", ps_replicas: 2, worker_replicas: 4,
+            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3000Mi }
+        - { name: "vc-tfbenchmarks-4", ps_replicas: 2, worker_replicas: 4,
+            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3000Mi }
+        - { name: "vc-tfbenchmarks-5", ps_replicas: 2, worker_replicas: 4,
+            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3000Mi }
+
+    - name: deploy volcano
+      shell: |
+        set -ex
+        mkdir -p src/volcano.sh/
+        git clone https://github.com/volcano-sh/volcano src/volcano.sh/volcano
+        pushd src/volcano.sh/volcano
+        curl -L https://git.io/get_helm.sh | bash
+        helm init
+        kubectl --namespace kube-system create serviceaccount tiller
+        kubectl create clusterrolebinding tiller-cluster-rule \
+         --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
+        kubectl --namespace kube-system patch deploy tiller-deploy \
+         -p '{"spec":{"template":{"spec":{"serviceAccount":"tiller"}}}}'
+
+        sleep 30
+        kubectl -n kube-system wait --timeout 300s --for condition=ready pod --all
+        helm version
+        helm plugin install installer/chart/volcano/plugins/gen-admission-secret
+        helm gen-admission-secret --service volcano-trial-admission-service --namespace volcano
+        helm install installer/chart/volcano --namespace volcano --name volcano-trial
+        kubectl -n volcano get pods -o wide
+        kubectl -n volcano get svc
+        sleep 30
+        kubectl -n volcano wait --timeout 300s --for condition=ready pod --all
+      args:
+        executable: /bin/bash
+        chdir: '{{ ansible_user_dir }}'
+
+    - name: run tensorflow benchmarks
+      shell: |
+        set -ex
+        kubectl -n vc-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/vc-tfbenchmars/"
+
+        kubectl -n vc-tfbenchmarks get job.batch.volcano.sh
+        kubectl -n vc-tfbenchmarks get pods -o wide
+        sleep 10000000000
+
+        function tfjobs_status() {
+            kubectl -n vc-tfbenchmarks get job.batch.volcano.sh -o jsonpath='{.items[*].status.state.phase}'|uniq
+        }
+        export -f tfjobs_status
+
+        timeout 7200 bash -c '
+            while :
+            do
+                jobs_status=$(tfjobs_status)
+                if [[ ${jobs_status} == Running ]]; then
+                    echo "Waiting for TF jobs running..."
+                elif echo ${jobs_status} |grep Failed;
+                    echo "Some TFjobs has failed :("
+                    kubectl -n vc-tfbenchmarks get job.batch.volcano.sh
+                    exit 1
+                elif [[ ${job_status} == Completed ]]; then
+                   echo "TFjobs running Succeeded :)"
+                   kubectl -n vc-tfbenchmarks get job.batch.volcano.sh
+                   break
+                fi
+                sleep 30
+            done
+            '
+        mkdir -p '{{ ansible_user_dir }}/workspace/test_results/tfjobs/'
+        job_pods = $(kubectl -n vc-tfbenchmarks get pods -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
+        for job_pod in ${job_pods}; do
+            kubectl -n vc-tfbenchmarks logs ${job_pod} > "{{ ansible_user_dir }}/workspace/test_results/tfjobs/${job_pod}.log"
+        done
+
+        kubectl -n vc-tfbenchmarks delete -f example/integrations/tensorflow/
+        helm delete integration --purge
+      args:
+        executable: /bin/bash
+        chdir: '{{ ansible_user_dir }}'
