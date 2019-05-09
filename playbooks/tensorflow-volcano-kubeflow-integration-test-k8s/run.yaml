@@ -24,7 +24,7 @@
       shell: |
           set -ex
           sleep 10
-          kubectl get nodes
+          kubectl get nodes -o wide
           kubectl wait --timeout 300s --for condition=ready node --all
           kubectl label node k8s-master env=system
           for node in "{{ groups['k8s-nodes']|join(' ') }}"; do
