@@ -1347,6 +1347,7 @@
     vars:
       k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
       kubernetes_version: 1.14.0
+      run_kubeflow_tfbenchmarks: true
     nodeset:
       nodes:
         - name: k8s-master
@@ -1369,18 +1370,25 @@
     parent: init-test
     description: |
       Test ingetration of tensorflow + volcano/kubeflow on k8s cluster
-    run: playbooks/tensorflow-volcano-kubeflow-integration-test-k8s/run-volcano.yaml
+    run: playbooks/tensorflow-volcano-kubeflow-integration-test-k8s/run.yaml
     post-run: playbooks/tensorflow-volcano-kubeflow-integration-test-k8s/post.yaml
     vars:
       k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
       kubernetes_version: 1.14.0
+      run_volcano_tfbenchmarks: true
     nodeset:
       nodes:
         - name: k8s-master
           label: ubuntu-xenial
         - name: k8s-node-1
           label: ubuntu-xenial
+        - name: k8s-node-2
+          label: ubuntu-xenial
+        - name: k8s-node-3
+          label: ubuntu-xenial
       groups:
         - name: k8s-nodes
           nodes:
             - k8s-node-1
+            - k8s-node-2
+            - k8s-node-3
