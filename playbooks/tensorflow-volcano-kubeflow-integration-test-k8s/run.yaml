@@ -237,6 +237,7 @@
 
         kubectl -n vc-tfbenchmarks create -f example/integrations/tensorflow/
         kubectl -n vc-tfbenchmarks get job.batch.volcano.sh
+        sleep 10000000000
 
         function tfjobs_status() {
             kubectl -n vc-tfbenchmarks get job.batch.volcano.sh -o jsonpath='{.items[*].status.state.phase}'|uniq
