@@ -37,6 +37,7 @@
       when: run_kubeflow_tfbenchmarks|default(false)|bool
       shell:
         cmd: |
+          set -ex
           cat <<EOF | kubectl create -f -
           apiVersion: v1
           kind: Namespace
@@ -73,6 +74,7 @@
       when: run_volcano_tfbenchmarks|default(false)|bool
       shell:
         cmd: |
+          set -ex
           cat <<EOF | kubectl create -f -
           apiVersion: v1
           kind: Namespace
@@ -231,7 +233,6 @@
         kubectl -n kube-system wait --timeout 300s --for condition=ready pod --all
         helm version
         helm plugin install installer/chart/volcano/plugins/gen-admission-secret
-        kubectl create namespace volcano
         helm gen-admission-secret --service volcano-trial-admission-service --namespace volcano
         helm install installer/chart/volcano --namespace volcano --name volcano-trial
         kubectl -n volcano get pods
