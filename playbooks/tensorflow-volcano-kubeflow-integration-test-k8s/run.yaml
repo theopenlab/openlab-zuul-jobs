@@ -224,6 +224,10 @@
         vc_tfbenchmars_name: "{{ item.name }}"
         ps_replicas: "{{ item.ps_replicas }}"
         worker_replicas: "{{ item.worker_replicas }}"
+        ps_cpu: "{{ item.ps_cpu }}"
+        ps_mem: "{{ item.ps_mem }}"
+        worker_cpu: "{{ item.worker_cpu }}"
+        worker_mem: "{{ item.worker_mem }}"
         minavailable: 3
       with_items:
         - { name: "vc-tfbenchmarks-1", ps_replicas: 2, worker_replicas: 4,
