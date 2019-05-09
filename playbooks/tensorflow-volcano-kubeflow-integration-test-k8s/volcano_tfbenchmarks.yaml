@@ -101,6 +101,7 @@
         }
         export -f tfjobs_status
 
+        exit_code=0
         timeout 7200 bash -c '
             while :
             do
@@ -118,7 +119,14 @@
                 fi
                 sleep 30
             done
-            '
+            ' || exit_code=$?
+      args:
+        executable: /bin/bash
+        chdir: '{{ ansible_user_dir }}'
+
+    - name: volcano env cleanup
+      shell: |
+        set -ex
         mkdir -p '{{ ansible_user_dir }}/workspace/test_results/tfjobs/'
         job_pods = $(kubectl -n vc-tfbenchmarks get pods -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
         for job_pod in ${job_pods}; do

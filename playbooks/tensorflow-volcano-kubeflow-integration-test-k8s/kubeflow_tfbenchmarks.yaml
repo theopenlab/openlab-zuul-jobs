@@ -84,6 +84,7 @@
         kubectl -n kubeflow wait --timeout 300s --for condition=ready pod --all
       args:
         executable: /bin/bash
+        chdir: '{{ ansible_user_dir }}/workspace'
 
     - name: create kf-tfbenchmarks directory
       file: path="{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/" state=directory
@@ -126,6 +127,7 @@
             kubectl -n kf-tfbenchmarks get tfjobs --no-headers | awk '{print $2}'|uniq
         }
         export -f tfjobs_status
+        exit_code=0
         timeout 7200 bash -c '
             while :
             do
@@ -143,14 +145,26 @@
                 fi
                 sleep 30
             done
-            '
+            ' || exit_code=$?
+      args:
+        executable: /bin/bash
+        chdir: '{{ ansible_user_dir }}/workspace'
 
+    - name: kubeflow env cleanup
+      shell: |
+        kubectl -n vc-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/"
         mkdir -p '{{ ansible_user_dir }}/workspace/test_results/tfjobs/'
         job_pods = $(kubectl -n kf-tfbenchmarks get pods -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
         for job_pod in ${job_pods}; do
             kubectl -n kf-tfbenchmarks logs ${job_pod} > "{{ ansible_user_dir }}/workspace/test_results/tfjobs/${job_pod}.log"
         done
+        kubectl -n vc-tfbenchmarks delete -f "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/"
+
+        export KFAPP="kfapp"
+        pushd ${KFAPP}
+        kfctl delete all --delete_storage
         popd
+        sleep 60
       args:
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'
