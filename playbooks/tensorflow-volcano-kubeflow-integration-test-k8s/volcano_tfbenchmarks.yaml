@@ -105,7 +105,6 @@
         sleep 10
         kubectl -n vc-tfbenchmarks get job.batch.volcano.sh
         kubectl -n vc-tfbenchmarks get pods -o wide
-        sleep 100000000
 
         function tfjobs_status() {
             kubectl -n vc-tfbenchmarks get job.batch.volcano.sh -o jsonpath='{.items[*].status.state.phase}'|uniq
@@ -119,7 +118,7 @@
 
         exit_code=0
         set +x
-        timeout 7200 bash -c '
+        timeout 180 bash -c '
             while :
             do
                 job_status=$(tfjobs_status)
@@ -141,24 +140,28 @@
 
     - name: collect testing results
       shell: |
-        # TODO
-        mkdir -p '{{ ansible_user_dir }}/workspace/test_results/tfjobs/'
-        kubectl -n vc-tfbenchmarks get pods
+        mkdir -p '{{ ansible_user_dir }}/workspace/test_results/volcano/{templates,pods_logs,jobs_logs}
+        cp -r vc-tfbenchmarks/  "{{ ansible_user_dir }}/workspace/test_results/volcano/templates/"
+
+        jobs_names = $(kubectl -n vc-tfbenchmarks get job.batch.volcano.sh -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
+        for job_name in ${jobs_names}; do
+            kubectl -n vc-tfbenchmarks describe job_name > "{{ ansible_user_dir }}/workspace/test_results/volcano/jobs_logs/${job_name}.log"
+        done
+
+        jobs_pods = $(kubectl -n vc-tfbenchmarks get pods -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
+        for job_pod in ${jobs_pods}; do
+            kubectl -n vc-tfbenchmarks logs ${job_pod} > "{{ ansible_user_dir }}/workspace/test_results/volcano/pods_logs/${job_pod}.log"
+        done
       args:
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'
 
     - name: volcano env cleanup
       shell: |
-        set -ex
-        mkdir -p '{{ ansible_user_dir }}/workspace/test_results/tfjobs/'
-        job_pods = $(kubectl -n vc-tfbenchmarks get pods -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
-        for job_pod in ${job_pods}; do
-            kubectl -n vc-tfbenchmarks logs ${job_pod} > "{{ ansible_user_dir }}/workspace/test_results/tfjobs/${job_pod}.log"
-        done
-
-        kubectl -n vc-tfbenchmarks delete -f example/integrations/tensorflow/
+        kubectl -n vc-tfbenchmarks delete -f "{{ ansible_user_dir }}/workspace/vc-tfbenchmarks/"
+        sleep 180
         helm delete integration --purge
+        sleep 60
       args:
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}'
