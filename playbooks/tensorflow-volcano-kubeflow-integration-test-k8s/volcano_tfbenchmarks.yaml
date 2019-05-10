@@ -102,7 +102,7 @@
       shell: |
         set -ex
         kubectl -n vc-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/vc-tfbenchmarks/{{ item }}"
-        sleep 10
+        sleep 20
         kubectl -n vc-tfbenchmarks get job.batch.volcano.sh
         kubectl -n vc-tfbenchmarks get pods -o wide
 
@@ -118,7 +118,7 @@
 
         exit_code=0
         set +x
-        timeout 36000 bash -c '
+        timeout 600 bash -c '
             while :
             do
                 job_status=$(tfjobs_status)
@@ -146,12 +146,12 @@
 
         jobs_names=$(kubectl -n vc-tfbenchmarks get job.batch.volcano.sh -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
         for job_name in ${jobs_names}; do
-            kubectl -n vc-tfbenchmarks describe job_name > ${result_path}//jobs_logs/${job_name}.log
+            kubectl -n vc-tfbenchmarks describe job_name > ${result_path}/jobs_logs/${job_name}.log
         done
 
         jobs_pods=$(kubectl -n vc-tfbenchmarks get pods -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
         for job_pod in ${jobs_pods}; do
-            kubectl -n vc-tfbenchmarks logs ${job_pod} > ${result_path}//pods_logs/${job_pod}.log
+            kubectl -n vc-tfbenchmarks logs ${job_pod} > ${result_path}/pods_logs/${job_pod}.log
         done
 
         kubectl -n kf-tfbenchmarks delete -f "{{ ansible_user_dir }}/workspace/vc-tfbenchmarks/{{ item }}"
@@ -171,6 +171,7 @@
         helm delete volcano-trial --purge
         sleep 60
         kubectl get pods -o wide -A
+        kubectl -n kubeflow get pods -o wide
       args:
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}'

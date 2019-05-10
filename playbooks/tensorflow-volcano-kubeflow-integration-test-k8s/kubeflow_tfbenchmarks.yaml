@@ -130,7 +130,7 @@
       shell: |
         set -ex
         kubectl -n kf-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/{{ item }}"
-        sleep 10
+        sleep 20
         kubectl -n kf-tfbenchmarks get tfjobs -o wide
         kubectl -n kf-tfbenchmarks get pods -o wide
 
@@ -140,7 +140,7 @@
         export -f tfjobs_status
         exit_code=0
         set +x
-        timeout 36000 bash -c '
+        timeout 600 bash -c '
             while :
             do
                 job_status=$(tfjobs_status)
@@ -196,6 +196,7 @@
         popd
         sleep 60
         kubectl get pods -o wide -A
+        kubectl -n volcano get pods -o wide
       args:
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'
