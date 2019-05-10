@@ -87,12 +87,17 @@
         chdir: '{{ ansible_user_dir }}/workspace'
 
     - name: create kf-tfbenchmarks directory
-      file: path="{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/" state=directory
+      file: path="{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/{{ item }}" state=directory
+      with_items:
+        - case1
+        - case2
+        - case3
+        - case4
 
     - name: customize kubeflow tfbenchmarks templates
       become: yes
       template:
-        dest: "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/{{ item.name }}.yaml"
+        dest: "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/{{ item.case }}/{{ item.name }}.yaml"
         src: "kf-tfbenchmarks.yaml.j2"
       vars:
         kf_tfbenchmarks_name: "{{ item.name }}"
@@ -104,25 +109,32 @@
         worker_mem: "{{ item.worker_mem }}"
         minavailable: 6
       with_items:
-        - { name: "kf-tfbenchmarks-1", ps_replicas: 2, worker_replicas: 4,
+        - { case: "case1", name: "kf-tfbenchmarks-1", ps_replicas: 1, worker_replicas: 1,
             ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
-        - { name: "kf-tfbenchmarks-2", ps_replicas: 2, worker_replicas: 4,
+        - { case: "case2", name: "kf-tfbenchmarks-1", ps_replicas: 1, worker_replicas: 2,
+            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 4000m, worker_mem: 3800Mi }
+        - { case: "case3", name: "kf-tfbenchmarks-1", ps_replicas: 2, worker_replicas: 4,
             ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
-        - { name: "kf-tfbenchmarks-3", ps_replicas: 2, worker_replicas: 4,
+        - { case: "case4", name: "kf-tfbenchmarks-1", ps_replicas: 2, worker_replicas: 4,
             ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
-        - { name: "kf-tfbenchmarks-4", ps_replicas: 2, worker_replicas: 4,
+        - { case: "case4", name: "kf-tfbenchmarks-2", ps_replicas: 2, worker_replicas: 4,
             ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
-        - { name: "kf-tfbenchmarks-5", ps_replicas: 2, worker_replicas: 4,
+        - { case: "case4", name: "kf-tfbenchmarks-3", ps_replicas: 2, worker_replicas: 4,
+            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
+        - { case: "case4", name: "kf-tfbenchmarks-4", ps_replicas: 2, worker_replicas: 4,
+            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
+        - { case: "case4", name: "kf-tfbenchmarks-5", ps_replicas: 2, worker_replicas: 4,
             ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
 
     - name: run tensorflow benchmarks
       shell: |
         set -ex
-        kubectl -n kf-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/"
+        kubectl -n kf-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/case4"
         sleep 10
         kubectl -n kf-tfbenchmarks get tfjobs -o wide
         kubectl -n kf-tfbenchmarks get pods -o wide
         kubectl -n kf-tfbenchmarks wait --timeout 300s --for condition=Running tfjobs --all
+        sleep 100000000
 
         function tfjobs_status() {
             kubectl -n kf-tfbenchmarks get tfjobs --no-headers | awk '{print $2}'|uniq > /dev/null
@@ -161,13 +173,13 @@
 
     - name: kubeflow env cleanup
       shell: |
-        kubectl -n kf-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/"
+        kubectl -n kf-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/case4"
         mkdir -p '{{ ansible_user_dir }}/workspace/test_results/tfjobs/'
         job_pods = $(kubectl -n kf-tfbenchmarks get pods -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
         for job_pod in ${job_pods}; do
             kubectl -n kf-tfbenchmarks logs ${job_pod} > "{{ ansible_user_dir }}/workspace/test_results/tfjobs/${job_pod}.log"
         done
-        kubectl -n kf-tfbenchmarks delete -f "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/"
+        kubectl -n kf-tfbenchmarks delete -f "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/case4"
 
         export KFAPP="kfapp"
         pushd ${KFAPP}

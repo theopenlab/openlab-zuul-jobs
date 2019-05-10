@@ -31,12 +31,17 @@
         executable: /bin/bash
 
     - name: create vc-tfbenchmarks directory
-      file: path="{{ ansible_user_dir }}/workspace/vc-tfbenchmarks/" state=directory
+      file: path="{{ ansible_user_dir }}/workspace/vc-tfbenchmarks/{{ item }}" state=directory
+      with_items:
+        - case1
+        - case2
+        - case3
+        - case4
 
     - name: customize volcano tfbenchmarks templates
       become: yes
       template:
-        dest: "{{ ansible_user_dir }}/workspace/vc-tfbenchmarks/{{ item.name }}.yaml"
+        dest: "{{ ansible_user_dir }}/workspace/vc-tfbenchmarks/{{ item.case }}/{{ item.name }}.yaml"
         src: "vc-tfbenchmarks.yaml.j2"
       vars:
         vc_tfbenchmarks_name: "{{ item.name }}"
@@ -48,16 +53,22 @@
         worker_mem: "{{ item.worker_mem }}"
         minavailable: 6
       with_items:
-        - { name: "vc-tfbenchmarks-1", ps_replicas: 2, worker_replicas: 4,
-            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3500Mi }
-        - { name: "vc-tfbenchmarks-2", ps_replicas: 2, worker_replicas: 4,
-            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3500Mi }
-        - { name: "vc-tfbenchmarks-3", ps_replicas: 2, worker_replicas: 4,
-            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3500Mi }
-        - { name: "vc-tfbenchmarks-4", ps_replicas: 2, worker_replicas: 4,
-            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3500Mi }
-        - { name: "vc-tfbenchmarks-5", ps_replicas: 2, worker_replicas: 4,
-            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3500Mi }
+        - { case: "case1", name: "vc-tfbenchmarks-1", ps_replicas: 1, worker_replicas: 1,
+            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
+        - { case: "case2", name: "vc-tfbenchmarks-1", ps_replicas: 1, worker_replicas: 2,
+            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 4000m, worker_mem: 3800Mi }
+        - { case: "case3", name: "vc-tfbenchmarks-1", ps_replicas: 2, worker_replicas: 4,
+            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
+        - { case: "case4", name: "vc-tfbenchmarks-1", ps_replicas: 2, worker_replicas: 4,
+            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
+        - { case: "case4", name: "vc-tfbenchmarks-2", ps_replicas: 2, worker_replicas: 4,
+            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
+        - { case: "case4", name: "vc-tfbenchmarks-3", ps_replicas: 2, worker_replicas: 4,
+            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
+        - { case: "case4", name: "vc-tfbenchmarks-4", ps_replicas: 2, worker_replicas: 4,
+            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
+        - { case: "case4", name: "vc-tfbenchmarks-5", ps_replicas: 2, worker_replicas: 4,
+            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
 
     - name: deploy volcano
       shell: |
@@ -90,31 +101,35 @@
     - name: run tensorflow benchmarks
       shell: |
         set -ex
-        kubectl -n vc-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/vc-tfbenchmarks/"
+        kubectl -n vc-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/vc-tfbenchmarks/case4"
         sleep 10
         kubectl -n vc-tfbenchmarks get job.batch.volcano.sh
         kubectl -n vc-tfbenchmarks get pods -o wide
-        sleep 10000000000
+        sleep 100000000
 
         function tfjobs_status() {
             kubectl -n vc-tfbenchmarks get job.batch.volcano.sh -o jsonpath='{.items[*].status.state.phase}'|uniq
         }
         export -f tfjobs_status
 
+        function get_tfjobs() {
+            kubectl -n vc-tfbenchmarks get job.batch.volcano.sh -o=custom-columns=NAME:.metadata.name,STATUS:.status.state.phase,CREATED_AT:.metadata.creationTimestamp
+        }
+        export -f get_tfjobs
+
         exit_code=0
+        set +x
         timeout 7200 bash -c '
             while :
             do
-                jobs_status=$(tfjobs_status)
-                if [[ ${jobs_status} == Running ]]; then
-                    echo "Waiting for TF jobs running..."
-                elif echo ${jobs_status} |grep Failed;
-                    echo "Some TFjobs has failed :("
-                    kubectl -n vc-tfbenchmarks get job.batch.volcano.sh
-                    exit 1
-                elif [[ ${job_status} == Completed ]]; then
-                   echo "TFjobs running Succeeded :)"
-                   kubectl -n vc-tfbenchmarks get job.batch.volcano.sh
+                job_status=$(tfjobs_status)
+                echo "======================================================="
+                if echo ${job_status} |grep -E "Running|Pending|Created|Inqueue" > /dev/null; then
+                    echo "There are TFjobs still in running or inqueue status..."
+                    get_tfjobs
+                else
+                   echo "All TFjobs run complate!"
+                   get_tfjobs
                    break
                 fi
                 sleep 30
@@ -123,6 +138,15 @@
       args:
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}'
+
+    - name: collect testing results
+      shell: |
+        # TODO
+        mkdir -p '{{ ansible_user_dir }}/workspace/test_results/tfjobs/'
+        kubectl -n vc-tfbenchmarks get pods
+      args:
+        executable: /bin/bash
+        chdir: '{{ ansible_user_dir }}/workspace'
 
     - name: volcano env cleanup
       shell: |
