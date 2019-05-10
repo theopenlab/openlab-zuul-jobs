@@ -98,7 +98,7 @@
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}'
 
-    - name: run tensorflow benchmarks for case {{ item }}
+    - name: run tensorflow benchmarks
       shell: |
         set -ex
         kubectl -n vc-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/vc-tfbenchmarks/{{ item }}"
@@ -137,8 +137,9 @@
         set -x
         set +e
         result_path="{{ ansible_user_dir }}/workspace/test_results/volcano/{{ item }}"
-        mkdir -p ${result_path}/{templates,pods_logs,jobs_logs}
-        cp -r vc-tfbenchmarks/  ${result_path}/templates/
+        mkdir -p ${result_path}/{pods_logs,jobs_logs}
+        mkdir -p ${result_path}/../templates
+        cp -r vc-tfbenchmarks/*  ${result_path}/../templates/
 
         jobs_names=$(kubectl -n vc-tfbenchmarks get job.batch.volcano.sh -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
         for job_name in ${jobs_names}; do
@@ -149,6 +150,9 @@
         for job_pod in ${jobs_pods}; do
             kubectl -n vc-tfbenchmarks logs ${job_pod} > ${result_path}//pods_logs/${job_pod}.log
         done
+
+        kubectl -n kf-tfbenchmarks delete -f "{{ ansible_user_dir }}/workspace/vc-tfbenchmarks/{{ item }}"
+        sleep 180
       args:
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'

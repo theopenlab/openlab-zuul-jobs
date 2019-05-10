@@ -126,7 +126,7 @@
         - { case: "case4", name: "kf-tfbenchmarks-5", ps_replicas: 2, worker_replicas: 4,
             ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
 
-    - name: run tensorflow benchmarks for case {{ item }}
+    - name: run tensorflow benchmarks
       shell: |
         set -ex
         kubectl -n kf-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/{{ item }}"
@@ -160,8 +160,9 @@
         set -x
         set +e
         result_path="{{ ansible_user_dir }}/workspace/test_results/kubeflow/{{ item }}"
-        mkdir -p ${result_path}/{templates,pods_logs,jobs_logs}
-        cp -r kf-tfbenchmarks/  ${result_path}/templates/
+        mkdir -p ${result_path}/{pods_logs,jobs_logs}
+        mkdir -p ${result_path}/../templates
+        cp -r kf-tfbenchmarks/*  ${result_path}/../templates/
 
         jobs_names=$(kubectl -n kf-tfbenchmarks get tfjobs -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
         for job_name in ${jobs_names}; do
