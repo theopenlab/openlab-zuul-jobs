@@ -49,15 +49,15 @@
         minavailable: 6
       with_items:
         - { name: "vc-tfbenchmarks-1", ps_replicas: 2, worker_replicas: 4,
-            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3000Mi }
+            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3500Mi }
         - { name: "vc-tfbenchmarks-2", ps_replicas: 2, worker_replicas: 4,
-            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3000Mi }
+            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3500Mi }
         - { name: "vc-tfbenchmarks-3", ps_replicas: 2, worker_replicas: 4,
-            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3000Mi }
+            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3500Mi }
         - { name: "vc-tfbenchmarks-4", ps_replicas: 2, worker_replicas: 4,
-            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3000Mi }
+            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3500Mi }
         - { name: "vc-tfbenchmarks-5", ps_replicas: 2, worker_replicas: 4,
-            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3000Mi }
+            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3500Mi }
 
     - name: deploy volcano
       shell: |

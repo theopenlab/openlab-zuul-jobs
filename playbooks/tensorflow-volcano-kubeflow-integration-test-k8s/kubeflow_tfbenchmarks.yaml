@@ -105,15 +105,15 @@
         minavailable: 6
       with_items:
         - { name: "kf-tfbenchmarks-1", ps_replicas: 2, worker_replicas: 4,
-            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3000Mi }
+            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
         - { name: "kf-tfbenchmarks-2", ps_replicas: 2, worker_replicas: 4,
-            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3000Mi }
+            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
         - { name: "kf-tfbenchmarks-3", ps_replicas: 2, worker_replicas: 4,
-            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3000Mi }
+            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
         - { name: "kf-tfbenchmarks-4", ps_replicas: 2, worker_replicas: 4,
-            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3000Mi }
+            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
         - { name: "kf-tfbenchmarks-5", ps_replicas: 2, worker_replicas: 4,
-            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3000Mi }
+            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
 
     - name: run tensorflow benchmarks
       shell: |
@@ -122,31 +122,39 @@
         sleep 10
         kubectl -n kf-tfbenchmarks get tfjobs -o wide
         kubectl -n kf-tfbenchmarks get pods -o wide
-        sleep 10000000000
+        kubectl -n kf-tfbenchmarks wait --timeout 300s --for condition=Running tfjobs --all
 
         function tfjobs_status() {
-            kubectl -n kf-tfbenchmarks get tfjobs --no-headers | awk '{print $2}'|uniq
+            kubectl -n kf-tfbenchmarks get tfjobs --no-headers | awk '{print $2}'|uniq > /dev/null
         }
         export -f tfjobs_status
         exit_code=0
+        set +x
         timeout 7200 bash -c '
             while :
             do
                 job_status=$(tfjobs_status)
-                if [[ ${job_status} == Running ]]; then
-                    echo "Waiting for TF jobs running..."
-                elif echo ${job_status} |grep Failed;
-                    echo "Some TFjobs has failed :("
-                    kubectl -n kf-tfbenchmarks get tfjobs -o wide
-                    exit 1
-                elif [[ ${job_status} == Succeeded ]]; then
-                   echo "TFjobs running Succeeded :)"
-                   kubectl -n kf-tfbenchmarks get tfjobs -o wide
+                echo "======================================================="
+                if echo ${job_status} |grep -E "Running|Pending|Created" > /dev/null; then
+                    echo "There are TFjobs still in running or pending status..."
+                    kubectl -n kf-tfbenchmarks get tfjobs
+                else
+                   echo "All TFjobs run complate!"
+                   kubectl -n kf-tfbenchmarks get tfjobs
                    break
                 fi
                 sleep 30
             done
             ' || exit_code=$?
+      args:
+        executable: /bin/bash
+        chdir: '{{ ansible_user_dir }}/workspace'
+
+
+    - name: collect testing results
+      shell: |
+        # TODO
+        kubectl -n kf-tfbenchmarks get tfjobs
       args:
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'
