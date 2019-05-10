@@ -133,7 +133,6 @@
         sleep 10
         kubectl -n kf-tfbenchmarks get tfjobs -o wide
         kubectl -n kf-tfbenchmarks get pods -o wide
-        kubectl -n kf-tfbenchmarks wait --timeout 300s --for condition=Running tfjobs --all
 
         function tfjobs_status() {
             kubectl -n kf-tfbenchmarks get tfjobs --no-headers | awk '{print $2}'|uniq > /dev/null
