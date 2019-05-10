@@ -3,12 +3,11 @@
       jobs:
         - openlab-zuul-jobs-check
 
-#- project:
-#    name: liu-sheng/labkeeper-1
-#    check:
-#      jobs:
-#        - labkeeper-allinone-deployment-test
-        #- labkeeper-allinone-ha-deployment-test
+- project:
+    name: liu-sheng/labkeeper-1
+    check:
+      jobs:
+        tensorflow-benchmarks-volcano/kubeflow-k8s-v1.14.0
 
 - project:
     name: liu-sheng/packer

@@ -118,7 +118,7 @@
 
         exit_code=0
         set +x
-        timeout 120 bash -c '
+        timeout 72000 bash -c '
             while :
             do
                 job_status=$(tfjobs_status)
@@ -146,7 +146,7 @@
 
         jobs_names=$(kubectl -n vc-tfbenchmarks get job.batch.volcano.sh -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
         for job_name in ${jobs_names}; do
-            kubectl -n vc-tfbenchmarks describe ${job_name} > ${result_path}/jobs_logs/${job_name}.log
+            kubectl -n vc-tfbenchmarks describe job.batch.volcano.sh ${job_name} > ${result_path}/jobs_logs/${job_name}.log
         done
 
         jobs_pods=$(kubectl -n vc-tfbenchmarks get pods -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)

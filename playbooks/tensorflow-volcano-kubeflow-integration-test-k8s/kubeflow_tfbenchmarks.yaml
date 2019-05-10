@@ -140,7 +140,7 @@
         export -f tfjobs_status
         exit_code=0
         set +x
-        timeout 120 bash -c '
+        timeout 72000 bash -c '
             while :
             do
                 job_status=$(tfjobs_status)
@@ -169,7 +169,7 @@
 
         jobs_names=$(kubectl -n kf-tfbenchmarks get tfjobs -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
         for job_name in ${jobs_names}; do
-            kubectl -n kf-tfbenchmarks describe ${job_name} > ${result_path}/jobs_logs/${job_name}.log
+            kubectl -n kf-tfbenchmarks describe tfjob ${job_name} > ${result_path}/jobs_logs/${job_name}.log
         done
 
         jobs_pods=$(kubectl -n kf-tfbenchmarks get pods -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
