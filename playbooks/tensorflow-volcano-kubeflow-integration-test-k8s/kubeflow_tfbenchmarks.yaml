@@ -168,12 +168,12 @@
         mkdir -p '{{ ansible_user_dir }}/workspace/test_results/kubeflow/{templates,pods_logs,jobs_logs}'
         cp -r kf-tfbenchmarks/  "{{ ansible_user_dir }}/workspace/test_results/kubeflow/templates/"
 
-        jobs_names = $(kubectl -n kf-tfbenchmarks get tfjobs -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
+        jobs_names=$(kubectl -n kf-tfbenchmarks get tfjobs -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
         for job_name in ${jobs_names}; do
             kubectl -n kf-tfbenchmarks describe job_name > "{{ ansible_user_dir }}/workspace/test_results/kubeflow/jobs_logs/${job_name}.log"
         done
 
-        jobs_pods = $(kubectl -n kf-tfbenchmarks get pods -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
+        jobs_pods=$(kubectl -n kf-tfbenchmarks get pods -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
         for job_pod in ${jobs_pods}; do
             kubectl -n kf-tfbenchmarks logs ${job_pod} > "{{ ansible_user_dir }}/workspace/test_results/kubeflow/pods_logs/${job_pod}.log"
         done
@@ -184,12 +184,15 @@
     - name: kubeflow env cleanup
       shell: |
         set -x
-        kubectl -n kf-tfbenchmarks delete -f "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/"
+        cd "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/"
+
+        kubectl -n kf-tfbenchmarks delete -f "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/case*"
         export KFAPP="kfapp"
         pushd ${KFAPP}
         kfctl delete all --delete_storage
         popd
         sleep 60
+        kubectl get pods -o wide -A
       args:
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'

@@ -144,12 +144,12 @@
         mkdir -p '{{ ansible_user_dir }}/workspace/test_results/volcano/{templates,pods_logs,jobs_logs}'
         cp -r vc-tfbenchmarks/  "{{ ansible_user_dir }}/workspace/test_results/volcano/templates/"
 
-        jobs_names = $(kubectl -n vc-tfbenchmarks get job.batch.volcano.sh -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
+        jobs_names=$(kubectl -n vc-tfbenchmarks get job.batch.volcano.sh -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
         for job_name in ${jobs_names}; do
             kubectl -n vc-tfbenchmarks describe job_name > "{{ ansible_user_dir }}/workspace/test_results/volcano/jobs_logs/${job_name}.log"
         done
 
-        jobs_pods = $(kubectl -n vc-tfbenchmarks get pods -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
+        jobs_pods=$(kubectl -n vc-tfbenchmarks get pods -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
         for job_pod in ${jobs_pods}; do
             kubectl -n vc-tfbenchmarks logs ${job_pod} > "{{ ansible_user_dir }}/workspace/test_results/volcano/pods_logs/${job_pod}.log"
         done
@@ -160,10 +160,11 @@
     - name: volcano env cleanup
       shell: |
         set -x
-        kubectl -n vc-tfbenchmarks delete -f "{{ ansible_user_dir }}/workspace/vc-tfbenchmarks/"
+        kubectl -n vc-tfbenchmarks delete -f "{{ ansible_user_dir }}/workspace/vc-tfbenchmarks/case*"
         sleep 180
-        helm delete integration --purge
+        helm delete volcano-trial --purge
         sleep 60
+        kubectl get pods -o wide -A
       args:
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}'
