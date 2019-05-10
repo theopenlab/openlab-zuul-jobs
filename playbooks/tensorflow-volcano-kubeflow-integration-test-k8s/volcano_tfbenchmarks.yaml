@@ -92,7 +92,7 @@
         helm install installer/chart/volcano --namespace volcano --name volcano-trial
         kubectl -n volcano get pods -o wide
         kubectl -n volcano get svc
-        sleep 30
+        sleep 10
         kubectl -n volcano wait --timeout 300s --for condition=ready pod --all
       args:
         executable: /bin/bash
@@ -101,7 +101,7 @@
     - name: run tensorflow benchmarks
       shell: |
         set -ex
-        kubectl -n vc-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/vc-tfbenchmarks/case4"
+        kubectl -n vc-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/vc-tfbenchmarks/{{ case }}"
         sleep 10
         kubectl -n vc-tfbenchmarks get job.batch.volcano.sh
         kubectl -n vc-tfbenchmarks get pods -o wide
@@ -134,34 +134,30 @@
                 sleep 30
             done
             ' || exit_code=$?
-      args:
-        executable: /bin/bash
-        chdir: '{{ ansible_user_dir }}'
-
-    - name: collect testing results
-      shell: |
         set -x
-        mkdir -p '{{ ansible_user_dir }}/workspace/test_results/volcano/{templates,pods_logs,jobs_logs}'
-        cp -r vc-tfbenchmarks/  "{{ ansible_user_dir }}/workspace/test_results/volcano/templates/"
+        set +e
+        result_path="{{ ansible_user_dir }}/workspace/test_results/volcano/{{ case }}"
+        mkdir -p ${result_path}/{templates,pods_logs,jobs_logs}
+        cp -r kf-tfbenchmarks/  ${result_path}/templates/
 
         jobs_names=$(kubectl -n vc-tfbenchmarks get job.batch.volcano.sh -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
         for job_name in ${jobs_names}; do
-            kubectl -n vc-tfbenchmarks describe job_name > "{{ ansible_user_dir }}/workspace/test_results/volcano/jobs_logs/${job_name}.log"
+            kubectl -n vc-tfbenchmarks describe job_name > ${result_path}//jobs_logs/${job_name}.log
         done
 
         jobs_pods=$(kubectl -n vc-tfbenchmarks get pods -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
         for job_pod in ${jobs_pods}; do
-            kubectl -n vc-tfbenchmarks logs ${job_pod} > "{{ ansible_user_dir }}/workspace/test_results/volcano/pods_logs/${job_pod}.log"
+            kubectl -n vc-tfbenchmarks logs ${job_pod} > ${result_path}//pods_logs/${job_pod}.log
         done
       args:
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'
+      with_items:
+        - case4
 
     - name: volcano env cleanup
       shell: |
         set -x
-        kubectl -n vc-tfbenchmarks delete -f "{{ ansible_user_dir }}/workspace/vc-tfbenchmarks/case*"
-        sleep 180
         helm delete volcano-trial --purge
         sleep 60
         kubectl get pods -o wide -A
