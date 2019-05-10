@@ -140,6 +140,7 @@
 
     - name: collect testing results
       shell: |
+        set -x
         mkdir -p '{{ ansible_user_dir }}/workspace/test_results/volcano/{templates,pods_logs,jobs_logs}
         cp -r vc-tfbenchmarks/  "{{ ansible_user_dir }}/workspace/test_results/volcano/templates/"
 
@@ -158,6 +159,7 @@
 
     - name: volcano env cleanup
       shell: |
+        set -x
         kubectl -n vc-tfbenchmarks delete -f "{{ ansible_user_dir }}/workspace/vc-tfbenchmarks/"
         sleep 180
         helm delete integration --purge

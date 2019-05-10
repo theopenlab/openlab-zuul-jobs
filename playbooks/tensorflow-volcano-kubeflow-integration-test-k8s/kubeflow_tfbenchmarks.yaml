@@ -164,6 +164,7 @@
 
     - name: collect testing results
       shell: |
+        set -x
         mkdir -p '{{ ansible_user_dir }}/workspace/test_results/kubeflow/{templates,pods_logs,jobs_logs}
         cp -r kf-tfbenchmarks/  "{{ ansible_user_dir }}/workspace/test_results/kubeflow/templates/"
 
@@ -182,6 +183,7 @@
 
     - name: kubeflow env cleanup
       shell: |
+        set -x
         kubectl -n kf-tfbenchmarks delete -f "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/"
         export KFAPP="kfapp"
         pushd ${KFAPP}
