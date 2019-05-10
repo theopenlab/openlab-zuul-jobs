@@ -98,10 +98,10 @@
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}'
 
-    - name: run tensorflow benchmarks
+    - name: run tensorflow benchmarks for case {{ item }}
       shell: |
         set -ex
-        kubectl -n vc-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/vc-tfbenchmarks/{{ case }}"
+        kubectl -n vc-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/vc-tfbenchmarks/{{ item }}"
         sleep 10
         kubectl -n vc-tfbenchmarks get job.batch.volcano.sh
         kubectl -n vc-tfbenchmarks get pods -o wide
@@ -136,7 +136,7 @@
             ' || exit_code=$?
         set -x
         set +e
-        result_path="{{ ansible_user_dir }}/workspace/test_results/volcano/{{ case }}"
+        result_path="{{ ansible_user_dir }}/workspace/test_results/volcano/{{ item }}"
         mkdir -p ${result_path}/{templates,pods_logs,jobs_logs}
         cp -r vc-tfbenchmarks/  ${result_path}/templates/
 

@@ -126,10 +126,10 @@
         - { case: "case4", name: "kf-tfbenchmarks-5", ps_replicas: 2, worker_replicas: 4,
             ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
 
-    - name: run tensorflow benchmarks
+    - name: run tensorflow benchmarks for case {{ item }}
       shell: |
         set -ex
-        kubectl -n kf-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/{{ case }}"
+        kubectl -n kf-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/{{ item }}"
         sleep 10
         kubectl -n kf-tfbenchmarks get tfjobs -o wide
         kubectl -n kf-tfbenchmarks get pods -o wide
@@ -159,7 +159,7 @@
 
         set -x
         set +e
-        result_path="{{ ansible_user_dir }}/workspace/test_results/kubeflow/{{ case }}"
+        result_path="{{ ansible_user_dir }}/workspace/test_results/kubeflow/{{ item }}"
         mkdir -p ${result_path}/{templates,pods_logs,jobs_logs}
         cp -r kf-tfbenchmarks/  ${result_path}/templates/
 
@@ -172,7 +172,7 @@
         for job_pod in ${jobs_pods}; do
             kubectl -n kf-tfbenchmarks logs ${job_pod} > ${result_path}/pods_logs/${job_pod}.log
         done
-        kubectl -n kf-tfbenchmarks delete -f "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/{{ case }}"
+        kubectl -n kf-tfbenchmarks delete -f "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/{{ item }}"
         sleep 180
       args:
         executable: /bin/bash
