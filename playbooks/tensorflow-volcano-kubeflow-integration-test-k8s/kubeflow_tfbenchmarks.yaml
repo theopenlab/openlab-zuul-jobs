@@ -140,7 +140,7 @@
         export -f tfjobs_status
         exit_code=0
         set +x
-        timeout 180 bash -c '
+        timeout 36000 bash -c '
             while :
             do
                 job_status=$(tfjobs_status)
@@ -161,8 +161,11 @@
         set +e
         result_path="{{ ansible_user_dir }}/workspace/test_results/kubeflow/{{ item }}"
         mkdir -p ${result_path}/{pods_logs,jobs_logs}
-        mkdir -p ${result_path}/../templates
-        cp -r kf-tfbenchmarks/*  ${result_path}/../templates/
+
+        if [ ! -d "${result_path}/../templates" ]; then
+            mkdir -p ${result_path}/../templates
+            cp -r kf-tfbenchmarks/*  ${result_path}/../templates/
+        fi
 
         jobs_names=$(kubectl -n kf-tfbenchmarks get tfjobs -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
         for job_name in ${jobs_names}; do
@@ -179,6 +182,9 @@
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'
       with_items:
+        - case1
+        - case2
+        - case3
         - case4
 
     - name: kubeflow env cleanup

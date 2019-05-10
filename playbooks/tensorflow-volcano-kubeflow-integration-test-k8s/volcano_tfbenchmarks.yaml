@@ -118,8 +118,7 @@
 
         exit_code=0
         set +x
-        sleep 1000000000
-        timeout 180 bash -c '
+        timeout 36000 bash -c '
             while :
             do
                 job_status=$(tfjobs_status)
@@ -139,8 +138,11 @@
         set +e
         result_path="{{ ansible_user_dir }}/workspace/test_results/volcano/{{ item }}"
         mkdir -p ${result_path}/{pods_logs,jobs_logs}
-        mkdir -p ${result_path}/../templates
-        cp -r vc-tfbenchmarks/*  ${result_path}/../templates/
+
+        if [ ! -d "${result_path}/../templates" ]; then
+            mkdir -p ${result_path}/../templates
+            cp -r vc-tfbenchmarks/*  ${result_path}/../templates/
+        fi
 
         jobs_names=$(kubectl -n vc-tfbenchmarks get job.batch.volcano.sh -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
         for job_name in ${jobs_names}; do
@@ -158,6 +160,9 @@
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'
       with_items:
+        - case1
+        - case2
+        - case3
         - case4
 
     - name: volcano env cleanup
