@@ -165,7 +165,7 @@
     - name: collect testing results
       shell: |
         set -x
-        mkdir -p '{{ ansible_user_dir }}/workspace/test_results/kubeflow/{templates,pods_logs,jobs_logs}
+        mkdir -p '{{ ansible_user_dir }}/workspace/test_results/kubeflow/{templates,pods_logs,jobs_logs}'
         cp -r kf-tfbenchmarks/  "{{ ansible_user_dir }}/workspace/test_results/kubeflow/templates/"
 
         jobs_names = $(kubectl -n kf-tfbenchmarks get tfjobs -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)

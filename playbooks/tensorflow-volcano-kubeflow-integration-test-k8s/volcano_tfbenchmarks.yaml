@@ -141,7 +141,7 @@
     - name: collect testing results
       shell: |
         set -x
-        mkdir -p '{{ ansible_user_dir }}/workspace/test_results/volcano/{templates,pods_logs,jobs_logs}
+        mkdir -p '{{ ansible_user_dir }}/workspace/test_results/volcano/{templates,pods_logs,jobs_logs}'
         cp -r vc-tfbenchmarks/  "{{ ansible_user_dir }}/workspace/test_results/volcano/templates/"
 
         jobs_names = $(kubectl -n vc-tfbenchmarks get job.batch.volcano.sh -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
