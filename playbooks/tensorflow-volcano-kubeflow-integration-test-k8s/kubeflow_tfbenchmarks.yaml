@@ -140,7 +140,7 @@
         export -f tfjobs_status
         exit_code=0
         set +x
-        timeout 600 bash -c '
+        timeout 120 bash -c '
             while :
             do
                 job_status=$(tfjobs_status)
@@ -169,7 +169,7 @@
 
         jobs_names=$(kubectl -n kf-tfbenchmarks get tfjobs -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
         for job_name in ${jobs_names}; do
-            kubectl -n kf-tfbenchmarks describe job_name > ${result_path}/jobs_logs/${job_name}.log
+            kubectl -n kf-tfbenchmarks describe ${job_name} > ${result_path}/jobs_logs/${job_name}.log
         done
 
         jobs_pods=$(kubectl -n kf-tfbenchmarks get pods -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
@@ -178,6 +178,7 @@
         done
         kubectl -n kf-tfbenchmarks delete -f "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/{{ item }}"
         sleep 180
+        kubectl -n kf-tfbenchmarks get tfjobs -o wide
       args:
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'
