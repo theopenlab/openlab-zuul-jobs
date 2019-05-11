@@ -123,13 +123,13 @@
             do
                 job_status=$(tfjobs_status)
                 echo "======================================================="
-                if echo ${job_status} |grep -E "Running|Pending|Created|Inqueue" > /dev/null; then
+                if echo ${job_status} |grep -E "Terminated|Completed|Failed" > /dev/null; then
+                    echo "All TFjobs run complate!"
+                    get_tfjobs
+                    break
+                else
                     echo "There are TFjobs still in running or inqueue status..."
                     get_tfjobs
-                else
-                   echo "All TFjobs run complate!"
-                   get_tfjobs
-                   break
                 fi
                 sleep 30
             done
