@@ -1,5 +1,23 @@
 - hosts: k8s-master
   become: yes
+  vars:
+    cases:
+      - { case: "case1", name: "kf-tfbenchmarks-1", ps_replicas: 1, worker_replicas: 1,
+          ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
+      - { case: "case2", name: "kf-tfbenchmarks-1", ps_replicas: 1, worker_replicas: 2,
+          ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 4000m, worker_mem: 3800Mi }
+      - { case: "case3", name: "kf-tfbenchmarks-1", ps_replicas: 2, worker_replicas: 4,
+          ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
+      - { case: "case4", name: "kf-tfbenchmarks-1", ps_replicas: 2, worker_replicas: 4,
+          ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
+      - { case: "case4", name: "kf-tfbenchmarks-2", ps_replicas: 2, worker_replicas: 4,
+          ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
+      - { case: "case4", name: "kf-tfbenchmarks-3", ps_replicas: 2, worker_replicas: 4,
+          ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
+      - { case: "case4", name: "kf-tfbenchmarks-4", ps_replicas: 2, worker_replicas: 4,
+          ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
+      - { case: "case4", name: "kf-tfbenchmarks-5", ps_replicas: 2, worker_replicas: 4,
+          ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
   tasks:
     - name: prepare k8s namespaces for kubeflow and TFjobs
       shell:
@@ -108,23 +126,23 @@
         worker_cpu: "{{ item.worker_cpu }}"
         worker_mem: "{{ item.worker_mem }}"
         minavailable: 6
-      with_items:
-        - { case: "case1", name: "kf-tfbenchmarks-1", ps_replicas: 1, worker_replicas: 1,
-            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
-        - { case: "case2", name: "kf-tfbenchmarks-1", ps_replicas: 1, worker_replicas: 2,
-            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 4000m, worker_mem: 3800Mi }
-        - { case: "case3", name: "kf-tfbenchmarks-1", ps_replicas: 2, worker_replicas: 4,
-            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
-        - { case: "case4", name: "kf-tfbenchmarks-1", ps_replicas: 2, worker_replicas: 4,
-            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
-        - { case: "case4", name: "kf-tfbenchmarks-2", ps_replicas: 2, worker_replicas: 4,
-            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
-        - { case: "case4", name: "kf-tfbenchmarks-3", ps_replicas: 2, worker_replicas: 4,
-            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
-        - { case: "case4", name: "kf-tfbenchmarks-4", ps_replicas: 2, worker_replicas: 4,
-            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
-        - { case: "case4", name: "kf-tfbenchmarks-5", ps_replicas: 2, worker_replicas: 4,
-            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
+      with_items: {{ cases }}
+#        - { case: "case1", name: "kf-tfbenchmarks-1", ps_replicas: 1, worker_replicas: 1,
+#            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
+#        - { case: "case2", name: "kf-tfbenchmarks-1", ps_replicas: 1, worker_replicas: 2,
+#            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 4000m, worker_mem: 3800Mi }
+#        - { case: "case3", name: "kf-tfbenchmarks-1", ps_replicas: 2, worker_replicas: 4,
+#            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
+#        - { case: "case4", name: "kf-tfbenchmarks-1", ps_replicas: 2, worker_replicas: 4,
+#            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
+#        - { case: "case4", name: "kf-tfbenchmarks-2", ps_replicas: 2, worker_replicas: 4,
+#            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
+#        - { case: "case4", name: "kf-tfbenchmarks-3", ps_replicas: 2, worker_replicas: 4,
+#            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
+#        - { case: "case4", name: "kf-tfbenchmarks-4", ps_replicas: 2, worker_replicas: 4,
+#            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
+#        - { case: "case4", name: "kf-tfbenchmarks-5", ps_replicas: 2, worker_replicas: 4,
+#            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
 
     - name: run tensorflow benchmarks
       shell: |
@@ -140,7 +158,8 @@
         export -f tfjobs_status
         exit_code=0
         set +x
-        timeout 72000 bash -c '
+        # 72000
+        timeout 60 bash -c '
             while :
             do
                 job_status=$(tfjobs_status)
@@ -166,10 +185,14 @@
             mkdir -p ${result_path}/../templates
             cp -r kf-tfbenchmarks/*  ${result_path}/../templates/
         fi
+        if [ ! -f "${result_path}/../results.csv" ]; then
+            echo 'case,job,ps,ps_cpu,worker,worker_cpu,started_at,complated_at,duration' >> result.csv
+        fi
 
         jobs_names=$(kubectl -n kf-tfbenchmarks get tfjobs -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
         for job_name in ${jobs_names}; do
             kubectl -n kf-tfbenchmarks describe tfjob ${job_name} > ${result_path}/jobs_logs/${job_name}.log
+            echo "{{ item }},${job_name},ps_cpu,worker,worker_cpu,started_at,complated_at,duration" >> ${result_path}/../results.csv
         done
 
         jobs_pods=$(kubectl -n kf-tfbenchmarks get pods -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
