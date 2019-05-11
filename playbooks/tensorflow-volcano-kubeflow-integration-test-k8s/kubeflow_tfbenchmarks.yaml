@@ -135,7 +135,7 @@
         kubectl -n kf-tfbenchmarks get pods -o wide
 
         function tfjobs_status() {
-            kubectl -n kf-tfbenchmarks get tfjobs --no-headers | awk '{print $2}'|uniq > /dev/null
+            kubectl -n kf-tfbenchmarks get tfjobs --no-headers | awk '{print $2}'|uniq
         }
         export -f tfjobs_status
         exit_code=0
@@ -186,7 +186,7 @@
         - case1
         - case2
         - case3
-        - case4
+        # - case4
 
     - name: kubeflow env cleanup
       shell: |

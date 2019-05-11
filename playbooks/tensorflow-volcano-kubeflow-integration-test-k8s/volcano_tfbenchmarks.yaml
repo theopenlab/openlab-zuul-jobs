@@ -164,7 +164,7 @@
         - case1
         - case2
         - case3
-        - case4
+        # - case4
 
     - name: volcano env cleanup
       shell: |
