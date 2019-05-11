@@ -145,13 +145,13 @@
             do
                 job_status=$(tfjobs_status)
                 echo "======================================================="
-                if echo ${job_status} |grep -E "Running|Pending|Created" > /dev/null; then
+                if echo ${job_status} |grep -E "Succeeded|Failed" > /dev/null; then
+                    echo "All TFjobs run complate!"
+                    kubectl -n kf-tfbenchmarks get tfjobs
+                    break
+                else
                     echo "There are TFjobs still in running or pending status..."
                     kubectl -n kf-tfbenchmarks get tfjobs
-                else
-                   echo "All TFjobs run complate!"
-                   kubectl -n kf-tfbenchmarks get tfjobs
-                   break
                 fi
                 sleep 30
             done
