@@ -139,14 +139,18 @@
         result_path="{{ ansible_user_dir }}/workspace/test_results/volcano/{{ item }}"
         mkdir -p ${result_path}/{pods_logs,jobs_logs}
 
-        if [ ! -d "${result_path}/../templates" ]; then
-            mkdir -p ${result_path}/../templates
-            cp -r vc-tfbenchmarks/*  ${result_path}/../templates/
+        if [ ! -d "${result_path}/../jobs_resources" ]; then
+            mkdir -p ${result_path}/../jobs_resources
+            cp -r vc-tfbenchmarks/*  ${result_path}/../jobs_resources/
+        fi
+        if [ ! -f "${result_path}/../results.csv" ]; then
+            echo 'case,job,ps,ps_cpu,worker,worker_cpu,started_at,complated_at,duration' >> result.csv
         fi
 
         jobs_names=$(kubectl -n vc-tfbenchmarks get job.batch.volcano.sh -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
         for job_name in ${jobs_names}; do
             kubectl -n vc-tfbenchmarks describe job.batch.volcano.sh ${job_name} > ${result_path}/jobs_logs/${job_name}.log
+            echo "{{ item }},${job_name},ps_cpu,worker,worker_cpu,started_at,complated_at,duration" >> ${result_path}/../results.csv
         done
 
         jobs_pods=$(kubectl -n vc-tfbenchmarks get pods -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
