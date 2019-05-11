@@ -126,7 +126,7 @@
         worker_cpu: "{{ item.worker_cpu }}"
         worker_mem: "{{ item.worker_mem }}"
         minavailable: 6
-      with_items: {{ cases }}
+      with_items: "{{ cases }}"
 #        - { case: "case1", name: "kf-tfbenchmarks-1", ps_replicas: 1, worker_replicas: 1,
 #            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
 #        - { case: "case2", name: "kf-tfbenchmarks-1", ps_replicas: 1, worker_replicas: 2,
