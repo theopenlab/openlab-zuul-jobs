@@ -156,6 +156,7 @@
             started_at=`cat ${result_path}/jobs_logs/${job_name}.log |grep 'Start Time:'|awk '{print $(NF)}'`
             started_at_ts=`date -d ${started_at} +%s`
             complated_at_ts=`date -d ${complated_at} +%s`
+            duration=''
             if [ -n "${complated_at_ts}" ]; then
                 duration=`echo $(($complated_at_ts-$started_at_ts)) |awk '{print strftime("%H:%M:%S",$1)}'`
             fi
