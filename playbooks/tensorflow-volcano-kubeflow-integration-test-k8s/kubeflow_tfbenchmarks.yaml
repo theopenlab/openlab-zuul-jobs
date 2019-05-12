@@ -181,8 +181,8 @@
             started_at_ts=`date -d ${started_at} +%s`
             complated_at_ts=`date -d ${complated_at} +%s`
             duration=`echo $(($complated_at_ts-$started_at_ts)) |awk '{print strftime("%H:%M:%S",$1)}'`
-            echo "{{ item }},${job_name},${started_at},${complated_at},${duration}" >> ${result_path}/../results.csv        done
-
+            echo "{{ item }},${job_name},${started_at},${complated_at},${duration}" >> ${result_path}/../results.csv
+        done
         jobs_pods=$(kubectl -n kf-tfbenchmarks get pods -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
         for job_pod in ${jobs_pods}; do
             kubectl -n kf-tfbenchmarks logs ${job_pod} > ${result_path}/pods_logs/${job_pod}.log
