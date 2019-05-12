@@ -174,10 +174,10 @@
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'
       with_items:
-        - case1
-        - case2
-        - case3
-        # - case4
+        # - case1
+        # - case2
+        # - case3m
+        - case4
 
     - name: volcano env cleanup
       shell: |
