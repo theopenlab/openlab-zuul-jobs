@@ -120,8 +120,7 @@
 
         exit_code=0
         set +x
-        # 72000
-        timeout 60 bash -c '
+        timeout 72000 bash -c '
             while :
             do
                 job_status=$(tfjobs_status)
@@ -157,7 +156,9 @@
             started_at=`cat ${result_path}/jobs_logs/${job_name}.log |grep 'Start Time:'|awk '{print $(NF)}'`
             started_at_ts=`date -d ${started_at} +%s`
             complated_at_ts=`date -d ${complated_at} +%s`
-            duration=`echo $(($complated_at_ts-$started_at_ts)) |awk '{print strftime("%H:%M:%S",$1)}'`
+            if [ -n "${complated_at_ts}" ]; then
+                duration=`echo $(($complated_at_ts-$started_at_ts)) |awk '{print strftime("%H:%M:%S",$1)}'`
+            fi
             echo "{{ item }},${job_name},${started_at},${complated_at},${duration}" >> ${result_path}/../results.csv
         done
 
