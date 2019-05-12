@@ -1,5 +1,23 @@
 - hosts: k8s-master
   become: yes
+  vars:
+    cases:
+      - { case: "case1", name: "vc-tfbenchmarks-1", ps_replicas: 1, worker_replicas: 1,
+          ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi, minavailable: 2}
+      - { case: "case2", name: "vc-tfbenchmarks-1", ps_replicas: 1, worker_replicas: 2,
+          ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 4000m, worker_mem: 3800Mi, minavailable: 3}
+      - { case: "case3", name: "vc-tfbenchmarks-1", ps_replicas: 2, worker_replicas: 4,
+          ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi, minavailable: 6}
+      - { case: "case4", name: "vc-tfbenchmarks-1", ps_replicas: 2, worker_replicas: 4,
+          ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi, minavailable: 6}
+      - { case: "case4", name: "vc-tfbenchmarks-2", ps_replicas: 2, worker_replicas: 4,
+          ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi, minavailable: 6}
+      - { case: "case4", name: "vc-tfbenchmarks-3", ps_replicas: 2, worker_replicas: 4,
+          ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi, minavailable: 6}
+      - { case: "case4", name: "vc-tfbenchmarks-4", ps_replicas: 2, worker_replicas: 4,
+          ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi, minavailable: 6}
+      - { case: "case4", name: "vc-tfbenchmarks-5", ps_replicas: 2, worker_replicas: 4,
+          ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi, minavailable: 6}
   tasks:
     - name: prepare k8s namespaces for volcano and TFjobs
       shell:
@@ -52,23 +70,23 @@
         worker_cpu: "{{ item.worker_cpu }}"
         worker_mem: "{{ item.worker_mem }}"
         minavailable: "{{ item.minavailable }}"
-      with_items:
-        - { case: "case1", name: "vc-tfbenchmarks-1", ps_replicas: 1, worker_replicas: 1,
-            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi, minavailable: 2}
-        - { case: "case2", name: "vc-tfbenchmarks-1", ps_replicas: 1, worker_replicas: 2,
-            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 4000m, worker_mem: 3800Mi, minavailable: 3}
-        - { case: "case3", name: "vc-tfbenchmarks-1", ps_replicas: 2, worker_replicas: 4,
-            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi, minavailable: 6}
-        - { case: "case4", name: "vc-tfbenchmarks-1", ps_replicas: 2, worker_replicas: 4,
-            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi, minavailable: 6}
-        - { case: "case4", name: "vc-tfbenchmarks-2", ps_replicas: 2, worker_replicas: 4,
-            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi, minavailable: 6}
-        - { case: "case4", name: "vc-tfbenchmarks-3", ps_replicas: 2, worker_replicas: 4,
-            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi, minavailable: 6}
-        - { case: "case4", name: "vc-tfbenchmarks-4", ps_replicas: 2, worker_replicas: 4,
-            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi, minavailable: 6}
-        - { case: "case4", name: "vc-tfbenchmarks-5", ps_replicas: 2, worker_replicas: 4,
-            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi, minavailable: 6}
+      with_items: "{{ cases }}"
+#        - { case: "case1", name: "vc-tfbenchmarks-1", ps_replicas: 1, worker_replicas: 1,
+#            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi, minavailable: 2}
+#        - { case: "case2", name: "vc-tfbenchmarks-1", ps_replicas: 1, worker_replicas: 2,
+#            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 4000m, worker_mem: 3800Mi, minavailable: 3}
+#        - { case: "case3", name: "vc-tfbenchmarks-1", ps_replicas: 2, worker_replicas: 4,
+#            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi, minavailable: 6}
+#        - { case: "case4", name: "vc-tfbenchmarks-1", ps_replicas: 2, worker_replicas: 4,
+#            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi, minavailable: 6}
+#        - { case: "case4", name: "vc-tfbenchmarks-2", ps_replicas: 2, worker_replicas: 4,
+#            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi, minavailable: 6}
+#        - { case: "case4", name: "vc-tfbenchmarks-3", ps_replicas: 2, worker_replicas: 4,
+#            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi, minavailable: 6}
+#        - { case: "case4", name: "vc-tfbenchmarks-4", ps_replicas: 2, worker_replicas: 4,
+#            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi, minavailable: 6}
+#        - { case: "case4", name: "vc-tfbenchmarks-5", ps_replicas: 2, worker_replicas: 4,
+#            ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi, minavailable: 6}
 
     - name: deploy volcano
       shell: |
@@ -118,7 +136,8 @@
 
         exit_code=0
         set +x
-        timeout 72000 bash -c '
+        # 72000
+        timeout 60 bash -c '
             while :
             do
                 job_status=$(tfjobs_status)
