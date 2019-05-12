@@ -109,7 +109,7 @@
         kubectl -n vc-tfbenchmarks get pods -o wide
 
         function tfjobs_status() {
-            kubectl -n vc-tfbenchmarks get job.batch.volcano.sh -o jsonpath='{.items[*].status.state.phase}'|uniq
+            kubectl -n vc-tfbenchmarks get job.batch.volcano.sh -o jsonpath='{range .items[*]}{.status.state.phase}{"\n"}'|sort|uniq
         }
         export -f tfjobs_status
 
@@ -125,7 +125,7 @@
             do
                 job_status=$(tfjobs_status)
                 echo "======================================================="
-                if echo ${job_status} |grep -E "Terminated|Completed|Failed" > /dev/null; then
+                if [[ "Terminated Completed Failed" =~ "$(echo $job_status)" ]]; then
                     echo "All TFjobs run complate!"
                     get_tfjobs
                     break

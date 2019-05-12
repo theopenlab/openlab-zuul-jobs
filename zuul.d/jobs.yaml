@@ -1344,7 +1344,7 @@
       Test ingetration of tensorflow + volcano/kubeflow on k8s cluster
     run: playbooks/tensorflow-volcano-kubeflow-integration-test-k8s/run.yaml
     post-run: playbooks/tensorflow-volcano-kubeflow-integration-test-k8s/post.yaml
-    timeout: 72000
+    timeout: 360000
     vars:
       k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
       kubernetes_version: 1.14.0
@@ -1376,7 +1376,7 @@
       Test ingetration of tensorflow + volcano/kubeflow on k8s cluster
     run: playbooks/tensorflow-volcano-kubeflow-integration-test-k8s/run.yaml
     post-run: playbooks/tensorflow-volcano-kubeflow-integration-test-k8s/post.yaml
-    timeout: 72000
+    timeout: 360000
     vars:
       k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
       kubernetes_version: 1.14.0

@@ -137,7 +137,7 @@
         kubectl -n kf-tfbenchmarks get pods -o wide
 
         function tfjobs_status() {
-            kubectl -n kf-tfbenchmarks get tfjobs --no-headers | awk '{print $2}'|uniq
+            kubectl -n kf-tfbenchmarks get tfjobs --no-headers | awk '{print $2}'|sort|uniq
         }
         export -f tfjobs_status
         exit_code=0
@@ -147,7 +147,7 @@
             do
                 job_status=$(tfjobs_status)
                 echo "======================================================="
-                if echo ${job_status} |grep -E "Succeeded|Failed" > /dev/null; then
+                if [[ "Failed Succeeded" =~ "$(echo $job_status)" ]]; then
                     echo "All TFjobs run complate!"
                     kubectl -n kf-tfbenchmarks get tfjobs
                     break
