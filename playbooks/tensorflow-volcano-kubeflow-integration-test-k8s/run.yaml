@@ -1,7 +1,11 @@
 - hosts: k8s-master
   become: yes
   roles:
+<<<<<<< HEAD
     - role: deploy-k8s-cluster-with-kubeadm
+=======
+    - role: create-multinodes-k8s-cluster-with-kubeadm
+>>>>>>> 078bf43... Add job for running tensorflow benchmarks with kubeflow/volcano on k8s
       k8s_role_to_deploy:
         - master
   tasks:
@@ -12,7 +16,11 @@
 - hosts: k8s-nodes
   become: yes
   roles:
+<<<<<<< HEAD
     - role: deploy-k8s-cluster-with-kubeadm
+=======
+    - role: create-multinodes-k8s-cluster-with-kubeadm
+>>>>>>> 078bf43... Add job for running tensorflow benchmarks with kubeflow/volcano on k8s
       k8s_role_to_deploy:
         - node
       kubeadm_join_cmd: "{{ hostvars['k8s-master']['kubeadm_join_cmd']['stdout'] }}"
