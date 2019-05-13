@@ -1,0 +1,217 @@
+- hosts: k8s-master
+  become: yes
+  vars:
+    cases:
+      - { case: "case1", name: "kf-tfbenchmarks-1", ps_replicas: 1, worker_replicas: 1,
+          ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
+      - { case: "case2", name: "kf-tfbenchmarks-1", ps_replicas: 1, worker_replicas: 2,
+          ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 4000m, worker_mem: 3800Mi }
+      - { case: "case3", name: "kf-tfbenchmarks-1", ps_replicas: 2, worker_replicas: 4,
+          ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
+      - { case: "case4", name: "kf-tfbenchmarks-1", ps_replicas: 2, worker_replicas: 4,
+          ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
+      - { case: "case4", name: "kf-tfbenchmarks-2", ps_replicas: 2, worker_replicas: 4,
+          ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
+      - { case: "case4", name: "kf-tfbenchmarks-3", ps_replicas: 2, worker_replicas: 4,
+          ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
+      - { case: "case4", name: "kf-tfbenchmarks-4", ps_replicas: 2, worker_replicas: 4,
+          ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
+      - { case: "case4", name: "kf-tfbenchmarks-5", ps_replicas: 2, worker_replicas: 4,
+          ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
+  tasks:
+    - name: prepare k8s namespaces for kubeflow and TFjobs
+      shell:
+        cmd: |
+          set -ex
+          cat <<EOF | kubectl create -f -
+          apiVersion: v1
+          kind: Namespace
+          metadata:
+           name: kubeflow
+           annotations:
+             scheduler.alpha.kubernetes.io/node-selector: env=system
+          spec: {}
+          status: {}
+          EOF
+
+          cat <<EOF | kubectl create -f -
+          apiVersion: v1
+          kind: Namespace
+          metadata:
+           name: kf-tfbenchmarks
+           annotations:
+             scheduler.alpha.kubernetes.io/node-selector: env=workload
+          spec: {}
+          status: {}
+          EOF
+          CURRENT_CONTEXT=$(kubectl config current-context)
+          CURRENT_CLUSTER=$(kubectl config get-contexts $CURRENT_CONTEXT | tail -1 | awk '{print $3}')
+          CURRENT_USER=$(kubectl config get-contexts $CURRENT_CONTEXT | tail -1 | awk '{print $4}')
+          kubectl config set-context kf-tfbenchmarks \
+            --namespace kf-tfbenchmarks \
+            --cluster $CURRENT_CLUSTER \
+            --user $CURRENT_USER
+          sed -i '/--enable-admission-plugins/ s/$/,PodNodeSelector/' /etc/kubernetes/manifests/kube-apiserver.yaml
+          sleep 30
+        executable: /bin/bash
+
+    - name: config PVs for kubeflow deployment
+      shell:
+        cmd: |
+          set -ex
+          apt-get install -y nfs-server
+          export KUBECONFIG=/etc/kubernetes/admin.conf
+          for i in `seq 1 3`;do
+              mkdir -p /nfs-data/kubeflow-pv$i
+              echo "/nfs-data/kubeflow-pv$i *(rw,sync,no_root_squash,no_subtree_check)" >> /etc/exports
+              systemctl restart nfs-kernel-server.service
+              cat << EOF >> kubeflow-pv$i.yaml
+              apiVersion: v1
+              kind: PersistentVolume
+              metadata:
+                name: kubeflow-pv$i
+              spec:
+                capacity:
+                  storage: 20Gi
+                accessModes:
+                  - ReadWriteOnce
+                nfs:
+                  server: {{ ansible_host }}
+                  path: /nfs-data/kubeflow-pv$i
+          EOF
+              kubectl create -f kubeflow-pv$i.yaml
+          done
+        executable: /bin/bash
+        chdir: '{{ ansible_user_dir }}/workspace'
+
+    - name: deploy kubeflow
+      shell: |
+        set -ex
+        wget https://github.com/kubeflow/kubeflow/releases/download/v0.5.0/kfctl_v0.5.0_linux.tar.gz
+        tar -zxvf kfctl_*.tar.gz -C /usr/local/bin/
+        export KFAPP="kfapp"
+        kfctl init ${KFAPP} -v v0.5.0
+        pushd ${KFAPP}
+        kfctl generate all -V
+        kfctl apply all -V
+        kubectl -n kubeflow get all -o wide
+        popd
+        # pushd ${KFAPP}
+        # kfctl delete all --delete_storage
+        # popd
+        kubectl -n kubeflow wait --timeout 300s --for condition=ready pod --all
+      args:
+        executable: /bin/bash
+        chdir: '{{ ansible_user_dir }}/workspace'
+
+    - name: create kf-tfbenchmarks directory
+      file: path="{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/{{ item }}" state=directory
+      with_items:
+        - case1
+        - case2
+        - case3
+        - case4
+
+    - name: customize kubeflow tfbenchmarks templates
+      become: yes
+      template:
+        dest: "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/{{ item.case }}/{{ item.name }}.yaml"
+        src: "kf-tfbenchmarks.yaml.j2"
+      vars:
+        kf_tfbenchmarks_name: "{{ item.name }}"
+        ps_replicas: "{{ item.ps_replicas }}"
+        worker_replicas: "{{ item.worker_replicas }}"
+        ps_cpu: "{{ item.ps_cpu }}"
+        ps_mem: "{{ item.ps_mem }}"
+        worker_cpu: "{{ item.worker_cpu }}"
+        worker_mem: "{{ item.worker_mem }}"
+        minavailable: 6
+      with_items: "{{ cases }}"
+
+    - name: run tensorflow benchmarks
+      shell: |
+        set -ex
+        kubectl -n kf-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/{{ item }}"
+        sleep 20
+        kubectl -n kf-tfbenchmarks get tfjobs -o wide
+        kubectl -n kf-tfbenchmarks get pods -o wide
+
+        function tfjobs_status() {
+            kubectl -n kf-tfbenchmarks get tfjobs --no-headers | awk '{print $2}'|sort|uniq
+        }
+        export -f tfjobs_status
+        exit_code=0
+        set +x
+        timeout 72000 bash -c '
+            while :
+            do
+                job_status=$(tfjobs_status)
+                echo "======================================================="
+                if [[ "Failed Succeeded" =~ "$(echo $job_status)" ]]; then
+                    echo "All TFjobs run complate!"
+                    kubectl -n kf-tfbenchmarks get tfjobs
+                    break
+                else
+                    echo "There are TFjobs still in running or pending status..."
+                    kubectl -n kf-tfbenchmarks get tfjobs
+                fi
+                sleep 30
+            done
+            ' || exit_code=$?
+
+        set -x
+        set +e
+        result_path="{{ ansible_user_dir }}/workspace/test_results/kubeflow/{{ item }}"
+        mkdir -p ${result_path}/{pods_logs,jobs_logs}
+
+        if [ ! -d "${result_path}/../jobs_resources" ]; then
+            mkdir -p ${result_path}/../jobs_resources
+            cp -r kf-tfbenchmarks/*  ${result_path}/../jobs_resources/
+        fi
+        if [ ! -f "${result_path}/../results.csv" ]; then
+            echo 'case,job,started_at,complated_at,duration' >> ${result_path}/../results.csv
+        fi
+
+        jobs_names=$(kubectl -n kf-tfbenchmarks get tfjobs -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
+        for job_name in ${jobs_names}; do
+            kubectl -n kf-tfbenchmarks describe tfjob ${job_name} > ${result_path}/jobs_logs/${job_name}.log
+            complated_at=`cat ${result_path}/jobs_logs/${job_name}.log |grep 'Completion Time:'|awk '{print $(NF)}'`
+            started_at=`cat ${result_path}/jobs_logs/${job_name}.log |grep 'Start Time:'|awk '{print $(NF)}'`
+            started_at_ts=`date -d ${started_at} +%s`
+            complated_at_ts=`date -d ${complated_at} +%s`
+            duration=''
+            if [ -n "${complated_at_ts}" ]; then
+                duration=`echo $(($complated_at_ts-$started_at_ts)) |awk '{print strftime("%H:%M:%S",$1)}'`
+            fi
+            echo "{{ item }},${job_name},${started_at},${complated_at},${duration}" >> ${result_path}/../results.csv
+        done
+        jobs_pods=$(kubectl -n kf-tfbenchmarks get pods -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
+        for job_pod in ${jobs_pods}; do
+            kubectl -n kf-tfbenchmarks logs ${job_pod} > ${result_path}/pods_logs/${job_pod}.log
+        done
+        kubectl -n kf-tfbenchmarks delete -f "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/{{ item }}"
+        sleep 180
+        kubectl -n kf-tfbenchmarks get tfjobs -o wide
+      args:
+        executable: /bin/bash
+        chdir: '{{ ansible_user_dir }}/workspace'
+      with_items:
+        # We only test the typical case case4, otherwise, it will take very long time.
+        # - case1
+        # - case2
+        # - case3
+        - case4
+
+    - name: kubeflow env cleanup
+      shell: |
+        set -x
+        export KFAPP="kfapp"
+        pushd ${KFAPP}
+        kfctl delete all --delete_storage
+        popd
+        sleep 60
+        kubectl get pods -o wide -A
+        kubectl -n kubeflow get pods -o wide
+      args:
+        executable: /bin/bash
+        chdir: '{{ ansible_user_dir }}/workspace'
