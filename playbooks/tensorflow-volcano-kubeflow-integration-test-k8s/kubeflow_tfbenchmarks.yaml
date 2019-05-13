@@ -142,7 +142,6 @@
         export -f tfjobs_status
         exit_code=0
         set +x
-        sleep 1000000
         timeout 72000 bash -c '
             while :
             do
