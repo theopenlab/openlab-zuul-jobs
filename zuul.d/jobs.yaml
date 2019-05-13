@@ -1341,7 +1341,7 @@
     name: tensorflow-benchmarks-kubeflow-k8s-v1.14.0
     parent: init-test
     description: |
-      Test ingetration of tensorflow + volcano/kubeflow on k8s cluster
+      Test benchmarks of tensorflow + volcano/kubeflow on k8s cluster
     run: playbooks/tensorflow-volcano-kubeflow-integration-test-k8s/run.yaml
     post-run: playbooks/tensorflow-volcano-kubeflow-integration-test-k8s/post.yaml
     timeout: 360000
@@ -1373,7 +1373,7 @@
     name: tensorflow-benchmarks-volcano-k8s-v1.14.0
     parent: init-test
     description: |
-      Test ingetration of tensorflow + volcano/kubeflow on k8s cluster
+      Test benchmarks of tensorflow + volcano/kubeflow on k8s cluster
     run: playbooks/tensorflow-volcano-kubeflow-integration-test-k8s/run.yaml
     post-run: playbooks/tensorflow-volcano-kubeflow-integration-test-k8s/post.yaml
     timeout: 360000
@@ -1405,7 +1405,7 @@
     name: tensorflow-benchmarks-volcano/kubeflow-k8s-v1.14.0
     parent: init-test
     description: |
-      Test ingetration of tensorflow + volcano/kubeflow on k8s cluster
+      Test benchmarks of tensorflow + volcano/kubeflow on k8s cluster
     run: playbooks/tensorflow-volcano-kubeflow-integration-test-k8s/run.yaml
     post-run: playbooks/tensorflow-volcano-kubeflow-integration-test-k8s/post.yaml
     timeout: 72000
