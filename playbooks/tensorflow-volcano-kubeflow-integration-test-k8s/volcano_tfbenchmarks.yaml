@@ -175,18 +175,10 @@
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'
       with_items:
-<<<<<<< HEAD
         - case1
         - case2
         - case3
         # - case4
-=======
-        # We only test the typical case case4, otherwise, it will take very long time.
-        # - case1
-        # - case2
-        # - case3
-        - case4
->>>>>>> 078bf43... Add job for running tensorflow benchmarks with kubeflow/volcano on k8s
 
     - name: volcano env cleanup
       shell: |
@@ -194,11 +186,7 @@
         helm delete volcano-trial --purge
         sleep 60
         kubectl get pods -o wide -A
-<<<<<<< HEAD
-        kubectl -n kubeflow get pods -o wide
-=======
         kubectl -n volcano get pods -o wide
->>>>>>> 078bf43... Add job for running tensorflow benchmarks with kubeflow/volcano on k8s
       args:
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}'
