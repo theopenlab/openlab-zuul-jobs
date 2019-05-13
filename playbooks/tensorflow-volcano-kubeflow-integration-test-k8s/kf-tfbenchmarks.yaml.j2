@@ -10,18 +10,13 @@ spec:
       template:
         spec:
           containers:
-          - args:
-            - python
-            - tf_cnn_benchmarks.py
-            - --batch_size=32
-            - --model=resnet50
-            - --variable_update=parameter_server
-            - --flush_stdout=true
-            - --num_gpus=1
-            - --local_parameter_device=cpu
-            - --device=cpu
-            - --data_format=NHWC
-            image: volcanosh/example-tf:0.0.1
+          - command:
+              - sh
+              - -c
+              - |
+                PS_HOST=`cat /etc/volcano/ps.host | sed 's/$/&:2222/g' | tr "\n" ","`;
+                WORKER_HOST=`cat /etc/volcano/worker.host | sed 's/$/&:2222/g' | tr "\n" ","`;
+                python tf_cnn_benchmarks.py --batch_size=32 --model=resnet50 --variable_update=parameter_server --flush_stdout=true --num_gpus=1 --local_parameter_device=cpu --device=cpu --data_format=NHWC --job_name=ps --task_index=${VK_TASK_INDEX} --ps_hosts=${PS_HOST} --worker_hosts=${WORKER_HOST}            image: volcanosh/example-tf:0.0.1
             name: tensorflow
             resources:
               limits:
@@ -38,17 +33,13 @@ spec:
       template:
         spec:
           containers:
-          - args:
-            - python
-            - tf_cnn_benchmarks.py
-            - --batch_size=32
-            - --model=resnet50
-            - --variable_update=parameter_server
-            - --flush_stdout=true
-            - --num_gpus=1
-            - --local_parameter_device=cpu
-            - --device=cpu
-            - --data_format=NHWC
+          - command:
+              - sh
+              - -c
+              - |
+                PS_HOST=`cat /etc/volcano/ps.host | sed 's/$/&:2222/g' | tr "\n" ","`;
+                WORKER_HOST=`cat /etc/volcano/worker.host | sed 's/$/&:2222/g' | tr "\n" ","`;
+                python tf_cnn_benchmarks.py --batch_size=32 --model=resnet50 --variable_update=parameter_server --flush_stdout=true --num_gpus=1 --local_parameter_device=cpu --device=cpu --data_format=NHWC --job_name=worker --task_index=${VK_TASK_INDEX} --ps_hosts=${PS_HOST} --worker_hosts=${WORKER_HOST}
             image: volcanosh/example-tf:0.0.1
             name: tensorflow
             resources:
