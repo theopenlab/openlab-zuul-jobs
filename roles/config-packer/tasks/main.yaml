@@ -6,6 +6,7 @@
 - name: Install master of Packer from source
   shell: |
     set -ex
+    go env
     sleep 7200
     make bin
     packer version
