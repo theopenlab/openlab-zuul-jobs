@@ -107,7 +107,8 @@
           # Build kubetest
           go get -u k8s.io/test-infra/kubetest
           # Build all binaries
-          export KUBE_FASTBUILD=true
+          # Revert once kubernetes/kubernetes#77521 is fixed
+          export KUBE_FASTBUILD=false
           export KUBERNETES_CONFORMANCE_TEST=y
 
           # Run e2e test using local deployment/provider
