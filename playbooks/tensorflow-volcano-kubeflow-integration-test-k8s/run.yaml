@@ -22,6 +22,7 @@
   tasks:
     - name: label k8s nodes for insulating system and workload pods
       shell: |
+          set -o pipefail
           set -ex
           sleep 10
           kubectl get nodes -o wide

@@ -22,6 +22,7 @@
     - name: prepare k8s namespaces for kubeflow and TFjobs
       shell:
         cmd: |
+          set -o pipefail
           set -ex
           cat <<EOF | kubectl create -f -
           apiVersion: v1
@@ -130,6 +131,7 @@
 
     - name: run tensorflow benchmarks
       shell: |
+        set -o pipefail
         set -ex
         kubectl -n kf-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/{{ item }}"
         sleep 20
@@ -196,6 +198,7 @@
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'
       with_items:
+        # We only test the typical case case4, otherwise, it will take very long time.
         # - case1
         # - case2
         # - case3
