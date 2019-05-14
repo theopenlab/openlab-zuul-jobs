@@ -23,6 +23,7 @@
       shell:
         cmd: |
           set -ex
+          set -o pipefail
           cat <<EOF | kubectl create -f -
           apiVersion: v1
           kind: Namespace
@@ -131,6 +132,7 @@
     - name: run tensorflow benchmarks
       shell: |
         set -ex
+        set -o pipefail
         kubectl -n kf-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/{{ item }}"
         sleep 20
         kubectl -n kf-tfbenchmarks get tfjobs -o wide
