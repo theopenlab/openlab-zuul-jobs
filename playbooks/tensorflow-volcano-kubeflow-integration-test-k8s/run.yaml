@@ -22,8 +22,8 @@
   tasks:
     - name: label k8s nodes for insulating system and workload pods
       shell: |
-          set -ex
           set -o pipefail
+          set -ex
           sleep 10
           kubectl get nodes -o wide
           kubectl wait --timeout 300s --for condition=ready node --all

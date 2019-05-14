@@ -22,8 +22,8 @@
     - name: prepare k8s namespaces for volcano and TFjobs
       shell:
         cmd: |
-          set -ex
           set -o pipefail
+          set -ex
           cat <<EOF | kubectl create -f -
           apiVersion: v1
           kind: Namespace
@@ -75,8 +75,8 @@
 
     - name: deploy volcano
       shell: |
-        set -ex
         set -o pipefail
+        set -ex
         mkdir -p src/volcano.sh/
         git clone https://github.com/volcano-sh/volcano src/volcano.sh/volcano
         pushd src/volcano.sh/volcano
@@ -104,8 +104,8 @@
 
     - name: run tensorflow benchmarks
       shell: |
-        set -ex
         set -o pipefail
+        set -ex
         kubectl -n vc-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/vc-tfbenchmarks/{{ item }}"
         sleep 20
         kubectl -n vc-tfbenchmarks get job.batch.volcano.sh

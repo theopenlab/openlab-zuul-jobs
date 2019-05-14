@@ -5,8 +5,8 @@
 - name: Install packages repository
   shell:
     cmd: |
-      set -ex
       set -o pipefail
+      set -ex
       # Installing kubeadm, kubelet and kubectl.
       apt-get update && apt-get install -y apt-transport-https curl
       curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
@@ -20,8 +20,8 @@
 - name: Deploy k8s master
   when: '"master" in k8s_role_to_deploy'
   shell: |
-    set -ex
     set -o pipefail
+    set -ex
     if [[ "{{ kubernetes_version }}" == "latest" ]]; then
         apt-get install -y kubelet kubeadm kubectl
     else
@@ -55,8 +55,8 @@
 - name: Deploy k8s node
   when: '"node" in k8s_role_to_deploy'
   shell: |
-    set -ex
     set -o pipefail
+    set -ex
     if [[ "{{ kubernetes_version }}" == "latest" ]]; then
         apt-get install -y kubelet kubeadm kubectl
     else
