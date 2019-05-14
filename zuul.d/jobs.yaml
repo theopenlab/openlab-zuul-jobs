@@ -1344,9 +1344,8 @@
       Test benchmarks of tensorflow + volcano/kubeflow on k8s cluster
     run: playbooks/tensorflow-volcano-kubeflow-integration-test-k8s/run.yaml
     post-run: playbooks/tensorflow-volcano-kubeflow-integration-test-k8s/post.yaml
-    timeout: 360000
+    timeout: 86400
     vars:
-<<<<<<< HEAD
       k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
       kubernetes_version: 1.14.0
       run_kubeflow_tfbenchmarks: true
@@ -1377,7 +1376,7 @@
       Test benchmarks of tensorflow + volcano/kubeflow on k8s cluster
     run: playbooks/tensorflow-volcano-kubeflow-integration-test-k8s/run.yaml
     post-run: playbooks/tensorflow-volcano-kubeflow-integration-test-k8s/post.yaml
-    timeout: 360000
+    timeout: 86400
     vars:
       k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
       kubernetes_version: 1.14.0
@@ -1401,9 +1400,6 @@
             - k8s-node-2
             - k8s-node-3
             - k8s-node-4
-=======
-      is_gpu_enabled: true
->>>>>>> 078bf43... Add job for running tensorflow benchmarks with kubeflow/volcano on k8s
 
 - job:
     name: tensorflow-benchmarks-volcano/kubeflow-k8s-v1.14.0
@@ -1412,7 +1408,7 @@
       Test benchmarks of tensorflow + volcano/kubeflow on k8s cluster
     run: playbooks/tensorflow-volcano-kubeflow-integration-test-k8s/run.yaml
     post-run: playbooks/tensorflow-volcano-kubeflow-integration-test-k8s/post.yaml
-    timeout: 72000
+    timeout: 86400
     vars:
       k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
       kubernetes_version: 1.14.0

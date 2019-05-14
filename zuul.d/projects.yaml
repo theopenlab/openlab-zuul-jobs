@@ -23,16 +23,6 @@
 #        - packer-functional-devstack-queens
          - tensorflow-benchmarks-volcano-k8s-v1.14.0
 
-<<<<<<< HEAD
-=======
-- project:
-    name: theopenlab/volcano
-    check:
-      jobs:
-        - tensorflow-benchmarks-volcano/kubeflow-k8s-v1.14.0
-
-####################### periodic jobs on 00:00/12:00 ##########################
->>>>>>> 078bf43... Add job for running tensorflow benchmarks with kubeflow/volcano on k8s
 - project:
     name: h00130372/packer
     check:
