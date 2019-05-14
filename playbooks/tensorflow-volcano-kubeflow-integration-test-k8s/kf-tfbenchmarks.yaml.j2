@@ -1,0 +1,62 @@
+apiVersion: kubeflow.org/v1beta2
+kind: TFJob
+metadata:
+  name: {{ kf_tfbenchmarks_name }}
+  namespace: kf-tfbenchmarks
+spec:
+  tfReplicaSpecs:
+    Ps:
+      replicas: {{ ps_replicas }}
+      template:
+        spec:
+          containers:
+          - args:
+            - python
+            - tf_cnn_benchmarks.py
+            - --batch_size=32
+            - --model=resnet50
+            - --variable_update=parameter_server
+            - --flush_stdout=true
+            - --num_gpus=1
+            - --local_parameter_device=cpu
+            - --device=cpu
+            - --data_format=NHWC
+            image: volcanosh/example-tf:0.0.3
+            name: tensorflow
+            resources:
+              limits:
+                cpu: {{ ps_cpu }}
+                memory: {{ ps_mem }}
+              requests:
+                cpu: {{ ps_cpu }}
+                memory: {{ ps_mem }}
+            workingDir: /opt/tf-benchmarks/scripts/tf_cnn_benchmarks
+          restartPolicy: OnFailure
+      tfReplicaType: PS
+    Worker:
+      replicas: {{ worker_replicas }}
+      template:
+        spec:
+          containers:
+          - args:
+            - python
+            - tf_cnn_benchmarks.py
+            - --batch_size=32
+            - --model=resnet50
+            - --variable_update=parameter_server
+            - --flush_stdout=true
+            - --num_gpus=1
+            - --local_parameter_device=cpu
+            - --device=cpu
+            - --data_format=NHWC
+            image: volcanosh/example-tf:0.0.3
+            name: tensorflow
+            resources:
+              limits:
+                cpu: {{ worker_cpu }}
+                memory: {{ worker_mem }}
+              requests:
+                cpu: {{ worker_cpu }}
+                memory: {{ worker_mem }}
+            workingDir: /opt/tf-benchmarks/scripts/tf_cnn_benchmarks
+          restartPolicy: OnFailure

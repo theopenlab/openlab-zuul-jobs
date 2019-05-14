@@ -1,0 +1,40 @@
+- hosts: k8s-master
+  become: yes
+  roles:
+    - role: create-multinodes-k8s-cluster-with-kubeadm
+      k8s_role_to_deploy:
+        - master
+  tasks:
+    - name: get kubeadm join command
+      shell: kubeadm token create --print-join-command
+      register: kubeadm_join_cmd
+
+- hosts: k8s-nodes
+  become: yes
+  roles:
+    - role: create-multinodes-k8s-cluster-with-kubeadm
+      k8s_role_to_deploy:
+        - node
+      kubeadm_join_cmd: "{{ hostvars['k8s-master']['kubeadm_join_cmd']['stdout'] }}"
+
+- hosts: k8s-master
+  become: yes
+  tasks:
+    - name: label k8s nodes for insulating system and workload pods
+      shell: |
+          set -o pipefail
+          set -ex
+          sleep 10
+          kubectl get nodes -o wide
+          kubectl wait --timeout 300s --for condition=ready node --all
+          kubectl label node k8s-master env=system
+          for node in "{{ groups['k8s-nodes']|join(' ') }}"; do
+              kubectl label node ${node} env=workload
+          done
+      args:
+        executable: /bin/bash
+
+- import_playbook: kubeflow_tfbenchmarks.yaml
+  when: run_kubeflow_tfbenchmarks|default(false)|bool
+- import_playbook: volcano_tfbenchmarks.yaml
+  when: run_volcano_tfbenchmarks|default(false)|bool

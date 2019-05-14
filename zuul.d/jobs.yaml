@@ -1236,3 +1236,36 @@
       - moo_github_account
     vars:
       is_gpu_enabled: true
+
+- job:
+    name: tensorflow-benchmarks-volcano-kubeflow-k8s-v1.14.0
+    parent: init-test
+    description: |
+      Test benchmarks of tensorflow + volcano/kubeflow on k8s cluster
+    run: playbooks/tensorflow-volcano-kubeflow-integration-test-k8s/run.yaml
+    post-run: playbooks/tensorflow-volcano-kubeflow-integration-test-k8s/post.yaml
+    timeout: 86000 # almost 1 day(86400)
+    vars:
+      k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
+      kubernetes_version: 1.14.0
+      run_kubeflow_tfbenchmarks: true
+      run_volcano_tfbenchmarks: true
+    nodeset:
+      nodes:
+        - name: k8s-master
+          label: ubuntu-xenial-tf
+        - name: k8s-node-1
+          label: ubuntu-xenial-tf
+        - name: k8s-node-2
+          label: ubuntu-xenial-tf
+        - name: k8s-node-3
+          label: ubuntu-xenial-tf
+        - name: k8s-node-4
+          label: ubuntu-xenial-tf
+      groups:
+        - name: k8s-nodes
+          nodes:
+            - k8s-node-1
+            - k8s-node-2
+            - k8s-node-3
+            - k8s-node-4

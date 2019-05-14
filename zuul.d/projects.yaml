@@ -21,6 +21,12 @@
             files:
               - ^user_data_gpu/.*
 
+- project:
+    name: theopenlab/volcano
+    check:
+      jobs:
+        - tensorflow-benchmarks-volcano-kubeflow-k8s-v1.14.0
+
 ####################### periodic jobs on 00:00/12:00 ##########################
 - project:
     name: ansible/ansible
