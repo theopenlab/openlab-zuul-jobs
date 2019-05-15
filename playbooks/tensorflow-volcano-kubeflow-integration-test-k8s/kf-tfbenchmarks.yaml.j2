@@ -14,6 +14,8 @@ spec:
             - python
             - tf_cnn_benchmarks.py
             - --batch_size=128
+            - --num_warmup_batches=10
+            - --num_batches=20
             - --model=alexnet
             - --optimizer=sgd
             - --variable_update=parameter_server
@@ -43,6 +45,8 @@ spec:
             - python
             - tf_cnn_benchmarks.py
             - --batch_size=128
+            - --num_warmup_batches=10
+            - --num_batches=20
             - --model=alexnet
             - --optimizer=sgd
             - --variable_update=parameter_server
