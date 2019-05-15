@@ -133,76 +133,79 @@
       shell: |
         set -o pipefail
         set -ex
-        kubectl -n kf-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/{{ item }}"
-        sleep 20
-        kubectl -n kf-tfbenchmarks get tfjobs -o wide
-        kubectl -n kf-tfbenchmarks get pods -o wide
+        for case in case4
+        do
+            kubectl -n kf-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/${case}"
+            sleep 20
+            kubectl -n kf-tfbenchmarks get tfjobs -o wide
+            kubectl -n kf-tfbenchmarks get pods -o wide
 
-        function tfjobs_status() {
-            kubectl -n kf-tfbenchmarks get tfjobs --no-headers | awk '{print $2}'|sort|uniq
-        }
-        export -f tfjobs_status
-        exit_code=0
-        set +x
-        timeout 72000 bash -c '
-            while :
-            do
-                job_status=$(tfjobs_status)
-                echo "======================================================="
-                if [[ "Failed Succeeded" =~ "$(echo $job_status)" ]]; then
-                    echo "All TFjobs run complate!"
-                    kubectl -n kf-tfbenchmarks get tfjobs
-                    break
-                else
-                    echo "There are TFjobs still in running or pending status..."
-                    kubectl -n kf-tfbenchmarks get tfjobs
-                fi
-                sleep 30
-            done
-            ' || exit_code=$?
+            function tfjobs_status() {
+                kubectl -n kf-tfbenchmarks get tfjobs --no-headers | awk '{print $2}'|sort|uniq
+            }
+            export -f tfjobs_status
+            exit_code=0
+            set +x
+            timeout 72000 bash -c '
+                while :
+                do
+                    job_status=$(tfjobs_status)
+                    echo "======================================================="
+                    if [[ "Failed Succeeded" =~ "$(echo $job_status)" ]]; then
+                        echo "All TFjobs run complate!"
+                        kubectl -n kf-tfbenchmarks get tfjobs
+                        break
+                    else
+                        echo "There are TFjobs still in running or pending status..."
+                        kubectl -n kf-tfbenchmarks get tfjobs
+                    fi
+                    sleep 30
+                done
+                ' || exit_code=$?
 
-        set -x
-        set +e
-        result_path="{{ ansible_user_dir }}/workspace/test_results/kubeflow/{{ item }}"
-        mkdir -p ${result_path}/{pods_logs,jobs_logs}
+            set -x
+            set +e
+            result_path="{{ ansible_user_dir }}/workspace/test_results/kubeflow/${case}"
+            mkdir -p ${result_path}/{pods_logs,jobs_logs}
 
-        if [ ! -d "${result_path}/../jobs_resources" ]; then
-            mkdir -p ${result_path}/../jobs_resources
-            cp -r kf-tfbenchmarks/*  ${result_path}/../jobs_resources/
-        fi
-        if [ ! -f "${result_path}/../results.csv" ]; then
-            echo 'case,job,started_at,complated_at,duration' >> ${result_path}/../results.csv
-        fi
-
-        jobs_names=$(kubectl -n kf-tfbenchmarks get tfjobs -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
-        for job_name in ${jobs_names}; do
-            kubectl -n kf-tfbenchmarks describe tfjob ${job_name} > ${result_path}/jobs_logs/${job_name}.log
-            complated_at=`cat ${result_path}/jobs_logs/${job_name}.log |grep 'Completion Time:'|awk '{print $(NF)}'`
-            started_at=`cat ${result_path}/jobs_logs/${job_name}.log |grep 'Start Time:'|awk '{print $(NF)}'`
-            started_at_ts=`date -d ${started_at} +%s`
-            complated_at_ts=`date -d ${complated_at} +%s`
-            duration=''
-            if [ -n "${complated_at_ts}" ]; then
-                duration=`echo $(($complated_at_ts-$started_at_ts)) |awk '{print strftime("%H:%M:%S",$1)}'`
+            if [ ! -d "${result_path}/../jobs_resources" ]; then
+                mkdir -p ${result_path}/../jobs_resources
+                cp -r kf-tfbenchmarks/*  ${result_path}/../jobs_resources/
             fi
-            echo "{{ item }},${job_name},${started_at},${complated_at},${duration}" >> ${result_path}/../results.csv
+            if [ ! -f "${result_path}/../results.csv" ]; then
+                echo 'case,job,started_at,complated_at,duration' >> ${result_path}/../results.csv
+            fi
+
+            jobs_names=$(kubectl -n kf-tfbenchmarks get tfjobs -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
+            for job_name in ${jobs_names}; do
+                kubectl -n kf-tfbenchmarks describe tfjob ${job_name} > ${result_path}/jobs_logs/${job_name}.log
+                complated_at=`cat ${result_path}/jobs_logs/${job_name}.log |grep 'Completion Time:'|awk '{print $(NF)}'`
+                started_at=`cat ${result_path}/jobs_logs/${job_name}.log |grep 'Start Time:'|awk '{print $(NF)}'`
+                started_at_ts=`date -d ${started_at} +%s`
+                complated_at_ts=`date -d ${complated_at} +%s`
+                duration=''
+                if [ -n "${complated_at_ts}" ]; then
+                    duration=`echo $(($complated_at_ts-$started_at_ts)) |awk '{print strftime("%H:%M:%S",$1)}'`
+                fi
+                echo "${case},${job_name},${started_at},${complated_at},${duration}" >> ${result_path}/../results.csv
+            done
+            jobs_pods=$(kubectl -n kf-tfbenchmarks get pods -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
+            for job_pod in ${jobs_pods}; do
+                kubectl -n kf-tfbenchmarks logs ${job_pod} > ${result_path}/pods_logs/${job_pod}.log
+            done
+            kubectl -n kf-tfbenchmarks delete -f "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/${case}"
+            sleep 180
+            kubectl -n kf-tfbenchmarks get tfjobs -o wide
         done
-        jobs_pods=$(kubectl -n kf-tfbenchmarks get pods -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
-        for job_pod in ${jobs_pods}; do
-            kubectl -n kf-tfbenchmarks logs ${job_pod} > ${result_path}/pods_logs/${job_pod}.log
-        done
-        kubectl -n kf-tfbenchmarks delete -f "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/{{ item }}"
-        sleep 180
-        kubectl -n kf-tfbenchmarks get tfjobs -o wide
       args:
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'
-      with_items:
-        # We only test the typical case case4, otherwise, it will take very long time.
-        # - case1
-        # - case2
-        # - case3
-        - case4
+#      with_items:
+#        # We only test the typical case case4, otherwise, it will take very long time.
+#        # - case1
+#        # - case2
+#        # - case3
+#        - case4
 
     - name: kubeflow env cleanup
       shell: |
