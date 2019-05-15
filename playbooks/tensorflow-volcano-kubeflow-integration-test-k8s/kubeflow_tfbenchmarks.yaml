@@ -133,7 +133,10 @@
       shell: |
         set -o pipefail
         set -ex
-        for case in case4
+        # We only test the typical case case4, otherwise, it will take very long time.
+        # cases="case1 case2 case3 case4"
+        cases="case4"
+        for case in ${cases}
         do
             kubectl -n kf-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/${case}"
             sleep 20
@@ -200,12 +203,6 @@
       args:
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'
-#      with_items:
-#        # We only test the typical case case4, otherwise, it will take very long time.
-#        # - case1
-#        # - case2
-#        # - case3
-#        - case4
 
     - name: kubeflow env cleanup
       shell: |
