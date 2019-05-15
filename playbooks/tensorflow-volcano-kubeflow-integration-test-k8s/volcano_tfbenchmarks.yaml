@@ -111,7 +111,7 @@
         cases="case4"
         for case in ${cases}
         do
-            kubectl -n vc-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/vc-tfbenchmarks/{{ item }}"
+            kubectl -n vc-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/vc-tfbenchmarks/${case}"
             sleep 20
             kubectl -n vc-tfbenchmarks get job.batch.volcano.sh
             kubectl -n vc-tfbenchmarks get pods -o wide
@@ -146,7 +146,7 @@
                 ' || exit_code=$?
             set -x
             set +e
-            result_path="{{ ansible_user_dir }}/workspace/test_results/volcano/{{ item }}"
+            result_path="{{ ansible_user_dir }}/workspace/test_results/volcano/${case}"
             mkdir -p ${result_path}/{pods_logs,jobs_logs}
 
             if [ ! -d "${result_path}/../jobs_resources" ]; then
@@ -168,7 +168,7 @@
                 if [ -n "${complated_at_ts}" ]; then
                     duration=`echo $(($complated_at_ts-$started_at_ts)) |awk '{print strftime("%H:%M:%S",$1)}'`
                 fi
-                echo "{{ item }},${job_name},${started_at},${complated_at},${duration}" >> ${result_path}/../results.csv
+                echo "${case},${job_name},${started_at},${complated_at},${duration}" >> ${result_path}/../results.csv
             done
 
             jobs_pods=$(kubectl -n vc-tfbenchmarks get pods -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
@@ -176,7 +176,7 @@
                 kubectl -n vc-tfbenchmarks logs ${job_pod} > ${result_path}/pods_logs/${job_pod}.log
             done
 
-            kubectl -n vc-tfbenchmarks delete -f "{{ ansible_user_dir }}/workspace/vc-tfbenchmarks/{{ item }}"
+            kubectl -n vc-tfbenchmarks delete -f "{{ ansible_user_dir }}/workspace/vc-tfbenchmarks/${case}"
             sleep 180
             kubectl -n vc-tfbenchmarks get job.batch.volcano.sh
         done
