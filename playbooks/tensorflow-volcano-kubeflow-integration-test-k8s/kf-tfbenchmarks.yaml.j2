@@ -13,10 +13,9 @@ spec:
           - args:
             - python
             - tf_cnn_benchmarks.py
-            - --batch_size=128
-            - --num_warmup_batches=10
+            - --batch_size=32
             - --num_batches=20
-            - --model=alexnet
+            - --model=resnet50
             - --optimizer=sgd
             - --variable_update=parameter_server
             - --flush_stdout=true
@@ -44,10 +43,9 @@ spec:
           - args:
             - python
             - tf_cnn_benchmarks.py
-            - --batch_size=128
-            - --num_warmup_batches=10
+            - --batch_size=32
             - --num_batches=20
-            - --model=alexnet
+            - --model=resnet50
             - --optimizer=sgd
             - --variable_update=parameter_server
             - --flush_stdout=true
