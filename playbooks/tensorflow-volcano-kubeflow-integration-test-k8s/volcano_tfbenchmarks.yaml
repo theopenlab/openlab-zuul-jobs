@@ -18,6 +18,9 @@
           ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi, minavailable: 6}
       - { case: "case4", name: "vc-tfbenchmarks-5", ps_replicas: 2, worker_replicas: 4,
           ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi, minavailable: 6}
+    # We only test the typical case case4 without case1,2,3, otherwise, it will take very long time.
+    cases_to_run:
+      - case4
   tasks:
     - name: prepare k8s namespaces for volcano and TFjobs
       shell:
@@ -106,83 +109,80 @@
       shell: |
         set -o pipefail
         set -ex
-        kubectl -n vc-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/vc-tfbenchmarks/{{ item }}"
-        sleep 20
-        kubectl -n vc-tfbenchmarks get job.batch.volcano.sh
-        kubectl -n vc-tfbenchmarks get pods -o wide
+        for case in {{ cases_to_run  | join(' ') }}
+        do
+            kubectl -n vc-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/vc-tfbenchmarks/${case}"
+            sleep 20
+            kubectl -n vc-tfbenchmarks get job.batch.volcano.sh
+            kubectl -n vc-tfbenchmarks get pods -o wide
 
-        function tfjobs_status() {
-            kubectl -n vc-tfbenchmarks get job.batch.volcano.sh -o jsonpath='{range .items[*]}{.status.state.phase}{"\n"}'|sort|uniq
-        }
-        export -f tfjobs_status
+            function tfjobs_status() {
+                kubectl -n vc-tfbenchmarks get job.batch.volcano.sh -o jsonpath='{range .items[*]}{.status.state.phase}{"\n"}'|sort|uniq
+            }
+            export -f tfjobs_status
 
-        function get_tfjobs() {
-            kubectl -n vc-tfbenchmarks get job.batch.volcano.sh -o=custom-columns=NAME:.metadata.name,STATUS:.status.state.phase,CREATED_AT:.metadata.creationTimestamp
-        }
-        export -f get_tfjobs
+            function get_tfjobs() {
+                kubectl -n vc-tfbenchmarks get job.batch.volcano.sh -o=custom-columns=NAME:.metadata.name,STATUS:.status.state.phase,CREATED_AT:.metadata.creationTimestamp
+            }
+            export -f get_tfjobs
 
-        exit_code=0
-        set +x
-        timeout 72000 bash -c '
-            while :
-            do
-                job_status=$(tfjobs_status)
-                echo "======================================================="
-                if [[ "Terminated Completed Failed" =~ "$(echo $job_status)" ]]; then
-                    echo "All TFjobs run complate!"
-                    get_tfjobs
-                    break
-                else
-                    echo "There are TFjobs still in running or inqueue status..."
-                    get_tfjobs
-                fi
-                sleep 30
-            done
-            ' || exit_code=$?
-        set -x
-        set +e
-        result_path="{{ ansible_user_dir }}/workspace/test_results/volcano/{{ item }}"
-        mkdir -p ${result_path}/{pods_logs,jobs_logs}
+            exit_code=0
+            set +x
+            timeout 72000 bash -c '
+                while :
+                do
+                    job_status=$(tfjobs_status)
+                    echo "======================================================="
+                    if [[ "Terminated Completed Failed" =~ "$(echo $job_status)" ]]; then
+                        echo "All TFjobs run complate!"
+                        get_tfjobs
+                        break
+                    else
+                        echo "There are TFjobs still in running or inqueue status..."
+                        get_tfjobs
+                    fi
+                    sleep 30
+                done
+                ' || exit_code=$?
+            set -x
+            set +e
+            result_path="{{ ansible_user_dir }}/workspace/test_results/volcano/${case}"
+            mkdir -p ${result_path}/{pods_logs,jobs_logs}
 
-        if [ ! -d "${result_path}/../jobs_resources" ]; then
-            mkdir -p ${result_path}/../jobs_resources
-            cp -r vc-tfbenchmarks/*  ${result_path}/../jobs_resources/
-        fi
-        if [ ! -f "${result_path}/../results.csv" ]; then
-            echo 'case,job,started_at,complated_at,duration' >> ${result_path}/../results.csv
-        fi
-
-        jobs_names=$(kubectl -n vc-tfbenchmarks get job.batch.volcano.sh -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
-        for job_name in ${jobs_names}; do
-            kubectl -n vc-tfbenchmarks describe job.batch.volcano.sh ${job_name} > ${result_path}/jobs_logs/${job_name}.log
-            complated_at=`cat ${result_path}/jobs_logs/${job_name}.log |grep 'Completion Time:'|awk '{print $(NF)}'`
-            started_at=`cat ${result_path}/jobs_logs/${job_name}.log |grep 'Start Time:'|awk '{print $(NF)}'`
-            started_at_ts=`date -d ${started_at} +%s`
-            complated_at_ts=`date -d ${complated_at} +%s`
-            duration=''
-            if [ -n "${complated_at_ts}" ]; then
-                duration=`echo $(($complated_at_ts-$started_at_ts)) |awk '{print strftime("%H:%M:%S",$1)}'`
+            if [ ! -d "${result_path}/../jobs_resources" ]; then
+                mkdir -p ${result_path}/../jobs_resources
+                cp -r vc-tfbenchmarks/*  ${result_path}/../jobs_resources/
             fi
-            echo "{{ item }},${job_name},${started_at},${complated_at},${duration}" >> ${result_path}/../results.csv
-        done
+            if [ ! -f "${result_path}/../results.csv" ]; then
+                echo 'case,job,started_at,complated_at,duration' >> ${result_path}/../results.csv
+            fi
 
-        jobs_pods=$(kubectl -n vc-tfbenchmarks get pods -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
-        for job_pod in ${jobs_pods}; do
-            kubectl -n vc-tfbenchmarks logs ${job_pod} > ${result_path}/pods_logs/${job_pod}.log
-        done
+            jobs_names=$(kubectl -n vc-tfbenchmarks get job.batch.volcano.sh -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
+            for job_name in ${jobs_names}; do
+                kubectl -n vc-tfbenchmarks describe job.batch.volcano.sh ${job_name} > ${result_path}/jobs_logs/${job_name}.log
+                complated_at=`cat ${result_path}/jobs_logs/${job_name}.log |grep 'Completion Time:'|awk '{print $(NF)}'`
+                started_at=`cat ${result_path}/jobs_logs/${job_name}.log |grep 'Start Time:'|awk '{print $(NF)}'`
+                started_at_ts=`date -d ${started_at} +%s`
+                complated_at_ts=`date -d ${complated_at} +%s`
+                duration=''
+                if [ -n "${complated_at_ts}" ]; then
+                    duration=`echo $(($complated_at_ts-$started_at_ts)) |awk '{print strftime("%H:%M:%S",$1)}'`
+                fi
+                echo "${case},${job_name},${started_at},${complated_at},${duration}" >> ${result_path}/../results.csv
+            done
 
-        kubectl -n vc-tfbenchmarks delete -f "{{ ansible_user_dir }}/workspace/vc-tfbenchmarks/{{ item }}"
-        sleep 180
-        kubectl -n vc-tfbenchmarks get job.batch.volcano.sh
+            jobs_pods=$(kubectl -n vc-tfbenchmarks get pods -o custom-columns=NAME:.metadata.name --no-headers |grep benchmark)
+            for job_pod in ${jobs_pods}; do
+                kubectl -n vc-tfbenchmarks logs ${job_pod} > ${result_path}/pods_logs/${job_pod}.log
+            done
+
+            kubectl -n vc-tfbenchmarks delete -f "{{ ansible_user_dir }}/workspace/vc-tfbenchmarks/${case}"
+            sleep 180
+            kubectl -n vc-tfbenchmarks get job.batch.volcano.sh
+        done
       args:
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'
-      with_items:
-        # We only test the typical case case4, otherwise, it will take very long time.
-        # - case1
-        # - case2
-        # - case3
-        - case4
 
     - name: volcano env cleanup
       shell: |
