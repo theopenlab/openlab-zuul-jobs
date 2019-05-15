@@ -18,6 +18,9 @@
           ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
       - { case: "case4", name: "kf-tfbenchmarks-5", ps_replicas: 2, worker_replicas: 4,
           ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
+    # We only test the typical case case4 without case1,2,3, otherwise, it will take very long time.
+    cases_to_run:
+      - case4
   tasks:
     - name: prepare k8s namespaces for kubeflow and TFjobs
       shell:
@@ -133,10 +136,7 @@
       shell: |
         set -o pipefail
         set -ex
-        # We only test the typical case case4, otherwise, it will take very long time.
-        # cases="case1 case2 case3 case4"
-        cases="case4"
-        for case in ${cases}
+        for case in {{ cases_to_run  | join(' ') }}
         do
             kubectl -n kf-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/${case}"
             sleep 20
