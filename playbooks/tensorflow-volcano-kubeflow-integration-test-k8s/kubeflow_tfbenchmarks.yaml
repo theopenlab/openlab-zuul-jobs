@@ -132,7 +132,6 @@
       shell: |
         set -o pipefail
         set -ex
-        sleep 10000000
         for case in {{ cases_to_run  | join(' ') }}
         do
             kubectl -n kf-tfbenchmarks create -f "{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/${case}"

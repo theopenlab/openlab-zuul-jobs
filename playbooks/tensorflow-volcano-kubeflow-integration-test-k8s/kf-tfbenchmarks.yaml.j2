@@ -13,8 +13,9 @@ spec:
           - args:
             - python
             - tf_cnn_benchmarks.py
-            - --batch_size=32
-            - --model=resnet50
+            - --batch_size=128
+            - --model=alexnet
+            - --optimizer=sgd
             - --variable_update=parameter_server
             - --flush_stdout=true
             - --num_gpus=1
@@ -41,8 +42,9 @@ spec:
           - args:
             - python
             - tf_cnn_benchmarks.py
-            - --batch_size=32
-            - --model=resnet50
+            - --batch_size=128
+            - --model=alexnet
+            - --optimizer=sgd
             - --variable_update=parameter_server
             - --flush_stdout=true
             - --num_gpus=1
