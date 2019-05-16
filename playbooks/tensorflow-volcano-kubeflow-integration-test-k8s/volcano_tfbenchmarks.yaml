@@ -92,10 +92,9 @@
         helm version
         helm plugin install installer/chart/volcano/plugins/gen-admission-secret
         helm gen-admission-secret --service volcano-trial-admission-service --namespace volcano
-        helm install installer/chart/volcano --namespace volcano --name volcano-trial
+        helm install installer/chart/volcano --namespace volcano --name volcano-trial --set basic.image_tag_version=fix_timestamp --wait
         kubectl -n volcano get pods -o wide
         kubectl -n volcano get svc
-        sleep 10
         kubectl -n volcano wait --timeout 300s --for condition=ready pod --all
       args:
         executable: /bin/bash
