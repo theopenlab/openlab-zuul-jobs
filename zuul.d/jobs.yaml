@@ -1349,6 +1349,8 @@
       k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
       kubernetes_version: 1.14.0
       run_kubeflow_tfbenchmarks: true
+      cases_to_run:
+        - case5
     nodeset:
       nodes:
         - name: k8s-master
@@ -1381,6 +1383,8 @@
       k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
       kubernetes_version: 1.14.0
       run_volcano_tfbenchmarks: true
+      cases_to_run:
+        - case5
     nodeset:
       nodes:
         - name: k8s-master
