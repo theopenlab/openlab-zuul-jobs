@@ -81,7 +81,7 @@
         set -o pipefail
         set -ex
         mkdir -p src/volcano.sh/
-        git clone https://github.com/volcano-sh/volcano src/volcano.sh/volcano
+        git clone https://github.com/volcano-sh/volcano src/volcano.sh/volcano -b release-0.1
         pushd src/volcano.sh/volcano
         curl -L https://git.io/get_helm.sh | bash
         helm init
