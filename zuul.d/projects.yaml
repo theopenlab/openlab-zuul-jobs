@@ -4,10 +4,10 @@
         - openlab-zuul-jobs-check
 
 - project:
-    name: liu-sheng/labkeeper-1
+    name: liu-sheng/volcano
     check:
       jobs:
-        - tensorflow-benchmarks-volcano/kubeflow-k8s-v1.14.0
+        - tensorflow-benchmarks-volcano-kubeflow-k8s-v1.14.0
 
 - project:
     name: liu-sheng/packer
