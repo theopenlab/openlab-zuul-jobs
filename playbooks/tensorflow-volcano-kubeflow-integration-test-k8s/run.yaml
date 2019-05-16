@@ -34,7 +34,8 @@
       args:
         executable: /bin/bash
 
-- import_playbook: kubeflow_tfbenchmarks.yaml
-  when: run_kubeflow_tfbenchmarks|default(false)|bool
 - import_playbook: volcano_tfbenchmarks.yaml
   when: run_volcano_tfbenchmarks|default(false)|bool
+- import_playbook: kubeflow_tfbenchmarks.yaml
+  when: run_kubeflow_tfbenchmarks|default(false)|bool
+

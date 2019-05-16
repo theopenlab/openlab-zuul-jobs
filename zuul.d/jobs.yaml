@@ -1402,7 +1402,7 @@
             - k8s-node-4
 
 - job:
-    name: tensorflow-benchmarks-volcano/kubeflow-k8s-v1.14.0
+    name: tensorflow-benchmarks-volcano-kubeflow-k8s-v1.14.0
     parent: init-test
     description: |
       Test benchmarks of tensorflow + volcano/kubeflow on k8s cluster
@@ -1414,6 +1414,11 @@
       kubernetes_version: 1.14.0
       run_kubeflow_tfbenchmarks: true
       run_volcano_tfbenchmarks: true
+      cases_to_run:
+        - case1
+        - case2
+        - case3
+        - case4
     nodeset:
       nodes:
         - name: k8s-master
