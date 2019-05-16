@@ -1351,9 +1351,11 @@
       run_kubeflow_tfbenchmarks: true
     extra-vars:
       cases_to_run:
-        - case1
-        - case2
-        - case3
+        # - case1
+        # - case2
+        # - case3
+        - case4
+        #- case5
     nodeset:
       nodes:
         - name: k8s-master
@@ -1388,9 +1390,10 @@
       run_volcano_tfbenchmarks: true
     extra-vars:
       cases_to_run:
-        - case1
-        - case2
-        - case3
+        # - case1
+        # - case2
+        # - case3
+        - case4
         #- case5
     nodeset:
       nodes:
