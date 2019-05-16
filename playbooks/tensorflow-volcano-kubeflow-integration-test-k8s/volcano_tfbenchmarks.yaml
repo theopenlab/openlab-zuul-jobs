@@ -128,7 +128,7 @@
 
             exit_code=0
             set +x
-            timeout 72000 bash -c '
+            timeout 18000 bash -c '
                 while :
                 do
                     job_status=$(tfjobs_status)
