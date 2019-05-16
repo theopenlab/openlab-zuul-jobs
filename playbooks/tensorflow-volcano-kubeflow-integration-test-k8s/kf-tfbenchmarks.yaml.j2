@@ -14,6 +14,8 @@ spec:
             - python
             - tf_cnn_benchmarks.py
             - --batch_size=32
+            - --num_batches=15
+            - --num_warmup_batches=10
             - --model=resnet50
             - --variable_update=parameter_server
             - --flush_stdout=true
@@ -42,6 +44,8 @@ spec:
             - python
             - tf_cnn_benchmarks.py
             - --batch_size=32
+            - --num_batches=15
+            - --num_warmup_batches=10
             - --model=resnet50
             - --variable_update=parameter_server
             - --flush_stdout=true

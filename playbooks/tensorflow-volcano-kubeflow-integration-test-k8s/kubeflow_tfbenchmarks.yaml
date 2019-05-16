@@ -110,11 +110,7 @@
 
     - name: create kf-tfbenchmarks directory
       file: path="{{ ansible_user_dir }}/workspace/kf-tfbenchmarks/{{ item }}" state=directory
-      with_items:
-        - case1
-        - case2
-        - case3
-        - case4
+      with_items: "{{ cases | json_query('[*].case')|unique }}"
 
     - name: customize kubeflow tfbenchmarks templates
       become: yes
