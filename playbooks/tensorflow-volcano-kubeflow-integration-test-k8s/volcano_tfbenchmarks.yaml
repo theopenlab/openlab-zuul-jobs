@@ -18,6 +18,10 @@
           ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi, minavailable: 6}
       - { case: "case4", name: "vc-tfbenchmarks-5", ps_replicas: 2, worker_replicas: 4,
           ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi, minavailable: 6}
+      - { case: "case5", name: "vc-tfbenchmarks-1", ps_replicas: 1, worker_replicas: 3,
+          ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi, minavailable: 4}
+      - { case: "case5", name: "vc-tfbenchmarks-2", ps_replicas: 1, worker_replicas: 3,
+          ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi, minavailable: 4}
     # We only test the typical case case4 without case1,2,3, otherwise, it will take very long time.
     cases_to_run:
       - case4
