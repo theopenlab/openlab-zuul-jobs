@@ -18,9 +18,9 @@
           ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
       - { case: "case4", name: "kf-tfbenchmarks-5", ps_replicas: 2, worker_replicas: 4,
           ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
-      - { case: "case5", name: "kf-tfbenchmarks-1", ps_replicas: 1, worker_replicas: 3,
+      - { case: "case5", name: "kf-tfbenchmarks-1", ps_replicas: 2, worker_replicas: 4,
           ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
-      - { case: "case5", name: "kf-tfbenchmarks-2", ps_replicas: 1, worker_replicas: 3,
+      - { case: "case5", name: "kf-tfbenchmarks-2", ps_replicas: 2, worker_replicas: 4,
           ps_cpu: 1000m, ps_mem: 1000Mi, worker_cpu: 2000m, worker_mem: 3800Mi }
     # We only test the typical case case4 without case1,2,3, otherwise, it will take very long time.
     cases_to_run:
