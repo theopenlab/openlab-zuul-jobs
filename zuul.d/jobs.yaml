@@ -1248,6 +1248,8 @@
     vars:
       k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
       kubernetes_version: 1.14.0
+      kubeflow_version: v0.5.0
+      volcano_version: release-0.1
       run_kubeflow_tfbenchmarks: true
       run_volcano_tfbenchmarks: true
     nodeset:
