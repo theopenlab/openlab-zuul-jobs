@@ -67,11 +67,13 @@
       with_items: "{{ cases }}"
 
     - name: deploy volcano
+      vars:
+        volcano_ver: "{{ volcano_version|default('release-0.1') }}"
       shell: |
         set -o pipefail
         set -ex
         mkdir -p src/volcano.sh/
-        git clone https://github.com/volcano-sh/volcano src/volcano.sh/volcano
+        git clone https://github.com/volcano-sh/volcano src/volcano.sh/volcano -b {{ volcano_ver }}
         pushd src/volcano.sh/volcano
         curl -L https://git.io/get_helm.sh | bash
         helm init
@@ -86,10 +88,10 @@
         helm version
         helm plugin install installer/chart/volcano/plugins/gen-admission-secret
         helm gen-admission-secret --service volcano-trial-admission-service --namespace volcano
-        helm install installer/chart/volcano --namespace volcano --name volcano-trial
+        helm install installer/chart/volcano --namespace volcano --name volcano-trial --set basic.image_tag_version=fix_timestamp
+        sleep 10
         kubectl -n volcano get pods -o wide
         kubectl -n volcano get svc
-        sleep 10
         kubectl -n volcano wait --timeout 300s --for condition=ready pod --all
       args:
         executable: /bin/bash
@@ -118,7 +120,7 @@
 
             exit_code=0
             set +x
-            timeout 72000 bash -c '
+            timeout 10800 bash -c '
                 while :
                 do
                     job_status=$(tfjobs_status)
