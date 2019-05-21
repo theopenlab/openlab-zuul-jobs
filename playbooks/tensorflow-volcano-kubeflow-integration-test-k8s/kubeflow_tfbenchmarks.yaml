@@ -199,6 +199,13 @@
     - name: kubeflow env cleanup
       shell: |
         set -x
+        kf_logs_path="{{ ansible_user_dir }}/workspace/logs/kubeflow/"
+        mkdir -p ${kf_logs_path}
+        kf_system_pods=$(kubectl -n kubeflow get pods -o jsonpath='{.items[*].metadata.name}')
+        for kf_pod in ${kf_system_pods}; do
+            kubectl -n kubeflow logs ${kf_pod} --all-containers=true > ${kf_logs_path}/${kf_pod}.log
+        done
+
         export KFAPP="kfapp"
         pushd ${KFAPP}
         kfctl delete all --delete_storage
