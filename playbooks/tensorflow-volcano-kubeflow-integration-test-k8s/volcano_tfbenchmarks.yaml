@@ -77,11 +77,13 @@
       with_items: "{{ cases }}"
 
     - name: deploy volcano
+      vars:
+        volcano_ver: "{{ volcano_version|default('release-0.1') }}"
       shell: |
         set -o pipefail
         set -ex
         mkdir -p src/volcano.sh/
-        git clone https://github.com/volcano-sh/volcano src/volcano.sh/volcano -b release-0.1
+        git clone https://github.com/volcano-sh/volcano src/volcano.sh/volcano -b {{ volcano_ver }}
         pushd src/volcano.sh/volcano
         curl -L https://git.io/get_helm.sh | bash
         helm init
@@ -128,7 +130,8 @@
 
             exit_code=0
             set +x
-            timeout 18000 bash -c '
+            sleep 1000000
+            timeout 10800 bash -c '
                 while :
                 do
                     job_status=$(tfjobs_status)

@@ -93,12 +93,14 @@
         chdir: '{{ ansible_user_dir }}/workspace'
 
     - name: deploy kubeflow
+      vars:
+        kubeflow_ver: "{{ kubeflow_version|default('v0.5.0') }}"
       shell: |
         set -ex
-        wget https://github.com/kubeflow/kubeflow/releases/download/v0.5.0/kfctl_v0.5.0_linux.tar.gz
+        wget https://github.com/kubeflow/kubeflow/releases/download/{{ kubeflow_ver }}/kfctl_{{ kubeflow_ver }}_linux.tar.gz
         tar -zxvf kfctl_*.tar.gz -C /usr/local/bin/
         export KFAPP="kfapp"
-        kfctl init ${KFAPP} -v v0.5.0
+        kfctl init ${KFAPP} -v {{ kubeflow_ver }}
         pushd ${KFAPP}
         kfctl generate all -V
         kfctl apply all -V
@@ -149,7 +151,7 @@
             export -f tfjobs_status
             exit_code=0
             set +x
-            timeout 18000 bash -c '
+            timeout 10800 bash -c '
                 while :
                 do
                     job_status=$(tfjobs_status)
