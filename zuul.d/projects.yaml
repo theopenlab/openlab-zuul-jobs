@@ -70,12 +70,12 @@
 #        - terraform-provider-openstack-acceptance-test-huaweicloud:
 #            branches: master
 
-- project:
-    name: terraform-providers/terraform-provider-huaweicloud
-    periodic-2/14:
-      jobs:
-        - terraform-provider-huaweicloud-acceptance-test-fusioncloud:
-            branches: master
+#- project:
+#    name: terraform-providers/terraform-provider-huaweicloud
+#    periodic-2/14:
+#      jobs:
+#        - terraform-provider-huaweicloud-acceptance-test-fusioncloud:
+#            branches: master
 
 - project:
     name: helm/charts
