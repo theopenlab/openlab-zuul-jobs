@@ -189,6 +189,13 @@
     - name: volcano env cleanup
       shell: |
         set -x
+        vc_logs_path="{{ ansible_user_dir }}/workspace/logs/volcano/"
+        mkdir -p ${vc_logs_path}
+        vc_system_pods=$(kubectl -n volcano get pods -o jsonpath='{.items[*].metadata.name}')
+        for vc_pod in ${vc_system_pods}; do
+            kubectl -n volcano logs ${vc_pod} --all-containers=true > ${vc_logs_path}/${vc_pod}.log
+        done
+
         helm delete volcano-trial --purge
         sleep 60
         kubectl get pods -o wide -A
