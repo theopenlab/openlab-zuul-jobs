@@ -130,7 +130,6 @@
 
             exit_code=0
             set +x
-            sleep 1000000
             timeout 10800 bash -c '
                 while :
                 do
