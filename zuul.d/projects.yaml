@@ -116,6 +116,8 @@
       jobs:
         - bosh-openstack-cpi-release-acceptance-test:
             branches: master
+        - bosh-openstack-cpi-release-acceptance-test-stein:
+            branches: master
         - bosh-openstack-cpi-release-acceptance-test-rocky:
             branches: master
         - bosh-openstack-cpi-release-acceptance-test-queens:
