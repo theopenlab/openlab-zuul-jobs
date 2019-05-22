@@ -110,6 +110,9 @@
           export KUBE_FASTBUILD=true
           export KUBERNETES_CONFORMANCE_TEST=y
 
+          # TEMP - Dump Memory Every Second
+          free -mt -s 2 >> $LOG_DIR/system_memory.log &
+
           # Run e2e test using local deployment/provider
           # Must run kubetest under kubernetes root directory
           cd '{{ k8s_src_dir }}'
