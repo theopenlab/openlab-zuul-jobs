@@ -1183,6 +1183,7 @@
     description: |
       Run integration tests of Kubernetes IN Docker against ARM64 architecture
     run: playbooks/kind-integration-test-arm64/run.yaml
+    post-run: playbooks/kind-integration-test-arm64/post.yaml
     nodeset: ubuntu-xenial-arm64
 
 - job:

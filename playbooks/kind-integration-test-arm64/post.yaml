@@ -1,5 +1,6 @@
 - hosts: all
-  # TODO create a role export-kind-gcp-account and add here
+  roles:
+    - export-kind-gcp-account
   become: yes
   tasks:
     - name: Upload conformance test result to testgrid
@@ -24,7 +25,7 @@
           fi
           # upload e2e log to google storage
           python upload_e2e.py --junit=$LOG_DIR/junit*.xml --log=$LOG_DIR/e2e.log \
-              --bucket=gs://k8s-conformance-openstack/$PIPELINE_LOGS_DIR/ci-'{{ zuul.job }}' \
+              --bucket=gs://k8s-conformance-kind-arm64-openlab/$PIPELINE_LOGS_DIR/ci-'{{ zuul.job }}' \
               --key-file='{{ hostvars[inventory_hostname]["gcp_key_file"] }}'
         executable: /bin/bash
       environment: '{{ global_env }}'

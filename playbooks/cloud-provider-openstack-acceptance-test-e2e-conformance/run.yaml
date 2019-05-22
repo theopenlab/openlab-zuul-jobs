@@ -135,13 +135,13 @@
             docker login -u '{{ dockerhub.username }}' -p '{{ dockerhub.password }}'
             export REGISTRY=docker.io/k8scloudprovider
             export VERSION=latest
-            
+
             set -x
             set -e
             set -o pipefail
-            
+
             make images 2>&1 | tee $LOG_DIR/image-build-upload.log
-            
+
             docker push ${REGISTRY}/openstack-cloud-controller-manager:${VERSION} | tee $LOG_DIR/image-build-upload.log
             docker push ${REGISTRY}/cinder-flex-volume-driver:${VERSION} | tee $LOG_DIR/image-build-upload.log
             docker push ${REGISTRY}/cinder-provisioner:${VERSION} | tee $LOG_DIR/image-build-upload.log
