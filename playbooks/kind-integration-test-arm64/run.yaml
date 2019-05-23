@@ -14,7 +14,7 @@
     - name: git required repositories
       shell:
         cmd: |
-          go get sigs.k8s.io/kind
+          GO111MODULE="on" go get sigs.k8s.io/kind@master
           go get k8s.io/kubeadm
           go get k8s.io/kubernetes
           go get k8s.io/test-infra/kubetest
