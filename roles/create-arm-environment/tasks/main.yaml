@@ -1,7 +1,0 @@
-- name: Create ARM Environment
-  shell:
-    cmd: |
-      set -x
-      set -e
-      echo 'Hello ARM!'
-    executable: /bin/bash
