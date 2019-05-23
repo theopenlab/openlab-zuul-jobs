@@ -23,6 +23,7 @@
           install_version=$(apt-cache madison kubelet |grep "{{ kubernetes_version }}" | head -n 1 | awk '{print $3}')
           apt-get install -y kubelet=$install_version kubeadm=$install_version kubectl=$install_version
       fi
+
       kubelet --version
       apt-mark hold kubelet kubeadm kubectl
 

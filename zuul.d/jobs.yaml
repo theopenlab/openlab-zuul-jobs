@@ -279,6 +279,14 @@
       - vexxhost_credentials
 
 - job:
+    name: kind-integration-test-arm64
+    parent: init-test
+    description: |
+      Run integration tests of Kubernetes IN Docker against ARM64 architecture
+    run: playbooks/kind-integration-test-arm64/run.yaml
+    nodeset: ubuntu-xenial-arm64
+
+- job:
     name: cloud-provider-openstack-format
     parent: cloud-provider-openstack-test
     description: |

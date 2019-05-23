@@ -44,7 +44,7 @@
       python '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/tools/update_env_info.py' \
       --job {{ job_name }} --patch "{{ zuul.patchset }}" --user '{{ moo_github_account.user_name }}' \
       --password '{{ moo_github_account.user_password }}' \
-      --url "http://logs.openlabtesting.org/logs/{{ zuul.change[-2:] }}/{{ zuul.change }}/{{ zuul.patchset }}/check/{{ zuul.job }}/{{ zuul.build[:7] }}/test_results/" \
+      --url "https://logs.openlabtesting.org/logs/{{ zuul.change[-2:] }}/{{ zuul.change }}/{{ zuul.patchset }}/check/{{ zuul.job }}/{{ zuul.build[:7] }}/test_results/" \
       --ip '{{ nodepool.public_ipv4 }}' --keeping '{{ env_keeping | lower }}'
     executable: /bin/bash
 
@@ -61,14 +61,13 @@
       set -xe
 
       apt install -y unzip
-      pip install pyyaml
 
       mkdir -p "{{ result_folder }}"
 
       cd '{{ user_data_folder }}'
 
       # txt file contains a url refer to remote input data. zip file contains
-      # loacl input data.
+      # local input data.
       if ls | grep txt;then
         txt_file=`ls | grep txt`
         url=`cat $txt_file`
@@ -109,6 +108,9 @@
       add-apt-repository -y ppa:deadsnakes/ppa
       apt-key adv --keyserver keyserver.ubuntu.com --recv-keys F60F4B3D7FA2AF80
       apt update
+
+      # TODO(wxy): Add and test all the runtime. Now only python is tested.
+
       if [ $runtime_name == 'python' ];then
         apt install -y $runtime_name$runtime_version
         apt install -y python2.7 python3.5 python3.6 python3.7
@@ -130,68 +132,6 @@
 
     executable: /bin/bash
 
-- name: Config new pip source
-  when: is_gpu_enabled and nodepool.cloud == 'huaweicloud' and nodepool.label != 'ubuntu-xenial-gpu-P100-hwcloud'
-  shell:
-    cmd: |
-      set -xe
-      mkdir ~/.pip
-      cat > '~/.pip/pip.conf' <<EOF
-      [global]
-      index-url=http://mirrors.aliyun.com/pypi/simple
-      trusted-host=mirrors.aliyun.com
-      disable-pip-version-check=true
-      EOF
-
-    executable: /bin/bash
-
-- name: Config new apt source
-  when: is_gpu_enabled and nodepool.cloud == 'huaweicloud' and nodepool.label != 'ubuntu-xenial-gpu-P100-hwcloud'
-  lineinfile:
-    dest: /etc/apt/sources.list
-    line: "{{ item }}"
-  with_items:
-    - 'deb https://mirrors.ustc.edu.cn/ubuntu/ xenial main restricted universe multiverse'
-    - 'deb https://mirrors.ustc.edu.cn/ubuntu/ xenial-updates main restricted universe multiverse'
-    - 'deb https://mirrors.ustc.edu.cn/ubuntu/ xenial-backports main restricted universe multiverse'
-    - 'deb https://mirrors.ustc.edu.cn/ubuntu/ xenial-security main restricted universe multiverse'
-
-
-- name: Prepare GPU env (GPU driver and CUDA)
-  when: is_gpu_enabled and nodepool.cloud != 'huaweicloud' and nodepool.label != 'ubuntu-xenial-gpu-P100-hwcloud'
-  shell:
-    cmd: |
-      set -xe
-      # As GPU just enable on huaweicloud, but when we get the apt public key,
-      # we will still get a error file, so store the public key in OBS
-      wget https://ai-model-public.obs.cn-north-1.myhuaweicloud.com/7fa2af80.pub
-      apt-key add ./7fa2af80.pub
-      # apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub
-      wget http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_9.1.85-1_amd64.deb
-      cd /var/
-      apt purge -y cuda*
-      apt-get remove -y --purge nvidia-418 nvidia-modprobe nvidia-settings
-      cd -
-      apt install -y ./cuda-repo-ubuntu1604_9.1.85-1_amd64.deb
-      wget http://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1604/x86_64/nvidia-machine-learning-repo-ubuntu1604_1.0.0-1_amd64.deb
-      apt install -y ./nvidia-machine-learning-repo-ubuntu1604_1.0.0-1_amd64.deb
-      apt update
-      apt install -y cuda9.0 cuda-cublas-9-0 cuda-cufft-9-0 cuda-curand-9-0 cuda-cusolver-9-0 cuda-cusparse-9-0 libcudnn7=7.2.1.38-1+cuda9.0 libnccl2=2.2.13-1+cuda9.0 cuda-command-line-tools-9-0
-
-      # Comments this linux kernel as the kernel version of current image is 4.4.0-143-generic
-      # apt install -y linux-headers-$(uname -r)
-      apt install -y linux-headers-4.4.0-143-generic
-
-      # Remember install the latest nvidia driver if the linux kernel version is new
-      wget http://us.download.nvidia.com/tesla/418.40.04/NVIDIA-Linux-x86_64-418.40.04.run
-      chmod +x ./NVIDIA-Linux-x86_64-418.40.04.run
-      cat > 'input' <<EOF
-      yes
-      yes
-      EOF
-      ./NVIDIA-Linux-x86_64-418.40.04.run -a --ui=none < ./input
-    executable: /bin/bash
-
 - name: Install {{ user_meta.framework.name }}-{{ user_meta.framework.version }}
   when:
     ( user_meta.framework.name == "tensorflow" and runtime_name.stdout in ["python", "c", "java", "go"] ) or
@@ -204,6 +144,8 @@
       framework_version={{ user_meta.framework.version }}
       runtime_name={{ runtime_name.stdout }}
 
+      # TODO(wxy): Add and test all the runtime. Now only tensorflow is tested.
+
       if [ $framework == "tensorflow" ];then
         if [ $runtime_name == "python" ];then
           if {{ is_gpu_enabled | lower }} ;then
@@ -213,21 +155,23 @@
           fi
         fi
         if [ $runtime_name == "java" ];then
-          wget https://storage.googleapis.com/tensorflow/libtensorflow_jni-cpu-linux-x86_64-$framework_version.tar.gz
+          wget https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow_jni-cpu-linux-x86_64-$framework_version.tar.gz
           tar -xvf libtensorflow_jni-cpu-linux-x86_64-$framework_version.tar.gz
+          ldconfig
         fi
         if [ $runtime_name == "go" ];then
           mkdir ./download
           export GOPATH=`pwd`/download
           apt install -y git-core
           go get github.com/tensorflow/tensorflow/tensorflow/go
-          go test github.com/tensorflow/tensorflow/tensorflow/go
+          cd .//download/src/github.com/tensorflow/tensorflow
           git checkout tags/$framework_version
+          go test ./tensorflow/go
 
         fi
         if [ $runtime_name == "c" ];then
-          wget https://storage.googleapis.com/tensorflow/libtensorflow-cpu-linux-x86_64-$framework_version.tar.gz
-          tar -xz libtensorflow-cpu-linux-x86_64-$framework_version.tar.gz /usr/local
+          wget https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-cpu-linux-x86_64-$framework_version.tar.gz
+          tar -xz libtensorflow-cpu-linux-x86_64-$framework_version.tar.gz -C /usr/local
           ldconfig
         fi
       fi
@@ -272,7 +216,7 @@
     executable: /bin/bash
 
 - name: Install tensorflow.js and convert training model
-  when: user_meta.framework.name == "tensorflow" and user_meta.model.name != 'EMNIST'
+  when: user_meta.framework.name == "tensorflow" and user_meta.model.name == 'MNIST'
   shell:
     cmd: |
       set -xe
@@ -284,10 +228,11 @@
         '{{ user_data_folder }}/tfjs'
     executable: /bin/bash
 
+#TODO(bzhao) This task needs to be deleted after hands on show.
 - name: Get web template
   delegate_to: localhost
-  become: yes
   become_user: zuul
+  become: yes
   get_url:
     url: https://raw.githubusercontent.com/moo-ai/moo-ai.github.io/master/tf_js.html
     dest: /tmp/tf_js.html
@@ -318,7 +263,7 @@
       mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/css' '{{ result_folder }}/web_page/'
       mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/js' '{{ result_folder }}/web_page/'
 
-      model_path="http:\/\/status.openlabtesting.org\/logs\/{{ zuul.change[-2:] }}\/{{ zuul.change }}\/{{ zuul.patchset }}\/check\/{{ zuul.job }}\/{{ zuul.build[:7] }}\/test_results\/web_page\/tfjs\/model.json"
+      model_path="https:\/\/logs.openlabtesting.org\/logs\/{{ zuul.change[-2:] }}\/{{ zuul.change }}\/{{ zuul.patchset }}\/check\/{{ zuul.job }}\/{{ zuul.build[:7] }}\/test_results\/web_page\/tfjs\/model.json"
       sed -i "s/replace.me/$model_path/" '{{ result_folder }}/web_page/index.html'
     executable: /bin/bash
 
