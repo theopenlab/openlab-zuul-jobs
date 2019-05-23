@@ -36,6 +36,7 @@
 
           # Run test inside instance
           ssh -i "$PRIVATE_KEY" "ubuntu@$FLOATING_IP" "
+          
               set -x
               cd $PWD
               source exported-envs
