@@ -106,8 +106,7 @@
     name: liu-sheng/spark
     check:
       jobs:
-        - spark-integration-test-kubeadm-k8s-v1.14.0
-        - spark-integration-test-minikube-k8s-v1.10.0
+        - kind-integration-test-arm64
 
 - project:
     name: h00130372/charts
