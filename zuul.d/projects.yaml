@@ -76,6 +76,24 @@
 #      jobs:
 #        - terraform-provider-huaweicloud-acceptance-test-fusioncloud:
 #            branches: master
+- project:
+    name: terraform-providers/terraform-provider-openstack
+    periodic-2/14:
+      jobs:
+        - terraform-provider-openstack-acceptance-test-stein:
+            branches: master
+        - terraform-provider-openstack-acceptance-test-rocky:
+            branches: master
+        - terraform-provider-openstack-acceptance-test-queens:
+            branches: master
+        - terraform-provider-openstack-acceptance-test-pike:
+            branches: master
+        - terraform-provider-openstack-acceptance-test-ocata:
+            branches: master
+        - terraform-provider-openstack-acceptance-test-newton:
+            branches: master
+        - terraform-provider-openstack-acceptance-test-mitaka:
+            branches: master
 
 - project:
     name: helm/charts
@@ -100,15 +118,6 @@
 #      jobs:
 #        - openshift-origin-functional-test-huaweicloud:
 #            branches: master
-
-- project:
-    name: gophercloud/gophercloud
-    periodic-4/16:
-      jobs:
-        - gophercloud-unittest:
-            branches: master
-        - gophercloud-acceptance-test:
-            branches: master
 
 - project:
     name: cloudfoundry/bosh-openstack-cpi-release
@@ -202,6 +211,27 @@
         - docker-machine-functional-devstack-mitaka:
             branches: master
 
+- project:
+    name: gophercloud/gophercloud
+    periodic-8/20:
+      jobs:
+        - gophercloud-acceptance-test:
+            branches: master
+        - gophercloud-acceptance-test-stein:
+            branches: master
+        - gophercloud-acceptance-test-rocky:
+            branches: master
+        - gophercloud-acceptance-test-queens:
+            branches: master
+        - gophercloud-acceptance-test-pike:
+            branches: master
+        - gophercloud-acceptance-test-ocata:
+            branches: master
+        - gophercloud-acceptance-test-newton:
+            branches: master
+        - gophercloud-acceptance-test-mitaka:
+            branches: master
+
 ####################### periodic jobs on 10:00/22:00 ##########################
 - project:
     name: kubernetes-sigs/cluster-api-provider-openstack
@@ -231,4 +261,15 @@
         - manageiq-providers-openstack-test-devstack-newton:
             branches: master
         - manageiq-providers-openstack-test-devstack-mitaka:
+            branches: master
+
+- project:
+    name: dtantsur/rust-openstack
+    periodic-10/22:
+      jobs:
+        - rust-openstack-acceptance-stein:
+            branches: master
+        - rust-openstack-acceptance-rocky:
+            branches: master
+        - rust-openstack-acceptance-queens:
             branches: master
