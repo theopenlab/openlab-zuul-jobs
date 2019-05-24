@@ -22,8 +22,6 @@
     nodeset: ubuntu-xenial
     secrets:
       - site_logs
-    tags:
-      - testby:hth
 
 # Common test base job
 - job:
@@ -38,6 +36,8 @@
         OS_BRANCH: master
         LOGS_PATH: '{{ ansible_user_dir }}/workspace/logs'
         RESULTS_PATH: '{{ ansible_user_dir }}/workspace/test_results'
+    tags:
+      - testby:hth
 
 # Golang test base job
 - job:
