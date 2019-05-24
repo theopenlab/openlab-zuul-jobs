@@ -22,6 +22,8 @@
     nodeset: ubuntu-xenial
     secrets:
       - site_logs
+    tags:
+      - testby:hth
 
 # Common test base job
 - job:
