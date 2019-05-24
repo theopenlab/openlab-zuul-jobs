@@ -644,34 +644,53 @@
     vars:
       os_sdk: openstacksdk
     override-checkout: stable-2.7
-
+    
 - job:
     name: openstacksdk-ansible-functional-devstack-rocky
-    parent: init-test
+    parent: openstacksdk-ansible-functional-devstack
     description: |
       Run openstacksdk ansible functional tests against a rocky devstack using git stable-2.7 branch version of ansible.
-    run: playbooks/ansible-functional-devstack/run.yaml
-    required-projects:
-      - openstack/openstacksdk
     vars:
       os_sdk: openstacksdk
       global_env:
         OS_BRANCH: stable/rocky
-    override-checkout: stable-2.7
-
+    
 - job:
     name: openstacksdk-ansible-functional-devstack-queens
-    parent: init-test
+    parent: openstacksdk-ansible-functional-devstack
     description: |
       Run openstacksdk ansible functional tests against a queens devstack using git stable-2.7 branch version of ansible.
-    run: playbooks/ansible-functional-devstack/run.yaml
-    required-projects:
-      - openstack/openstacksdk
     vars:
-      os_sdk: openstacksdk
       global_env:
         OS_BRANCH: stable/queens
-    override-checkout: stable-2.7
+
+#- job:
+#    name: openstacksdk-ansible-functional-devstack-rocky
+#    parent: init-test
+#    description: |
+#      Run openstacksdk ansible functional tests against a rocky devstack using git stable-2.7 branch version of ansible.
+#    run: playbooks/ansible-functional-devstack/run.yaml
+#    required-projects:
+#      - openstack/openstacksdk
+#    vars:
+#      os_sdk: openstacksdk
+#      global_env:
+#        OS_BRANCH: stable/rocky
+#    override-checkout: stable-2.7
+#
+#- job:
+#    name: openstacksdk-ansible-functional-devstack-queens
+#    parent: init-test
+#    description: |
+#      Run openstacksdk ansible functional tests against a queens devstack using git stable-2.7 branch version of ansible.
+#    run: playbooks/ansible-functional-devstack/run.yaml
+#    required-projects:
+#      - openstack/openstacksdk
+#    vars:
+#      os_sdk: openstacksdk
+#      global_env:
+#        OS_BRANCH: stable/queens
+#    override-checkout: stable-2.7
 
 - job:
     name: openstacksdk-ansible-functional-devstack-pike
