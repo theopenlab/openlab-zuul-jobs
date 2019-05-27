@@ -101,8 +101,6 @@
     name: kubernetes/cloud-provider-openstack
     periodic-4/16:
       jobs:
-        - cloud-provider-openstack-acceptance-test-e2e-conformance:
-            branches: master
         - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.14:
             branches: release-1.14
         - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.13:
@@ -123,6 +121,7 @@
     periodic-6/18:
       jobs:
         - packer-v1.4.1-functional-devstack-stein:
+<<<<<<< HEAD
             branches: master
         - packer-v1.4.1-functional-devstack-rocky:
             branches: master
@@ -134,6 +133,19 @@
             branches: master
         - packer-v1.4.1-functional-devstack-newton:
             branches: master
+=======
+            branches: master
+        - packer-v1.4.1-functional-devstack-rocky:
+            branches: master
+        - packer-v1.4.1-functional-devstack-queens:
+            branches: master
+        - packer-v1.4.1-functional-devstack-pike:
+            branches: master
+        - packer-v1.4.1-functional-devstack-ocata:
+            branches: master
+        - packer-v1.4.1-functional-devstack-newton:
+            branches: master
+>>>>>>> Refactor jobs using inheritance structure
         - packer-v1.4.1-functional-devstack-mitaka:
             branches: master
 
@@ -169,6 +181,7 @@
     periodic-8/20:
       jobs:
         - gophercloud-v0.1.0-acceptance-test-stein:
+<<<<<<< HEAD
             branches: master
         - gophercloud-v0.1.0-acceptance-test-rocky:
             branches: master
@@ -180,6 +193,19 @@
             branches: master
         - gophercloud-v0.1.0-acceptance-test-newton:
             branches: master
+=======
+            branches: master
+        - gophercloud-v0.1.0-acceptance-test-rocky:
+            branches: master
+        - gophercloud-v0.1.0-acceptance-test-queens:
+            branches: master
+        - gophercloud-v0.1.0-acceptance-test-pike:
+            branches: master
+        - gophercloud-v0.1.0-acceptance-test-ocata:
+            branches: master
+        - gophercloud-v0.1.0-acceptance-test-newton:
+            branches: master
+>>>>>>> Refactor jobs using inheritance structure
         - gophercloud-v0.1.0-acceptance-test-mitaka:
             branches: master
 
