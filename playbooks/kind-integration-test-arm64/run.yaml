@@ -29,7 +29,7 @@
           # it and comment out some of previous code, we can restore it once
           # the issue has been fixed.
           mkdir -p $GOPATH/src/sigs.k8s.io/
-          kind_tmp=`ls -d $GOPATH//pkg/mod/sigs.k8s.io/kind*`
+          kind_tmp=`ls -d $GOPATH/pkg/mod/sigs.k8s.io/kind*`
           ln -sf $kind_tmp $GOPATH/src/sigs.k8s.io/kind
           # cd $GOPATH/src/sigs.k8s.io/kind && go install .
           kind build base-image --image kindest/base:latest --source $GOPATH/src/sigs.k8s.io/kind/images/base --loglevel debug
