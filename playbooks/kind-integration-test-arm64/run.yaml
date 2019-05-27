@@ -23,7 +23,15 @@
     - name: build KIND against k/k master using bazel
       shell:
         cmd: |
-          cd $GOPATH/src/sigs.k8s.io/kind && go install .
+          # As suggested  in https://github.com/kubernetes-sigs/kind/issues/532
+          # we downloaded KinD's dependancies from go111module as a walkaround,
+          # thus the code is not in the original path, we add a soft link to
+          # it and comment out some of previous code, we can restore it once
+          # the issue has been fixed.
+          mkdir -p $GOPATH/src/sigs.k8s.io/
+          kind_tmp=`ls -d $GOPATH//pkg/mod/sigs.k8s.io/kind*`
+          ln -sf $kind_tmp $GOPATH/src/sigs.k8s.io/kind
+          # cd $GOPATH/src/sigs.k8s.io/kind && go install .
           kind build base-image --image kindest/base:latest --source $GOPATH/src/sigs.k8s.io/kind/images/base --loglevel debug
         executable: /bin/bash
       environment: '{{ global_env }}'
