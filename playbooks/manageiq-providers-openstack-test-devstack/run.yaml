@@ -88,7 +88,7 @@
           EOF
           openstack role create heat_stack_owner
           openstack role create SwiftOperator
-      
+          sleep 7200
           # NOTES: source to add ruby/rbenv into PATH
           source ~/.bash_profile
           bin/setup
@@ -103,7 +103,7 @@
           bundle install
           rbenv rehash
           bin/rake evm:db:reset db:seed
-          sleep 7200
+          
           bundle exec rails r spec/tools/environment_builders/openstack.rb
           popd
       
