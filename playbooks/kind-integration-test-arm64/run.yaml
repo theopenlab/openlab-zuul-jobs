@@ -31,6 +31,7 @@
           mkdir -p $GOPATH/src/sigs.k8s.io/
           kind_tmp=`ls -d $GOPATH/pkg/mod/sigs.k8s.io/kind*`
           ln -sf $kind_tmp $GOPATH/src/sigs.k8s.io/kind
+          chmod +x $GOPATH/src/sigs.k8s.io/kind/images/base/entrypoint
           # cd $GOPATH/src/sigs.k8s.io/kind && go install .
           kind build base-image --image kindest/base:latest --source $GOPATH/src/sigs.k8s.io/kind/images/base --loglevel debug
         executable: /bin/bash
