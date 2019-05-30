@@ -50,17 +50,17 @@
         cmd: |
           set -ex
           # Install Packages
-          sudo apt install memcached                        # Memcached for the session store
-          sudo apt install postgresql libpq-dev             # PostgreSQL Database server and to build 'pg' Gem
-          sudo apt install bzip2 libffi-dev libreadline-dev # For rbenv install 2.3.1 (might not be needed with other Ruby setups)
-          sudo apt install libxml2-dev libxslt-dev patch    # For Nokogiri Gem
-          sudo apt install libsqlite-dev libsqlite3-dev     # For sqlite3 Gem
-          sudo apt install nodejs nodejs-legacy npm         # For ExecJS Gem, bower, npm, yarn, webpack..
-          sudo apt install g++                              # For unf Gem
-          sudo apt install libcurl4-gnutls-dev              # For Curb
-          sudo apt install cmake                            # For rugged Gem
-          sudo apt install libgit2-dev pkg-config libtool
-          sudo apt install libssl-dev                       # for puma < 3.7.0
+          sudo apt install -y memcached                     # Memcached for the session store
+          sudo apt install -y postgresql-10 libpq-dev             # PostgreSQL Database server and to build 'pg' Gem
+          sudo apt install -y bzip2 libffi-dev libreadline-dev # For rbenv install 2.3.1 (might not be needed with other Ruby setups)
+          sudo apt install -y libxml2-dev libxslt-dev patch    # For Nokogiri Gem
+          sudo apt install -y libsqlite-dev libsqlite3-dev     # For sqlite3 Gem
+          sudo apt install -y nodejs nodejs-legacy npm         # For ExecJS Gem, bower, npm, yarn, webpack..
+          sudo apt install -y g++                              # For unf Gem
+          sudo apt install -y libcurl4-gnutls-dev              # For Curb
+          sudo apt install -y cmake                            # For rugged Gem
+          sudo apt install -y libgit2-dev pkg-config libtool
+          sudo apt install -y libssl-dev                       # for puma < 3.7.0
   
           # Ubuntu fix for failing Bundler
           wget -t 10 -T 2 ftp://ftp.us.debian.org/debian/pool/main/o/openssl1.0/libssl1.0-dev_1.0.2?-*_amd64.deb
@@ -74,8 +74,8 @@
           sudo systemctl start memcached
       
           # Configure PostgreSQL
-          grep -q '^local\s' /etc/postgresql/*/main/pg_hba.conf || echo "local all all trust" | sudo tee -a /etc/postgresql/10/main/pg_hba.conf
-          sed -i.bak 's/\(^local\s*\w*\s*\w*\s*\)\(peer$\)/\1trust/' /etc/postgresql/*/main/pg_hba.conf
+          grep -q '^local\s' /etc/postgresql/10/main/pg_hba.conf || echo "local all all trust" | sudo tee -a /etc/postgresql/10/main/pg_hba.conf
+          sed -i.bak 's/\(^local\s*\w*\s*\w*\s*\)\(peer$\)/\1trust/' /etc/postgresql/10/main/pg_hba.conf
           service postgresql restart
           su postgres -c "psql -c \"CREATE ROLE root SUPERUSER LOGIN PASSWORD 'smartvm'\""
       
@@ -90,7 +90,7 @@
           EOF
           openstack role create heat_stack_owner
           openstack role create SwiftOperator
-          #sleep 7200
+          sleep 7200
           # NOTES: source to add ruby/rbenv into PATH
           source ~/.bash_profile
           bin/setup
