@@ -50,32 +50,34 @@
         cmd: |
           set -ex
           # Install Packages
-          apt install -y memcached                        # Memcached for the session store
-          apt install -y libxml2-dev libxslt-dev patch    # For Nokogiri Gem
-          apt install -y libsqlite-dev libsqlite3-dev     # For sqlite3 Gem
-          apt install -y nodejs nodejs-legacy npm         # For ExecJS Gem, bower, npm, yarn, webpack..
-          apt install -y g++                              # For unf Gem
-          apt install -y libcurl4-gnutls-dev              # For Curb
-          apt install -y cmake
-          apt install -y pkg-config
-      
-          # Install nodejs
-          curl -sL https://deb.nodesource.com/setup_10.x | sudo bash -
-          curl -sL https://deb.nodesource.com/setup_8.x | sudo bash -
-          apt-get install -y nodejs
-      
-          # Configure PostgreSQL
-          grep -q '^local\s' /etc/postgresql/*/main/pg_hba.conf || echo "local all all trust" | sudo tee -a /etc/postgresql/9.5/main/pg_hba.conf
-          sed -i.bak 's/\(^local\s*\w*\s*\w*\s*\)\(peer$\)/\1trust/' /etc/postgresql/*/main/pg_hba.conf
-          service postgresql restart
-          su postgres -c "psql -c \"CREATE ROLE root SUPERUSER LOGIN PASSWORD 'smartvm'\""
-      
+          sudo apt install memcached                        # Memcached for the session store
+          sudo apt install postgresql libpq-dev             # PostgreSQL Database server and to build 'pg' Gem
+          sudo apt install bzip2 libffi-dev libreadline-dev # For rbenv install 2.3.1 (might not be needed with other Ruby setups)
+          sudo apt install libxml2-dev libxslt-dev patch    # For Nokogiri Gem
+          sudo apt install libsqlite-dev libsqlite3-dev     # For sqlite3 Gem
+          sudo apt install nodejs nodejs-legacy npm         # For ExecJS Gem, bower, npm, yarn, webpack..
+          sudo apt install g++                              # For unf Gem
+          sudo apt install libcurl4-gnutls-dev              # For Curb
+          sudo apt install cmake                            # For rugged Gem
+          sudo apt install libgit2-dev pkg-config libtool
+          sudo apt install libssl-dev                       # for puma < 3.7.0
+  
           # Ubuntu fix for failing Bundler
           wget -t 10 -T 2 ftp://ftp.us.debian.org/debian/pool/main/o/openssl1.0/libssl1.0-dev_1.0.2?-*_amd64.deb
           wget -t 10 -T 2 ftp://ftp.us.debian.org/debian/pool/main/o/openssl1.0/libssl1.0.2_1.0.2?-*_amd64.deb
           apt remove -y libssl-dev
           dpkg -i libssl1.0-dev_1.0.2*-*_amd64.deb libssl1.0.2_1.0.2*-*_amd64.deb
           apt-get install -y python-psycopg2 libpq-dev
+
+          #Enable Memcached
+          sudo systemctl enable memcached
+          sudo systemctl start memcached
+      
+          # Configure PostgreSQL
+          grep -q '^local\s' /etc/postgresql/*/main/pg_hba.conf || echo "local all all trust" | sudo tee -a /etc/postgresql/10/main/pg_hba.conf
+          sed -i.bak 's/\(^local\s*\w*\s*\w*\s*\)\(peer$\)/\1trust/' /etc/postgresql/*/main/pg_hba.conf
+          service postgresql restart
+          su postgres -c "psql -c \"CREATE ROLE root SUPERUSER LOGIN PASSWORD 'smartvm'\""
       
           # Prepare openstack_environments.yml
           my_ip=$(ip route get 1.1.1.1 | awk '{print $7}')
