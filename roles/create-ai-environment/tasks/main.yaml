@@ -1,0 +1,273 @@
+- name: Set Hardware Folder Name
+  set_fact:
+    hardware_folder: "{{ is_gpu_enabled | bool | ternary('user_data_gpu', 'user_data') }}"
+
+- name: Set Global Vars
+  set_fact:
+    user_data_folder: "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/{{ hardware_folder }}"
+    result_folder: "{{ ansible_user_dir }}/workspace/test_results"
+    training_output_folder_name: "training_result"
+
+- name: Find MOO job
+  find:
+    paths: "{{ user_data_folder }}"
+    patterns: 'moo-job-*'
+  register: job_name_matched
+
+- name: Set MOO job Info
+  set_fact:
+    env_keeping: "{{ job_name_matched.files[0].path | search('sleep') | bool | ternary(True, False)}}"
+    job_name: "{{ job_name_matched.files[0].path.split('/')[-1].split('.')[0].split('_')[0] }}"
+
+- name: Create Demo User
+  when: env_keeping
+  user:
+    name: demo
+    password: $6$tBuTR6GsY$2uMKM5A2rhwCE0a30HpFlmBzmBkf5HyqxoI1SgLx8jR0fpiRBh4xSvtqEXueZeNwgwJsAj6DnSCZYr6e2eBbM/
+    group: admin
+    shell: /bin/bash
+
+- name: Allow login with pasword
+  when: env_keeping
+  shell:
+    cmd: |
+      sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
+      service sshd restart
+    executable: /bin/bash
+
+- name: Upload Environment Info to Web
+  shell:
+    cmd: |
+      apt install -y python-pip
+      pip install pygithub
+
+      python '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/tools/update_env_info.py' \
+      --job {{ job_name }} --patch "{{ zuul.patchset }}" --user '{{ moo_github_account.user_name }}' \
+      --password '{{ moo_github_account.user_password }}' \
+      --url "https://logs.openlabtesting.org/logs/{{ zuul.change[-2:] }}/{{ zuul.change }}/{{ zuul.patchset }}/check/{{ zuul.job }}/{{ zuul.build[:7] }}/test_results/" \
+      --ip '{{ nodepool.public_ipv4 }}' --keeping '{{ env_keeping | lower }}'
+    executable: /bin/bash
+
+- name: Generate github raw file link for MOO
+  shell:
+    cmd: |
+      curl -L "https://github.com/moo-ai/moo-ai.github.io/raw/master/env_info/task_list.json"
+      curl -L "https://github.com/moo-ai/moo-ai.github.io/raw/master/env_info/task_list_sleep.json"
+    executable: /bin/bash
+
+- name: Get User Metadata Zip or Url
+  shell:
+    cmd: |
+      set -xe
+
+      apt install -y unzip
+
+      mkdir -p "{{ result_folder }}"
+
+      cd '{{ user_data_folder }}'
+
+      # txt file contains a url refer to remote input data. zip file contains
+      # local input data.
+      if ls | grep txt;then
+        txt_file=`ls | grep txt`
+        url=`cat $txt_file`
+        if [ -n "$url" ];then
+          wget $url
+        fi
+      fi
+
+      zip_file=`ls | grep zip`
+
+      unzip $zip_file
+    executable: /bin/bash
+
+- name: Split User Metadata
+  shell: 'cat {{ user_data_folder }}/metadata.yaml'
+  register: user_meta
+
+- name: Get ML metadata yaml content
+  set_fact:
+    user_meta: "{{ user_meta.stdout | from_yaml }}"
+
+- name: Define Parameters - runtime_name
+  shell: echo "{{ user_meta.framework.runtime | regex_findall('[java|go|python|c|c++]') | join("") }}"
+  register: runtime_name
+
+- name: Define Parameters - runtime_version
+  shell: echo "{{ user_meta.framework.runtime | regex_replace('[java|go|python|c|c++]') }}"
+  register: runtime_version
+
+- name: Install {{ user_meta.framework.runtime }} Runtime
+  when: runtime_name
+  shell:
+    cmd: |
+      set -x
+      set -e
+      runtime_name={{ runtime_name.stdout }}
+      runtime_version={{ runtime_version.stdout }}
+      add-apt-repository -y ppa:deadsnakes/ppa
+      apt-key adv --keyserver keyserver.ubuntu.com --recv-keys F60F4B3D7FA2AF80
+      apt update
+
+      # TODO(wxy): Add and test all the runtime. Now only python is tested.
+
+      if [ $runtime_name == 'python' ];then
+        apt install -y $runtime_name$runtime_version
+        apt install -y python2.7 python3.5 python3.6 python3.7
+      fi
+
+      if [ $runtime_name == 'java' ];then
+        apt install -y default-jre default-jdk
+        apt install -y openjdk-7-jre openjdk-8-jdk
+      fi
+
+      if [ $runtime_name == 'c' ];then
+        apt install -y gcc=$runtime_version g++=$runtime_version
+        apt install -y gcc-7 g++-7 gcc-8 g++-8 gcc-9 g++-9
+      fi
+
+      if [ $runtime_name == 'go' ];then
+        apt install -y golang-$runtime_version-go
+      fi
+
+    executable: /bin/bash
+
+- name: Install {{ user_meta.framework.name }}-{{ user_meta.framework.version }}
+  when:
+    ( user_meta.framework.name == "tensorflow" and runtime_name.stdout in ["python", "c", "java", "go"] ) or
+    ( user_meta.framework.name == "pytorch" and runtime_name.stdout in ["python", "c"] )
+  shell:
+    cmd: |
+      set -x
+      set -e
+      framework={{ user_meta.framework.name }}
+      framework_version={{ user_meta.framework.version }}
+      runtime_name={{ runtime_name.stdout }}
+
+      # TODO(wxy): Add and test all the runtime. Now only tensorflow is tested.
+
+      if [ $framework == "tensorflow" ];then
+        if [ $runtime_name == "python" ];then
+          if {{ is_gpu_enabled | lower }} ;then
+            pip install tensorflow-gpu==$framework_version
+          else
+            pip install tensorflow==$framework_version
+          fi
+        fi
+        if [ $runtime_name == "java" ];then
+          wget https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow_jni-cpu-linux-x86_64-$framework_version.tar.gz
+          tar -xvf libtensorflow_jni-cpu-linux-x86_64-$framework_version.tar.gz
+          ldconfig
+        fi
+        if [ $runtime_name == "go" ];then
+          mkdir ./download
+          export GOPATH=`pwd`/download
+          apt install -y git-core
+          go get github.com/tensorflow/tensorflow/tensorflow/go
+          cd .//download/src/github.com/tensorflow/tensorflow
+          git checkout tags/$framework_version
+          go test ./tensorflow/go
+
+        fi
+        if [ $runtime_name == "c" ];then
+          wget https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-cpu-linux-x86_64-$framework_version.tar.gz
+          tar -xz libtensorflow-cpu-linux-x86_64-$framework_version.tar.gz -C /usr/local
+          ldconfig
+        fi
+      fi
+
+      if [ $framework == 'pytorch' ];then
+        if [ $runtime_name == "python" ];then
+          pip install torch==$framework_version torchvision
+        fi
+        if [ $runtime_name == "c" ];then
+          wget https://download.pytorch.org/libtorch/cu90/libtorch-shared-with-deps-latest.zip
+          apt install zip
+          unzip libtorch-shared-with-deps-latest.zip
+        fi
+      fi
+
+    executable: /bin/bash
+
+- name: Run Tensorflow Job
+  when: user_meta.framework.name == "tensorflow" and runtime_name.stdout in ["python", "java", "go", "c"]
+  shell:
+    cmd: |
+      set -xe
+
+      cd '{{ user_data_folder }}/'
+
+      py_file={{ user_meta.entry_point }}
+
+      '{{ user_meta.framework.runtime }}' $py_file | tee "{{ result_folder }}/process_log.txt"
+    executable: /bin/bash
+
+- name: Run PyTorch Python Job
+  when: user_meta.framework.name == "pytorch" and runtime_name.stdout in ["python", "c"]
+  shell:
+    cmd: |
+      set -xe
+
+      cd '{{ user_data_folder }}/'
+
+      py_file=`cat entry_point.txt`
+
+      '{{ user_meta.framework.runtime }}' $py_file | tee "{{ result_folder }}/process_log.txt"
+    executable: /bin/bash
+
+- name: Install tensorflow.js and convert training model
+  when: user_meta.framework.name == "tensorflow" and user_meta.model.name == 'MNIST'
+  shell:
+    cmd: |
+      set -xe
+      pip install tensorflowjs
+
+      # Use tensorflow.js to show inference result via MOO web page
+      tensorflowjs_converter --input_format keras \
+        '{{ user_data_folder }}/{{ training_output_folder_name }}/my_model.h5' \
+        '{{ user_data_folder }}/tfjs'
+    executable: /bin/bash
+
+#TODO(bzhao) This task needs to be deleted after hands on show.
+- name: Get web template
+  delegate_to: localhost
+  become_user: zuul
+  become: yes
+  get_url:
+    url: https://raw.githubusercontent.com/moo-ai/moo-ai.github.io/master/tf_js.html
+    dest: /tmp/tf_js.html
+    mode: 0644
+
+- name: Create web dir
+  file:
+    path: '{{ result_folder }}/web_page/'
+    state: directory
+
+- name: Copy backend inference page by Jinja
+  template:
+    src: /tmp/tf_js.html
+    dest: '{{ result_folder }}/web_page/index.html'
+
+- name: Collect Traning or Inference Result
+  shell:
+    cmd: |
+      set -xe
+
+      # Serve inference function via openlab log server for each job. Users can
+      # visit log page to test inference directly.
+
+      mv '{{ user_data_folder }}/{{ training_output_folder_name }}' '{{ result_folder }}'
+      if [ -d "{{ user_data_folder }}/tfjs" ]; then
+          mv '{{ user_data_folder }}/tfjs/' '{{ result_folder }}/web_page/'
+      fi
+      mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/css' '{{ result_folder }}/web_page/'
+      mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/js' '{{ result_folder }}/web_page/'
+
+      model_path="https:\/\/logs.openlabtesting.org\/logs\/{{ zuul.change[-2:] }}\/{{ zuul.change }}\/{{ zuul.patchset }}\/check\/{{ zuul.job }}\/{{ zuul.build[:7] }}\/test_results\/web_page\/tfjs\/model.json"
+      sed -i "s/replace.me/$model_path/" '{{ result_folder }}/web_page/index.html'
+    executable: /bin/bash
+
+- name: ENV keeping
+  when: env_keeping
+  pause:
+    minutes: 60

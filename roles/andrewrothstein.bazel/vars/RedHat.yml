@@ -1,8 +1,0 @@
----
-bazel_os_pkgs:
-  - pkgconfig
-  - zip
-  - gcc-c++
-  - zlib-devel
-  - unzip
-  - which

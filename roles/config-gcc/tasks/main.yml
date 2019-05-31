@@ -1,0 +1,25 @@
+# We can install specify version gcc/g++ in task, like this:
+#- roles:
+#  - role: config-gcc
+#      gcc_version: '7'
+---
+- name: Install gcc and g++
+  shell: |
+    set -ex
+
+    # Install the g++-{{ gcc_version }} packages
+    apt-get install -y software-properties-common
+    add-apt-repository -y ppa:ubuntu-toolchain-r/test
+    apt update || true
+    apt install "g++-{{ gcc_version }}" -y
+
+    # Set it up so the symbolic links gcc, g++ point to the newer version
+    update-alternatives --install /usr/bin/gcc gcc "/usr/bin/gcc-{{ gcc_version }}" 60 \
+                             --slave /usr/bin/g++ g++ "/usr/bin/g++-{{ gcc_version }}"
+    update-alternatives --config gcc
+
+    # print g++ version
+    gcc --version
+    g++ --version
+  args:
+    executable: /bin/bash

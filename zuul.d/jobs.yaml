@@ -34,7 +34,10 @@
     vars:
       global_env:
         OS_BRANCH: master
-
+        # LOGS/RESULTS_PATH is created in roles.prepare_workspace, we enable
+        # these two vars in here for cross playbook usage.
+        LOGS_PATH: '{{ ansible_user_dir }}/workspace/logs'
+        RESULTS_PATH: '{{ ansible_user_dir }}/workspace/test_results'
 
 # Golang test base job
 - job:
@@ -59,6 +62,15 @@
     description: |
       Run terraform provider openstack acceptance test on master branch
     run: playbooks/terraform-provider-openstack-acceptance-test/run.yaml
+
+- job:
+    name: terraform-provider-openstack-acceptance-test-stein
+    parent: terraform-provider-openstack-acceptance-test
+    description: |
+      Run terraform provider openstack acceptance test on stein branch
+    vars:
+      global_env:
+        OS_BRANCH: stable/stein
 
 - job:
     name: terraform-provider-openstack-acceptance-test-rocky
@@ -430,7 +442,7 @@
       - dockerhub
 
 # ansible jobs
-- job:
+- job: # Deprecated
     name: openstacksdk-ansible-devel-functional-devstack
     parent: init-test
     description: |
@@ -442,17 +454,56 @@
     vars:
       os_sdk: openstacksdk
 
-- job:
+- job: # Ansible base job
     name: openstacksdk-ansible-functional-devstack
     parent: init-test
     description: |
-      Run openstacksdk ansible functional tests against a master devstack using git stable-2.7 branch version of ansible.
+      Run openstacksdk ansible functional tests against a master devstack using devel branch version of ansible.
     run: playbooks/ansible-functional-devstack/run.yaml
     required-projects:
       - openstack/openstacksdk
-    override-checkout: stable-2.7
     vars:
       os_sdk: openstacksdk
+    tags:
+      - Category:Cloud
+      - Project:ansible/ansible
+      - App:Ansible@devel
+      - App:OpenStack@master
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
+
+- job: # Ansible son job for stein
+    name: openstacksdk-ansible-functional-devstack-stein
+    parent: openstacksdk-ansible-functional-devstack
+    description: |
+      Run openstacksdk ansible functional tests against a stein devstack using devel branch version of ansible.
+    vars:
+      global_env:
+        OS_BRANCH: stable/stein
+    tags:
+      - Category:Cloud
+      - Project:ansible/ansible
+      - App:Ansible@devel
+      - App:OpenStack@stein
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
+
+- job: # Ansible grandson job for stein
+    name: openstacksdk-ansible-v2.8.0-functional-devstack-stein
+    parent: openstacksdk-ansible-functional-devstack-stein
+    description: |
+      Run openstacksdk ansible functional tests against a stein devstack using ansible v2.8.0.
+    override-checkout: v2.8.0 #tag
+    tags:
+      - Category:Cloud
+      - Project:ansible/ansible
+      - App:Ansible@v2.8.0
+      - App:OpenStack@stein
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
 
 - job:
     name: openstacksdk-ansible-functional-devstack-rocky
@@ -684,6 +735,17 @@
     override-checkout: v1.3.3
 
 - job:
+    name: packer-functional-devstack-stein
+    parent: init-test
+    description: |
+      Test image building functionality of Packer of v1.3.3 against stein devstack.
+    run: playbooks/packer-functional-devstack/run.yaml
+    vars:
+      global_env:
+        OS_BRANCH: stable/stein
+    override-checkout: v1.3.3
+
+- job:
     name: packer-functional-devstack-rocky
     parent: init-test
     description: |
@@ -873,6 +935,18 @@
         OS_BRANCH: stable/rocky
     override-checkout: v0.16.1
 
+- job:
+    name: docker-machine-functional-devstack-stein
+    parent: init-test
+    description: |
+      Test image building functionality of Docker machine of v0.16.1 version against
+      devstack of Stein.
+    run: playbooks/docker-machine-functional-devstack/run.yaml
+    vars:
+      global_env:
+        OS_BRANCH: stable/stein
+    override-checkout: v0.16.1
+
 # bosh huaweicloud cpi jobs
 - job:
     name: bosh-huaweicloud-cpi-release-validator-test-huaweicloud
@@ -978,6 +1052,16 @@
     vars:
       global_env:
         OS_BRANCH: stable/rocky
+
+- job:
+    name: manageiq-providers-openstack-test-devstack-stein
+    parent: init-test
+    description: |
+      This job run tests of manageiq-providers-openstack aganist devstack of Stein.
+    run: playbooks/manageiq-providers-openstack-test-devstack/run.yaml
+    vars:
+      global_env:
+        OS_BRANCH: stable/stein
 
 - job:
     name: manageiq-providers-openstack-test-huaweicloud
@@ -1094,6 +1178,9 @@
     description: |
       Run integration tests of spark of master against with v1.14.0 k8s cluster deployed by kubeadm
     run: playbooks/spark-integration-test-kubeadm-k8s/run.yaml
+    post-run: playbooks/spark-integration-test-kubeadm-k8s/post.yaml
+    secrets:
+      - openlab_dockerhub
     vars:
       k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
       kubernetes_version: 1.14.0
@@ -1104,7 +1191,10 @@
     description: |
       Run integration tests of spark of v2.4.0 against with v1.10.0 k8s cluster deployed by v0.30.0 minikube
     run: playbooks/spark-integration-test-minikube-k8s/run.yaml
+    post-run: playbooks/spark-integration-test-minikube-k8s/post.yaml
     override-checkout: branch-2.4
+    secrets:
+      - openlab_dockerhub
     vars:
       k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
       # the supported latest version of minikube is v0.30.0, and then the minikube can start
@@ -1118,6 +1208,7 @@
     description: |
       Run integration tests of Kubernetes IN Docker against ARM64 architecture
     run: playbooks/kind-integration-test-arm64/run.yaml
+    post-run: playbooks/kind-integration-test-arm64/post.yaml
     nodeset: ubuntu-xenial-arm64
     secrets:
       - gcp_account_kind
@@ -1149,3 +1240,62 @@
     description: |
       Try to deploy allinone openlab CI environment with labkeeper
     run: playbooks/labkeeper-allinone-deployment-test/run.yaml
+
+- job:
+    name: ai-on-openlab-test-vm
+    parent: init-test
+    description: |
+      Train and inference AI model in openlab VM.
+    run: playbooks/ai-on-openlab/run.yaml
+    nodeset: ubuntu-xenial
+    secrets:
+      - moo_github_account
+    vars:
+      is_gpu_enabled: false
+
+- job:
+    name: ai-on-openlab-test-vm-with-gpu
+    parent: init-test
+    description: |
+      Train and inference AI model on GPU in openlab VM.
+    run: playbooks/ai-on-openlab/run.yaml
+    nodeset: ubuntu-xenial-gpu
+    secrets:
+      - moo_github_account
+    vars:
+      is_gpu_enabled: true
+
+- job:
+    name: tensorflow-benchmarks-volcano-kubeflow-k8s-v1.14.0
+    parent: init-test
+    description: |
+      Test benchmarks of tensorflow + volcano/kubeflow on k8s cluster
+    run: playbooks/tensorflow-volcano-kubeflow-integration-test-k8s/run.yaml
+    post-run: playbooks/tensorflow-volcano-kubeflow-integration-test-k8s/post.yaml
+    timeout: 21600 # 6 hours
+    vars:
+      k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
+      kubernetes_version: 1.14.0
+      kubeflow_version: v0.5.0
+      volcano_version: release-0.1
+      run_kubeflow_tfbenchmarks: true
+      run_volcano_tfbenchmarks: true
+    nodeset:
+      nodes:
+        - name: k8s-master
+          label: ubuntu-xenial-tf
+        - name: k8s-node-1
+          label: ubuntu-xenial-tf
+        - name: k8s-node-2
+          label: ubuntu-xenial-tf
+        - name: k8s-node-3
+          label: ubuntu-xenial-tf
+        - name: k8s-node-4
+          label: ubuntu-xenial-tf
+      groups:
+        - name: k8s-nodes
+          nodes:
+            - k8s-node-1
+            - k8s-node-2
+            - k8s-node-3
+            - k8s-node-4
