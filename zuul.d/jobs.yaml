@@ -597,7 +597,7 @@
       Run shade ansible functional tests against a master devstack using git stable-2.5 branch version of ansible.
     run: playbooks/ansible-functional-devstack/run.yaml
     required-projects:
-      - openstack-infra/shade
+      - openstack/shade
     override-checkout: stable-2.5
     vars:
       os_sdk: shade
