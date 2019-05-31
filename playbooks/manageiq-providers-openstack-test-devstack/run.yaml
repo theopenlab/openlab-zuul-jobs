@@ -36,7 +36,12 @@
       shell:
         cmd: |
           set -ex
-          apt-get install -y postgresql
+          # install postgresql 10
+          echo "deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main" >> /etc/apt/sources.list.d/pgdg.list
+          wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+          sudo apt-get update
+          apt-get install postgresql-10 libpq-dev # PostgreSQL Database server and to build 'pg' Gem
+
           sed -i "/flat_networks/ s|public|public,public_net_0,public_net_1,public_net_2,public_net_3,public_net_4,public_net_5|" /etc/neutron/plugins/ml2/ml2_conf.ini
           sed -i "/filter_validation = / a filter_validation = false" /etc/neutron/neutron.conf
           service devstack@neutron-* restart
@@ -51,7 +56,6 @@
           set -ex
           # Install Packages
           sudo apt install -y memcached                     # Memcached for the session store
-          sudo apt install -y postgresql-10 libpq-dev             # PostgreSQL Database server and to build 'pg' Gem
           sudo apt install -y bzip2 libffi-dev libreadline-dev # For rbenv install 2.3.1 (might not be needed with other Ruby setups)
           sudo apt install -y libxml2-dev libxslt-dev patch    # For Nokogiri Gem
           sudo apt install -y libsqlite-dev libsqlite3-dev     # For sqlite3 Gem
