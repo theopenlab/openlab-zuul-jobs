@@ -1119,6 +1119,8 @@
       Run integration tests of Kubernetes IN Docker against ARM64 architecture
     run: playbooks/kind-integration-test-arm64/run.yaml
     nodeset: ubuntu-xenial-arm64
+    secrets:
+      - gcp_account_kind
 
 - job:
     name: helm-integration-test-kubeadm-k8s-v1.14.0
