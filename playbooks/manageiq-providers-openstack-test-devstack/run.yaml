@@ -40,7 +40,7 @@
           echo "deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main" >> /etc/apt/sources.list.d/pgdg.list
           wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
           sudo apt-get update
-          apt-get install postgresql-10 libpq-dev # PostgreSQL Database server and to build 'pg' Gem
+          apt-get install -y postgresql-10 libpq-dev # PostgreSQL Database server and to build 'pg' Gem
 
           sed -i "/flat_networks/ s|public|public,public_net_0,public_net_1,public_net_2,public_net_3,public_net_4,public_net_5|" /etc/neutron/plugins/ml2/ml2_conf.ini
           sed -i "/filter_validation = / a filter_validation = false" /etc/neutron/neutron.conf
