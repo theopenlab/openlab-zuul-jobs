@@ -1322,8 +1322,6 @@
     tags:
       - CNCF
       - Kubernetes
-    allowed-projects:
-      - h00130372/charts
     
 - job:
     name: helm-integration-test-kubeadm-k8s-v1.12.7
