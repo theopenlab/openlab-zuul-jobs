@@ -190,8 +190,14 @@
     cmd: |
       set -e
       set -x
+      # enable q-lbaasv2 for stable/mitaka branch
+      if [[ "{{ global_env.OS_BRANCH }}" == "stable/mitaka" ]];then
+          services='octavia,o-cw,o-hm,o-hk,o-api,q-lbaasv2'
+      else
+          services='octavia,o-cw,o-hm,o-hk,o-api'
+      fi
       cat << EOF >> /tmp/dg-local.conf
-      enable_service octavia,o-cw,o-hm,o-hk,o-api
+      enable_service $services
       enable_plugin octavia https://opendev.org/openstack/octavia
       enable_plugin barbican https://opendev.org/openstack/barbican
       # Avoid to confict with vm fixed ip in some public cloud
