@@ -1210,6 +1210,8 @@
     run: playbooks/kind-integration-test-arm64/run.yaml
     post-run: playbooks/kind-integration-test-arm64/post.yaml
     nodeset: ubuntu-xenial-arm64
+    vars:
+      k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
     secrets:
       - gcp_account_kind
 

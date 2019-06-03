@@ -20,7 +20,7 @@
           # TODO(RuiChen): Add timestamp for e2e.log in order to workaround upload_e2e.py bug
           date  +"%b %e %H:%M:%S.999: DONE" >> $LOG_DIR/e2e.log
           PIPELINE_LOGS_DIR='periodic-logs'
-          if [ '{{ zuul.pipeline }}' != 'periodic' ]; then
+          if [ '{{ zuul.pipeline }}' != 'periodic-6/18' ]; then
               PIPELINE_LOGS_DIR='pr-logs'
           fi
           # upload e2e log to google storage
