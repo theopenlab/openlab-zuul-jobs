@@ -40,6 +40,7 @@
     - name: run with kubetest
       shell:
         cmd: |
+          export LOG_DIR='{{ k8s_log_dir }}'
           cd $GOPATH/src/k8s.io/test-infra/kubetest && go install .
           cd $GOPATH/src/k8s.io/kubernetes && kubetest \
             --provider=skeleton \
@@ -53,6 +54,6 @@
             --check-version-skew=false \
             --down \
             --test_args="--ginkgo.focus=\[Conformance\] --ginkgo.skip=\[Serial\]|Alpha|Kubectl|\[(Disruptive|Feature:[^\]]+|Flaky)\] --num-nodes=3" \
-            --timeout=240m
+            --timeout=240m | tee $LOG_DIR/e2e.log
         executable: /bin/bash
       environment: '{{ global_env }}'
