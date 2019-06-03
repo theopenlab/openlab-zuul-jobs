@@ -40,6 +40,7 @@
     - name: run with kubetest
       shell:
         cmd: |
+          mkdir -p '{{ k8s_log_dir }}'
           export LOG_DIR='{{ k8s_log_dir }}'
           cd $GOPATH/src/k8s.io/test-infra/kubetest && go install .
           cd $GOPATH/src/k8s.io/kubernetes && kubetest \
