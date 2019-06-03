@@ -60,5 +60,6 @@
             --down \
             --test_args="--ginkgo.focus=\[Conformance\] --ginkgo.skip=\[Serial\]|Alpha|Kubectl|\[(Disruptive|Feature:[^\]]+|Flaky)\] --num-nodes=3" \
             --timeout=240m | tee $LOG_DIR/e2e.log
+            cp $GOPATH/src/k8s.io/kubernetes/_artifacts/junit*.xml $LOG_DIR
         executable: /bin/bash
       environment: '{{ global_env }}'
