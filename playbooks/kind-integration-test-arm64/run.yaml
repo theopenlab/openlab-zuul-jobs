@@ -48,6 +48,7 @@
           export LOG_DIR='{{ k8s_log_dir }}'
           cd $GOPATH/src/k8s.io/test-infra/kubetest && go install .
           cd $GOPATH/src/k8s.io/kubernetes && kubetest \
+            --dump=$LOG_DIR \
             --provider=skeleton \
             --deployment=kind \
             --kind-binary-version=build \
