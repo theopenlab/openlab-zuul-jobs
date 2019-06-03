@@ -39,7 +39,7 @@
 
     - name: Create e2e directory for testgrid
       file:
-        path: {{ k8s_log_dir }}
+        path: '{{ k8s_log_dir }}'
         state: directory
 
     - name: run with kubetest
