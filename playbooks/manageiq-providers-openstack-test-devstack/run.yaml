@@ -103,14 +103,14 @@
           cp openstack_environments.yml spec/manageiq/
       
           #NOTES: Build ManageIQ environment for devstack
-          pushd spec/manageiq/
+          cd spec/manageiq/
           sed -i "/admin_role =/ s|:domain_id => domain_id||"  spec/tools/environment_builders/openstack/services/identity/builder/keystone_v3.rb
           ln -s $(readlink -f ../../spec/models/manageiq/providers/openstack) spec/models/manageiq/providers/openstack
           #bundle install
           #rbenv rehash
           #bundle exec rake db:setup
           bin/rake evm:db:reset db:seed
-          
+          ./spec/tools/environment_builders/openstack_vcr.sh
 #          bundle exec rails r spec/tools/environment_builders/openstack.rb
 #          popd
 #
@@ -118,7 +118,7 @@
 #          rm spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_havana_errors_spec.rb
 #          rm spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_liberty_spec.rb
 #          bundle exec rake vcr:rerecord
-          bash spec/tools/environment_builders/openstack_vcr.sh
+        
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ global_env }}'
