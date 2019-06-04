@@ -118,7 +118,7 @@
 #          rm spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_havana_errors_spec.rb
 #          rm spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_liberty_spec.rb
 #          bundle exec rake vcr:rerecord
-          ./spec/tools/environment_builders/openstack_vcr.sh
+          bash spec/tools/environment_builders/openstack_vcr.sh
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ global_env }}'
