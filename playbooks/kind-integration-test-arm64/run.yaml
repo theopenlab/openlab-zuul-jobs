@@ -62,7 +62,7 @@
             --check-version-skew=false \
             --down \
             --test_args="--ginkgo.focus=\[Conformance\] --ginkgo.skip=\[Serial\]|Alpha|Kubectl|\[(Disruptive|Feature:[^\]]+|Flaky)\] --num-nodes=3" \
-            --timeout=240m | tee $LOG_DIR/e2e.log
+            --timeout=240m | tee -a $LOG_DIR/e2e.log
             cp -R $GOPATH/src/k8s.io/kubernetes/_artifacts/* $LOG_DIR
         executable: /bin/bash
       environment: '{{ global_env }}'
