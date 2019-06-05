@@ -48,7 +48,7 @@
           export LOG_DIR='{{ k8s_log_dir }}'
           # Add a walk-around start time to the e2e.log file to make the
           # upload step running
-          date  +"%b %e %H:%M:%S.999: START" >> $LOG_DIR/e2e.log
+          date +"%b %e %H:%M:%S.999: START " | tee $LOG_DIR/e2e.log
           cd $GOPATH/src/k8s.io/test-infra/kubetest && go install .
           cd $GOPATH/src/k8s.io/kubernetes && kubetest \
             --provider=skeleton \
