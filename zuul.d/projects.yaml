@@ -116,3 +116,12 @@
       jobs:
         - helm-integration-test-kubeadm-k8s-v1.14.0
         - helm-integration-test-kubeadm-k8s-v1.12.7
+
+- project:
+    name: apache/spark
+    check:
+      jobs:
+        - spark-integration-test-kubeadm-k8s-v1.14.0:
+            branches: master
+        - spark-integration-test-minikube-k8s-v1.10.0:
+            branches: master
