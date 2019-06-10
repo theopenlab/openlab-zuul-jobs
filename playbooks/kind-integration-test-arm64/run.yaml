@@ -46,6 +46,9 @@
       shell:
         cmd: |
           export LOG_DIR='{{ k8s_log_dir }}'
+          # Add a walk-around start time to the e2e.log file to make the
+          # upload step running
+          date +"%b %e %H:%M:%S.999: START " | tee $LOG_DIR/e2e.log
           cd $GOPATH/src/k8s.io/test-infra/kubetest && go install .
           cd $GOPATH/src/k8s.io/kubernetes && kubetest \
             --provider=skeleton \
@@ -59,7 +62,7 @@
             --check-version-skew=false \
             --down \
             --test_args="--ginkgo.focus=\[Conformance\] --ginkgo.skip=\[Serial\]|Alpha|Kubectl|\[(Disruptive|Feature:[^\]]+|Flaky)\] --num-nodes=3" \
-            --timeout=240m | tee $LOG_DIR/e2e.log
-            cp $GOPATH/src/k8s.io/kubernetes/_artifacts/junit*.xml $LOG_DIR
+            --timeout=240m | tee -a $LOG_DIR/e2e.log
+            cp -R $GOPATH/src/k8s.io/kubernetes/_artifacts/* $LOG_DIR
         executable: /bin/bash
       environment: '{{ global_env }}'
