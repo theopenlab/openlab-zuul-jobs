@@ -14,7 +14,7 @@
     - name: git required repositories
       shell:
         cmd: |
-          go get sigs.k8s.io/kind
+          GO111MODULE="on" go get sigs.k8s.io/kind@master
           go get k8s.io/kubeadm
           go get k8s.io/kubernetes
           go get k8s.io/test-infra/kubetest
@@ -23,14 +23,32 @@
     - name: build KIND against k/k master using bazel
       shell:
         cmd: |
-          cd $GOPATH/src/sigs.k8s.io/kind && go install .
+          # As suggested  in https://github.com/kubernetes-sigs/kind/issues/532
+          # we downloaded KinD's dependancies from go111module as a walkaround,
+          # thus the code is not in the original path, we add a soft link to
+          # it and comment out some of previous code, we can restore it once
+          # the issue has been fixed.
+          mkdir -p $GOPATH/src/sigs.k8s.io/
+          kind_tmp=`ls -d $GOPATH/pkg/mod/sigs.k8s.io/kind*`
+          ln -sf $kind_tmp $GOPATH/src/sigs.k8s.io/kind
+          chmod +x $GOPATH/src/sigs.k8s.io/kind/images/base/entrypoint
+          # cd $GOPATH/src/sigs.k8s.io/kind && go install .
           kind build base-image --image kindest/base:latest --source $GOPATH/src/sigs.k8s.io/kind/images/base --loglevel debug
         executable: /bin/bash
       environment: '{{ global_env }}'
 
+    - name: Create e2e directory for testgrid
+      file:
+        path: '{{ k8s_log_dir }}'
+        state: directory
+
     - name: run with kubetest
       shell:
         cmd: |
+          export LOG_DIR='{{ k8s_log_dir }}'
+          # Add a walk-around start time to the e2e.log file to make the
+          # upload step running
+          date +"%b %e %H:%M:%S.999: START " | tee $LOG_DIR/e2e.log
           cd $GOPATH/src/k8s.io/test-infra/kubetest && go install .
           cd $GOPATH/src/k8s.io/kubernetes && kubetest \
             --provider=skeleton \
@@ -44,6 +62,7 @@
             --check-version-skew=false \
             --down \
             --test_args="--ginkgo.focus=\[Conformance\] --ginkgo.skip=\[Serial\]|Alpha|Kubectl|\[(Disruptive|Feature:[^\]]+|Flaky)\] --num-nodes=3" \
-            --timeout=240m
+            --timeout=240m | tee -a $LOG_DIR/e2e.log
+            cp -R $GOPATH/src/k8s.io/kubernetes/_artifacts/* $LOG_DIR
         executable: /bin/bash
       environment: '{{ global_env }}'

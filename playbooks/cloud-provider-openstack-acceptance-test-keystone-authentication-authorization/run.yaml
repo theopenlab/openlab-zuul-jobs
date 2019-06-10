@@ -95,8 +95,8 @@
 
           K8S_INSTALL_SCRIPT='{{ k8s_src_dir }}/hack/local-up-cluster.sh'
           sed -i -e "/kube::util::wait_for_url.*$/,+1d" "$K8S_INSTALL_SCRIPT"
-          sed -i -e '/hyperkube\" apiserver.*$/a \      --authentication-token-webhook-config-file=/etc/kubernetes/webhook.kubeconfig \\' "$K8S_INSTALL_SCRIPT"
-          sed -i -e '/hyperkube\" apiserver.*$/a \      --authorization-webhook-config-file=/etc/kubernetes/webhook.kubeconfig \\' "$K8S_INSTALL_SCRIPT"
+          sed -i -e '/hyperkube\" kube-apiserver.*$/a \      --authentication-token-webhook-config-file=/etc/kubernetes/webhook.kubeconfig \\' "$K8S_INSTALL_SCRIPT"
+          sed -i -e '/hyperkube\" kube-apiserver.*$/a \      --authorization-webhook-config-file=/etc/kubernetes/webhook.kubeconfig \\' "$K8S_INSTALL_SCRIPT"
 
           # -E preserves the current env vars, but we need to special case PATH
           # Must run local-up-cluster.sh under kubernetes root directory

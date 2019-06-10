@@ -442,7 +442,7 @@
       - dockerhub
 
 # ansible jobs
-- job:
+- job: # Deprecated
     name: openstacksdk-ansible-devel-functional-devstack
     parent: init-test
     description: |
@@ -454,31 +454,56 @@
     vars:
       os_sdk: openstacksdk
 
-- job:
+- job: # Ansible base job
     name: openstacksdk-ansible-functional-devstack
     parent: init-test
     description: |
-      Run openstacksdk ansible functional tests against a master devstack using git stable-2.7 branch version of ansible.
+      Run openstacksdk ansible functional tests against a master devstack using devel branch version of ansible.
     run: playbooks/ansible-functional-devstack/run.yaml
     required-projects:
       - openstack/openstacksdk
-    override-checkout: stable-2.7
     vars:
       os_sdk: openstacksdk
+    tags:
+      - Category:Cloud
+      - Project:ansible/ansible
+      - App:Ansible@devel
+      - App:OpenStack@master
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
 
-- job:
+- job: # Ansible son job for stein
     name: openstacksdk-ansible-functional-devstack-stein
-    parent: init-test
+    parent: openstacksdk-ansible-functional-devstack
     description: |
-      Run openstacksdk ansible functional tests against a stein devstack using git stable-2.7 branch version of ansible.
-    run: playbooks/ansible-functional-devstack/run.yaml
-    required-projects:
-      - openstack/openstacksdk
-    override-checkout: stable-2.7
+      Run openstacksdk ansible functional tests against a stein devstack using devel branch version of ansible.
     vars:
-      os_sdk: openstacksdk
       global_env:
         OS_BRANCH: stable/stein
+    tags:
+      - Category:Cloud
+      - Project:ansible/ansible
+      - App:Ansible@devel
+      - App:OpenStack@stein
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
+
+- job: # Ansible grandson job for stein
+    name: openstacksdk-ansible-v2.8.0-functional-devstack-stein
+    parent: openstacksdk-ansible-functional-devstack-stein
+    description: |
+      Run openstacksdk ansible functional tests against a stein devstack using ansible v2.8.0.
+    override-checkout: v2.8.0 #tag
+    tags:
+      - Category:Cloud
+      - Project:ansible/ansible
+      - App:Ansible@v2.8.0
+      - App:OpenStack@stein
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
 
 - job:
     name: openstacksdk-ansible-functional-devstack-rocky
@@ -572,7 +597,7 @@
       Run shade ansible functional tests against a master devstack using git stable-2.5 branch version of ansible.
     run: playbooks/ansible-functional-devstack/run.yaml
     required-projects:
-      - openstack-infra/shade
+      - openstack/shade
     override-checkout: stable-2.5
     vars:
       os_sdk: shade
@@ -1183,7 +1208,12 @@
     description: |
       Run integration tests of Kubernetes IN Docker against ARM64 architecture
     run: playbooks/kind-integration-test-arm64/run.yaml
+    post-run: playbooks/kind-integration-test-arm64/post.yaml
     nodeset: ubuntu-xenial-arm64
+    vars:
+      k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
+    secrets:
+      - gcp_account_kind
 
 - job:
     name: helm-integration-test-kubeadm-k8s-v1.14.0
@@ -1236,3 +1266,38 @@
       - moo_github_account
     vars:
       is_gpu_enabled: true
+
+- job:
+    name: tensorflow-benchmarks-volcano-kubeflow-k8s-v1.14.0
+    parent: init-test
+    description: |
+      Test benchmarks of tensorflow + volcano/kubeflow on k8s cluster
+    run: playbooks/tensorflow-volcano-kubeflow-integration-test-k8s/run.yaml
+    post-run: playbooks/tensorflow-volcano-kubeflow-integration-test-k8s/post.yaml
+    timeout: 21600 # 6 hours
+    vars:
+      k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
+      kubernetes_version: 1.14.0
+      kubeflow_version: v0.5.0
+      volcano_version: release-0.1
+      run_kubeflow_tfbenchmarks: true
+      run_volcano_tfbenchmarks: true
+    nodeset:
+      nodes:
+        - name: k8s-master
+          label: ubuntu-xenial-tf
+        - name: k8s-node-1
+          label: ubuntu-xenial-tf
+        - name: k8s-node-2
+          label: ubuntu-xenial-tf
+        - name: k8s-node-3
+          label: ubuntu-xenial-tf
+        - name: k8s-node-4
+          label: ubuntu-xenial-tf
+      groups:
+        - name: k8s-nodes
+          nodes:
+            - k8s-node-1
+            - k8s-node-2
+            - k8s-node-3
+            - k8s-node-4
