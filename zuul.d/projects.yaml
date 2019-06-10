@@ -30,6 +30,12 @@
         - packer-master-functional-devstack
 
 - project:
+    name: bzhaoopenstack/packer
+    check:
+      jobs:
+        - packer-master-functional-devstack
+
+- project:
     name: liu-sheng/machine
     check:
       jobs:
