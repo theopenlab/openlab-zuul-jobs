@@ -1621,6 +1621,8 @@
     description: |
       This job run tests of manageiq-providers-openstack aganist master OpenStack.
     run: playbooks/manageiq-providers-openstack-test-devstack/run.yaml
+    vars:
+      postgresql_version: 10
 
 # son job for mitaka
 - job:
