@@ -5,6 +5,7 @@
   tasks:
     - name: Login dockerhub
       shell: docker login -u {{openlab_dockerhub.username}} -p {{openlab_dockerhub.password}}
+      no_log: yes
 
     - name: Run integration tests of Spark with k8s cluster manager
       shell: |
