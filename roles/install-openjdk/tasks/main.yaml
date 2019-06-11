@@ -1,0 +1,6 @@
+- name: Install java {{ java_version }}
+  shell:
+    cmd: |
+      apt-get install openjdk-{{ java_version }}-jdk -y
+    executable: /bin/bash
+  environment: '{{ global_env }}'
