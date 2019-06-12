@@ -1127,7 +1127,8 @@
     description: |
       This job run tests of manageiq-providers-openstack aganist Devstack
     run: playbooks/manageiq-providers-openstack-test-devstack/run.yaml
-
+    vars:
+      postgresql_version: 10
 
 # terraform-provider-huaweicloud acceptance tests against FusionCloud
 - job:

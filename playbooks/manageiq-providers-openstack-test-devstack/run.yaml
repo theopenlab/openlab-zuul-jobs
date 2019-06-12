@@ -18,11 +18,11 @@
         cmd: |
           set -ex
           apt-get -y install software-properties-common
-          echo "deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main 9.5" >> /etc/apt/sources.list.d/pgdg.list
+          echo "deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main {{ postgresql_version }}" >> /etc/apt/sources.list.d/pgdg.list
           curl -4 -O https://www.postgresql.org/media/keys/ACCC4CF8.asc
           apt-key add ACCC4CF8.asc
           apt-get -o Acquire::ForceIPv4=true update -y
-          apt-get -o Acquire::ForceIPv4=true install postgresql-9.5 -y
+          apt-get -o Acquire::ForceIPv4=true install postgresql-{{ postgresql_version }} -y
           psql --version
           sed -i "/flat_networks/ a flat_networks = public,public_net_0,public_net_1,public_net_2,public_net_3,public_net_4,public_net_5" /etc/neutron/plugins/ml2/ml2_conf.ini
           killall neutron-server
@@ -31,17 +31,15 @@
         chdir: '{{ zuul.project.src_dir }}'
       when:
         - global_env.OS_BRANCH == 'stable/mitaka'
-  
+
     - name: Install specifc packages and config Neutron for Ubuntu 16.04
       shell:
         cmd: |
-          set -ex
-          # install postgresql 10
+          # install postgresql, default is version 10
           echo "deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main" >> /etc/apt/sources.list.d/pgdg.list
           wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
           sudo apt-get update
-          apt-get install -y postgresql-10 libpq-dev # PostgreSQL Database server and to build 'pg' Gem
-
+          apt-get install -y postgresql-{{ postgresql_version }} libpq-dev # PostgreSQL Database server and to build 'pg' Gem
           sed -i "/flat_networks/ s|public|public,public_net_0,public_net_1,public_net_2,public_net_3,public_net_4,public_net_5|" /etc/neutron/plugins/ml2/ml2_conf.ini
           sed -i "/filter_validation = / a filter_validation = false" /etc/neutron/neutron.conf
           service devstack@neutron-* restart
@@ -49,40 +47,35 @@
         chdir: '{{ zuul.project.src_dir }}'
       when:
         - global_env.OS_BRANCH != 'stable/mitaka'
-  
+
     - name: Run Integration tests of manageiq-providers-openstack against devstack
       shell:
         cmd: |
           set -ex
           # Install Packages
-          sudo apt install -y memcached                     # Memcached for the session store
-          sudo apt install -y bzip2 libffi-dev libreadline-dev # For rbenv install 2.3.1 (might not be needed with other Ruby setups)
-          sudo apt install -y libxml2-dev libxslt-dev patch    # For Nokogiri Gem
-          sudo apt install -y libsqlite-dev libsqlite3-dev     # For sqlite3 Gem
-          sudo apt install -y nodejs nodejs-legacy npm         # For ExecJS Gem, bower, npm, yarn, webpack..
-          sudo apt install -y g++                              # For unf Gem
-          sudo apt install -y libcurl4-gnutls-dev              # For Curb
-          sudo apt install -y cmake                            # For rugged Gem
-          sudo apt install -y libgit2-dev pkg-config libtool
-          sudo apt install -y libssl-dev                       # for puma < 3.7.0
-  
+          apt install -y memcached                        # Memcached for the session store
+          apt install -y libxml2-dev libxslt-dev patch    # For Nokogiri Gem
+          apt install -y libsqlite-dev libsqlite3-dev     # For sqlite3 Gem
+          apt install -y nodejs nodejs-legacy npm         # For ExecJS Gem, bower, npm, yarn, webpack..
+          apt install -y g++                              # For unf Gem
+          apt install -y libcurl4-gnutls-dev              # For Curb
+          apt install -y cmake
+          apt install -y pkg-config
+          # Install nodejs
+          curl -sL https://deb.nodesource.com/setup_10.x | sudo bash -
+          curl -sL https://deb.nodesource.com/setup_8.x | sudo bash -
+          apt-get install -y nodejs
+          # Configure PostgreSQL
+          grep -q '^local\s' /etc/postgresql/{{ postgresql_version }}/main/pg_hba.conf || echo "local all all trust" | sudo tee -a /etc/postgresql/{{ postgresql_version }}/main/pg_hba.conf
+          sed -i.bak 's/\(^local\s*\w*\s*\w*\s*\)\(peer$\)/\1trust/' /etc/postgresql/{{ postgresql_version }}/main/pg_hba.conf
+          service postgresql restart
+          su postgres -c "psql -c \"CREATE ROLE root SUPERUSER LOGIN PASSWORD 'smartvm'\""
           # Ubuntu fix for failing Bundler
           wget -t 10 -T 2 ftp://ftp.us.debian.org/debian/pool/main/o/openssl1.0/libssl1.0-dev_1.0.2?-*_amd64.deb
           wget -t 10 -T 2 ftp://ftp.us.debian.org/debian/pool/main/o/openssl1.0/libssl1.0.2_1.0.2?-*_amd64.deb
           apt remove -y libssl-dev
           dpkg -i libssl1.0-dev_1.0.2*-*_amd64.deb libssl1.0.2_1.0.2*-*_amd64.deb
           apt-get install -y python-psycopg2 libpq-dev
-
-          #Enable Memcached
-          sudo systemctl enable memcached
-          sudo systemctl start memcached
-      
-          # Configure PostgreSQL
-          grep -q '^local\s' /etc/postgresql/10/main/pg_hba.conf || echo "local all all trust" | sudo tee -a /etc/postgresql/10/main/pg_hba.conf
-          sed -i.bak 's/\(^local\s*\w*\s*\w*\s*\)\(peer$\)/\1trust/' /etc/postgresql/10/main/pg_hba.conf
-          service postgresql restart
-          su postgres -c "psql -c \"CREATE ROLE root SUPERUSER LOGIN PASSWORD 'smartvm'\""
-      
           # Prepare openstack_environments.yml
           my_ip=$(ip route get 1.1.1.1 | awk '{print $7}')
           cat << EOF >> openstack_environments.yml
@@ -97,28 +90,23 @@
           # NOTES: source to add ruby/rbenv into PATH
           source ~/.bash_profile
           bin/setup
-          #sleep 7200
+          sleep 7200
           bundle install
-          #rbenv rehash
+          rbenv rehash
           cp openstack_environments.yml spec/manageiq/
-      
           #NOTES: Build ManageIQ environment for devstack
-          cd spec/manageiq/
+          pushd spec/manageiq/
           sed -i "/admin_role =/ s|:domain_id => domain_id||"  spec/tools/environment_builders/openstack/services/identity/builder/keystone_v3.rb
           ln -s $(readlink -f ../../spec/models/manageiq/providers/openstack) spec/models/manageiq/providers/openstack
-          #bundle install
-          #rbenv rehash
-          #bundle exec rake db:setup
-          bin/rake evm:db:reset db:seed
-          ./spec/tools/environment_builders/openstack_vcr.sh
-#          bundle exec rails r spec/tools/environment_builders/openstack.rb
-#          popd
-#
-#          #NOTES: Only run liberty+ and keystone v3 cases
-#          rm spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_havana_errors_spec.rb
-#          rm spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_liberty_spec.rb
-#          bundle exec rake vcr:rerecord
-        
+          bundle install
+          rbenv rehash
+          bundle exec rake db:setup
+          bundle exec rails r spec/tools/environment_builders/openstack.rb
+          popd
+          #NOTES: Only run liberty+ and keystone v3 cases
+          rm spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_havana_errors_spec.rb
+          rm spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_liberty_spec.rb
+          bundle exec rake vcr:rerecord
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ global_env }}'
