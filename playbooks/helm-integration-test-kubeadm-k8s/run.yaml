@@ -28,7 +28,7 @@
           # helm client has installed in chart-testing image, here we install the helm server tiller
           docker exec --interactive ctd "$@" helm init --service-account tiller
           # sleep 3 minutes to wait the tiller pod become running
-          sleep 180
+          sleep 3600
           # we need to test databases like mysql installing, persistence is enabled default,
           # create local pv to support the test
           mkdir /home/zuul/k8s/
