@@ -21,7 +21,8 @@
 #        #- packer-functional-devstack
 #        - packer-functional-devstack-rocky
 #        - packer-functional-devstack-queens
-         - tensorflow-benchmarks-volcano-k8s-v1.14.0
+         # - tensorflow-benchmarks-volcano-k8s-v1.14.0
+         - hive-build-arm64
 
 - project:
     name: huangtianhua/packer

@@ -1,0 +1,10 @@
+- hosts: all
+  become: yes
+  roles:
+  tasks:
+    - name: install required packages
+      shell: |
+        apt update -y
+        sleep 7200
+      args:
+        executable: /bin/bash
