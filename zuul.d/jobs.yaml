@@ -1477,3 +1477,12 @@
             - k8s-node-2
             - k8s-node-3
             - k8s-node-4
+
+
+- job:
+    name: hbase-master-build-arm
+    parent: init-test
+    description: |
+      Hbase build in openlab cluster.
+    run: playbooks/hbase-arm-build/run.yaml
+    nodeset: ubuntu-xenial-arm64
