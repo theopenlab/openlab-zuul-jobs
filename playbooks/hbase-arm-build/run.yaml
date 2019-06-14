@@ -67,10 +67,6 @@
 
               # Move protoc3/include to /usr/local/include/
               sudo mv protoc3/include/google /usr/local/include/
-
-              ### Optional: change owner
-              ##sudo chown $USER /usr/local/bin/protoc
-              ##sudo chown -R $USER /usr/local/include/google
           fi
 
           # build begin
@@ -78,5 +74,18 @@
           sudo sed -i 's#<protocArtifact>com.google.protobuf:protoc:${external.protobuf.version}:exe:${os.detected.classifier}</protocArtifact>#<protocExecutable>/usr/bin/protoc</protocExecutable>#g' pom.xml
           sudo sed -i 's#<protocArtifact>com.google.protobuf:protoc:${internal.protobuf.version}:exe:${os.detected.classifier}</protocArtifact>#<protocExecutable>/usr/local/bin/protoc</protocExecutable>#g' hbase-protocol-shaded/pom.xml
 
-          sudo mvn package -DskipTests
+          sudo mvn package -DskipTests | tee $LOGS_PATH/hbase_build.log
+
+          # Copy jar packages
+          for i in `find . -name target`; do
+              cp_dir=${i%/*}
+              cp_dir=${cp_dir#*.}
+              if [ ${i%/*} == '.' ]; then
+                  mkdir -p $RESULTS_PATH/hbase/
+                  cp -rf $i $RESULTS_PATH/hbase/
+              else
+                  mkdir -p $RESULTS_PATH$cp_dir
+                  cp -rf $i $RESULTS_PATH$cp_dir
+              fi
+          done
         executable: /bin/bash
