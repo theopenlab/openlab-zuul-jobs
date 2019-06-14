@@ -71,19 +71,17 @@
           cd "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}"
           sed -i 's#<protocArtifact>com.google.protobuf:protoc:${external.protobuf.version}:exe:${os.detected.classifier}</protocArtifact>#<protocExecutable>/usr/bin/protoc</protocExecutable>#g' pom.xml
           sed -i 's#<protocArtifact>com.google.protobuf:protoc:${internal.protobuf.version}:exe:${os.detected.classifier}</protocArtifact>#<protocExecutable>/usr/local/bin/protoc</protocExecutable>#g' hbase-protocol-shaded/pom.xml
-
-          mvn package -DskipTests | tee $LOGS_PATH/hbase_build.log
-
+          mvn package -DskipTests | tee "{{ ansible_user_dir }}/workspace/logs/hbase_build.log"
           # Copy jar packages
           for i in `find . -name target`; do
               cp_dir=${i%/*}
               cp_dir=${cp_dir#*.}
               if [ ${i%/*} == '.' ]; then
-                  mkdir -p $RESULTS_PATH/hbase/
-                  cp -rf $i $RESULTS_PATH/hbase/
+                  mkdir -p "{{ ansible_user_dir }}/workspace/test_results/hbase/"
+                  cp -rf $i "{{ ansible_user_dir }}/workspace/test_results/hbase/"
               else
-                  mkdir -p $RESULTS_PATH$cp_dir
-                  cp -rf $i $RESULTS_PATH$cp_dir
+                  mkdir -p "{{ ansible_user_dir }}/workspace/test_results$cp_dir"
+                  cp -rf $i "{{ ansible_user_dir }}/workspace/test_results$cp_dir"
               fi
           done
         executable: /bin/bash
