@@ -90,7 +90,6 @@
           # NOTES: source to add ruby/rbenv into PATH
           source ~/.bash_profile
           bin/setup
-          # sleep 7200
           bundle install
           rbenv rehash
           cp openstack_environments.yml spec/manageiq/
@@ -100,6 +99,7 @@
           ln -s $(readlink -f ../../spec/models/manageiq/providers/openstack) spec/models/manageiq/providers/openstack
           bundle install
           rbenv rehash
+          sleep 7200
           bundle exec rake db:setup
           bundle exec rails r spec/tools/environment_builders/openstack.rb
           popd
