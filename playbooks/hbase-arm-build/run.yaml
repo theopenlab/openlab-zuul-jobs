@@ -6,9 +6,9 @@
         cmd: |
           set -xe
           # install java
-          sudo apt-get update
-          sudo apt install default-jre -y
-          sudo apt install default-jdk -y
+          apt-get update
+          apt install default-jre -y
+          apt install default-jdk -y
           export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-arm64
           export PATH=$PATH:$JAVA_HOME/bin
           echo "export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-arm64" >> ~/.profile
@@ -16,10 +16,10 @@
           source ~/.profile
 
           # install mvn
-          sudo apt install maven -y
+          apt install maven -y
 
           # install dependencies for protobuf build
-          sudo apt install autoconf automake libtool -y
+          apt install autoconf automake libtool -y
 
           # Fix protobuf-2.5.0
           cd /usr/local/src/
@@ -27,54 +27,52 @@
           sudo wget -O protobuf-2.5.0-arm64.patch https://www.dropbox.com/s/713wql5cw9dfxhx/protobuf-2.5.0-arm64.patch?dl=0
           sudo tar xfz protobuf-2.5.0.tar.gz
           cd protobuf-2.5.0
-          sudo patch -p1 < ../protobuf-2.5.0-arm64.patch
-          #sudo apt-get install build-essential
-          #sudo apt-get install automake libtool autoconf
-          sudo ./autogen.sh
-          sudo ./configure --prefix=/usr
-          sudo make
-          sudo make install
-          sudo ldconfig
+          patch -p1 < ../protobuf-2.5.0-arm64.patch
+          ./autogen.sh
+          ./configure --prefix=/usr
+          make
+          make install
+          ldconfig
 
-          # create workspace and repo
-          sudo mkdir -p /opt/test/
-          cd /opt/test/
-          sudo git clone https://github.com/apache/hbase.git
+          cd "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}"
 
           # change pom.xml
-          external_version=`cat hbase/pom.xml | grep "<external.protobuf.version>" | grep -Po "(\d\.\d\.\d)(-\d)?" | sed "s/-/./g"`
-          internal_version=`cat hbase/hbase-protocol-shaded/pom.xml | grep "<internal.protobuf.version>" | grep -Po "(\d\.\d\.\d)(-\d)?" | sed "s/-/./g"`
+          external_version=`cat ./pom.xml | grep "<external.protobuf.version>" | grep -Po "(\d\.\d\.\d)(-\d)?" | sed "s/-/./g"`
+          internal_version=`cat ./hbase-protocol-shaded/pom.xml | grep "<internal.protobuf.version>" | grep -Po "(\d\.\d\.\d)(-\d)?" | sed "s/-/./g"`
 
           url="https://github.com/google/protobuf/releases/download/v${internal_version}/protoc-${internal_version}-linux-aarch_64.zip"
 
-          sudo curl -OL $url
+          # create workspace
+          mkdir -p /opt/test/
+          cd /opt/test/
+          curl -OL $url
 
-          if ! sudo unzip protoc-${internal_version}-linux-aarch_64.zip -d protoc3; then
+          if ! unzip protoc-${internal_version}-linux-aarch_64.zip -d protoc3; then
               # The release only provider a zip source package
               url="https://codeload.github.com/protocolbuffers/protobuf/zip/v${internal_version}"
-              sudo curl -OL $url
-              sudo unzip v${internal_version} -d protoc3
+              curl -OL $url
+              unzip v${internal_version} -d protoc3
               cd protoc3/protobuf-${internal_version}
-              sudo ./autogen.sh
-              sudo ./configure --prefix=/usr/local
-              sudo make
-              sudo make install
-              sudo ldconfig
+              ./autogen.sh
+              ./configure --prefix=/usr/local
+              make
+              make install
+              ldconfig
           else
-              sudo unzip protoc-${internal_version}-linux-aarch_64.zip -d protoc3
+              unzip protoc-${internal_version}-linux-aarch_64.zip -d protoc3
               # Move protoc to /usr/local/bin/
-              sudo mv protoc3/bin/protoc /usr/local/bin/
+              mv protoc3/bin/protoc /usr/local/bin/
 
               # Move protoc3/include to /usr/local/include/
-              sudo mv protoc3/include/google /usr/local/include/
+              mv protoc3/include/google /usr/local/include/
           fi
 
           # build begin
-          cd /opt/test/hbase
-          sudo sed -i 's#<protocArtifact>com.google.protobuf:protoc:${external.protobuf.version}:exe:${os.detected.classifier}</protocArtifact>#<protocExecutable>/usr/bin/protoc</protocExecutable>#g' pom.xml
-          sudo sed -i 's#<protocArtifact>com.google.protobuf:protoc:${internal.protobuf.version}:exe:${os.detected.classifier}</protocArtifact>#<protocExecutable>/usr/local/bin/protoc</protocExecutable>#g' hbase-protocol-shaded/pom.xml
+          cd "{{ ansible_user_dir }}/{{ zuul.project.src_dir }}"
+          sed -i 's#<protocArtifact>com.google.protobuf:protoc:${external.protobuf.version}:exe:${os.detected.classifier}</protocArtifact>#<protocExecutable>/usr/bin/protoc</protocExecutable>#g' pom.xml
+          sed -i 's#<protocArtifact>com.google.protobuf:protoc:${internal.protobuf.version}:exe:${os.detected.classifier}</protocArtifact>#<protocExecutable>/usr/local/bin/protoc</protocExecutable>#g' hbase-protocol-shaded/pom.xml
 
-          sudo mvn package -DskipTests | tee $LOGS_PATH/hbase_build.log
+          mvn package -DskipTests | tee $LOGS_PATH/hbase_build.log
 
           # Copy jar packages
           for i in `find . -name target`; do
