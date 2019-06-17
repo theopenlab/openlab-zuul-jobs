@@ -1478,10 +1478,20 @@
             - k8s-node-3
             - k8s-node-4
 
+
 - job:
     name: hive-build-arm64
     parent: init-test
     description: |
       Hive build on arm64 server
     run: playbooks/hive-build-arm64/run.yaml
+    nodeset: ubuntu-xenial-arm64
+
+
+- job:
+    name: hbase-master-build-arm
+    parent: init-test
+    description: |
+      Hbase build in openlab cluster.
+    run: playbooks/hbase-arm-build/run.yaml
     nodeset: ubuntu-xenial-arm64

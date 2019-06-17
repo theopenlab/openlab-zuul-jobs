@@ -8,6 +8,12 @@
     set -ex
     sleep 3600
     make bin
+    # Currently, we use ubuntu amd64 image to test, but the make bin failed to
+    # find the right version, so in the end of above will fail to copy the
+    # binary into /usr/local/bin/
+    if [ -d "./pkg/linux_amd64/" ]; then
+        cp ./pkg/linux_amd64/packer /usr/local/bin/
+    fi
     packer version
   environment: '{{ global_env }}'
   args:
