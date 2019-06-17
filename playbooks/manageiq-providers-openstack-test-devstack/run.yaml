@@ -102,6 +102,7 @@
           bundle exec rake evm:db:reset db:seed
           bundle exec rails r spec/tools/environment_builders/openstack.rb
           popd
+          sleep 7200
           #NOTES: Only run liberty+ and keystone v3 cases
           rm spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_havana_errors_spec.rb
           rm spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_liberty_spec.rb
