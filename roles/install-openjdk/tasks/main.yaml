@@ -18,7 +18,7 @@
       PATH: '{{ real_java_home.stdout }}/bin:{{ ansible_env.PATH }}'
   no_log: yes
 
-- name: Merge golang env vars into global env
+- name: Merge java env vars into global env
   set_fact:
     global_env: '{{ global_env | combine(java_env) }}'
   no_log: yes
