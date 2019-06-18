@@ -3,7 +3,7 @@
     cmd: |
       set -e
       set -x
-      PROJECT=openstack-infra/devstack-gate
+      PROJECT=openstack/devstack-gate
       SHORT_PROJECT=`basename $PROJECT`
       if [ -d /opt/git/$PROJECT ]; then
           rsync -a /opt/git/$PROJECT/ $SHORT_PROJECT
