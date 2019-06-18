@@ -124,7 +124,12 @@
       jobs:
         - helm-integration-test-kubeadm-k8s-v1.14.0
         - helm-integration-test-kubeadm-k8s-v1.12.7
-
+        
+- project:
+    name: huangtianhua/gophercloud
+    check:
+      jobs:
+        - gophercloud-v0.1.0-acceptance-test-mitaka
 
 - project:
     name: bzhaoopenstack/hbase

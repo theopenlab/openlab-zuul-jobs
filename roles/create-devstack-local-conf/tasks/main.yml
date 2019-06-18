@@ -7,7 +7,7 @@
       cat << EOF >> /tmp/dg-local.conf
       [[local|localrc]]
       NETWORK_GATEWAY=10.0.0.1
-      enable_plugin neutron git://git.openstack.org/openstack/neutron
+      enable_plugin neutron git://opendev.org/openstack/neutron
       SWIFT_LOOPBACK_DISK_SIZE=10G
       EOF
     executable: /bin/bash
@@ -36,7 +36,7 @@
       set -x
       cat << EOF >> /tmp/dg-local.conf
       enable_service heat,h-api,h-api-cfn,h-api-cw,h-eng
-      enable_plugin heat git://git.openstack.org/openstack/heat
+      enable_plugin heat git://opendev.org/openstack/heat
       EOF
     executable: /bin/bash
   when:
@@ -49,7 +49,7 @@
       set -e
       set -x
       cat << EOF >> /tmp/dg-local.conf
-      enable_plugin trove git://git.openstack.org/openstack/trove
+      enable_plugin trove git://opendev.org/openstack/trove
       PATH_TROVE="/opt/stack/new/trove"
       TROVESTACK_SCRIPTS="/opt/stack/new/trove/integration/scripts"
       SSH_DIR="/opt/stack/new/.ssh"
@@ -93,7 +93,7 @@
       echo ${insert_service} >> /tmp/dg-local.conf
     executable: /bin/bash
   when:
-  - '"neutron-ext" in enable_services'
+    - '"neutron-ext" in enable_services'
 
 # Populate local conf with specific branch
 - name: create devstack local conf on stable/mitaka branch
@@ -126,14 +126,14 @@
       MANILA_BACKEND2_CONFIG_GROUP_NAME=paris
       MANILA_SHARE_BACKEND1_NAME=LONDON
       MANILA_SHARE_BACKEND2_NAME=PARIS
-
+    
       # This local.conf sets up Devstack with manila enabling the LVM
       # driver which operates in driver_handles_share_services=False mode
       MANILA_OPTGROUP_london_driver_handles_share_servers=False
       MANILA_OPTGROUP_paris_driver_handles_share_servers=False
       SHARE_DRIVER=manila.share.drivers.lvm.LVMShareDriver
       MANILA_DEFAULT_SHARE_TYPE_EXTRA_SPECS='snapshot_support=True create_share_from_snapshot_support=True revert_to_snapshot_support=True mount_snapshot_support=True'
-
+    
       # This local.conf sets up Devstack with manila enabling the Generic
       # driver that uses Cinder to provide back-end storage and Nova to
       # serve storage virtual machines (share servers) in the tenant's domain.
@@ -146,9 +146,9 @@
       #SHARE_DRIVER=manila.share.drivers.generic.GenericShareDriver
       #MANILA_SERVICE_IMAGE_ENABLED=True
       #MANILA_DEFAULT_SHARE_TYPE_EXTRA_SPECS='snapshot_support=True create_share_from_snapshot_support=True'
-
-      enable_plugin heat git://git.openstack.org/openstack/heat
-      enable_plugin manila git://git.openstack.org/openstack/manila
+    
+      enable_plugin heat git://opendev.org/openstack/heat
+      enable_plugin manila git://opendev.org/openstack/manila
       EOF
     executable: /bin/bash
   when:
@@ -160,7 +160,7 @@
       set -e
       set -x
       cat << EOF >> /tmp/dg-local.conf
-      enable_plugin designate git://git.openstack.org/openstack/designate
+      enable_plugin designate git://opendev.org/openstack/designate
       EOF
     executable: /bin/bash
   when:
@@ -173,9 +173,9 @@
       set -x
       cat << EOF >> /tmp/dg-local.conf
       enable_service neutron-lbaasv2,octavia,o-cw,o-hm,o-hk,o-api
-      enable_plugin neutron-lbaas https://git.openstack.org/openstack/neutron-lbaas
-      enable_plugin octavia https://git.openstack.org/openstack/octavia
-      enable_plugin barbican https://git.openstack.org/openstack/barbican
+      enable_plugin neutron-lbaas https://opendev.org/openstack/neutron-lbaas
+      enable_plugin octavia https://opendev.org/openstack/octavia
+      enable_plugin barbican https://opendev.org/openstack/barbican
       # Avoid to confict with vm fixed ip in some public cloud
       OCTAVIA_MGMT_SUBNET=192.168.10.0/24
       OCTAVIA_MGMT_SUBNET_START=192.168.10.2
@@ -190,10 +190,16 @@
     cmd: |
       set -e
       set -x
+      # enable q-lbaasv2 for stable/mitaka branch
+      if [[ "{{ global_env.OS_BRANCH }}" == "stable/mitaka" ]];then
+          services='octavia,o-cw,o-hm,o-hk,o-api,q-lbaasv2'
+      else
+          services='octavia,o-cw,o-hm,o-hk,o-api'
+      fi
       cat << EOF >> /tmp/dg-local.conf
-      enable_service octavia,o-cw,o-hm,o-hk,o-api
-      enable_plugin octavia https://git.openstack.org/openstack/octavia
-      enable_plugin barbican https://git.openstack.org/openstack/barbican
+      enable_service $services
+      enable_plugin octavia https://opendev.org/openstack/octavia
+      enable_plugin barbican https://opendev.org/openstack/barbican
       # Avoid to confict with vm fixed ip in some public cloud
       OCTAVIA_MGMT_SUBNET=192.168.10.0/24
       OCTAVIA_MGMT_SUBNET_START=192.168.10.2
@@ -210,7 +216,7 @@
       set -x
       cat << EOF >> /tmp/dg-local.conf
       enable_service q-fwaas-v1
-      enable_plugin neutron-fwaas https://git.openstack.org/openstack/neutron-fwaas
+      enable_plugin neutron-fwaas https://opendev.org/openstack/neutron-fwaas
       EOF
     executable: /bin/bash
   when:
@@ -223,7 +229,7 @@
       set -x
       cat << EOF >> /tmp/dg-local.conf
       enable_service q-fwaas-v2
-      enable_plugin neutron-fwaas https://git.openstack.org/openstack/neutron-fwaas
+      enable_plugin neutron-fwaas https://opendev.org/openstack/neutron-fwaas
       EOF
     executable: /bin/bash
   when:
@@ -236,11 +242,11 @@
       set -x
       cat << EOF >> /tmp/dg-local.conf
       enable_service zun-api,zun-compute,zun-wsproxy
-      enable_plugin devstack-plugin-container https://git.openstack.org/openstack/devstack-plugin-container
+      enable_plugin devstack-plugin-container https://opendev.org/openstack/devstack-plugin-container
       KURYR_CAPABILITY_SCOPE=global
       KURYR_ETCD_PORT=2379
-      enable_plugin kuryr-libnetwork https://git.openstack.org/openstack/kuryr-libnetwork
-      enable_plugin zun https://git.openstack.org/openstack/zun
+      enable_plugin kuryr-libnetwork https://opendev.org/openstack/kuryr-libnetwork
+      enable_plugin zun https://opendev.org/openstack/zun
       EOF
     executable: /bin/bash
   when:
@@ -255,7 +261,7 @@
       set -e
       set -x
       cat << EOF >> /tmp/dg-local.conf
-      enable_plugin devstack-plugin-ceph https://git.openstack.org/openstack/devstack-plugin-ceph
+      enable_plugin devstack-plugin-ceph https://opendev.org/openstack/devstack-plugin-ceph
       ENABLE_CEPH_CINDER=True
       ENABLE_CEPH_GLANCE=False
       ENABLE_CEPH_C_BAK=False
@@ -273,7 +279,7 @@
       set -e
       set -x
       cat << EOF >> /tmp/dg-local.conf
-      enable_plugin ironic https://git.openstack.org/openstack/ironic
+      enable_plugin ironic https://opendev.org/openstack/ironic
       DEFAULT_INSTANCE_TYPE=baremetal
       OVERRIDE_PUBLIC_BRIDGE_MTU=1400
       VIRT_DRIVER=ironic
