@@ -127,18 +127,21 @@
         executable: /bin/bash
         chdir: '{{ k8s_os_provider_src_dir }}'
       environment: '{{ global_env }}'
+
+    - name: Login dockerhub
+      shell: docker login -u {{ dockerhub.username }} -p {{ dockerhub.password }}
+      no_log: yes
+
     - name: Run image build and publish for cloud-provider-openstack
       shell:
         cmd: |
           if [ '{{ zuul.pipeline }}' == 'periodic-4/16' ] && [ '{{ zuul.branch }}' == 'master' ]; then
+            set -ex
+            set -o pipefail
+
             export LOG_DIR='{{ k8s_log_dir }}'
-            docker login -u '{{ dockerhub.username }}' -p '{{ dockerhub.password }}'
             export REGISTRY=docker.io/k8scloudprovider
             export VERSION=latest
-
-            set -x
-            set -e
-            set -o pipefail
 
             make images 2>&1 | tee $LOG_DIR/image-build-upload.log
 
