@@ -5,7 +5,7 @@
     - create-single-k8s-cluster-with-kubeadm
   tasks:
     - name: Login dockerhub
-      shell: docker login -u {{openlab_dockerhub.username}} -p {{openlab_dockerhub.password}}
+      shell: docker login -u {{ dockerhub.username }} -p {{ dockerhub.password }}
       no_log: yes
 
     - name: Run integration tests of Spark with k8s cluster manager
@@ -26,7 +26,7 @@
         pushd resource-managers/kubernetes/integration-tests
         dev/dev-run-integration-tests.sh --deploy-mode cloud \
             --spark-master k8s://$(kubectl config view -o jsonpath='{.clusters[0].cluster.server}') \
-            --spark-tgz $(realpath ../../../spark-*.tgz) --image-repo openlabtesting \
+            --spark-tgz $(realpath ../../../spark-*.tgz) --image-repo '{{ dockerhub.username }}' \
             --namespace default --service-account spark --r-image-name spark-r --exclude-tags minikube
         popd
       args:

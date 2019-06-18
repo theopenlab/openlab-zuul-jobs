@@ -1926,7 +1926,7 @@
     run: playbooks/spark-integration-test-kubeadm-k8s/run.yaml
     post-run: playbooks/spark-integration-test-kubeadm-k8s/post.yaml
     secrets:
-      - openlab_dockerhub
+      - dockerhub
     vars:
       k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
       kubernetes_version: 1.14.0
@@ -1948,8 +1948,6 @@
     run: playbooks/spark-integration-test-minikube-k8s/run.yaml
     post-run: playbooks/spark-integration-test-minikube-k8s/post.yaml
     override-checkout: branch-2.4
-    secrets:
-      - openlab_dockerhub
     vars:
       k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
       # the supported latest version of minikube is v0.30.0, and then the minikube can start
