@@ -50,7 +50,8 @@
         #- docker-machine-functional-opentelekomcloud
         #- docker-machine-functional-orange
         #- docker-machine-functional-telefonica
-        - tensorflow-benchmarks-kubeflow-k8s-v1.14.0
+#        - tensorflow-benchmarks-kubeflow-k8s-v1.14.0
+         - cluster-api-provider-openstack-image-build
 
 #- project:
 #    name: liu-sheng/huaweicloud-service-broker
