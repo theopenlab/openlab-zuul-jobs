@@ -4,21 +4,18 @@
     - install-k8s
   become: yes
   tasks:
+    - name: Login dockerhub
+      shell: docker login -u {{ dockerhub.username }} -p {{ dockerhub.password }}
+      no_log: yes
+
     - name: Run image build and publish for cluster-api-provider-openstack
       shell:
         cmd: |
-          docker login -u '{{ dockerhub.username }}' -p '{{ dockerhub.password }}'
-          export REGISTRY=docker.io/k8scloudprovider
-          export VERSION=latest
-
-          set -x
-          set -e
+          set -ex
           set -o pipefail
 
-          if [ '{{ zuul.pipeline }}' != 'periodic-10/22' ]; then
-              exit 0;
-          fi
-
+          export REGISTRY=docker.io/k8scloudprovider
+          export VERSION=latest
           make images 2>&1 | tee $LOG_DIR/image-build-upload.log
 
           docker push ${REGISTRY}/openstack-cluster-api-controller:${VERSION} | tee $LOG_DIR/image-build-upload.log
