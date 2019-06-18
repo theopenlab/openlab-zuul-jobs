@@ -152,6 +152,7 @@
             docker push ${REGISTRY}/k8s-keystone-auth:${VERSION} | tee $LOG_DIR/image-build-upload.log
             docker push ${REGISTRY}/octavia-ingress-controller:${VERSION} | tee $LOG_DIR/image-build-upload.log
             docker push ${REGISTRY}/manila-provisioner:${VERSION} | tee $LOG_DIR/image-build-upload.log
+            docker push ${REGISTRY}/magnum-auto-healer:${VERSION} | tee $LOG_DIR/image-build-upload.log
           else
             exit 0;
           fi
