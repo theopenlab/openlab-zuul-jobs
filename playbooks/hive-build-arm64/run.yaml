@@ -46,7 +46,10 @@
         sed -i 's|<protocArtifact>com.google.protobuf:protoc:2.5.0</protocArtifact>|<protocExecutable>/usr/bin/protoc</protocExecutable>|g' ./standalone-metastore/metastore-server/pom.xml
         git diff
 
-        mvn -e clean package -Pdist -DskipTests
+        mvn install:install-file -DgroupId=com.google.protobuf -DartifactId=protoc -Dversion=2.5.0 \
+            -Dclassifier=linux-aarch_64 -Dpackaging=exe -Dfile=../protobuf-2.5.0/java/target/protobuf-java-2.5.0.jar
+
+        mvn -X -e clean package -Pdist -DskipTests
       args:
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'
