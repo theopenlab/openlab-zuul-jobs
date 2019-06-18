@@ -7,7 +7,7 @@
     - name: Run image build and publish for cluster-api-provider-openstack
       shell:
         cmd: |
-          docker login -u {{dockerhub.username}} -p {{dockerhub.password}}
+          docker login -u '{{ dockerhub.username }}' -p '{{ dockerhub.password }}'
           export REGISTRY=docker.io/k8scloudprovider
           export VERSION=latest
 
@@ -15,7 +15,7 @@
           set -e
           set -o pipefail
 
-          if [ '{{ zuul.pipeline }}' != 'periodic' ]; then
+          if [ '{{ zuul.pipeline }}' != 'periodic-10/22' ]; then
               exit 0;
           fi
 
