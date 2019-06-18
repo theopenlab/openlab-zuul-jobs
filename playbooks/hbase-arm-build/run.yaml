@@ -6,7 +6,7 @@
   tasks:
     - name: Build hbase
       shell: |
-        set -xe
+        set -xeo pipefail
         apt install protobuf-compiler
         # build begin
         mvn package -DskipTests | tee "{{ ansible_user_dir }}/workspace/logs/hbase_build.log"
