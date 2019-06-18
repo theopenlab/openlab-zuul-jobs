@@ -4,10 +4,13 @@
     - install-k8s
   become: yes
   tasks:
+    - name: Login dockerhub
+      shell: docker login -u {{ dockerhub.username }} -p {{ dockerhub.password }}
+      no_log: yes
+
     - name: Run image build and publish for cluster-api-provider-openstack
       shell:
         cmd: |
-          docker login -u '{{ dockerhub.username }}' -p '{{ dockerhub.password }}'
           export REGISTRY=docker.io/k8scloudprovider
           export VERSION=latest
 
