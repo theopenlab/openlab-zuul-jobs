@@ -25,5 +25,4 @@
           docker push ${REGISTRY}/openstack-cluster-api-controller:${VERSION} | tee $LOG_DIR/image-build-upload.log
 
         executable: /bin/bash
-        chdir: '{{ k8s_cluster_api_provider_os_src_dir }}'
       environment: '{{ global_env }}'
