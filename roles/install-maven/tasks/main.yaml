@@ -1,11 +1,11 @@
 - name: Install Apache Maven {{ maven_version }}
-  shell:
-    cmd: |
+  shell: |
       wget "https://archive.apache.org/dist/maven/maven-3/{{ maven_version }}/binaries/apache-maven-{{ maven_version }}-bin.tar.gz"
       tar xzvf apache-maven-{{ maven_version }}-bin.tar.gz
+  args:
     executable: /bin/bash
+    chdir: '{{ zuul.project.src_dir }}'
   environment: '{{ global_env }}'
-  chdir: '{{ zuul.project.src_dir }}'
 
 - name: Set maven env vars
   set_fact:

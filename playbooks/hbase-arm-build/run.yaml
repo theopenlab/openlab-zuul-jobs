@@ -5,13 +5,12 @@
     - install-maven
   tasks:
     - name: Build hbase
-      shell:
-        cmd: |
+      shell: |
           set -xe
           apt install protobuf-compiler
           # build begin
           mvn package -DskipTests | tee "{{ ansible_user_dir }}/workspace/logs/hbase_build.log"
-        args:
-          executable: /bin/bash
-          chdir: '{{ zuul.project.src_dir }}'
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ global_env }}'
