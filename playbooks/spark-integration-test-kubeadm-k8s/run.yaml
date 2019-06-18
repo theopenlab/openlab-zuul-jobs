@@ -4,7 +4,7 @@
     - create-single-k8s-cluster-with-kubeadm
   tasks:
     - name: Login dockerhub
-      shell: docker login -u {{openlab_dockerhub.username}} -p {{openlab_dockerhub.password}}
+      shell: docker login -u {{ dockerhub.username }} -p {{ dockerhub.password }}
       no_log: yes
 
     - name: Run integration tests of Spark with k8s cluster manager

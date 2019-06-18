@@ -1299,7 +1299,7 @@
       k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
       kubernetes_version: 1.14.0
     secrets:
-      - openlab_dockerhub
+      - dockerhub
     tags:
       - Category:BigData
       - Project:apache/spark
