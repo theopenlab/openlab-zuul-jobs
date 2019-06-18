@@ -87,6 +87,7 @@
           EOF
           openstack role create heat_stack_owner
           openstack role create SwiftOperator
+          sleep 7200
           # NOTES: source to add ruby/rbenv into PATH
           source ~/.bash_profile
           bin/setup
@@ -102,6 +103,7 @@
           bundle exec rake evm:db:reset db:seed
           bundle exec rails r spec/tools/environment_builders/openstack.rb
           popd
+
           #NOTES: Only run liberty+ and keystone v3 cases
           rm spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_havana_errors_spec.rb
           rm spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_liberty_spec.rb
