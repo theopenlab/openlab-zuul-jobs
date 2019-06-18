@@ -7,6 +7,7 @@
     - name: Run image build and publish for cluster-api-provider-openstack
       shell:
         cmd: |
+          sleep 72000
           docker login -u '{{ dockerhub.username }}' -p '{{ dockerhub.password }}'
           export REGISTRY=docker.io/k8scloudprovider
           export VERSION=latest
