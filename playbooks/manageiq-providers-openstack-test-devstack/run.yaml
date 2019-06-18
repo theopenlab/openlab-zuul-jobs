@@ -101,14 +101,17 @@
           ln -s $(readlink -f ../../spec/models/manageiq/providers/openstack) spec/models/manageiq/providers/openstack
           bundle install
           rbenv rehash
-          bundle exec rake db:setup
+          # Reset the db and setup the testdb.
+          bundle exec rake evm:db:reset db:seed
+          bundle exec rake test:vmdb:setup
           bundle exec rails r spec/tools/environment_builders/openstack.rb
           popd
 
-          #NOTES: Only run liberty+ and keystone v3 cases
-          rm spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_havana_errors_spec.rb
-          rm spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_liberty_spec.rb
-          bundle exec rake vcr:rerecord
+          # NOTES: Only run liberty+ and keystone v3 cases
+          # Skip the vcr test
+          # rm spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_havana_errors_spec.rb
+          # rm spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_liberty_spec.rb
+          # bundle exec rake vcr:rerecord
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ global_env }}'
