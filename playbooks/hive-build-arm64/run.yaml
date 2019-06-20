@@ -16,7 +16,6 @@
         source ~/.profile
 
         # install mvn
-        # apt-get install maven -y
         wget "https://archive.apache.org/dist/maven/maven-3/3.6.1/binaries/apache-maven-3.6.1-bin.tar.gz"
         tar xzvf apache-maven-3.6.1-bin.tar.gz
         new_path=$(realpath apache-maven-3.6.1/bin/):$PATH
@@ -27,7 +26,6 @@
 
         # install dependencies for protobuf build
         apt-get install autoconf automake libtool -y
-        sleep 72000
 
         # Fix protobuf-2.5.0
         cd /usr/local/src/
@@ -48,15 +46,10 @@
         cd '{{ ansible_user_dir }}/workspace'
         git clone https://git-wip-us.apache.org/repos/asf/hive.git
         cd hive
-        grep "protoc:2.5.0" ./* -R -l
-        sed -i 's|<protocArtifact>com.google.protobuf:protoc:2.5.0</protocArtifact>|<protocExecutable>/usr/bin/protoc</protocExecutable>|g' ./standalone-metastore/metastore-common/pom.xml
-        sed -i 's|<protocArtifact>com.google.protobuf:protoc:2.5.0</protocArtifact>|<protocExecutable>/usr/bin/protoc</protocExecutable>|g' ./standalone-metastore/metastore-server/pom.xml
+        sed -i 's|<protocArtifact>com.google.protobuf:protoc:2.5.0</protocArtifact>|<protocCommand>/usr/bin/protoc</protocCommand>|g' ./standalone-metastore/metastore-common/pom.xml
+        sed -i 's|<protocArtifact>com.google.protobuf:protoc:2.5.0</protocArtifact>|<protocCommand>/usr/bin/protoc</protocCommand>|g' ./standalone-metastore/metastore-server/pom.xml
         git diff
-
-        mvn install:install-file -DgroupId=com.google.protobuf -DartifactId=protoc -Dversion=2.5.0 \
-            -Dclassifier=linux-aarch_64 -Dpackaging=exe -Dfile=../protobuf-2.5.0/java/target/protobuf-java-2.5.0.jar
-
-        mvn -X -e clean package -Pdist -DskipTests | tee "{{ ansible_user_dir }}/workspace/logs/hive_build.log"
+        mvn -e clean package -Pdist -DskipTests 2>&1 | tee "{{ ansible_user_dir }}/workspace/logs/hive_build.log"
       args:
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'
