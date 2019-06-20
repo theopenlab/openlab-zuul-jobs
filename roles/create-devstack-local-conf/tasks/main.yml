@@ -193,13 +193,13 @@
 
       # enable q-lbaasv2 for stable/mitaka branch
       if [[ "{{ global_env.OS_BRANCH }}" == "stable/mitaka" ]];then
-          services='octavia,o-cw,o-hm,o-hk,o-api,q-lbaasv2'
-          cat << EOF >> /tmp/dg-local.conf
-          disable_service q-lbaas
-          enable_plugin neutron-lbaas https://opendev.org/openstack/neutron-lbaas
-          EOF
+        services='octavia,o-cw,o-hm,o-hk,o-api,q-lbaasv2'
+        cat << EOF >> /tmp/dg-local.conf
+        disable_service q-lbaas
+        enable_plugin neutron-lbaas https://opendev.org/openstack/neutron-lbaas
+        EOF
       else
-          services='octavia,o-cw,o-hm,o-hk,o-api'
+        services='octavia,o-cw,o-hm,o-hk,o-api'
       fi
       
       cat << EOF >> /tmp/dg-local.conf
