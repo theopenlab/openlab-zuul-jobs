@@ -192,19 +192,16 @@
       set -x
       # enable q-lbaasv2 for stable/mitaka branch
       if [[ "{{ global_env.OS_BRANCH }}" == "stable/mitaka" ]];then
-          services='octavia,o-cw,o-hm,o-hk,o-api,q-lbaasv2'
-          disable_lbaas_v1='q-lbaas'
+        services='octavia,o-cw,o-hm,o-hk,o-api,q-lbaasv2'
+        cat << EOF >> /tmp/dg-local.conf
+        disable_service q-lbaas
+        enable_plugin neutron-lbaas https://opendev.org/openstack/neutron-lbaas
+        EOF
       else
-          services='octavia,o-cw,o-hm,o-hk,o-api'
-          disable_lbaas_v1=''
+        services='octavia,o-cw,o-hm,o-hk,o-api'
       fi
-      
-      lbaas_plugin='neutron-lbaas https://opendev.org/openstack/neutron-lbaas'
-      
       cat << EOF >> /tmp/dg-local.conf
       enable_service $services
-      disable_service $disable_lbaas_v1
-      enable_plugin $lbaas_plugin
       enable_plugin octavia https://opendev.org/openstack/octavia
       enable_plugin barbican https://opendev.org/openstack/barbican
       # Avoid to confict with vm fixed ip in some public cloud
