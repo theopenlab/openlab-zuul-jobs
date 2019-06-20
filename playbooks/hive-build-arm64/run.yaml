@@ -22,6 +22,7 @@
         new_path=$(realpath apache-maven-3.6.1/bin/):$PATH
         grep -q 'export PATH=' ~/.bashrc && sed -i "s|^export PATH=.*$|export PATH=${new_path}|" ~/.bashrc || echo "export PATH=${new_path}" >> ~/.bashrc
         source ~/.bashrc
+        sleep 72000
         mvn --version
 
         # install dependencies for protobuf build
