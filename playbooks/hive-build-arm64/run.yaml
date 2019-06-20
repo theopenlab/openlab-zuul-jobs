@@ -20,7 +20,7 @@
         wget "https://archive.apache.org/dist/maven/maven-3/3.6.1/binaries/apache-maven-3.6.1-bin.tar.gz"
         tar xzvf apache-maven-3.6.1-bin.tar.gz
         new_path=$(realpath apache-maven-3.6.1/bin/):$PATH
-        grep -q 'export PATH=' ~/.bashrc && sed -i "s|^export PATH=.*$|export PATH=${new_path}|" ~/.bashrc || echo "$new_path" >> ~/.bashrc
+        grep -q 'export PATH=' ~/.bashrc && sed -i "s|^export PATH=.*$|export PATH=${new_path}|" ~/.bashrc || echo "export PATH=${new_path}" >> ~/.bashrc
         source ~/.bashrc
         mvn --version
 
