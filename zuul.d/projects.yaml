@@ -129,7 +129,7 @@
     name: huangtianhua/gophercloud
     check:
       jobs:
-        - gophercloud-v0.1.0-acceptance-test-mitaka
+        - gophercloud-v0.1.0-acceptance-test-stein
 
 - project:
     name: bzhaoopenstack/hbase

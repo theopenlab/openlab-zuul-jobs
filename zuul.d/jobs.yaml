@@ -198,11 +198,12 @@
     #  - telefonica_credentials
 
 - job:
-    name: gophercloud-v0.1.0-acceptance-test-mitaka
-    parent: gophercloud-acceptance-test-mitaka
+    name: gophercloud-v0.1.0-acceptance-test-stein
+    parent: gophercloud-acceptance-test-stein
     description: |
-      Run gophercloud v0.1.0 acceptance test on mitaka branch of OpenStack
+      Run gophercloud v0.1.0 acceptance test on stein branch of OpenStack
     override-checkout: v0.1.0
+
 # terraform-provider-telefonicaopencloud acceptance tests with Telefonica cloud
 - job:
     name: terraform-provider-telefonicaopencloud-acceptance-test-telefonica
