@@ -49,7 +49,7 @@
         sed -i 's|<protocArtifact>com.google.protobuf:protoc:2.5.0</protocArtifact>|<protocCommand>/usr/bin/protoc</protocCommand>|g' ./standalone-metastore/metastore-common/pom.xml
         sed -i 's|<protocArtifact>com.google.protobuf:protoc:2.5.0</protocArtifact>|<protocCommand>/usr/bin/protoc</protocCommand>|g' ./standalone-metastore/metastore-server/pom.xml
         git diff
-        mvn -e clean package -Pdist -DskipTests 2>&1 | tee "{{ ansible_user_dir }}/workspace/logs/hive_build.log"
+        mvn -B -e clean package -Pdist -DskipTests 2>&1 | tee "{{ ansible_user_dir }}/workspace/logs/hive_build.log"
         sleep 72000
       args:
         executable: /bin/bash
