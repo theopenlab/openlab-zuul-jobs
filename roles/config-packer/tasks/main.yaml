@@ -6,7 +6,6 @@
 - name: Install master of Packer from source
   shell: |
     set -ex
-    sleep 3600
     make dev
     packer version
   environment: '{{ global_env }}'
