@@ -196,7 +196,7 @@
           cat << EOF >> /tmp/dg-local.conf
           disable_service q-lbaas
           enable_plugin neutron-lbaas https://opendev.org/openstack/neutron-lbaas
-          EOF
+      EOF
       else
           services='octavia,o-cw,o-hm,o-hk,o-api'
       fi
