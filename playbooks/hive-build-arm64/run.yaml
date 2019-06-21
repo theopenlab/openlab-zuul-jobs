@@ -26,6 +26,7 @@
 
         # install dependencies for protobuf build
         apt-get install autoconf automake libtool -y
+        sleep 72000
 
         # Fix protobuf-2.5.0
         cd /usr/local/src/
