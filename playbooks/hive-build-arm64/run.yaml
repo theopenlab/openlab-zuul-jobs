@@ -43,7 +43,7 @@
         ldconfig
         protoc --version
 
-        cd '{{ zuul.project.src_dir }}'
+        cd '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}'
         sed -i 's|<protocArtifact>com.google.protobuf:protoc:2.5.0</protocArtifact>|<protocCommand>/usr/bin/protoc</protocCommand>|g' ./standalone-metastore/metastore-common/pom.xml
         sed -i 's|<protocArtifact>com.google.protobuf:protoc:2.5.0</protocArtifact>|<protocCommand>/usr/bin/protoc</protocCommand>|g' ./standalone-metastore/metastore-server/pom.xml
         git diff
