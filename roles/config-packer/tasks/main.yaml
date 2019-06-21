@@ -5,7 +5,6 @@
 
 - name: Install master of Packer from source
   shell: |
-    sleep 72000
     set -ex
     make dev
     packer version

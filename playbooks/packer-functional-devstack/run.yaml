@@ -10,6 +10,7 @@
       shell:
         cmd: |
           set -ex
+          exit 0
           set -o pipefail
           cat << EOF >> welcome.txt
           WELCOME TO PACKER!
