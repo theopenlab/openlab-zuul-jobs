@@ -851,6 +851,7 @@
     override-checkout: stable-2.7
 
 # packer jobs
+# the job is disabled
 - job:
     name: packer-functional-opentelekomcloud
     parent: init-test
@@ -863,6 +864,7 @@
       - opentelekomcloud_credentials
     override-checkout: v1.3.3
 
+# the job is disabled
 - job:
     name: packer-functional-orange
     parent: init-test
@@ -875,6 +877,7 @@
       - orange_credentials
     override-checkout: v1.3.3
 
+# the job is disabled
 - job:
     name: packer-functional-telefonica
     parent: init-test
@@ -887,6 +890,7 @@
       - telefonica_credentials
     override-checkout: v1.3.3
 
+# the job is disabled
 - job:
     name: packer-functional-huaweicloud
     parent: init-test
@@ -899,87 +903,189 @@
       - huaweicloud_credentials
     override-checkout: v1.3.3
 
-- job:
-    name: packer-master-functional-devstack
-    parent: init-test
-    description: |
-      Test image building functionality of Packer of master against devstack.
-    run: playbooks/packer-functional-devstack/run.yaml
-
+# parent job
 - job:
     name: packer-functional-devstack
     parent: init-test
     description: |
-      Test image building functionality of Packer of v1.3.3 against master devstack.
+      Test image building functionality of master Packer against master OpenStack.
     run: playbooks/packer-functional-devstack/run.yaml
-    override-checkout: v1.3.3
 
+# son job for stein
+- job:
+    name: packer-functional-devstack-stein
+    parent: packer-functional-devstack
+    description: |
+      Test image building functionality of master Packer against stein branch of OpenStack.
+    vars:
+      global_env:
+        OS_BRANCH: stable/stein
+# grandson job for stein
+- job:
+    name: packer-v1.4.1-functional-devstack-stein
+    parent: packer-functional-devstack-stein
+    description: |
+      Test image building functionality of v1.4.1 Packer against stein branch of OpenStack.
+    override-checkout: v1.4.1
+    tags:
+      - Category:Cloud
+      - Project:hashicorp/packer
+      - Application:Packer@v1.4.1
+      - Application:OpenStack@stein
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
+
+# son job for rocky
 - job:
     name: packer-functional-devstack-rocky
-    parent: init-test
+    parent: packer-functional-devstack
     description: |
-      Test image building functionality of Packer of v1.3.3 against rocky devstack.
-    run: playbooks/packer-functional-devstack/run.yaml
+      Test image building functionality of master Packer against rocky branch of OpenStack.
     vars:
       global_env:
         OS_BRANCH: stable/rocky
-    override-checkout: v1.3.3
+# grandson job for rocky
+- job:
+    name: packer-v1.4.1-functional-devstack-rocky
+    parent: packer-functional-devstack-rocky
+    description: |
+      Test image building functionality of v1.4.1 Packer against rocky branch of OpenStack.
+    override-checkout: v1.4.1
+    tags:
+      - Category:Cloud
+      - Project:hashicorp/packer
+      - Application:Packer@v1.4.1
+      - Application:OpenStack@rocky
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
 
+# son job for queens
 - job:
     name: packer-functional-devstack-queens
-    parent: init-test
+    parent: packer-functional-devstack
     description: |
-      Test image building functionality of Packer of v1.3.3 against queens devstack.
-    run: playbooks/packer-functional-devstack/run.yaml
+      Test image building functionality of master Packer against queens branch of OpenStack.
     vars:
       global_env:
         OS_BRANCH: stable/queens
-    override-checkout: v1.3.3
+# grandson job for queens
+- job:
+    name: packer-v1.4.1-functional-devstack-queens
+    parent: packer-functional-devstack-queens
+    description: |
+      Test image building functionality of v1.4.1 Packer against queens branch of OpenStack.
+    override-checkout: v1.4.1
+    tags:
+      - Category:Cloud
+      - Project:hashicorp/packer
+      - Application:Packer@v1.4.1
+      - Application:OpenStack@queens
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
 
+# son job for pike
 - job:
     name: packer-functional-devstack-pike
-    parent: init-test
+    parent: packer-functional-devstack
     description: |
-      Test image building functionality of Packer of v1.3.3 against pike devstack.
-    run: playbooks/packer-functional-devstack/run.yaml
+      Test image building functionality of master Packer against pike branch of OpenStack.
     vars:
       global_env:
         OS_BRANCH: stable/pike
-    override-checkout: v1.3.3
+# grandson job for pike
+- job:
+    name: packer-v1.4.1-functional-devstack-pike
+    parent: packer-functional-devstack-pike
+    description: |
+      Test image building functionality of v1.4.1 Packer against pike branch of OpenStack.
+    override-checkout: v1.4.1
+    tags:
+      - Category:Cloud
+      - Project:hashicorp/packer
+      - Application:Packer@v1.4.1
+      - Application:OpenStack@pike
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
 
+# son job for ocata
 - job:
     name: packer-functional-devstack-ocata
-    parent: init-test
+    parent: packer-functional-devstack
     description: |
-      Test image building functionality of Packer of v1.3.3 against ocata devstack.
-    run: playbooks/packer-functional-devstack/run.yaml
+      Test image building functionality of master Packer against ocata branch of OpenStack.
     vars:
       global_env:
         OS_BRANCH: stable/ocata
-    override-checkout: v1.3.3
+# grandson job for ocata
+- job:
+    name: packer-v1.4.1-functional-devstack-ocata
+    parent: packer-functional-devstack-ocata
+    description: |
+      Test image building functionality of v1.4.1 Packer against ocata branch of OpenStack.
+    override-checkout: v1.4.1
+    tags:
+      - Category:Cloud
+      - Project:hashicorp/packer
+      - Application:Packer@v1.4.1
+      - Application:OpenStack@ocata
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
 
+# son job for newton
 - job:
     name: packer-functional-devstack-newton
-    parent: init-test
+    parent: packer-functional-devstack
     description: |
-      Test image building functionality of Packer of v1.3.3  against newton devstack.
-    run: playbooks/packer-functional-devstack/run.yaml
+      Test image building functionality of master Packer against newton branch of OpenStack.
     vars:
       global_env:
         OS_BRANCH: stable/newton
-    override-checkout: v1.3.3
+# grandson job for newton
+- job:
+    name: packer-v1.4.1-functional-devstack-newton
+    parent: packer-functional-devstack-newton
+    description: |
+      Test image building functionality of v1.4.1 Packer against newton branch of OpenStack.
+    override-checkout: v1.4.1
+    tags:
+      - Category:Cloud
+      - Project:hashicorp/packer
+      - Application:Packer@v1.4.1
+      - Application:OpenStack@newton
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
 
+# son job for mitaka
 - job:
     name: packer-functional-devstack-mitaka
-    parent: init-test
+    parent: packer-functional-devstack
     description: |
-      Test image building functionality of Packer of v1.3.3 against mitaka devstack.
-    run: playbooks/packer-functional-devstack/run.yaml
+      Test image building functionality of master Packer against mitaka branch of OpenStack.
     vars:
       global_env:
         OS_BRANCH: stable/mitaka
-    override-checkout: v1.3.3
     nodeset: ubuntu-trusty
+# grandson job for mitaka
+- job:
+    name: packer-v1.4.1-functional-devstack-mitaka
+    parent: packer-functional-devstack-mitaka
+    description: |
+      Test image building functionality of v1.4.1 Packer against mitaka branch of OpenStack.
+    override-checkout: v1.4.1
+    tags:
+      - Category:Cloud
+      - Project:hashicorp/packer
+      - Application:Packer@v1.4.1
+      - Application:OpenStack@mitaka
+      - OS:ubuntu-trusty
+      - Arch:x86_64
+      - BuildType:Integration test
 
 # docker machine jobs
 - job:
