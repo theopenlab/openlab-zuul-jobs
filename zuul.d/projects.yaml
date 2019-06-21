@@ -22,7 +22,6 @@
 #        - packer-functional-devstack-rocky
 #        - packer-functional-devstack-queens
          # - tensorflow-benchmarks-volcano-k8s-v1.14.0
-         - hive-build-arm64
 
 - project:
     name: huangtianhua/packer
@@ -136,3 +135,9 @@
     check:
       jobs:
         - hbase-master-build-arm
+
+- project:
+    name: liu-sheng/hive
+    check:
+      jobs:
+         - hive-build-arm64
