@@ -628,7 +628,7 @@
       - Application:Kubernetes@release-1.13
       - Application:Docker.io@v18.09.2
       - Application:Etcd@v3.3.10
-      - Application:Go@1.11.5
+      - Application:Go@1.12
       - OS:ubuntu-xenial
       - Arch:x86_64
       - BuildType:Integration test
