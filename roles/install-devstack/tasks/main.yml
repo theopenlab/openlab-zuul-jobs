@@ -39,7 +39,7 @@
       # if enabled octavia in mitaka
       pip install dib-utils
       sleep 3600
-      pip install diskimage-builder>=1.1.2,!=1.6.0,!=1.7.0,!=1.7.1
+      pip install diskimage-builder==2.0.0
     executable: /bin/bash
     chdir: '{{ ansible_user_dir }}/workspace'
   environment: '{{ zuul | zuul_legacy_vars }}'
