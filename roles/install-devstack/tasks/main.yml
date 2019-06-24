@@ -38,7 +38,6 @@
       pip install "reno==2.9.2"
       # if enabled octavia in mitaka
       pip install dib-utils
-      sleep 3600
       pip install diskimage-builder==2.0.0
     executable: /bin/bash
     chdir: '{{ ansible_user_dir }}/workspace'
