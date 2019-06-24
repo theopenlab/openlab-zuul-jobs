@@ -36,6 +36,8 @@
       # Fix issue https://github.com/theopenlab/openlab/issues/79
       apt-get purge --yes python-six python-six-whl python3-six
       pip install "reno==2.9.2"
+      # if enabled octavia in mitaka
+      pip install dib-utils
     executable: /bin/bash
     chdir: '{{ ansible_user_dir }}/workspace'
   environment: '{{ zuul | zuul_legacy_vars }}'
