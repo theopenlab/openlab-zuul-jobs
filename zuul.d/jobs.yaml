@@ -619,7 +619,7 @@
     description: |
       Run Kubernetes E2E Conformance tests against release-1.13 branch of Kubernetes
     vars:
-      go_version: '1.11.5'
+      go_version: '1.12'
       k8s_version: 'release-1.13'
     tags:
       - Category:Cloud
@@ -628,7 +628,7 @@
       - Application:Kubernetes@release-1.13
       - Application:Docker.io@v18.09.2
       - Application:Etcd@v3.3.10
-      - Application:Go@1.11.5
+      - Application:Go@1.12
       - OS:ubuntu-xenial
       - Arch:x86_64
       - BuildType:Integration test
