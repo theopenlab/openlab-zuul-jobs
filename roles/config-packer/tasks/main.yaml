@@ -9,8 +9,7 @@
     cd ../../
     mv liu-sheng hashicorp
     cd hashicorp/packer
-    sleep 72000
-    make dev
+    go install
     packer version
   environment: '{{ global_env }}'
   args:
