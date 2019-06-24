@@ -6,7 +6,7 @@
 - name: Install master of Packer from source
   shell: |
     set -ex
-    make dev
+    go install
     packer version
   environment: '{{ global_env }}'
   args:
