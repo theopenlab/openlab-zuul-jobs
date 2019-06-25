@@ -39,8 +39,8 @@
       # if enabled octavia in mitaka
       pip install dib-utils
       pip install diskimage-builder==2.0.0
-      sed -i '/"elif [[ "$mode" == "override_defaults" ]]; then"/ a\
-                sed -i "s/six>=1.9.0/six>=1.10.0/" /opt/stack/new/octavia/requirements.txt' '/opt/stack/new/devstack/functions-common'
+      sed -i '/"Running gate_hook"/ a\
+                sed -i "s/six>=1.9.0/six>=1.10.0/" /opt/stack/new/octavia/requirements.txt' '{{ ansible_user_dir }}/workspace/devstack-gate/devstack-vm-gate-wrap.sh'
 
     executable: /bin/bash
     chdir: '{{ ansible_user_dir }}/workspace'
