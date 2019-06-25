@@ -33,6 +33,7 @@
         wget -O protobuf-2.5.0-arm64.patch https://www.dropbox.com/s/713wql5cw9dfxhx/protobuf-2.5.0-arm64.patch?dl=0
         tar xfz protobuf-2.5.0.tar.gz
         cd protobuf-2.5.0
+        sleep 720000
         patch -p1 < ../protobuf-2.5.0-arm64.patch
         apt-get install build-essential
         apt-get install automake libtool autoconf
