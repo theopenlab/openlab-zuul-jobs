@@ -22,3 +22,12 @@
   set_fact:
     global_env: '{{ global_env | combine(java_env) }}'
   no_log: yes
+
+- name: Show installed java info
+  shell: |
+    set -ex
+    which javac
+    javac -version
+  args:
+    executable: /bin/bash
+  environment: '{{ global_env }}'

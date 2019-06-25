@@ -2145,6 +2145,13 @@
     name: hbase-build-arm64
     parent: init-test
     description: |
-      Hbase build in openlab cluster.
+      Hbase build in openlab arm instance.
     run: playbooks/hbase-arm-build/run.yaml
     nodeset: ubuntu-xenial-arm64
+    tags:
+      - Category:BigData
+      - Project:apache/hbase
+      - Application:Hbase@latest-release
+      - OS:ubuntu-xenial
+      - Arch:aarch_64
+      - BuildType:Integration test

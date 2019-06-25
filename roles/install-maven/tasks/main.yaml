@@ -1,7 +1,7 @@
 - name: Install Apache Maven {{ maven_version }}
   shell: |
-      wget "https://archive.apache.org/dist/maven/maven-3/{{ maven_version }}/binaries/apache-maven-{{ maven_version }}-bin.tar.gz"
-      tar xzvf apache-maven-{{ maven_version }}-bin.tar.gz
+    wget "https://archive.apache.org/dist/maven/maven-3/{{ maven_version }}/binaries/apache-maven-{{ maven_version }}-bin.tar.gz"
+    tar xzvf apache-maven-{{ maven_version }}-bin.tar.gz
   args:
     executable: /bin/bash
     chdir: '{{ zuul.project.src_dir }}'
@@ -17,3 +17,12 @@
   set_fact:
     global_env: '{{ global_env | combine(maven_env) }}'
   no_log: yes
+
+- name: Show installed maven info
+  shell: |
+    set -ex
+    which mvn
+    mvn --version
+  args:
+    executable: /bin/bash
+  environment: '{{ global_env }}'
