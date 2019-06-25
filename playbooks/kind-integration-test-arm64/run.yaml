@@ -14,10 +14,12 @@
     - name: git required repositories
       shell:
         cmd: |
-          GO111MODULE="on" go get sigs.k8s.io/kind@master
+          GO111MODULE="on" go get sigs.k8s.io/kind@v0.3.0
           go get k8s.io/kubeadm
           go get k8s.io/kubernetes
           go get k8s.io/test-infra/kubetest
+          cd $GOPATH/src/k8s.io/kubernetes
+          git checkout v1.14.3
         executable: /bin/bash
       environment: '{{ global_env }}'
     - name: build KIND against k/k master using bazel
