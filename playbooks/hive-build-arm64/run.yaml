@@ -32,8 +32,7 @@
         # sed -i 's|<protocArtifact>com.google.protobuf:protoc:2.5.0</protocArtifact>|<protocCommand>/usr/bin/protoc</protocCommand>|g' ./standalone-metastore/metastore-server/pom.xml
         # git diff
 
-        sed -i 's|protoc:2.5.0|protoc:2.6.1-build3|g' ./standalone-metastore/metastore-common/pom.xml
-        sed -i 's|protoc:2.5.0|protoc:2.6.1-build3|g' ./standalone-metastore/metastore-server/pom.xml
+        sed -i 's|com.google.protobuf:protoc:2.5.0|com.github.os72:protoc:2.6.1-build3|g' `grep "protoc:2.5.0" -rl ./`
         git diff
         mvn -B -e clean package -Pdist -DskipTests 2>&1 | tee "{{ ansible_user_dir }}/workspace/logs/hive_build.log"
       args:
