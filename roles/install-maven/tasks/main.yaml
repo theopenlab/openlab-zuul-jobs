@@ -1,0 +1,28 @@
+- name: Install Apache Maven {{ maven_version }}
+  shell: |
+    wget "https://www.apache.org/dist/maven/maven-3/{{ maven_version }}/binaries/apache-maven-{{ maven_version }}-bin.tar.gz"
+    tar xzvf apache-maven-{{ maven_version }}-bin.tar.gz
+  args:
+    executable: /bin/bash
+    chdir: '{{ zuul.project.src_dir }}'
+  environment: '{{ global_env }}'
+
+- name: Set maven env vars
+  set_fact:
+    maven_env:
+      PATH: '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/apache-maven-{{ maven_version }}/bin:{{ ansible_env.PATH }}'
+  no_log: yes
+
+- name: Merge maven env vars into global env
+  set_fact:
+    global_env: '{{ global_env | combine(maven_env) }}'
+  no_log: yes
+
+- name: Show installed maven info
+  shell: |
+    set -ex
+    which mvn
+    mvn --version
+  args:
+    executable: /bin/bash
+  environment: '{{ global_env }}'
