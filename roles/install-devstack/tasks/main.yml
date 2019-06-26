@@ -36,12 +36,10 @@
       # Fix issue https://github.com/theopenlab/openlab/issues/79
       apt-get purge --yes python-six python-six-whl python3-six
       pip install "reno==2.9.2"
-      sleep 3600
       # if enabled octavia in mitaka
       pip install dib-utils
       pip install diskimage-builder==2.0.0
-      sed -i '/"Running gate_hook"/ a\
-                sed -i "s/six>=1.9.0/six>=1.10.0/" /opt/stack/new/octavia/requirements.txt' '{{ ansible_user_dir }}/workspace/devstack-gate/devstack-vm-gate-wrap.sh'
+      sed -i '/"Running gate_hook"/a sed -i '\''/"Keystone failed to get token."/a sleep 5400'\'' '\''/opt/stack/new/octavia/plugin.sh'\''' '{{ ansible_user_dir }}/workspace/devstack-gate/devstack-vm-gate-wrap.sh'
 
     executable: /bin/bash
     chdir: '{{ ansible_user_dir }}/workspace'
