@@ -51,7 +51,9 @@
     cmd: |
       set -e
       set -x
-      sleep 5400
+      if [ global_env.OS_BRANCH == 'stable/mitaka' ]; then
+          sleep 5400
+      fi
       export PYTHONUNBUFFERED=true
       export GIT_BASE=https://github.com
       export OVERRIDE_ZUUL_BRANCH='{{ global_env.OS_BRANCH }}'
