@@ -39,7 +39,8 @@
       # if enabled octavia in mitaka
       pip install dib-utils
       pip install diskimage-builder==2.0.0
-      sed -i '/"Running gate_hook"/a sed -i '\''/"Keystone failed to get token."/a sleep 5400'\'' '\''/opt/stack/new/octavia/plugin.sh'\''' '{{ ansible_user_dir }}/workspace/devstack-gate/devstack-vm-gate-wrap.sh'
+      sed -i '/fetch_plugins/ a\
+                sed -i '\''/"Keystone failed to get token."/a sleep 5400'\'' '\''/opt/stack/new/octavia/plugin.sh'\''' '/opt/stack/new/devstack/stack.sh'
     executable: /bin/bash
     chdir: '{{ ansible_user_dir }}/workspace'
   environment: '{{ zuul | zuul_legacy_vars }}'
