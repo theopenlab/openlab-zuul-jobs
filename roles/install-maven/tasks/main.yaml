@@ -1,6 +1,6 @@
 - name: Install Apache Maven {{ maven_version }}
   shell: |
-    wget "https://archive.apache.org/dist/maven/maven-3/{{ maven_version }}/binaries/apache-maven-{{ maven_version }}-bin.tar.gz"
+    wget "https://www.apache.org/dist/maven/maven-3/{{ maven_version }}/binaries/apache-maven-{{ maven_version }}-bin.tar.gz"
     tar xzvf apache-maven-{{ maven_version }}-bin.tar.gz
   args:
     executable: /bin/bash
