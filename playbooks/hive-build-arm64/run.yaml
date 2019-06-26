@@ -1,53 +1,38 @@
 - hosts: all
   become: yes
   roles:
+    - install-openjdk
+    - install-maven
   tasks:
     - name: install required packages
       shell: |
         set -ex
-        apt-get update -y
-
-        # install java
-        apt-get install default-jre -y
-        apt-get install default-jdk -y
-        java_home=$(dirname $(dirname $(update-alternatives --list javac)))
-        echo "export JAVA_HOME=${java_home}" >> ~/.profile
-        echo "export PATH=${java_home}/bin:$PATH" >> ~/.profile
-        source ~/.profile
-
-        # install maven-3
-        wget "https://archive.apache.org/dist/maven/maven-3/3.6.1/binaries/apache-maven-3.6.1-bin.tar.gz"
-        tar xzvf apache-maven-3.6.1-bin.tar.gz
-        new_path=$(realpath apache-maven-3.6.1/bin/):$PATH
-        grep -q 'export PATH=' ~/.profile && sed -i "s|^export PATH=.*$|export PATH=${new_path}|" ~/.profile || echo "export PATH=${new_path}" >> ~/.profile
-        source ~/.profile
-        echo $PATH
-        mvn --version
 
         # install dependencies for protobuf build
-        apt-get install autoconf automake libtool -y
+        # apt-get install autoconf automake libtool -y
         # build protobuf-2.5.0 for ARM64 arch
-        cd /usr/local/src/
-        wget https://github.com/google/protobuf/releases/download/v2.5.0/protobuf-2.5.0.tar.gz
-        # Fix protobuf-2.5.0 building on ARM64
-        wget -O protobuf-2.5.0-arm64.patch https://www.dropbox.com/s/713wql5cw9dfxhx/protobuf-2.5.0-arm64.patch?dl=0
-        tar xfz protobuf-2.5.0.tar.gz
-        cd protobuf-2.5.0
-        patch -p1 < ../protobuf-2.5.0-arm64.patch
-        apt-get install build-essential
-        apt-get install automake libtool autoconf
-        ./autogen.sh
-        ./configure --prefix=/usr
-        make
-        make install
-        ldconfig
-        protoc --version
-
-        cd '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}'
-        sed -i 's|<protocArtifact>com.google.protobuf:protoc:2.5.0</protocArtifact>|<protocCommand>/usr/bin/protoc</protocCommand>|g' ./standalone-metastore/metastore-common/pom.xml
-        sed -i 's|<protocArtifact>com.google.protobuf:protoc:2.5.0</protocArtifact>|<protocCommand>/usr/bin/protoc</protocCommand>|g' ./standalone-metastore/metastore-server/pom.xml
-        git diff
+        # cd /usr/local/src/
+        # wget https://github.com/google/protobuf/releases/download/v2.5.0/protobuf-2.5.0.tar.gz
+        # # Fix protobuf-2.5.0 building on ARM64
+        # wget -O protobuf-2.5.0-arm64.patch https://www.dropbox.com/s/713wql5cw9dfxhx/protobuf-2.5.0-arm64.patch?dl=0
+        # tar xfz protobuf-2.5.0.tar.gz
+        # cd protobuf-2.5.0
+        # patch -p1 < ../protobuf-2.5.0-arm64.patch
+        # apt-get install build-essential
+        # apt-get install automake libtool autoconf
+        # ./autogen.sh
+        # ./configure --prefix=/usr
+        # make
+        # make install
+        # ldconfig
+        # protoc --version
+#
+        # cd '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}'
+        # sed -i 's|<protocArtifact>com.google.protobuf:protoc:2.5.0</protocArtifact>|<protocCommand>/usr/bin/protoc</protocCommand>|g' ./standalone-metastore/metastore-common/pom.xml
+        # sed -i 's|<protocArtifact>com.google.protobuf:protoc:2.5.0</protocArtifact>|<protocCommand>/usr/bin/protoc</protocCommand>|g' ./standalone-metastore/metastore-server/pom.xml
+        # git diff
         mvn -B -e clean package -Pdist -DskipTests 2>&1 | tee "{{ ansible_user_dir }}/workspace/logs/hive_build.log"
       args:
         executable: /bin/bash
-        chdir: '{{ ansible_user_dir }}/workspace'
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
