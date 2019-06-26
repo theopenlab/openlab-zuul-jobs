@@ -1,0 +1,16 @@
+- hosts: all
+  become: yes
+  roles:
+    - install-openjdk
+    - install-maven
+  tasks:
+    - name: Build hbase
+      shell: |
+        set -xeo pipefail
+        apt install protobuf-compiler -y
+        # build begin
+        mvn package -DskipTests | tee "{{ ansible_user_dir }}/workspace/logs/hbase_build.log"
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'

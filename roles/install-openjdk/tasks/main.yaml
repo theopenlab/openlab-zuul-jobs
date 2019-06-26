@@ -5,3 +5,29 @@
       apt-get install openjdk-{{ java_version }}-jdk -y
     executable: /bin/bash
   environment: '{{ global_env }}'
+
+- name: Get host jvm path
+  shell: echo $(dirname $(dirname $(update-alternatives --list javac)))
+  no_log: yes
+  register: real_java_home
+
+- name: Set java env vars
+  set_fact:
+    java_env:
+      JAVA_HOME: "{{ real_java_home.stdout }}"
+      PATH: '{{ real_java_home.stdout }}/bin:{{ ansible_env.PATH }}'
+  no_log: yes
+
+- name: Merge java env vars into global env
+  set_fact:
+    global_env: '{{ global_env | combine(java_env) }}'
+  no_log: yes
+
+- name: Show installed java info
+  shell: |
+    set -ex
+    which javac
+    javac -version
+  args:
+    executable: /bin/bash
+  environment: '{{ global_env }}'
