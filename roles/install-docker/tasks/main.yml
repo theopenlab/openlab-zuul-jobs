@@ -1,0 +1,34 @@
+- name: Install Docker CE {{ docker_version }} using get.docker.com
+  shell:
+    cmd: |
+      set -x
+      set -e
+
+      # Download docker install script
+      # The script worked on multiple OS (Ubuntu, CentOS, SUSE) and Archs (x86_64 and aarch64)
+      # and have consistent docker-ce version, like: 18.06, 18.09
+      curl -fsSL https://get.docker.com -o get-docker.sh
+
+      # Install docker ce.
+      if [[ "{{ docker_version }}" == "latest" ]]; then
+          sh get-docker.sh
+      else
+          VERSION="{{ docker_version }}" sh get-docker.sh
+      fi
+
+      # Stopping firewall and allow all traffic
+      iptables -F
+      iptables -X
+      iptables -t nat -F
+      iptables -t nat -X
+      iptables -t mangle -F
+      iptables -t mangle -X
+      iptables -P INPUT ACCEPT
+      iptables -P FORWARD ACCEPT
+      iptables -P OUTPUT ACCEPT
+
+      # Restart docker.
+      systemctl daemon-reload
+      systemctl restart docker
+
+    executable: /bin/bash
