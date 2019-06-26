@@ -2154,4 +2154,4 @@
       - Application:Hbase@master
       - OS:ubuntu-xenial
       - Arch:aarch64
-      - BuildType:Integration test
+      - BuildType:Compile
