@@ -1984,7 +1984,7 @@
       - Application:Kubernetes@master
       - Application:Docker@latest-release
       - OS:ubuntu-xenial
-      - Arch:Aarch64
+      - Arch:aarch64
       - BuildType:Integration test
 
 - job:
@@ -2151,7 +2151,7 @@
     tags:
       - Category:BigData
       - Project:apache/hbase
-      - Application:Hbase@latest-release
+      - Application:Hbase@master
       - OS:ubuntu-xenial
-      - Arch:aarch_64
+      - Arch:aarch64
       - BuildType:Integration test
