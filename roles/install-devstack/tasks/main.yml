@@ -51,7 +51,7 @@
     cmd: |
       set -e
       set -x
-      if [[ global_env.OS_BRANCH == 'stable/mitaka' ]]; then
+      if [[ {{ global_env.OS_BRANCH }} == 'stable/mitaka' ]]; then
           sleep 5400
       fi
       export PYTHONUNBUFFERED=true
