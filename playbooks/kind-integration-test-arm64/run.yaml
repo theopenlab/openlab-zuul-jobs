@@ -5,10 +5,8 @@
     - role: config-golang
       go_version: 1.12.1
       arch: arm64
-    - role: install-docker-ce
-      arch: arm64
-    #- role: andrewrothstein.bazel
-    #  bazel_ver: '0.23.1'
+    - role: install-docker
+      docker_version: 18.09
 
   tasks:
     - name: git required repositories

@@ -1,23 +1,14 @@
-- name: Disable iptables, install docker, etcd {{ etcd_version }} and kubernetes {{ k8s_version }}
+- name: Install Runtime Docker CE
+  include_role:
+    name: install-docker
+  vars:
+    docker_version: '18.09'
+
+- name: Install etcd {{ etcd_version }} and kubernetes {{ k8s_version }}
   shell:
     cmd: |
       set -x
       set -e
-
-      # Stopping firewall and allow all traffic
-      iptables -F
-      iptables -X
-      iptables -t nat -F
-      iptables -t nat -X
-      iptables -t mangle -F
-      iptables -t mangle -X
-      iptables -P INPUT ACCEPT
-      iptables -P FORWARD ACCEPT
-      iptables -P OUTPUT ACCEPT
-
-      # Install docker
-      apt update -y
-      apt install -y docker.io
 
       # Install etcd
       wget https://github.com/coreos/etcd/releases/download/{{ etcd_version }}/etcd-{{ etcd_version }}-linux-amd64.tar.gz
