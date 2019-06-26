@@ -6,7 +6,7 @@
   tasks:
     - name: install required packages
       shell: |
-        set -ex
+        set -exo pipefail
 
         # install dependencies for protobuf build
         # apt-get install autoconf automake libtool -y
