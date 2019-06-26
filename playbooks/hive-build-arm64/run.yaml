@@ -11,7 +11,7 @@
         # install dependencies for protobuf build
         # apt-get install autoconf automake libtool -y
         # build protobuf-2.5.0 for ARM64 arch
-        # cd /usr/local/src/
+        # pushd /usr/local/src/
         # wget https://github.com/google/protobuf/releases/download/v2.5.0/protobuf-2.5.0.tar.gz
         # # Fix protobuf-2.5.0 building on ARM64
         # wget -O protobuf-2.5.0-arm64.patch https://www.dropbox.com/s/713wql5cw9dfxhx/protobuf-2.5.0-arm64.patch?dl=0
@@ -24,12 +24,17 @@
         # ./configure --prefix=/usr
         # make
         # make install
+        # popd
         # ldconfig
         # protoc --version
 
         # sed -i 's|<protocArtifact>com.google.protobuf:protoc:2.5.0</protocArtifact>|<protocCommand>/usr/bin/protoc</protocCommand>|g' ./standalone-metastore/metastore-common/pom.xml
         # sed -i 's|<protocArtifact>com.google.protobuf:protoc:2.5.0</protocArtifact>|<protocCommand>/usr/bin/protoc</protocCommand>|g' ./standalone-metastore/metastore-server/pom.xml
         # git diff
+
+        sed -i 's|protoc:2.5.0|protoc:2.6.1|g' ./standalone-metastore/metastore-common/pom.xml
+        sed -i 's|protoc:2.5.0|protoc:2.6.1|g' ./standalone-metastore/metastore-server/pom.xml
+        git diff
         mvn -B -e clean package -Pdist -DskipTests 2>&1 | tee "{{ ansible_user_dir }}/workspace/logs/hive_build.log"
       args:
         executable: /bin/bash
