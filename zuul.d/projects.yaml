@@ -144,6 +144,13 @@
         - kind-integration-test-arm64:
             branches: master
 
+- project:
+    name: apache/hive
+    periodic-6/18:
+      jobs:
+        - hive-build-arm64:
+            branches: master
+
 ####################### periodic jobs on 08:00/20:00 ##########################
 - project:
     name: docker/machine

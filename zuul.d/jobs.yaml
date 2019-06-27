@@ -2175,3 +2175,19 @@
       - OS:ubuntu-xenial
       - Arch:aarch64
       - BuildType:Compile
+
+# Hive arm build periodic job
+- job:
+    name: hive-build-arm64
+    parent: init-test
+    description: |
+      Apache Hive build on arm64 server
+    run: playbooks/hive-build-arm64/run.yaml
+    nodeset: ubuntu-xenial-arm64
+    tags:
+      - Category:BigData
+      - Project:apache/hive
+      - Application:Hive@master
+      - OS:ubuntu-xenial
+      - Arch:aarch64
+      - BuildType:Compile
