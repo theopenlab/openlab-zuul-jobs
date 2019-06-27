@@ -290,6 +290,12 @@
     parent: init-test
     description: |
       Run integration tests of Kubernetes IN Docker against ARM64 architecture
+    required-projects:
+      - kubernetes-sigs/kind
+      - kubernetes/kubernetes
+        override-checkout: v1.14.3
+      - kubernetes/kubeadm
+      - kubernetes/test-infra
     run: playbooks/kind-integration-test-arm64/run.yaml
     nodeset: ubuntu-xenial-arm64
 

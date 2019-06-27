@@ -3,47 +3,25 @@
   become: yes
   roles:
     - role: config-golang
-      go_version: 1.12.1
+      go_version: 1.12.6
       arch: arm64
     - role: install-docker-ce
       arch: arm64
-    #- role: andrewrothstein.bazel
-    #  bazel_ver: '0.23.1'
 
   tasks:
-    - name: git required repositories
-      shell:
-        cmd: |
-          GO111MODULE="on" go get sigs.k8s.io/kind@master
-          go get k8s.io/kubeadm
-          go get k8s.io/kubernetes
-          go get k8s.io/test-infra/kubetest
-        executable: /bin/bash
-      environment: '{{ global_env }}'
     - name: build KIND against k/k master using bazel
       shell:
         cmd: |
-          cd $GOPATH/src/sigs.k8s.io/kind && go install .
-          kind build base-image --image kindest/base:latest --source $GOPATH/src/sigs.k8s.io/kind/images/base --loglevel debug
-        executable: /bin/bash
-      environment: '{{ global_env }}'
-
-    - name: run with kubetest
-      shell:
-        cmd: |
-          cd $GOPATH/src/k8s.io/test-infra/kubetest && go install .
-          cd $GOPATH/src/k8s.io/kubernetes && kubetest \
-            --provider=skeleton \
-            --deployment=kind \
-            --kind-binary-version=build \
-            --kind-base-image="kindest/base:latest" \
-            --kind-config-path=./../../k8s.io/kubeadm/tests/e2e/kind/single-cp/single-cp.yaml \
-            --build=bazel \
-            --up \
-            --test \
-            --check-version-skew=false \
-            --down \
-            --test_args="--ginkgo.focus=\[Conformance\] --ginkgo.skip=\[Serial\]|Alpha|Kubectl|\[(Disruptive|Feature:[^\]]+|Flaky)\] --num-nodes=3" \
-            --timeout=240m
+          mkdir -p $GOPATH/src/k8s.io/kubernetes
+          mkdir -p $GOPATH/src/sigs.k8s.io/kind
+          ln -sf '{{ zuul.project.src_dir }}'/kind $GOPATH/src/sigs.k8s.io/kind
+          ln -sf '{{ zuul.project.src_dir }}'/kubernetes $GOPATH/src/k8s.io/kubernetes
+          cd '{{ zuul.project.src_dir }}'/kind && go install .
+          sed -i '/kind build node-image/i\    kind build base-image --image kindest/base:latest --source '{{ zuul.project.src_dir }}'/kind/images/base' \
+            '{{ zuul.project.src_dir }}'/kind/hack/ci/e2e.sh
+          sed 's/kind build node-image/kind build node-image --base-image kindest/base:latest/' '{{ zuul.project.src_dir }}'/kind/hack/ci/e2e.sh
+                    cd '{{ zuul.project.src_dir }}'/test-infra/kubetest && go install .
+          cd '{{ zuul.project.src_dir }}'/kubernetes && bazel build //cmd/kubectl //test/e2e:e2e.test //vendor/github.com/onsi/ginkgo/ginkgo
+          '{{ zuul.project.src_dir }}'/kind/hack/ci/e2e.sh
         executable: /bin/bash
       environment: '{{ global_env }}'
