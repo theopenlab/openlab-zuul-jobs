@@ -103,12 +103,12 @@
       jobs:
         - cloud-provider-openstack-acceptance-test-e2e-conformance:
             branches: master
+        - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.15:
+            branches: release-1.15
         - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.14:
             branches: release-1.14
         - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.13:
             branches: release-1.13
-        - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.12:
-            branches: release-1.12
 
 - project:
     name: envoyproxy/envoy
@@ -142,6 +142,13 @@
     periodic-6/18:
       jobs:
         - kind-integration-test-arm64:
+            branches: master
+
+- project:
+    name: apache/hive
+    periodic-6/18:
+      jobs:
+        - hive-build-arm64:
             branches: master
 
 ####################### periodic jobs on 08:00/20:00 ##########################

@@ -652,6 +652,26 @@
       - OS:ubuntu-xenial
       - Arch:x86_64
       - BuildType:Integration test
+      
+- job:
+    name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.15
+    parent: cloud-provider-openstack-acceptance-test-e2e-conformance
+    description: |
+      Run Kubernetes E2E Conformance tests against release-1.15 branch of Kubernetes
+    vars:
+      go_version: '1.12.1'
+      k8s_version: 'release-1.15'
+    tags:
+      - Category:Cloud
+      - Project:kubernetes/cloud-provider-openstack
+      - Application:cloud-provider-openstack@release-1.15
+      - Application:Kubernetes@release-1.15
+      - Application:Docker.io@v18.09.2
+      - Application:Etcd@v3.3.10
+      - Application:Go@1.12.1
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
 
 - job:
     name: cloud-provider-openstack-acceptance-test-standalone-cinder
@@ -2152,6 +2172,22 @@
       - Category:BigData
       - Project:apache/hbase
       - Application:Hbase@master
+      - OS:ubuntu-xenial
+      - Arch:aarch64
+      - BuildType:Compile
+
+# Hive arm build periodic job
+- job:
+    name: hive-build-arm64
+    parent: init-test
+    description: |
+      Apache Hive build on arm64 server
+    run: playbooks/hive-build-arm64/run.yaml
+    nodeset: ubuntu-xenial-arm64
+    tags:
+      - Category:BigData
+      - Project:apache/hive
+      - Application:Hive@master
       - OS:ubuntu-xenial
       - Arch:aarch64
       - BuildType:Compile
