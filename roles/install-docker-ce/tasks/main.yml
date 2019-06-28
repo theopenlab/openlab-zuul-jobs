@@ -1,4 +1,4 @@
-- name: Install Runtime Docker CE using the repository
+- name: (Deprecated, instead by "install-docker") Install Runtime Docker CE using the repository
   shell:
     cmd: |
       set -x

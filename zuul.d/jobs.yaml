@@ -1346,7 +1346,7 @@
       - Category:Cloud
       - Project:docker/machine
       - Application:Docker Machine@v0.16.1
-      - Application:Docker@latest-release
+      - Application:Docker@18.06
       - Application:Go@1.12.1
       - Application:OpenStack@mitaka
       - OS:ubuntu-trusty
@@ -1374,7 +1374,7 @@
       - Project:docker/machine
       - Application:Docker Machine@v0.16.1
       - Application:OpenStack@newton
-      - Application:Docker@latest-release
+      - Application:Docker@18.06
       - Application:Go@1.12.1
       - OS:ubuntu-xenial
       - Arch:x86_64
@@ -1401,7 +1401,7 @@
       - Project:docker/machine
       - Application:Docker Machine@v0.16.1
       - Application:OpenStack@ocata
-      - Application:Docker@latest-release
+      - Application:Docker@18.06
       - Application:Go@1.12.1
       - OS:ubuntu-xenial
       - Arch:x86_64
@@ -1428,7 +1428,7 @@
       - Project:docker/machine
       - Application:Docker Machine@v0.16.1
       - Application:OpenStack@pike
-      - Application:Docker@latest-release
+      - Application:Docker@18.06
       - Application:Go@1.12.1
       - OS:ubuntu-xenial
       - Arch:x86_64
@@ -1455,7 +1455,7 @@
       - Project:docker/machine
       - Application:Docker Machine@v0.16.1
       - Application:OpenStack@queens
-      - Application:Docker@latest-release
+      - Application:Docker@18.06
       - Application:Go@1.12.1
       - OS:ubuntu-xenial
       - Arch:x86_64
@@ -1482,7 +1482,7 @@
       - Project:docker/machine
       - Application:Docker Machine@v0.16.1
       - Application:OpenStack@rocky
-      - Application:Docker@latest-release
+      - Application:Docker@18.06
       - Application:Go@1.12.1
       - OS:ubuntu-xenial
       - Arch:x86_64
@@ -1509,7 +1509,7 @@
       - Project:docker/machine
       - Application:Docker Machine@v0.16.1
       - Application:OpenStack@stein
-      - Application:Docker@latest-release
+      - Application:Docker@18.06
       - Application:Go@1.12.1
       - OS:ubuntu-xenial
       - Arch:x86_64
