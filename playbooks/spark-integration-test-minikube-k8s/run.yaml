@@ -1,9 +1,8 @@
 - hosts: all
   become: yes
   roles:
-    - role: install-docker-ce
-      docker_ce_version: 18.06
-      docker_vcgroupdriver: "cgroupfs"
+    - role: install-docker
+      docker_version: 18.06
     - create-single-k8s-cluster-with-minikube
   tasks:
     - name: Run integration tests of Spark with k8s cluster manager

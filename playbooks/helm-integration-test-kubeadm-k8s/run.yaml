@@ -1,8 +1,7 @@
 - hosts: all
   become: yes
   roles:
-    - role: create-single-k8s-cluster-with-kubeadm
-      docker_vcgroupdriver: "cgroupfs"
+    - create-single-k8s-cluster-with-kubeadm
   tasks:
     - name: Run integration tests of Helm deployed on k8s cluster
       shell:

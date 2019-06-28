@@ -5,8 +5,8 @@
     - role: config-golang
       go_version: 1.12.6
       arch: arm64
-    - role: install-docker-ce
-      arch: arm64
+    - role: install-docker
+      docker_version: 18.09
 
   tasks:
 
