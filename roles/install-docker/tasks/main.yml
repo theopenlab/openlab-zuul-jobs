@@ -27,8 +27,8 @@
       iptables -P FORWARD ACCEPT
       iptables -P OUTPUT ACCEPT
 
-      # Restart docker.
-      systemctl daemon-reload
-      systemctl restart docker
+      # NOTE: systemctl is not available in Ubuntu 14.04, so use "service"
+      # command for compatibility
+      service docker restart
 
     executable: /bin/bash
