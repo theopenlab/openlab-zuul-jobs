@@ -1,4 +1,0 @@
----
-docker_ce_version: "latest"
-docker_vcgroupdriver: "systemd"
-arch: amd64

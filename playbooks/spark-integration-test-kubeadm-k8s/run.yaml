@@ -11,12 +11,11 @@
     - name: Run integration tests of Spark with k8s cluster manager
       shell: |
         set -ex
-        export KUBECONFIG=/etc/kubernetes/admin.conf
-        export JAVA_HOME=$(dirname $(dirname $(update-alternatives --list javac)))
 
         sed -i -e '/127.0.0.1/ s/\(localhost\)/'$(hostname)' \1/' /etc/hosts
 
         # Create required account in k8s
+        export KUBECONFIG=/etc/kubernetes/admin.conf
         kubectl create serviceaccount spark
         kubectl create clusterrolebinding spark-role --clusterrole=edit --serviceaccount=default:spark --namespace=default
 
@@ -32,3 +31,4 @@
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
