@@ -3,12 +3,6 @@
   include_role:
     name: config-golang
 
-- name: Install Runtime Docker CE
-  include_role:
-    name: install-docker
-  vars:
-    docker_version: '18.06'
-
 - name: Compiled and install docker-machine from source
   shell:
     cmd: |
