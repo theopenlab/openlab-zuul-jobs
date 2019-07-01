@@ -52,86 +52,208 @@
     name: terraform-provider-openstack-unittest
     parent: golang-test
     description: |
-      Run terraform provider openstack unit test
+      Run terraform-provider-openstack unit test
     run: playbooks/terraform-provider-openstack-unittest/run.yaml
     nodeset: ubuntu-xenial-ut
 
+## ========== terraform-provider-openstack + openstack jobs ==============
+
+### parent job
 - job:
     name: terraform-provider-openstack-acceptance-test
     parent: golang-test
     description: |
-      Run terraform provider openstack acceptance test on master branch
+      Run terraform-provider-openstack acceptance test against master OpenStack
     run: playbooks/terraform-provider-openstack-acceptance-test/run.yaml
 
+### son job against stein branch of OpenStack
 - job:
     name: terraform-provider-openstack-acceptance-test-stein
     parent: terraform-provider-openstack-acceptance-test
     description: |
-      Run terraform provider openstack acceptance test on stein branch
+      Run terraform-provider-openstack acceptance test against stein branch of OpenStack
     vars:
       global_env:
         OS_BRANCH: stable/stein
+### grandson job pinned v1.19.0 against stein branch of OpenStack
+- job:
+    name: terraform-provider-openstack-v1.19.0-acceptance-test-stein
+    parent: terraform-provider-openstack-acceptance-test-stein
+    description: |
+      Run terraform-provider-openstack of v1.19.0 acceptance test against stein branch of OpenStack
+    override-checkout: v1.19.0
+    tags:
+      - Category:Cloud
+      - Project:terraform-providers/terraform-provider-openstack
+      - Application:terraform-provider-openstack@v1.19.0
+      - Application:OpenStack@stein
+      - Application:Go@1.12.1
+      - Arch:x86_64
+      - OS:ubuntu-xenial
+      - BuildType:Integration test
 
+### son job against rocky branch of OpenStack
 - job:
     name: terraform-provider-openstack-acceptance-test-rocky
     parent: terraform-provider-openstack-acceptance-test
     description: |
-      Run terraform provider openstack acceptance test on rocky branch
+      Run terraform-provider-openstack acceptance test against rocky branch of OpenStack
     vars:
       global_env:
         OS_BRANCH: stable/rocky
+### grandson job pinned v1.19.0 against rocky branch of OpenStack
+- job:
+    name: terraform-provider-openstack-v1.19.0-acceptance-test-rocky
+    parent: terraform-provider-openstack-acceptance-test-rocky
+    description: |
+      Run terraform-provider-openstack of v1.19.0 acceptance test against rocky branch of OpenStack
+    override-checkout: v1.19.0
+    tags:
+      - Category:Cloud
+      - Project:terraform-providers/terraform-provider-openstack
+      - Application:terraform-provider-openstack@v1.19.0
+      - Application:OpenStack@rocky
+      - Application:Go@1.12.1
+      - Arch:x86_64
+      - OS:ubuntu-xenial
+      - BuildType:Integration test
 
+### son job against queens branch of OpenStack
 - job:
     name: terraform-provider-openstack-acceptance-test-queens
     parent: terraform-provider-openstack-acceptance-test
     description: |
-      Run terraform provider openstack acceptance test on queens branch
+      Run terraform-provider-openstack acceptance test against queens branch of OpenStack
     vars:
       global_env:
         OS_BRANCH: stable/queens
+### grandson job pinned v1.19.0 against queens branch of OpenStack
+- job:
+    name: terraform-provider-openstack-v1.19.0-acceptance-test-queens
+    parent: terraform-provider-openstack-acceptance-test-queens
+    description: |
+      Run terraform-provider-openstack of v1.19.0 acceptance test against queens branch of OpenStack
+    override-checkout: v1.19.0
+    tags:
+      - Category:Cloud
+      - Project:terraform-providers/terraform-provider-openstack
+      - Application:terraform-provider-openstack@v1.19.0
+      - Application:OpenStack@queens
+      - Application:Go@1.12.1
+      - Arch:x86_64
+      - OS:ubuntu-xenial
+      - BuildType:Integration test
 
+### son job against pike branch of OpenStack
 - job:
     name: terraform-provider-openstack-acceptance-test-pike
     parent: terraform-provider-openstack-acceptance-test
     description: |
-      Run terraform provider openstack acceptance test on pike branch
+      Run terraform-provider-openstack acceptance test against pike branch of OpenStack
     vars:
       global_env:
         OS_BRANCH: stable/pike
+### grandson job pinned v1.19.0 against pike branch of OpenStack
+- job:
+    name: terraform-provider-openstack-v1.19.0-acceptance-test-pike
+    parent: terraform-provider-openstack-acceptance-test-pike
+    description: |
+      Run terraform-provider-openstack of v1.19.0 acceptance test against pike branch of OpenStack
+    override-checkout: v1.19.0
+    tags:
+      - Category:Cloud
+      - Project:terraform-providers/terraform-provider-openstack
+      - Application:terraform-provider-openstack@v1.19.0
+      - Application:OpenStack@pike
+      - Application:Go@1.12.1
+      - Arch:x86_64
+      - OS:ubuntu-xenial
+      - BuildType:Integration test
 
+### son job against ocata branch of OpenStack
 - job:
     name: terraform-provider-openstack-acceptance-test-ocata
     parent: terraform-provider-openstack-acceptance-test
     description: |
-      Run terraform provider openstack acceptance test on ocata branch
+      Run terraform-provider-openstack acceptance test against ocata branch of OpenStack
     vars:
       global_env:
         OS_BRANCH: stable/ocata
+### grandson job pinned v1.19.0 against ocata branch of OpenStack
+- job:
+    name: terraform-provider-openstack-v1.19.0-acceptance-test-ocata
+    parent: terraform-provider-openstack-acceptance-test-ocata
+    description: |
+      Run terraform-provider-openstack of v1.19.0 acceptance test against ocata branch of OpenStack
+    override-checkout: v1.19.0
+    tags:
+      - Category:Cloud
+      - Project:terraform-providers/terraform-provider-openstack
+      - Application:terraform-provider-openstack@v1.19.0
+      - Application:OpenStack@ocata
+      - Application:Go@1.12.1
+      - Arch:x86_64
+      - OS:ubuntu-xenial
+      - BuildType:Integration test
 
+### son job against newton branch of OpenStack
 - job:
     name: terraform-provider-openstack-acceptance-test-newton
     parent: terraform-provider-openstack-acceptance-test
     description: |
-      Run terraform provider openstack acceptance test on newton branch
+      Run terraform-provider-openstack acceptance test against newton branch of OpenStack
     vars:
       global_env:
         OS_BRANCH: stable/newton
+### grandson job pinned v1.19.0 against newton branch of OpenStack
+- job:
+    name: terraform-provider-openstack-v1.19.0-acceptance-test-newton
+    parent: terraform-provider-openstack-acceptance-test-newton
+    description: |
+      Run terraform-provider-openstack of v1.19.0 acceptance test against newton branch of OpenStack
+    override-checkout: v1.19.0
+    tags:
+      - Category:Cloud
+      - Project:terraform-providers/terraform-provider-openstack
+      - Application:terraform-provider-openstack@v1.19.0
+      - Application:OpenStack@newton
+      - Application:Go@1.12.1
+      - Arch:x86_64
+      - OS:ubuntu-xenial
+      - BuildType:Integration test
 
+### son job against mitaka branch of OpenStack
 - job:
     name: terraform-provider-openstack-acceptance-test-mitaka
     parent: terraform-provider-openstack-acceptance-test
     description: |
-      Run terraform provider openstack acceptance test on mitaka branch
+      Run terraform-provider-openstack acceptance test against mitaka branch of OpenStack
     vars:
       global_env:
         OS_BRANCH: stable/mitaka
     nodeset: ubuntu-trusty
+### grandson job pinned v1.19.0 against mitaka branch of OpenStack
+- job:
+    name: terraform-provider-openstack-v1.19.0-acceptance-test-mitaka
+    parent: terraform-provider-openstack-acceptance-test-mitaka
+    description: |
+      Run terraform-provider-openstack of v1.19.0 acceptance test against mitaka branch of OpenStack
+    override-checkout: v1.19.0
+    tags:
+      - Category:Cloud
+      - Project:terraform-providers/terraform-provider-openstack
+      - Application:terraform-provider-openstack@v1.19.0
+      - Application:OpenStack@mitaka
+      - Application:Go@1.12.1
+      - Arch:x86_64
+      - OS:ubuntu-xenial
+      - BuildType:Integration test
 
 - job:
     name: terraform-provider-openstack-acceptance-test-designate
     parent: golang-test
     description: |
-      Run terraform provider openstack designate acceptance test on master branch
+      Run terraform-provider-openstack designate acceptance test on master branch
     run: playbooks/terraform-provider-openstack-acceptance-test-designate/run.yaml
 
 - job:
@@ -145,14 +267,14 @@
     name: terraform-provider-openstack-acceptance-test-lbaas
     parent: golang-test
     description: |
-      Run terraform provider openstack lbaas acceptance test on master branch
+      Run terraform-provider-openstack lbaas acceptance test on master branch
     run: playbooks/terraform-provider-openstack-acceptance-test-lbaas/run.yaml
 
 - job:
     name: terraform-provider-openstack-acceptance-test-fwaas
     parent: golang-test
     description: |
-      Run terraform provider openstack fwaas acceptance test on master branch
+      Run terraform-provider-openstack fwaas acceptance test on master branch
     run: playbooks/terraform-provider-openstack-acceptance-test-fwaas/run.yaml
 
 # terraform-provider-openstack acceptance tests with Telefonica cloud
@@ -194,7 +316,7 @@
     vars:
       cloud_name: orange
 
-# terraform-provider-openstack acceptance tests with huawei cloud
+# terraform-provider-openstack acceptance tests with huawei cloud, now the job is disabled
 - job:
     name: terraform-provider-openstack-acceptance-test-huaweicloud
     parent: golang-test
@@ -207,7 +329,7 @@
     vars:
       cloud_name: huaweicloud
 
-# Gophercloud acceptance tests with Telefonica cloud
+# Gophercloud acceptance tests with Telefonica cloud, now the job is disabled
 - job:
     name: gophercloud-acceptance-test-telefonica
     parent: golang-test
@@ -217,7 +339,128 @@
     secrets:
       - telefonica_credentials
 
+## ========== gophercloud + openstack jobs ==============
+## grandson job for stein
+- job:
+    name: gophercloud-v0.1.0-acceptance-test-stein
+    parent: gophercloud-acceptance-test-stein
+    description: |
+      Run gophercloud v0.1.0 acceptance test on stein branch of OpenStack
+    override-checkout: v0.1.0
+    tags:
+      - Category:Cloud
+      - Project:gophercloud/gophercloud
+      - Application:gophercloud@v0.1.0
+      - Application:OpenStack@stein
+      - Application:Go@1.12.1
+      - Arch:x86_64
+      - OS:ubuntu-xenial
+      - BuildType:Integration test
+
+## grandson job for rocky
+- job:
+    name: gophercloud-v0.1.0-acceptance-test-rocky
+    parent: gophercloud-acceptance-test-rocky
+    description: |
+      Run gophercloud v0.1.0 acceptance test on rocky branch of OpenStack
+    override-checkout: v0.1.0
+    tags:
+      - Category:Cloud
+      - Project:gophercloud/gophercloud
+      - Application:gophercloud@v0.1.0
+      - Application:OpenStack@rocky
+      - Application:Go@1.12.1
+      - Arch:x86_64
+      - OS:ubuntu-xenial
+      - BuildType:Integration test
+
+## grandson job for queens
+- job:
+    name: gophercloud-v0.1.0-acceptance-test-queens
+    parent: gophercloud-acceptance-test-queens
+    description: |
+      Run gophercloud v0.1.0 acceptance test on queens branch of OpenStack
+    override-checkout: v0.1.0
+    tags:
+      - Category:Cloud
+      - Project:gophercloud/gophercloud
+      - Application:gophercloud@v0.1.0
+      - Application:OpenStack@queens
+      - Application:Go@1.12.1
+      - Arch:x86_64
+      - OS:ubuntu-xenial
+      - BuildType:Integration test
+
+## grandson job for pike
+- job:
+    name: gophercloud-v0.1.0-acceptance-test-pike
+    parent: gophercloud-acceptance-test-pike
+    description: |
+      Run gophercloud v0.1.0 acceptance test on pike branch of OpenStack
+    override-checkout: v0.1.0
+    tags:
+      - Category:Cloud
+      - Project:gophercloud/gophercloud
+      - Application:gophercloud@v0.1.0
+      - Application:OpenStack@pike
+      - Application:Go@1.12.1
+      - Arch:x86_64
+      - OS:ubuntu-xenial
+      - BuildType:Integration test
+
+## grandson job for ocata
+- job:
+    name: gophercloud-v0.1.0-acceptance-test-ocata
+    parent: gophercloud-acceptance-test-ocata
+    description: |
+      Run gophercloud v0.1.0 acceptance test on ocata branch of OpenStack
+    override-checkout: v0.1.0
+    tags:
+      - Category:Cloud
+      - Project:gophercloud/gophercloud
+      - Application:gophercloud@v0.1.0
+      - Application:OpenStack@ocata
+      - Application:Go@1.12.1
+      - Arch:x86_64
+      - OS:ubuntu-xenial
+      - BuildType:Integration test
+
+## grandson job for newton
+- job:
+    name: gophercloud-v0.1.0-acceptance-test-newton
+    parent: gophercloud-acceptance-test-newton
+    description: |
+      Run gophercloud v0.1.0 acceptance test on newton branch of OpenStack
+    override-checkout: v0.1.0
+    tags:
+      - Category:Cloud
+      - Project:gophercloud/gophercloud
+      - Application:gophercloud@v0.1.0
+      - Application:OpenStack@newton
+      - Application:Go@1.12.1
+      - Arch:x86_64
+      - OS:ubuntu-xenial
+      - BuildType:Integration test
+
+## grandson job for mitaka
+- job:
+    name: gophercloud-v0.1.0-acceptance-test-mitaka
+    parent: gophercloud-acceptance-test-mitaka
+    description: |
+      Run gophercloud v0.1.0 acceptance test on mitaka branch of OpenStack
+    override-checkout: v0.1.0
+    tags:
+      - Category:Cloud
+      - Project:gophercloud/gophercloud
+      - Application:gophercloud@v0.1.0
+      - Application:OpenStack@mitaka
+      - Application:Go@1.12.1
+      - Arch:x86_64
+      - OS:ubuntu-xenial
+      - BuildType:Integration test
+
 # terraform-provider-telefonicaopencloud acceptance tests with Telefonica cloud
+# the job is disabled now
 - job:
     name: terraform-provider-telefonicaopencloud-acceptance-test-telefonica
     parent: golang-test
@@ -228,6 +471,7 @@
       - telefonica_credentials
 
 # terraform-provider-flexibleengine acceptance tests with orange cloud
+# the job is disabled now
 - job:
     name: terraform-provider-flexibleengine-acceptance-test-orange
     parent: golang-test
@@ -238,6 +482,7 @@
       - orange_credentials
 
 # terraform-provider-opentelekomcloud acceptance tests with Open Telekom cloud
+# the job is disabled now
 - job:
     name: terraform-provider-opentelekomcloud-acceptance-test-opentelekomcloud
     parent: golang-test
@@ -352,28 +597,81 @@
     name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.12
     parent: cloud-provider-openstack-acceptance-test-e2e-conformance
     description: |
-      Run Kubernetes E2E Conformance tests against Kubernetes v1.12
+      Run Kubernetes E2E Conformance tests against release-1.12 branch of Kubernetes
     vars:
       go_version: '1.10.8'
       k8s_version: 'release-1.12'
+    tags:
+      - Category:Cloud
+      - Project:kubernetes/cloud-provider-openstack
+      - Application:cloud-provider-openstack@release-1.12
+      - Application:Kubernetes@release-1.12
+      - Application:Docker.io@v18.09
+      - Application:Etcd@v3.3.10
+      - Application:Go@1.10.8
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
 
 - job:
     name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.13
     parent: cloud-provider-openstack-acceptance-test-e2e-conformance
     description: |
-      Run Kubernetes E2E Conformance tests against Kubernetes v1.13
+      Run Kubernetes E2E Conformance tests against release-1.13 branch of Kubernetes
     vars:
-      go_version: '1.11.5'
+      go_version: '1.12'
       k8s_version: 'release-1.13'
+    tags:
+      - Category:Cloud
+      - Project:kubernetes/cloud-provider-openstack
+      - Application:cloud-provider-openstack@release-1.13
+      - Application:Kubernetes@release-1.13
+      - Application:Docker.io@v18.09
+      - Application:Etcd@v3.3.10
+      - Application:Go@1.12
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
 
 - job:
     name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.14
     parent: cloud-provider-openstack-acceptance-test-e2e-conformance
     description: |
-      Run Kubernetes E2E Conformance tests against Kubernetes v1.14
+      Run Kubernetes E2E Conformance tests against release-1.14 branch of Kubernetes
     vars:
       go_version: '1.12.1'
       k8s_version: 'release-1.14'
+    tags:
+      - Category:Cloud
+      - Project:kubernetes/cloud-provider-openstack
+      - Application:cloud-provider-openstack@release-1.14
+      - Application:Kubernetes@release-1.14
+      - Application:Docker.io@v18.09
+      - Application:Etcd@v3.3.10
+      - Application:Go@1.12.1
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
+      
+- job:
+    name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.15
+    parent: cloud-provider-openstack-acceptance-test-e2e-conformance
+    description: |
+      Run Kubernetes E2E Conformance tests against release-1.15 branch of Kubernetes
+    vars:
+      go_version: '1.12.1'
+      k8s_version: 'release-1.15'
+    tags:
+      - Category:Cloud
+      - Project:kubernetes/cloud-provider-openstack
+      - Application:cloud-provider-openstack@release-1.15
+      - Application:Kubernetes@release-1.15
+      - Application:Docker.io@v18.09
+      - Application:Etcd@v3.3.10
+      - Application:Go@1.12.1
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
 
 - job:
     name: cloud-provider-openstack-acceptance-test-standalone-cinder
@@ -446,7 +744,7 @@
     name: openstacksdk-ansible-devel-functional-devstack
     parent: init-test
     description: |
-      Run openstacksdk ansible functional tests against a master devstack using git devel branch version of ansible.
+      Run openstacksdk ansible functional tests against a master OpenStack with devel branch of ansible.
     run: playbooks/ansible-functional-devstack/run.yaml
     required-projects:
       - openstack/openstacksdk
@@ -454,142 +752,196 @@
     vars:
       os_sdk: openstacksdk
 
-- job: # Ansible base job
+# Ansible base job
+- job:
     name: openstacksdk-ansible-functional-devstack
     parent: init-test
     description: |
-      Run openstacksdk ansible functional tests against a master devstack using devel branch version of ansible.
+      Run openstacksdk ansible functional tests against master OpenStack with devel branch of ansible.
     run: playbooks/ansible-functional-devstack/run.yaml
     required-projects:
       - openstack/openstacksdk
     vars:
       os_sdk: openstacksdk
-    tags:
-      - Category:Cloud
-      - Project:ansible/ansible
-      - App:Ansible@devel
-      - App:OpenStack@master
-      - OS:ubuntu-xenial
-      - Arch:x86_64
-      - BuildType:Integration test
 
-- job: # Ansible son job for stein
+# Ansible son job for stein
+- job:
     name: openstacksdk-ansible-functional-devstack-stein
     parent: openstacksdk-ansible-functional-devstack
     description: |
-      Run openstacksdk ansible functional tests against a stein devstack using devel branch version of ansible.
+      Run openstacksdk ansible functional tests against stein OpenStack with devel branch of ansible.
     vars:
       global_env:
         OS_BRANCH: stable/stein
-    tags:
-      - Category:Cloud
-      - Project:ansible/ansible
-      - App:Ansible@devel
-      - App:OpenStack@stein
-      - OS:ubuntu-xenial
-      - Arch:x86_64
-      - BuildType:Integration test
-
-- job: # Ansible grandson job for stein
+# Ansible grandson job for stein
+- job:
     name: openstacksdk-ansible-v2.8.0-functional-devstack-stein
     parent: openstacksdk-ansible-functional-devstack-stein
     description: |
-      Run openstacksdk ansible functional tests against a stein devstack using ansible v2.8.0.
+      Run openstacksdk ansible functional tests against stein OpenStack with ansible v2.8.0.
     override-checkout: v2.8.0 #tag
     tags:
       - Category:Cloud
       - Project:ansible/ansible
-      - App:Ansible@v2.8.0
-      - App:OpenStack@stein
+      - Application:Ansible@v2.8.0
+      - Application:OpenStack@stein
       - OS:ubuntu-xenial
       - Arch:x86_64
       - BuildType:Integration test
 
+# Ansible son job for rocky
 - job:
     name: openstacksdk-ansible-functional-devstack-rocky
-    parent: init-test
+    parent: openstacksdk-ansible-functional-devstack
     description: |
-      Run openstacksdk ansible functional tests against a rocky devstack using git stable-2.7 branch version of ansible.
-    run: playbooks/ansible-functional-devstack/run.yaml
-    required-projects:
-      - openstack/openstacksdk
-    override-checkout: stable-2.7
+      Run openstacksdk ansible functional tests against rocky OpenStack with devel branch of ansible.
     vars:
-      os_sdk: openstacksdk
       global_env:
         OS_BRANCH: stable/rocky
+# Ansible grandson job for rocky
+- job:
+    name: openstacksdk-ansible-v2.8.0-functional-devstack-rocky
+    parent: openstacksdk-ansible-functional-devstack-rocky
+    description: |
+      Run openstacksdk ansible functional tests against rocky OpenStack with ansible v2.8.0.
+    override-checkout: v2.8.0
+    tags:
+      - Category:Cloud
+      - Project:ansible/ansible
+      - Application:Ansible@v2.8.0
+      - Application:OpenStack@rocky
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
 
+# Ansible son job for queens
 - job:
     name: openstacksdk-ansible-functional-devstack-queens
-    parent: init-test
+    parent: openstacksdk-ansible-functional-devstack
     description: |
-      Run openstacksdk ansible functional tests against a queens devstack using git stable-2.7 branch version of ansible.
-    run: playbooks/ansible-functional-devstack/run.yaml
-    required-projects:
-      - openstack/openstacksdk
-    override-checkout: stable-2.7
+      Run openstacksdk ansible functional tests against queens OpenStack with devel branch of ansible.
     vars:
-      os_sdk: openstacksdk
       global_env:
         OS_BRANCH: stable/queens
+# Ansible grandson job for queens
+- job:
+    name: openstacksdk-ansible-v2.8.0-functional-devstack-queens
+    parent: openstacksdk-ansible-functional-devstack-queens
+    description: |
+      Run openstacksdk ansible functional tests against queens OpenStack with ansible v2.8.0.
+    override-checkout: v2.8.0
+    tags:
+      - Category:Cloud
+      - Project:ansible/ansible
+      - Application:Ansible@v2.8.0
+      - Application:OpenStack@queens
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
 
+# Ansible son job for pike
 - job:
     name: openstacksdk-ansible-functional-devstack-pike
-    parent: init-test
+    parent: openstacksdk-ansible-functional-devstack
     description: |
-      Run openstacksdk ansible functional tests against a pike devstack using git stable-2.7 branch version of ansible.
-    run: playbooks/ansible-functional-devstack/run.yaml
-    required-projects:
-      - openstack/openstacksdk
-    override-checkout: stable-2.7
+      Run openstacksdk ansible functional tests against pike OpenStack with devel branch of ansible.
     vars:
-      os_sdk: openstacksdk
       global_env:
         OS_BRANCH: stable/pike
+# Ansible grandson job for pike
+- job:
+    name: openstacksdk-ansible-v2.8.0-functional-devstack-pike
+    parent: openstacksdk-ansible-functional-devstack-pike
+    description: |
+      Run openstacksdk ansible functional tests against pike OpenStack with ansible v2.8.0.
+    override-checkout: v2.8.0
+    tags:
+      - Category:Cloud
+      - Project:ansible/ansible
+      - Application:Ansible@v2.8.0
+      - Application:OpenStack@pike
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
 
+# Ansible son job for ocata
 - job:
     name: openstacksdk-ansible-functional-devstack-ocata
-    parent: init-test
+    parent: openstacksdk-ansible-functional-devstack
     description: |
-      Run openstacksdk ansible functional tests against a ocata devstack using git stable-2.7 branch version of ansible.
-    run: playbooks/ansible-functional-devstack/run.yaml
-    required-projects:
-      - openstack/openstacksdk
-    override-checkout: stable-2.7
+      Run openstacksdk ansible functional tests against ocata OpenStack with devel branch of ansible.
     vars:
-      os_sdk: openstacksdk
       global_env:
         OS_BRANCH: stable/ocata
+# Ansible grandson job for ocata
+- job:
+    name: openstacksdk-ansible-v2.8.0-functional-devstack-ocata
+    parent: openstacksdk-ansible-functional-devstack-ocata
+    description: |
+      Run openstacksdk ansible functional tests against ocata OpenStack with ansible v2.8.0.
+    override-checkout: v2.8.0
+    tags:
+      - Category:Cloud
+      - Project:ansible/ansible
+      - Application:Ansible@v2.8.0
+      - Application:OpenStack@ocata
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
 
+# Ansible son job for newton
 - job:
     name: openstacksdk-ansible-functional-devstack-newton
-    parent: init-test
+    parent: openstacksdk-ansible-functional-devstack
     description: |
-      Run openstacksdk ansible functional tests against a newton devstack using git stable-2.7 branch version of ansible.
-    run: playbooks/ansible-functional-devstack/run.yaml
-    required-projects:
-      - openstack/openstacksdk
-    override-checkout: stable-2.7
+      Run openstacksdk ansible functional tests against newton OpenStack with devel branch of ansible.
     vars:
-      os_sdk: openstacksdk
       global_env:
         OS_BRANCH: stable/newton
+# Ansible grandson job for newton
+- job:
+    name: openstacksdk-ansible-v2.8.0-functional-devstack-newton
+    parent: openstacksdk-ansible-functional-devstack-newton
+    description: |
+      Run openstacksdk ansible functional tests against newton OpenStack with ansible v2.8.0.
+    override-checkout: v2.8.0
+    tags:
+      - Category:Cloud
+      - Project:ansible/ansible
+      - Application:Ansible@v2.8.0
+      - Application:OpenStack@newton
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
 
+# Ansible son job for mitaka
 - job:
     name: openstacksdk-ansible-functional-devstack-mitaka
-    parent: init-test
+    parent: openstacksdk-ansible-functional-devstack
     description: |
-      Run openstacksdk ansible functional tests against a mitaka devstac using git stable-2.7 branch version of ansible.
+      Run openstacksdk ansible functional tests against mitaka OpenStack with devel branch of ansible.
     run: playbooks/ansible-functional-devstack/run.yaml
-    required-projects:
-      - openstack/openstacksdk
-    override-checkout: stable-2.7
     vars:
-      os_sdk: openstacksdk
       global_env:
         OS_BRANCH: stable/mitaka
     nodeset: ubuntu-trusty
+# Ansible grandson job for mitaka
+- job:
+    name: openstacksdk-ansible-v2.8.0-functional-devstack-mitaka
+    parent: openstacksdk-ansible-functional-devstack-mitaka
+    description: |
+      Run openstacksdk ansible functional tests against mitaka OpenStack with ansible v2.8.0.
+    override-checkout: v2.8.0
+    tags:
+      - Category:Cloud
+      - Project:ansible/ansible
+      - Application:Ansible@v2.8.0
+      - Application:OpenStack@mitaka
+      - OS:ubuntu-trusty
+      - Arch:x86_64
+      - BuildType:Integration test
 
+# the job is disabled
 - job:
     name: shade-ansible-functional-devstack
     parent: init-test
@@ -597,11 +949,12 @@
       Run shade ansible functional tests against a master devstack using git stable-2.5 branch version of ansible.
     run: playbooks/ansible-functional-devstack/run.yaml
     required-projects:
-      - openstack-infra/shade
+      - openstack/shade
     override-checkout: stable-2.5
     vars:
       os_sdk: shade
 
+# the job is disabled
 - job:
     name: openstacksdk-ansible-functional-opentelekomcloud
     parent: init-test
@@ -619,6 +972,7 @@
     secrets:
       - opentelekomcloud_credentials
 
+# the job is disabled
 - job:
     name: openstacksdk-ansible-functional-orange
     parent: init-test
@@ -636,6 +990,7 @@
     secrets:
       - orange_credentials
 
+# the job is disabled
 - job:
     name: openstacksdk-ansible-functional-telefonica
     parent: init-test
@@ -653,6 +1008,7 @@
     secrets:
       - telefonica_credentials
 
+# the job is disabled now
 - job:
     name: openstacksdk-ansible-functional-huaweicloud
     parent: init-test
@@ -671,6 +1027,7 @@
       - huaweicloud_credentials
 
 # packer jobs
+# the job is disabled
 - job:
     name: packer-functional-opentelekomcloud
     parent: init-test
@@ -683,6 +1040,7 @@
       - opentelekomcloud_credentials
     override-checkout: v1.3.3
 
+# the job is disabled
 - job:
     name: packer-functional-orange
     parent: init-test
@@ -695,6 +1053,7 @@
       - orange_credentials
     override-checkout: v1.3.3
 
+# the job is disabled
 - job:
     name: packer-functional-telefonica
     parent: init-test
@@ -707,6 +1066,7 @@
       - telefonica_credentials
     override-checkout: v1.3.3
 
+# the job is disabled
 - job:
     name: packer-functional-huaweicloud
     parent: init-test
@@ -719,100 +1079,192 @@
       - huaweicloud_credentials
     override-checkout: v1.3.3
 
-- job:
-    name: packer-master-functional-devstack
-    parent: init-test
-    description: |
-      Test image building functionality of Packer of master against devstack.
-    run: playbooks/packer-functional-devstack/run.yaml
-
+# parent job
 - job:
     name: packer-functional-devstack
     parent: init-test
     description: |
-      Test image building functionality of Packer of v1.3.3 against master devstack.
+      Test image building functionality of master Packer against master OpenStack.
     run: playbooks/packer-functional-devstack/run.yaml
-    override-checkout: v1.3.3
 
+# son job for stein
 - job:
     name: packer-functional-devstack-stein
-    parent: init-test
+    parent: packer-functional-devstack
     description: |
-      Test image building functionality of Packer of v1.3.3 against stein devstack.
-    run: playbooks/packer-functional-devstack/run.yaml
+      Test image building functionality of master Packer against stein branch of OpenStack.
     vars:
       global_env:
         OS_BRANCH: stable/stein
-    override-checkout: v1.3.3
+# grandson job for stein
+- job:
+    name: packer-v1.4.1-functional-devstack-stein
+    parent: packer-functional-devstack-stein
+    description: |
+      Test image building functionality of v1.4.1 Packer against stein branch of OpenStack.
+    override-checkout: v1.4.1
+    tags:
+      - Category:Cloud
+      - Project:hashicorp/packer
+      - Application:Packer@v1.4.1
+      - Application:OpenStack@stein
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
 
+# son job for rocky
 - job:
     name: packer-functional-devstack-rocky
-    parent: init-test
+    parent: packer-functional-devstack
     description: |
-      Test image building functionality of Packer of v1.3.3 against rocky devstack.
-    run: playbooks/packer-functional-devstack/run.yaml
+      Test image building functionality of master Packer against rocky branch of OpenStack.
     vars:
       global_env:
         OS_BRANCH: stable/rocky
-    override-checkout: v1.3.3
+# grandson job for rocky
+- job:
+    name: packer-v1.4.1-functional-devstack-rocky
+    parent: packer-functional-devstack-rocky
+    description: |
+      Test image building functionality of v1.4.1 Packer against rocky branch of OpenStack.
+    override-checkout: v1.4.1
+    tags:
+      - Category:Cloud
+      - Project:hashicorp/packer
+      - Application:Packer@v1.4.1
+      - Application:OpenStack@rocky
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
 
+# son job for queens
 - job:
     name: packer-functional-devstack-queens
-    parent: init-test
+    parent: packer-functional-devstack
     description: |
-      Test image building functionality of Packer of v1.3.3 against queens devstack.
-    run: playbooks/packer-functional-devstack/run.yaml
+      Test image building functionality of master Packer against queens branch of OpenStack.
     vars:
       global_env:
         OS_BRANCH: stable/queens
-    override-checkout: v1.3.3
+# grandson job for queens
+- job:
+    name: packer-v1.4.1-functional-devstack-queens
+    parent: packer-functional-devstack-queens
+    description: |
+      Test image building functionality of v1.4.1 Packer against queens branch of OpenStack.
+    override-checkout: v1.4.1
+    tags:
+      - Category:Cloud
+      - Project:hashicorp/packer
+      - Application:Packer@v1.4.1
+      - Application:OpenStack@queens
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
 
+# son job for pike
 - job:
     name: packer-functional-devstack-pike
-    parent: init-test
+    parent: packer-functional-devstack
     description: |
-      Test image building functionality of Packer of v1.3.3 against pike devstack.
-    run: playbooks/packer-functional-devstack/run.yaml
+      Test image building functionality of master Packer against pike branch of OpenStack.
     vars:
       global_env:
         OS_BRANCH: stable/pike
-    override-checkout: v1.3.3
+# grandson job for pike
+- job:
+    name: packer-v1.4.1-functional-devstack-pike
+    parent: packer-functional-devstack-pike
+    description: |
+      Test image building functionality of v1.4.1 Packer against pike branch of OpenStack.
+    override-checkout: v1.4.1
+    tags:
+      - Category:Cloud
+      - Project:hashicorp/packer
+      - Application:Packer@v1.4.1
+      - Application:OpenStack@pike
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
 
+# son job for ocata
 - job:
     name: packer-functional-devstack-ocata
-    parent: init-test
+    parent: packer-functional-devstack
     description: |
-      Test image building functionality of Packer of v1.3.3 against ocata devstack.
-    run: playbooks/packer-functional-devstack/run.yaml
+      Test image building functionality of master Packer against ocata branch of OpenStack.
     vars:
       global_env:
         OS_BRANCH: stable/ocata
-    override-checkout: v1.3.3
+# grandson job for ocata
+- job:
+    name: packer-v1.4.1-functional-devstack-ocata
+    parent: packer-functional-devstack-ocata
+    description: |
+      Test image building functionality of v1.4.1 Packer against ocata branch of OpenStack.
+    override-checkout: v1.4.1
+    tags:
+      - Category:Cloud
+      - Project:hashicorp/packer
+      - Application:Packer@v1.4.1
+      - Application:OpenStack@ocata
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
 
+# son job for newton
 - job:
     name: packer-functional-devstack-newton
-    parent: init-test
+    parent: packer-functional-devstack
     description: |
-      Test image building functionality of Packer of v1.3.3  against newton devstack.
-    run: playbooks/packer-functional-devstack/run.yaml
+      Test image building functionality of master Packer against newton branch of OpenStack.
     vars:
       global_env:
         OS_BRANCH: stable/newton
-    override-checkout: v1.3.3
+# grandson job for newton
+- job:
+    name: packer-v1.4.1-functional-devstack-newton
+    parent: packer-functional-devstack-newton
+    description: |
+      Test image building functionality of v1.4.1 Packer against newton branch of OpenStack.
+    override-checkout: v1.4.1
+    tags:
+      - Category:Cloud
+      - Project:hashicorp/packer
+      - Application:Packer@v1.4.1
+      - Application:OpenStack@newton
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
 
+# son job for mitaka
 - job:
     name: packer-functional-devstack-mitaka
-    parent: init-test
+    parent: packer-functional-devstack
     description: |
-      Test image building functionality of Packer of v1.3.3 against mitaka devstack.
-    run: playbooks/packer-functional-devstack/run.yaml
+      Test image building functionality of master Packer against mitaka branch of OpenStack.
     vars:
       global_env:
         OS_BRANCH: stable/mitaka
-    override-checkout: v1.3.3
     nodeset: ubuntu-trusty
+# grandson job for mitaka
+- job:
+    name: packer-v1.4.1-functional-devstack-mitaka
+    parent: packer-functional-devstack-mitaka
+    description: |
+      Test image building functionality of v1.4.1 Packer against mitaka branch of OpenStack.
+    override-checkout: v1.4.1
+    tags:
+      - Category:Cloud
+      - Project:hashicorp/packer
+      - Application:Packer@v1.4.1
+      - Application:OpenStack@mitaka
+      - OS:ubuntu-trusty
+      - Arch:x86_64
+      - BuildType:Integration test
 
 # docker machine jobs
+# the job is disabled now
 - job:
     name: docker-machine-functional-opentelekomcloud
     parent: init-test
@@ -825,6 +1277,7 @@
     secrets:
       - opentelekomcloud_credentials
 
+# the job is disabled now
 - job:
     name: docker-machine-functional-orange
     parent: init-test
@@ -837,6 +1290,7 @@
     secrets:
       - orange_credentials
 
+# the job is disabled now
 - job:
     name: docker-machine-functional-telefonica
     parent: init-test
@@ -850,6 +1304,7 @@
     secrets:
       - telefonica_credentials
 
+# the job is disabled now
 - job:
     name: docker-machine-functional-huaweicloud
     parent: init-test
@@ -862,92 +1317,206 @@
     secrets:
       - huaweicloud_credentials
 
+# parent job
 - job:
-    name: docker-machine-functional-devstack-mitaka
+    name: docker-machine-functional-devstack
     parent: init-test
     description: |
-      Test image building functionality of Docker machine of v0.16.1 version against
-      devstack of Mitaka.
+      Test image building functionality of master Docker machine against master OpenStack.
     run: playbooks/docker-machine-functional-devstack/run.yaml
+
+# son jor for mitaka
+- job:
+    name: docker-machine-functional-devstack-mitaka
+    parent: docker-machine-functional-devstack
+    description: |
+      Test image building functionality of master Docker machine against mitaka branch of OpenStack.
     vars:
       global_env:
         OS_BRANCH: stable/mitaka
-    override-checkout: v0.16.1
     nodeset: ubuntu-trusty
+# grandson job for mitaka
+- job:
+    name: docker-machine-v0.16.1-functional-devstack-mitaka
+    parent: docker-machine-functional-devstack-mitaka
+    description: |
+      Test image building functionality of v0.16.1 Docker machine against mitaka branch of OpenStack.
+    override-checkout: v0.16.1
+    tags:
+      - Category:Cloud
+      - Project:docker/machine
+      - Application:Docker Machine@v0.16.1
+      - Application:Docker@18.06
+      - Application:Go@1.12.1
+      - Application:OpenStack@mitaka
+      - OS:ubuntu-trusty
+      - Arch:x86_64
+      - BuildType:Integration test
 
+# son job for newton
 - job:
     name: docker-machine-functional-devstack-newton
-    parent: init-test
+    parent: docker-machine-functional-devstack
     description: |
-      Test image building functionality of Docker machine of v0.16.1 version against
-      devstack of Newton.
-    run: playbooks/docker-machine-functional-devstack/run.yaml
+      Test image building functionality of master Docker machine against newton branch of OpenStack.
     vars:
       global_env:
         OS_BRANCH: stable/newton
+# grandson job for newton
+- job:
+    name: docker-machine-v0.16.1-functional-devstack-newton
+    parent: docker-machine-functional-devstack-newton
+    description: |
+      Test image building functionality of v0.16.1 Docker machine against newton branch of OpenStack.
     override-checkout: v0.16.1
+    tags:
+      - Category:Cloud
+      - Project:docker/machine
+      - Application:Docker Machine@v0.16.1
+      - Application:OpenStack@newton
+      - Application:Docker@18.06
+      - Application:Go@1.12.1
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
 
+# son job for ocata
 - job:
     name: docker-machine-functional-devstack-ocata
-    parent: init-test
+    parent: docker-machine-functional-devstack
     description: |
-      Test image building functionality of Docker machine of v0.16.1 version against
-      devstack of Ocata.
-    run: playbooks/docker-machine-functional-devstack/run.yaml
+      Test image building functionality of master Docker machine against ocata branch of OpenStack.
     vars:
       global_env:
         OS_BRANCH: stable/ocata
+# grandson job for ocata
+- job:
+    name: docker-machine-v0.16.1-functional-devstack-ocata
+    parent: docker-machine-functional-devstack-ocata
+    description: |
+      Test image building functionality of v0.16.1 Docker machine against ocata branch of OpenStack.
     override-checkout: v0.16.1
+    tags:
+      - Category:Cloud
+      - Project:docker/machine
+      - Application:Docker Machine@v0.16.1
+      - Application:OpenStack@ocata
+      - Application:Docker@18.06
+      - Application:Go@1.12.1
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
 
+# son job for pike
 - job:
     name: docker-machine-functional-devstack-pike
-    parent: init-test
+    parent: docker-machine-functional-devstack
     description: |
-      Test image building functionality of Docker machine of v0.16.1 version against
-      devstack of Pike.
-    run: playbooks/docker-machine-functional-devstack/run.yaml
+      Test image building functionality of master Docker machine against pike branch of OpenStack.
     vars:
       global_env:
         OS_BRANCH: stable/pike
+# grandson job for pike
+- job:
+    name: docker-machine-v0.16.1-functional-devstack-pike
+    parent: docker-machine-functional-devstack-pike
+    description: |
+      Test image building functionality of v0.16.1 Docker machine against pike branch of OpenStack.
     override-checkout: v0.16.1
+    tags:
+      - Category:Cloud
+      - Project:docker/machine
+      - Application:Docker Machine@v0.16.1
+      - Application:OpenStack@pike
+      - Application:Docker@18.06
+      - Application:Go@1.12.1
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
 
+# son job for queens
 - job:
     name: docker-machine-functional-devstack-queens
-    parent: init-test
+    parent: docker-machine-functional-devstack
     description: |
-      Test image building functionality of Docker machine of v0.16.1 version against
-      devstack of Queens.
-    run: playbooks/docker-machine-functional-devstack/run.yaml
+      Test image building functionality of master Docker machine against queens branch of OpenStack.
     vars:
       global_env:
         OS_BRANCH: stable/queens
+# grandson job for queens
+- job:
+    name: docker-machine-v0.16.1-functional-devstack-queens
+    parent: docker-machine-functional-devstack-queens
+    description: |
+      Test image building functionality of v0.16.1 Docker machine against queens branch of OpenStack.
     override-checkout: v0.16.1
+    tags:
+      - Category:Cloud
+      - Project:docker/machine
+      - Application:Docker Machine@v0.16.1
+      - Application:OpenStack@queens
+      - Application:Docker@18.06
+      - Application:Go@1.12.1
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
 
+# son job for rocky
 - job:
     name: docker-machine-functional-devstack-rocky
-    parent: init-test
+    parent: docker-machine-functional-devstack
     description: |
-      Test image building functionality of Docker machine of v0.16.1 version against
-      devstack of Rocky.
-    run: playbooks/docker-machine-functional-devstack/run.yaml
+      Test image building functionality of master Docker machine against rocky branch of OpenStack.
     vars:
       global_env:
         OS_BRANCH: stable/rocky
+# grandson job for rocky
+- job:
+    name: docker-machine-v0.16.1-functional-devstack-rocky
+    parent: docker-machine-functional-devstack-rocky
+    description: |
+      Test image building functionality of v0.16.1 Docker machine against rocky branch of OpenStack.
     override-checkout: v0.16.1
+    tags:
+      - Category:Cloud
+      - Project:docker/machine
+      - Application:Docker Machine@v0.16.1
+      - Application:OpenStack@rocky
+      - Application:Docker@18.06
+      - Application:Go@1.12.1
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
 
+# son job for stein
 - job:
     name: docker-machine-functional-devstack-stein
-    parent: init-test
+    parent: docker-machine-functional-devstack
     description: |
-      Test image building functionality of Docker machine of v0.16.1 version against
-      devstack of Stein.
-    run: playbooks/docker-machine-functional-devstack/run.yaml
+      Test image building functionality of master Docker machine against stein branch of OpenStack.
     vars:
       global_env:
         OS_BRANCH: stable/stein
+# grandson job for stein
+- job:
+    name: docker-machine-v0.16.1-functional-devstack-stein
+    parent: docker-machine-functional-devstack-stein
+    description: |
+      Test image building functionality of v0.16.1 Docker machine against stein branch of OpenStack.
     override-checkout: v0.16.1
+    tags:
+      - Category:Cloud
+      - Project:docker/machine
+      - Application:Docker Machine@v0.16.1
+      - Application:OpenStack@stein
+      - Application:Docker@18.06
+      - Application:Go@1.12.1
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
 
 # bosh huaweicloud cpi jobs
+# the jobs are disabled now
 - job:
     name: bosh-huaweicloud-cpi-release-validator-test-huaweicloud
     parent: init-test
@@ -973,6 +1542,86 @@
       - huaweicloud_credentials
     nodeset: ubuntu-xenial-huaweicloud
 
+## ========== bosh-openstack-cpi-release + openstack jobs ==============
+# grandson job for stein
+- job:
+    name: bosh-openstack-cpi-release-v42-acceptance-test-stein
+    parent: bosh-openstack-cpi-release-acceptance-test-stein
+    description: |
+      This job validation tests of v42 bosh-openstack-cpi-release against OpenStack Stein release.
+    override-checkout: v42
+    tags:
+      - Category:Cloud
+      - Project:cloudfoundry/bosh-openstack-cpi-release
+      - Application:Bosh@v42
+      - Application:OpenStack@stein
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
+
+# grandson job for rocky
+- job:
+    name: bosh-openstack-cpi-release-v42-acceptance-test-rocky
+    parent: bosh-openstack-cpi-release-acceptance-test-rocky
+    description: |
+      This job validation tests of v42 bosh-openstack-cpi-release against OpenStack Rocky release.
+    override-checkout: v42
+    tags:
+      - Category:Cloud
+      - Project:cloudfoundry/bosh-openstack-cpi-release
+      - Application:Bosh@v42
+      - Application:OpenStack@rocky
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
+
+# grandson job for queens
+- job:
+    name: bosh-openstack-cpi-release-v42-acceptance-test-queens
+    parent: bosh-openstack-cpi-release-acceptance-test-queens
+    description: |
+      This job validation tests of v42 bosh-openstack-cpi-release against OpenStack Queens release.
+    override-checkout: v42
+    tags:
+      - Category:Cloud
+      - Project:cloudfoundry/bosh-openstack-cpi-release
+      - Application:Bosh@v42
+      - Application:OpenStack@queens
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
+
+# grandson job for pike
+- job:
+    name: bosh-openstack-cpi-release-v42-acceptance-test-pike
+    parent: bosh-openstack-cpi-release-acceptance-test-pike
+    description: |
+      This job validation tests of v42 bosh-openstack-cpi-release against OpenStack Pike release.
+    override-checkout: v42
+    tags:
+      - Category:Cloud
+      - Project:cloudfoundry/bosh-openstack-cpi-release
+      - Application:Bosh@v42
+      - Application:OpenStack@pike
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
+# grandson job for ocata
+- job:
+    name: bosh-openstack-cpi-release-v42-acceptance-test-ocata
+    parent: bosh-openstack-cpi-release-acceptance-test-ocata
+    description: |
+      This job validation tests of v42 bosh-openstack-cpi-release against OpenStack Ocata release.
+    override-checkout: v42
+    tags:
+      - Category:Cloud
+      - Project:cloudfoundry/bosh-openstack-cpi-release
+      - Application:Bosh@v42
+      - Application:OpenStack@ocata
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
+
 # open service broker checker jobs
 - job:
     name: osb-checker-test-huaweicloud
@@ -985,84 +1634,200 @@
     secrets:
       - huaweicloud_credentials
 
+# parent job
 - job:
-    name: manageiq-providers-openstack-test-devstack-master
+    name: manageiq-providers-openstack-test-devstack
     parent: init-test
     description: |
-      This job run tests of manageiq-providers-openstack aganist Devstack of master.
+      This job run tests of manageiq-providers-openstack aganist master OpenStack.
     run: playbooks/manageiq-providers-openstack-test-devstack/run.yaml
+    vars:
+      postgresql_version: 10
 
+# son job for mitaka
 - job:
     name: manageiq-providers-openstack-test-devstack-mitaka
-    parent: init-test
+    parent: manageiq-providers-openstack-test-devstack
     description: |
-      This job run tests of manageiq-providers-openstack aganist devstack of Mitaka.
-    run: playbooks/manageiq-providers-openstack-test-devstack/run.yaml
+      This job run tests of manageiq-providers-openstack aganist mitaka branch of OpenStack.
     vars:
       global_env:
         OS_BRANCH: stable/mitaka
     nodeset: ubuntu-trusty
+# grandson job for mitaka
+- job:
+    name: manageiq-providers-openstack-hammer-6-test-devstack-mitaka
+    parent: manageiq-providers-openstack-test-devstack-mitaka
+    description: |
+      This job run tests of hammer-6 manageiq-providers-openstack aganist mitaka branch of OpenStack.
+    override-checkout: hammer-6
+    tags:
+      - Category:Cloud
+      - Project:manageiq/manageiq-providers-openstack
+      - Application:manageiq-provider-openstack@hammer-6
+      - Application:OpenStack@mitaka
+      - Application:Ruby@v2.3.3
+      - OS:ubuntu-trusty
+      - Arch:x86_64
+      - BuildType:Integration test
 
+# son job for newton
 - job:
     name: manageiq-providers-openstack-test-devstack-newton
-    parent: init-test
+    parent: manageiq-providers-openstack-test-devstack
     description: |
-      This job run tests of manageiq-providers-openstack aganist devstack of Newton.
-    run: playbooks/manageiq-providers-openstack-test-devstack/run.yaml
+      This job run tests of manageiq-providers-openstack aganist newton branch of OpenStack.
     vars:
       global_env:
         OS_BRANCH: stable/newton
+# grandson job for newton
+- job:
+    name: manageiq-providers-openstack-hammer-6-test-devstack-newton
+    parent: manageiq-providers-openstack-test-devstack-newton
+    description: |
+      This job run tests of hammer-6 manageiq-providers-openstack aganist newton branch of OpenStack.
+    override-checkout: hammer-6
+    tags:
+      - Category:Cloud
+      - Project:manageiq/manageiq-providers-openstack
+      - Application:manageiq-providers-openstack@hammer-6
+      - Application:OpenStack@newton
+      - Application:Ruby@v2.3.3
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
 
+# son job for ocata
 - job:
     name: manageiq-providers-openstack-test-devstack-ocata
-    parent: init-test
+    parent: manageiq-providers-openstack-test-devstack
     description: |
-      This job run tests of manageiq-providers-openstack aganist devstack of Ocata.
-    run: playbooks/manageiq-providers-openstack-test-devstack/run.yaml
+      This job run tests of manageiq-providers-openstack aganist ocata branch of OpenStack.
     vars:
       global_env:
         OS_BRANCH: stable/ocata
+# grandson job for ocata
+- job:
+    name: manageiq-providers-openstack-hammer-6-test-devstack-ocata
+    parent: manageiq-providers-openstack-test-devstack-ocata
+    description: |
+      This job run tests of hammer-6 manageiq-providers-openstack aganist ocata branch of OpenStack.
+    override-checkout: hammer-6
+    tags:
+      - Category:Cloud
+      - Project:manageiq/manageiq-providers-openstack
+      - Application:manageiq-providers-openstack@hammer-6
+      - Application:OpenStack@ocata
+      - Application:Ruby@v2.3.3
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
 
+# son job for pike
 - job:
     name: manageiq-providers-openstack-test-devstack-pike
-    parent: init-test
+    parent: manageiq-providers-openstack-test-devstack
     description: |
-      This job run tests of manageiq-providers-openstack aganist devstack of Pike.
-    run: playbooks/manageiq-providers-openstack-test-devstack/run.yaml
+      This job run tests of manageiq-providers-openstack aganist pike branch of OpenStack.
     vars:
       global_env:
         OS_BRANCH: stable/pike
+# grandson job for pike
+- job:
+    name: manageiq-providers-openstack-hammer-6-test-devstack-pike
+    parent: manageiq-providers-openstack-test-devstack-pike
+    description: |
+      This job run tests of hammer-6 manageiq-providers-openstack aganist pike branch of OpenStack.
+    override-checkout: hammer-6
+    tags:
+      - Category:Cloud
+      - Project:manageiq/manageiq-providers-openstack
+      - Application:manageiq-providers-openstack@hammer-6
+      - Application:OpenStack@pike
+      - Application:Ruby@v2.3.3
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
 
+# son job for queens
 - job:
     name: manageiq-providers-openstack-test-devstack-queens
-    parent: init-test
+    parent: manageiq-providers-openstack-test-devstack
     description: |
-      This job run tests of manageiq-providers-openstack aganist devstack of Queens.
-    run: playbooks/manageiq-providers-openstack-test-devstack/run.yaml
+      This job run tests of manageiq-providers-openstack aganist queens branch of OpenStack.
     vars:
       global_env:
         OS_BRANCH: stable/queens
+# grandson job for queens
+- job:
+    name: manageiq-providers-openstack-hammer-6-test-devstack-queens
+    parent: manageiq-providers-openstack-test-devstack-queens
+    description: |
+      This job run tests of hammer-6 manageiq-providers-openstack aganist queens branch of OpenStack.
+    override-checkout: hammer-6
+    tags:
+      - Category:Cloud
+      - Project:manageiq/manageiq-providers-openstack
+      - Application:manageiq-providers-openstack@hammer-6
+      - Application:OpenStack@queens
+      - Application:Ruby@v2.3.3
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
 
+# son job for rocky
 - job:
     name: manageiq-providers-openstack-test-devstack-rocky
-    parent: init-test
+    parent: manageiq-providers-openstack-test-devstack
     description: |
-      This job run tests of manageiq-providers-openstack aganist devstack of Rocky.
-    run: playbooks/manageiq-providers-openstack-test-devstack/run.yaml
+      This job run tests of manageiq-providers-openstack aganist rocky branch of OpenStack.
     vars:
       global_env:
         OS_BRANCH: stable/rocky
+# grandson job for rocky
+- job:
+    name: manageiq-providers-openstack-hammer-6-test-devstack-rocky
+    parent: manageiq-providers-openstack-test-devstack-rocky
+    description: |
+      This job run tests of hammer-6 manageiq-providers-openstack aganist rocky branch of OpenStack.
+    override-checkout: hammer-6
+    tags:
+      - Category:Cloud
+      - Project:manageiq/manageiq-providers-openstack
+      - Application:manageiq-providers-openstack@hammer-6
+      - Application:OpenStack@rocky
+      - Application:Ruby@v2.3.3
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
 
+# son job for stein
 - job:
     name: manageiq-providers-openstack-test-devstack-stein
-    parent: init-test
+    parent: manageiq-providers-openstack-test-devstack
     description: |
-      This job run tests of manageiq-providers-openstack aganist devstack of Stein.
-    run: playbooks/manageiq-providers-openstack-test-devstack/run.yaml
+      This job run tests of manageiq-providers-openstack aganist stein branch of OpenStack.
     vars:
       global_env:
         OS_BRANCH: stable/stein
+# grandson job for stein
+- job:
+    name: manageiq-providers-openstack-hammer-6-test-devstack-stein
+    parent: manageiq-providers-openstack-test-devstack-stein
+    description: |
+      This job run tests of hammer-6 manageiq-providers-openstack aganist stein branch of OpenStack.
+    override-checkout: hammer-6
+    tags:
+      - Category:Cloud
+      - Project:manageiq/manageiq-providers-openstack
+      - Application:manageiq-providers-openstack@hammer-6
+      - Application:OpenStack@stein
+      - Application:Ruby@v2.3.3
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
 
+# the jobs below for manageiq-providers-openstack with public clouds are disabled now
 - job:
     name: manageiq-providers-openstack-test-huaweicloud
     parent: init-test
@@ -1119,6 +1884,7 @@
     secrets:
       - fusioncloud_credentials
 
+# the openshift jobs are disabled now
 - job:
     name: openshift-origin-functional-test-huaweicloud
     parent: init-test
@@ -1176,31 +1942,47 @@
     name: spark-integration-test-kubeadm-k8s-v1.14.0
     parent: init-test
     description: |
-      Run integration tests of spark of master against with v1.14.0 k8s cluster deployed by kubeadm
+      Run integration tests of spark of master against v1.14.0 k8s cluster deployed by kubeadm
     run: playbooks/spark-integration-test-kubeadm-k8s/run.yaml
     post-run: playbooks/spark-integration-test-kubeadm-k8s/post.yaml
     secrets:
-      - openlab_dockerhub
+      - dockerhub
     vars:
       k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
       kubernetes_version: 1.14.0
+    tags:
+      - Category:BigData
+      - Project:apache/spark
+      - Application:Spark@master
+      - Application:Docker@18.06
+      - Application:Kubernetes@v1.14.0
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
 
 - job:
     name: spark-integration-test-minikube-k8s-v1.10.0
     parent: init-test
     description: |
-      Run integration tests of spark of v2.4.0 against with v1.10.0 k8s cluster deployed by v0.30.0 minikube
+      Run integration tests of spark of v2.4.0 against v1.10.0 k8s cluster deployed by v0.30.0 minikube
     run: playbooks/spark-integration-test-minikube-k8s/run.yaml
     post-run: playbooks/spark-integration-test-minikube-k8s/post.yaml
     override-checkout: branch-2.4
-    secrets:
-      - openlab_dockerhub
     vars:
       k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
       # the supported latest version of minikube is v0.30.0, and then the minikube can start
       # k8s in v1.10.0
       minikube_version: v0.30.0
       kubernetes_version: v1.10.0
+    tags:
+      - Category:BigData
+      - Project:apache/spark
+      - Application:Spark@branch-2.4
+      - Application:Docker@18.06
+      - Application:Kubernetes@v1.10.0
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
 
 - job:
     name: kind-integration-test-arm64
@@ -1210,6 +1992,20 @@
     run: playbooks/kind-integration-test-arm64/run.yaml
     post-run: playbooks/kind-integration-test-arm64/post.yaml
     nodeset: ubuntu-xenial-arm64
+    vars:
+      k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
+    secrets:
+      - gcp_account_kind
+    tags:
+      - Category:Cloud
+      - Project:kubernetes-sigs/kind
+      - Application:Kind@master
+      - Application:Go@1.12.1
+      - Application:Kubernetes@master
+      - Application:Docker@18.09
+      - OS:ubuntu-xenial
+      - Arch:aarch64
+      - BuildType:Integration test
 
 - job:
     name: helm-integration-test-kubeadm-k8s-v1.14.0
@@ -1220,6 +2016,15 @@
     vars:
       chart_testing_version: v2.2.0
       kubernetes_version: 1.14.0
+    tags:
+      - Category:Cloud
+      - Project:helm/charts
+      - Application:Helm@v2.12.2
+      - Application:Kubernetes@v1.14.0
+      - Application:Docker@18.06
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
 
 - job:
     name: helm-integration-test-kubeadm-k8s-v1.12.7
@@ -1231,6 +2036,15 @@
       chart_testing_version: v2.2.0
       kubernetes_version: 1.12.7
       docker_ce_version: 18.06
+    tags:
+      - Category:Cloud
+      - Project:helm/charts
+      - Application:Helm@v2.12.2
+      - Application:Kubernetes@v1.12.7
+      - Application:Docker@v18.06
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
 
 - job:
     name: labkeeper-allinone-deployment-test
@@ -1297,3 +2111,83 @@
             - k8s-node-2
             - k8s-node-3
             - k8s-node-4
+    
+# grandson job for stein
+- job:
+    name: rust-openstack-0.2.3-acceptance-stein
+    parent: rust-openstack-acceptance-stein
+    description: |
+      Run rust-openstack of 0.2.3 acceptance test on stein branch of OpenStack
+    override-checkout: 0.2.3
+    tags:
+      - Category:Cloud
+      - Project:dtantsur/rust-openstack
+      - Application:Rust-openstack@0.2.3
+      - Application:OpenStack@stein
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
+    
+# grandson job for rocky
+- job:
+    name: rust-openstack-0.2.3-acceptance-rocky
+    parent: rust-openstack-acceptance-rocky
+    description: |
+      Run rust-openstack of 0.2.3 acceptance test on rocky branch of OpenStack
+    override-checkout: 0.2.3
+    tags:
+      - Category:Cloud
+      - Project:dtantsur/rust-openstack
+      - Application:Rust-openstack@0.2.3
+      - Application:OpenStack@rocky
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
+
+# grandson job for queens
+- job:
+    name: rust-openstack-0.2.3-acceptance-queens
+    parent: rust-openstack-acceptance-queens
+    description: |
+      Run rust-openstack of 0.2.3 acceptance test on queens branch of OpenStack
+    override-checkout: 0.2.3
+    tags:
+      - Category:Cloud
+      - Project:dtantsur/rust-openstack
+      - Application:Rust-openstack@0.2.3
+      - Application:OpenStack@queens
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
+
+# hbase arm build periodic job
+- job:
+    name: hbase-build-arm64
+    parent: init-test
+    description: |
+      Hbase build in openlab arm instance.
+    run: playbooks/hbase-arm-build/run.yaml
+    nodeset: ubuntu-xenial-arm64
+    tags:
+      - Category:BigData
+      - Project:apache/hbase
+      - Application:Hbase@master
+      - OS:ubuntu-xenial
+      - Arch:aarch64
+      - BuildType:Compile
+
+# Hive arm build periodic job
+- job:
+    name: hive-build-arm64
+    parent: init-test
+    description: |
+      Apache Hive build on arm64 server
+    run: playbooks/hive-build-arm64/run.yaml
+    nodeset: ubuntu-xenial-arm64
+    tags:
+      - Category:BigData
+      - Project:apache/hive
+      - Application:Hive@master
+      - OS:ubuntu-xenial
+      - Arch:aarch64
+      - BuildType:Compile

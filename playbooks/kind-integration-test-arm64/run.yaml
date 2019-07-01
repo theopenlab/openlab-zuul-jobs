@@ -3,55 +3,48 @@
   become: yes
   roles:
     - role: config-golang
-      go_version: 1.12.1
+      go_version: 1.12.6
       arch: arm64
-    - role: install-docker-ce
-      arch: arm64
-    #- role: andrewrothstein.bazel
-    #  bazel_ver: '0.23.1'
+    - role: install-docker
+      docker_version: 18.09
 
   tasks:
-    - name: git required repositories
-      shell:
-        cmd: |
-          GO111MODULE="on" go get sigs.k8s.io/kind@master
-          go get k8s.io/kubeadm
-          go get k8s.io/kubernetes
-          go get k8s.io/test-infra/kubetest
-        executable: /bin/bash
-      environment: '{{ global_env }}'
-    - name: build KIND against k/k master using bazel
-      shell:
-        cmd: |
-          # As suggested  in https://github.com/kubernetes-sigs/kind/issues/532
-          # we downloaded KinD's dependancies from go111module as a walkaround,
-          # thus the code is not in the original path, we add a soft link to
-          # it and comment out some of previous code, we can restore it once
-          # the issue has been fixed.
-          mkdir -p $GOPATH/src/sigs.k8s.io/
-          kind_tmp=`ls -d $GOPATH/pkg/mod/sigs.k8s.io/kind*`
-          ln -sf $kind_tmp $GOPATH/src/sigs.k8s.io/kind
-          # cd $GOPATH/src/sigs.k8s.io/kind && go install .
-          kind build base-image --image kindest/base:latest --source $GOPATH/src/sigs.k8s.io/kind/images/base --loglevel debug
-        executable: /bin/bash
-      environment: '{{ global_env }}'
 
-    - name: run with kubetest
+    - name: Create e2e directory for testgrid
+      file:
+        path: '{{ k8s_log_dir }}'
+        state: directory
+
+    - name: Run e2e tests
       shell:
         cmd: |
+          export LOG_DIR='{{ k8s_log_dir }}'
+          # Add a walk-around start time to the e2e.log file to make the
+          # upload step running
+          date +"%b %e %H:%M:%S.999: START " | tee $LOG_DIR/e2e.log
+          go get k8s.io/kubernetes
+          go get k8s.io/kubeadm
+          go get k8s.io/test-infra/kubetest
+          # Install Kind@Master
+          mkdir -p $GOPATH/src/sigs.k8s.io/
+          mv '{{ zuul.project.src_dir }}' $GOPATH/src/sigs.k8s.io/
+          cd $GOPATH/src/sigs.k8s.io/kind && go mod download go.mod
+          # walk-arounds to make e2e.sh be able to run on AArch64, will
+          # be removed once fix has been merged in KinD
+          sed -i \
+            '/kind build node-image/i\    kind build base-image --image kindest/base:latest --source $GOPATH/src/sigs.k8s.io/kind/images/base' \
+            $GOPATH/src/sigs.k8s.io/kind/hack/ci/e2e.sh
+          sed -i \
+            's#kind build node-image#kind build node-image --base-image kindest/base:latest#' \
+            $GOPATH/src/sigs.k8s.io/kind/hack/ci/e2e.sh
+          sed -i \
+            '/export KUBERNETES_CONFORMANCE_TEST/i\    KUBETEST_ARGS="${KUBETEST_ARGS} --dump=$GOPATH/src/k8s.io/kubernetes/_artifacts/"' \
+            $GOPATH/src/sigs.k8s.io/kind/hack/ci/e2e.sh
+          go install .
           cd $GOPATH/src/k8s.io/test-infra/kubetest && go install .
-          cd $GOPATH/src/k8s.io/kubernetes && kubetest \
-            --provider=skeleton \
-            --deployment=kind \
-            --kind-binary-version=build \
-            --kind-base-image="kindest/base:latest" \
-            --kind-config-path=./../../k8s.io/kubeadm/tests/e2e/kind/single-cp/single-cp.yaml \
-            --build=bazel \
-            --up \
-            --test \
-            --check-version-skew=false \
-            --down \
-            --test_args="--ginkgo.focus=\[Conformance\] --ginkgo.skip=\[Serial\]|Alpha|Kubectl|\[(Disruptive|Feature:[^\]]+|Flaky)\] --num-nodes=3" \
-            --timeout=240m
+          # Checkout K8S to v1.14.3 and run tests
+          cd $GOPATH/src/k8s.io/kubernetes && git checkout v1.14.3
+          $GOPATH/src/sigs.k8s.io/kind/hack/ci/e2e.sh | tee -a $LOG_DIR/e2e.log
+          cp -R $GOPATH/src/k8s.io/kubernetes/_artifacts/* $LOG_DIR
         executable: /bin/bash
       environment: '{{ global_env }}'

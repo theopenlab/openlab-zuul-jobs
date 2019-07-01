@@ -1,23 +1,21 @@
 - hosts: all
   become: yes
   roles:
+    - install-openjdk
     - create-single-k8s-cluster-with-kubeadm
   tasks:
     - name: Login dockerhub
-      shell: docker login -u {{openlab_dockerhub.username}} -p {{openlab_dockerhub.password}}
+      shell: docker login -u {{ dockerhub.username }} -p {{ dockerhub.password }}
       no_log: yes
 
     - name: Run integration tests of Spark with k8s cluster manager
       shell: |
         set -ex
-        export KUBECONFIG=/etc/kubernetes/admin.conf
-        # install java8
-        apt-get install openjdk-8-jdk -y
-        export JAVA_HOME=$(dirname $(dirname $(update-alternatives --list javac)))
 
         sed -i -e '/127.0.0.1/ s/\(localhost\)/'$(hostname)' \1/' /etc/hosts
 
         # Create required account in k8s
+        export KUBECONFIG=/etc/kubernetes/admin.conf
         kubectl create serviceaccount spark
         kubectl create clusterrolebinding spark-role --clusterrole=edit --serviceaccount=default:spark --namespace=default
 
@@ -27,9 +25,10 @@
         pushd resource-managers/kubernetes/integration-tests
         dev/dev-run-integration-tests.sh --deploy-mode cloud \
             --spark-master k8s://$(kubectl config view -o jsonpath='{.clusters[0].cluster.server}') \
-            --spark-tgz $(realpath ../../../spark-*.tgz) --image-repo openlabtesting \
+            --spark-tgz $(realpath ../../../spark-*.tgz) --image-repo '{{ dockerhub.username }}' \
             --namespace default --service-account spark --r-image-name spark-r --exclude-tags minikube
         popd
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'

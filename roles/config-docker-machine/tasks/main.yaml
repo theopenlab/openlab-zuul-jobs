@@ -3,15 +3,16 @@
   include_role:
     name: config-golang
 
+- name: Install Runtime Docker CE
+  include_role:
+    name: install-docker
+  vars:
+    docker_version: '18.06'
+
 - name: Compiled and install docker-machine from source
   shell:
     cmd: |
       set -ex
-
-      # Install docker
-      apt-get update
-      apt-get install apt-transport-https ca-certificates -y
-      wget -qO- https://get.docker.com/ | sh
 
       # Build docker-machine
       make build

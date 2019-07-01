@@ -4,7 +4,8 @@
     #NOTES: manageiq-providers-openstack don't support OpenStack version discovery, so enable legacy endpoint format.
     DISABLE_HTTPD_MOD_WSGI: true
   roles:
-    - config-ruby
+    - role: config-ruby
+      ruby_version: '2.4.0'
     - clone-devstack-gate-to-workspace
     - role: create-devstack-local-conf
       enable_services:
@@ -17,11 +18,11 @@
         cmd: |
           set -ex
           apt-get -y install software-properties-common
-          echo "deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main 9.5" >> /etc/apt/sources.list.d/pgdg.list
+          echo "deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main {{ postgresql_version }}" >> /etc/apt/sources.list.d/pgdg.list
           curl -4 -O https://www.postgresql.org/media/keys/ACCC4CF8.asc
           apt-key add ACCC4CF8.asc
           apt-get -o Acquire::ForceIPv4=true update -y
-          apt-get -o Acquire::ForceIPv4=true install postgresql-9.5 -y
+          apt-get -o Acquire::ForceIPv4=true install postgresql-{{ postgresql_version }} -y
           psql --version
           sed -i "/flat_networks/ a flat_networks = public,public_net_0,public_net_1,public_net_2,public_net_3,public_net_4,public_net_5" /etc/neutron/plugins/ml2/ml2_conf.ini
           killall neutron-server
@@ -34,8 +35,12 @@
     - name: Install specifc packages and config Neutron for Ubuntu 16.04
       shell:
         cmd: |
-          set -ex
-          apt-get install -y postgresql
+          # install postgresql, default is version 10
+          echo "deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main" >> /etc/apt/sources.list.d/pgdg.list
+          wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+          sudo apt-get update
+          apt-get install -y postgresql-{{ postgresql_version }} libpq-dev # PostgreSQL Database server and to build 'pg' Gem
+
           sed -i "/flat_networks/ s|public|public,public_net_0,public_net_1,public_net_2,public_net_3,public_net_4,public_net_5|" /etc/neutron/plugins/ml2/ml2_conf.ini
           sed -i "/filter_validation = / a filter_validation = false" /etc/neutron/neutron.conf
           service devstack@neutron-* restart
@@ -64,8 +69,8 @@
           apt-get install -y nodejs
 
           # Configure PostgreSQL
-          grep -q '^local\s' /etc/postgresql/*/main/pg_hba.conf || echo "local all all trust" | sudo tee -a /etc/postgresql/9.5/main/pg_hba.conf
-          sed -i.bak 's/\(^local\s*\w*\s*\w*\s*\)\(peer$\)/\1trust/' /etc/postgresql/*/main/pg_hba.conf
+          grep -q '^local\s' /etc/postgresql/{{ postgresql_version }}/main/pg_hba.conf || echo "local all all trust" | sudo tee -a /etc/postgresql/{{ postgresql_version }}/main/pg_hba.conf
+          sed -i.bak 's/\(^local\s*\w*\s*\w*\s*\)\(peer$\)/\1trust/' /etc/postgresql/{{ postgresql_version }}/main/pg_hba.conf
           service postgresql restart
           su postgres -c "psql -c \"CREATE ROLE root SUPERUSER LOGIN PASSWORD 'smartvm'\""
 
@@ -101,14 +106,17 @@
           ln -s $(readlink -f ../../spec/models/manageiq/providers/openstack) spec/models/manageiq/providers/openstack
           bundle install
           rbenv rehash
-          bundle exec rake db:setup
+          # Reset the db and setup the testdb.
+          bundle exec rake evm:db:reset db:seed
+          bundle exec rake test:vmdb:setup
           bundle exec rails r spec/tools/environment_builders/openstack.rb
           popd
 
-          #NOTES: Only run liberty+ and keystone v3 cases
-          rm spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_havana_errors_spec.rb
-          rm spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_liberty_spec.rb
-          bundle exec rake vcr:rerecord
+          # NOTES: Only run liberty+ and keystone v3 cases
+          # Skip the vcr test
+          # rm spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_havana_errors_spec.rb
+          # rm spec/models/manageiq/providers/openstack/cloud_manager/refresher_rhos_liberty_spec.rb
+          # bundle exec rake vcr:rerecord
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ global_env }}'

@@ -21,24 +21,20 @@
     name: ansible/ansible
     periodic-0/12:
       jobs:
-        - openstacksdk-ansible-functional-devstack:
-            branches: devel
-        - openstacksdk-ansible-functional-devstack-stein:
-            branches: devel
         - openstacksdk-ansible-v2.8.0-functional-devstack-stein:
             branches: devel
-        - openstacksdk-ansible-functional-devstack-rocky:
-            branches: stable-2.7
-        - openstacksdk-ansible-functional-devstack-queens:
-            branches: stable-2.7
-        - openstacksdk-ansible-functional-devstack-pike:
-            branches: stable-2.7
-        - openstacksdk-ansible-functional-devstack-ocata:
-            branches: stable-2.7
-        - openstacksdk-ansible-functional-devstack-newton:
-            branches: stable-2.7
-        - openstacksdk-ansible-functional-devstack-mitaka:
-            branches: stable-2.7
+        - openstacksdk-ansible-v2.8.0-functional-devstack-rocky:
+            branches: devel
+        - openstacksdk-ansible-v2.8.0-functional-devstack-queens:
+            branches: devel
+        - openstacksdk-ansible-v2.8.0-functional-devstack-pike:
+            branches: devel
+        - openstacksdk-ansible-v2.8.0-functional-devstack-ocata:
+            branches: devel
+        - openstacksdk-ansible-v2.8.0-functional-devstack-newton:
+            branches: devel
+        - openstacksdk-ansible-v2.8.0-functional-devstack-mitaka:
+            branches: devel
 
 - project:
     name: apache/spark
@@ -54,19 +50,19 @@
     name: terraform-providers/terraform-provider-openstack
     periodic-2/14:
       jobs:
-        - terraform-provider-openstack-acceptance-test-stein:
+        - terraform-provider-openstack-v1.19.0-acceptance-test-stein:
             branches: master
-        - terraform-provider-openstack-acceptance-test-rocky:
+        - terraform-provider-openstack-v1.19.0-acceptance-test-rocky:
             branches: master
-        - terraform-provider-openstack-acceptance-test-queens:
+        - terraform-provider-openstack-v1.19.0-acceptance-test-queens:
             branches: master
-        - terraform-provider-openstack-acceptance-test-pike:
+        - terraform-provider-openstack-v1.19.0-acceptance-test-pike:
             branches: master
-        - terraform-provider-openstack-acceptance-test-ocata:
+        - terraform-provider-openstack-v1.19.0-acceptance-test-ocata:
             branches: master
-        - terraform-provider-openstack-acceptance-test-newton:
+        - terraform-provider-openstack-v1.19.0-acceptance-test-newton:
             branches: master
-        - terraform-provider-openstack-acceptance-test-mitaka:
+        - terraform-provider-openstack-v1.19.0-acceptance-test-mitaka:
             branches: master
 
 - project:
@@ -90,17 +86,15 @@
     name: cloudfoundry/bosh-openstack-cpi-release
     periodic-4/16:
       jobs:
-        - bosh-openstack-cpi-release-acceptance-test:
+        - bosh-openstack-cpi-release-v42-acceptance-test-stein:
             branches: master
-        - bosh-openstack-cpi-release-acceptance-test-stein:
+        - bosh-openstack-cpi-release-v42-acceptance-test-rocky:
             branches: master
-        - bosh-openstack-cpi-release-acceptance-test-rocky:
+        - bosh-openstack-cpi-release-v42-acceptance-test-queens:
             branches: master
-        - bosh-openstack-cpi-release-acceptance-test-queens:
+        - bosh-openstack-cpi-release-v42-acceptance-test-pike:
             branches: master
-        - bosh-openstack-cpi-release-acceptance-test-pike:
-            branches: master
-        - bosh-openstack-cpi-release-acceptance-test-ocata:
+        - bosh-openstack-cpi-release-v42-acceptance-test-ocata:
             branches: master
 
 - project:
@@ -109,12 +103,12 @@
       jobs:
         - cloud-provider-openstack-acceptance-test-e2e-conformance:
             branches: master
+        - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.15:
+            branches: release-1.15
         - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.14:
             branches: release-1.14
         - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.13:
             branches: release-1.13
-        - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.12:
-            branches: release-1.12
 
 - project:
     name: envoyproxy/envoy
@@ -128,23 +122,19 @@
     name: hashicorp/packer
     periodic-6/18:
       jobs:
-        - packer-functional-devstack:
+        - packer-v1.4.1-functional-devstack-stein:
             branches: master
-        - packer-functional-devstack-stein:
+        - packer-v1.4.1-functional-devstack-rocky:
             branches: master
-        - packer-functional-devstack-rocky:
+        - packer-v1.4.1-functional-devstack-queens:
             branches: master
-        - packer-functional-devstack-queens:
+        - packer-v1.4.1-functional-devstack-pike:
             branches: master
-        - packer-functional-devstack-pike:
+        - packer-v1.4.1-functional-devstack-ocata:
             branches: master
-        - packer-functional-devstack-ocata:
+        - packer-v1.4.1-functional-devstack-newton:
             branches: master
-        - packer-functional-devstack-newton:
-            branches: master
-        - packer-functional-devstack-mitaka:
-            branches: master
-        - packer-master-functional-devstack:
+        - packer-v1.4.1-functional-devstack-mitaka:
             branches: master
 
 - project:
@@ -154,45 +144,50 @@
         - kind-integration-test-arm64:
             branches: master
 
+- project:
+    name: apache/hive
+    periodic-6/18:
+      jobs:
+        - hive-build-arm64:
+            branches: master
+
 ####################### periodic jobs on 08:00/20:00 ##########################
 - project:
     name: docker/machine
     periodic-8/20:
       jobs:
-        - docker-machine-functional-devstack-stein:
+        - docker-machine-v0.16.1-functional-devstack-stein:
             branches: master
-        - docker-machine-functional-devstack-rocky:
+        - docker-machine-v0.16.1-functional-devstack-rocky:
             branches: master
-        - docker-machine-functional-devstack-queens:
+        - docker-machine-v0.16.1-functional-devstack-queens:
             branches: master
-        - docker-machine-functional-devstack-pike:
+        - docker-machine-v0.16.1-functional-devstack-pike:
             branches: master
-        - docker-machine-functional-devstack-ocata:
+        - docker-machine-v0.16.1-functional-devstack-ocata:
             branches: master
-        - docker-machine-functional-devstack-newton:
+        - docker-machine-v0.16.1-functional-devstack-newton:
             branches: master
-        - docker-machine-functional-devstack-mitaka:
+        - docker-machine-v0.16.1-functional-devstack-mitaka:
             branches: master
 
 - project:
     name: gophercloud/gophercloud
     periodic-8/20:
       jobs:
-        - gophercloud-acceptance-test:
+        - gophercloud-v0.1.0-acceptance-test-stein:
             branches: master
-        - gophercloud-acceptance-test-stein:
+        - gophercloud-v0.1.0-acceptance-test-rocky:
             branches: master
-        - gophercloud-acceptance-test-rocky:
+        - gophercloud-v0.1.0-acceptance-test-queens:
             branches: master
-        - gophercloud-acceptance-test-queens:
+        - gophercloud-v0.1.0-acceptance-test-pike:
             branches: master
-        - gophercloud-acceptance-test-pike:
+        - gophercloud-v0.1.0-acceptance-test-ocata:
             branches: master
-        - gophercloud-acceptance-test-ocata:
+        - gophercloud-v0.1.0-acceptance-test-newton:
             branches: master
-        - gophercloud-acceptance-test-newton:
-            branches: master
-        - gophercloud-acceptance-test-mitaka:
+        - gophercloud-v0.1.0-acceptance-test-mitaka:
             branches: master
 
 ####################### periodic jobs on 10:00/22:00 ##########################
@@ -207,30 +202,35 @@
     name: manageiq/manageiq-providers-openstack
     periodic-10/22:
       jobs:
-        - manageiq-providers-openstack-test-devstack-master:
+        - manageiq-providers-openstack-hammer-6-test-devstack-stein:
             branches: master
-        - manageiq-providers-openstack-test-devstack-stein:
+        - manageiq-providers-openstack-hammer-6-test-devstack-rocky:
             branches: master
-        - manageiq-providers-openstack-test-devstack-rocky:
+        - manageiq-providers-openstack-hammer-6-test-devstack-queens:
             branches: master
-        - manageiq-providers-openstack-test-devstack-queens:
+        - manageiq-providers-openstack-hammer-6-test-devstack-pike:
             branches: master
-        - manageiq-providers-openstack-test-devstack-pike:
+        - manageiq-providers-openstack-hammer-6-test-devstack-ocata:
             branches: master
-        - manageiq-providers-openstack-test-devstack-ocata:
+        - manageiq-providers-openstack-hammer-6-test-devstack-newton:
             branches: master
-        - manageiq-providers-openstack-test-devstack-newton:
-            branches: master
-        - manageiq-providers-openstack-test-devstack-mitaka:
+        - manageiq-providers-openstack-hammer-6-test-devstack-mitaka:
             branches: master
 
 - project:
     name: dtantsur/rust-openstack
     periodic-10/22:
       jobs:
-        - rust-openstack-acceptance-stein:
+        - rust-openstack-0.2.3-acceptance-stein:
             branches: master
-        - rust-openstack-acceptance-rocky:
+        - rust-openstack-0.2.3-acceptance-rocky:
             branches: master
-        - rust-openstack-acceptance-queens:
+        - rust-openstack-0.2.3-acceptance-queens:
+            branches: master
+
+- project:
+    name: apache/hbase
+    periodic-10/22:
+      jobs:
+        - hbase-build-arm64:
             branches: master
