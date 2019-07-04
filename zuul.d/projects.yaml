@@ -190,6 +190,13 @@
         - gophercloud-v0.1.0-acceptance-test-mitaka:
             branches: master
 
+- project:
+    name: apache/hadoop
+    periodic-6/18:
+      jobs:
+        - hadoop-build-arm64:
+            branches: master
+
 ####################### periodic jobs on 10:00/22:00 ##########################
 - project:
     name: kubernetes-sigs/cluster-api-provider-openstack
