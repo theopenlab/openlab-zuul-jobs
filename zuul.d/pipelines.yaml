@@ -21,6 +21,7 @@
       github:
         status: pending
         comment: false
+        status-url: https://status.openlabtesting.org/status
     success:
       github:
         status: 'success'
@@ -77,6 +78,7 @@
       github:
         status: pending
         comment: false
+        status-url: https://status.openlabtesting.org/status
     success:
       github:
         status: 'success'
@@ -101,6 +103,7 @@
       github:
         status: pending
         comment: false
+        status-url: https://status.openlabtesting.org/status
     success:
       github:
         status: 'success'
@@ -125,6 +128,7 @@
       github:
         status: pending
         comment: false
+        status-url: https://status.openlabtesting.org/status
     success:
       github:
         status: 'success'
@@ -149,6 +153,7 @@
       github:
         status: pending
         comment: false
+        status-url: https://status.openlabtesting.org/status
     success:
       github:
         status: 'success'
@@ -173,6 +178,7 @@
       github:
         status: pending
         comment: false
+        status-url: https://status.openlabtesting.org/status
     success:
       github:
         status: 'success'
@@ -197,6 +203,7 @@
       github:
         status: pending
         comment: false
+        status-url: https://status.openlabtesting.org/status
     success:
       github:
         status: 'success'
@@ -221,6 +228,7 @@
       github:
         status: pending
         comment: false
+        status-url: https://status.openlabtesting.org/status
     success:
       github:
         status: 'success'
@@ -346,6 +354,7 @@
       github:
         status: pending
         comment: false
+        status-url: https://status.openlabtesting.org/status
     success:
       github:
         status: 'success'
@@ -370,6 +379,7 @@
       github:
         status: pending
         comment: false
+        status-url: https://status.openlabtesting.org/status
     success:
       github:
         status: 'success'
@@ -394,6 +404,7 @@
       github:
         status: pending
         comment: false
+        status-url: https://status.openlabtesting.org/status
     success:
       github:
         status: 'success'
@@ -418,6 +429,7 @@
       github:
         status: pending
         comment: false
+        status-url: https://status.openlabtesting.org/status
     success:
       github:
         status: 'success'
@@ -442,6 +454,7 @@
       github:
         status: pending
         comment: false
+        status-url: https://status.openlabtesting.org/status
     success:
       github:
         status: 'success'
@@ -478,6 +491,7 @@
       github:
         status: pending
         comment: false
+        status-url: https://status.openlabtesting.org/status
     success:
       github:
         status: 'success'
@@ -514,6 +528,7 @@
       github:
         status: pending
         comment: false
+        status-url: https://status.openlabtesting.org/status
     success:
       github:
         status: 'success'
@@ -550,6 +565,7 @@
       github:
         status: pending
         comment: false
+        status-url: https://status.openlabtesting.org/status
     success:
       github:
         status: 'success'
@@ -586,6 +602,7 @@
       github:
         status: pending
         comment: false
+        status-url: https://status.openlabtesting.org/status
     success:
       github:
         status: 'success'
@@ -622,6 +639,7 @@
       github:
         status: pending
         comment: false
+        status-url: https://status.openlabtesting.org/status
     success:
       github:
         status: 'success'
@@ -658,6 +676,7 @@
       github:
         status: pending
         comment: false
+        status-url: https://status.openlabtesting.org/status
     success:
       github:
         status: 'success'
@@ -694,6 +713,7 @@
       github:
         status: pending
         comment: false
+        status-url: https://status.openlabtesting.org/status
     success:
       github:
         status: 'success'
@@ -730,6 +750,7 @@
       github:
         status: pending
         comment: false
+        status-url: https://status.openlabtesting.org/status
     success:
       github:
         status: 'success'
@@ -766,6 +787,7 @@
       github:
         status: pending
         comment: false
+        status-url: https://status.openlabtesting.org/status
     success:
       github:
         status: 'success'
@@ -802,6 +824,7 @@
       github:
         status: pending
         comment: false
+        status-url: https://status.openlabtesting.org/status
     success:
       github:
         status: 'success'
@@ -838,6 +861,7 @@
       github:
         status: pending
         comment: false
+        status-url: https://status.openlabtesting.org/status
     success:
       github:
         status: 'success'
@@ -874,6 +898,7 @@
       github:
         status: pending
         comment: false
+        status-url: https://status.openlabtesting.org/status
     success:
       github:
         status: 'success'
@@ -910,6 +935,7 @@
       github:
         status: pending
         comment: false
+        status-url: https://status.openlabtesting.org/status
     success:
       github:
         status: 'success'
@@ -946,6 +972,7 @@
       github:
         status: pending
         comment: false
+        status-url: https://status.openlabtesting.org/status
     success:
       github:
         status: 'success'
@@ -982,6 +1009,7 @@
       github:
         status: pending
         comment: false
+        status-url: https://status.openlabtesting.org/status
     success:
       github:
         status: 'success'
@@ -1018,6 +1046,7 @@
       github:
         status: pending
         comment: false
+        status-url: https://status.openlabtesting.org/status
     success:
       github:
         status: 'success'
