@@ -192,7 +192,7 @@
 
 - project:
     name: apache/hadoop
-    periodic-6/18:
+    periodic-8/20:
       jobs:
         - hadoop-build-arm64:
             branches: master
