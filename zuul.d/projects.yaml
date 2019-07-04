@@ -195,7 +195,7 @@
     periodic-8/20:
       jobs:
         - hadoop-build-arm64:
-            branches: master
+            branches: trunk
 
 ####################### periodic jobs on 10:00/22:00 ##########################
 - project:
