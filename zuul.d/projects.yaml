@@ -44,6 +44,8 @@
             branches: master
         - spark-integration-test-minikube-k8s-v1.13.3:
             branches: master
+        - spark-master-unit-test-hadoop-2.7-arm64:
+            branches: master
 
 ####################### periodic jobs on 02:00/14:00 ##########################
 - project:
