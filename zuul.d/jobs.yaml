@@ -2162,11 +2162,11 @@
 
 # hbase arm build periodic job
 - job:
-    name: hbase-build-arm64
+    name: hbase-build-aarch64
     parent: init-test
     description: |
-      Hbase build in openlab arm instance.
-    run: playbooks/hbase-arm-build/run.yaml
+      Hbase build in openlab aarch64 instance.
+    run: playbooks/hbase-build-aarch64/run.yaml
     nodeset: ubuntu-xenial-arm64
     tags:
       - Category:BigData
@@ -2178,11 +2178,11 @@
 
 # Hive arm build periodic job
 - job:
-    name: hive-build-arm64
+    name: hive-build-aarch64
     parent: init-test
     description: |
-      Apache Hive build on arm64 server
-    run: playbooks/hive-build-arm64/run.yaml
+      Apache Hive build on aarch64 server
+    run: playbooks/hive-build-aarch64/run.yaml
     nodeset: ubuntu-xenial-arm64
     tags:
       - Category:BigData
