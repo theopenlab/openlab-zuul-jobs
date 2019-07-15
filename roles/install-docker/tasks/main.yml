@@ -5,7 +5,7 @@
       set -e
 
       # Download docker install script
-      # The script worked on multiple OS (Ubuntu, CentOS, SUSE) and Archs (x86_64 and aarch64)
+      # The script worked on multiple OS (Ubuntu, CentOS, SUSE) and Archs (x86_64 and arm64)
       # and have consistent docker-ce version, like: 18.06, 18.09
       curl -fsSL https://get.docker.com -o get-docker.sh
 

@@ -2004,7 +2004,7 @@
       - Application:Kubernetes@master
       - Application:Docker@18.09
       - OS:ubuntu-xenial
-      - Arch:aarch64
+      - Arch:arm64
       - BuildType:Integration test
 
 - job:
@@ -2173,7 +2173,7 @@
       - Project:apache/hbase
       - Application:Hbase@master
       - OS:ubuntu-xenial
-      - Arch:aarch64
+      - Arch:arm64
       - BuildType:Compile
 
 # Hive arm build periodic job
@@ -2189,5 +2189,5 @@
       - Project:apache/hive
       - Application:Hive@master
       - OS:ubuntu-xenial
-      - Arch:aarch64
+      - Arch:arm64
       - BuildType:Compile
