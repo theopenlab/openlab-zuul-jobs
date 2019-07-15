@@ -2165,7 +2165,7 @@
     name: hbase-build-aarch64
     parent: init-test
     description: |
-      Hbase build in openlab aarch64 instance.
+      Apache HBase build on aarch64 server
     run: playbooks/hbase-build-aarch64/run.yaml
     nodeset: ubuntu-xenial-arm64
     tags:
