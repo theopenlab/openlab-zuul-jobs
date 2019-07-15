@@ -2192,7 +2192,7 @@
       - Arch:aarch64
       - BuildType:Compile
 
-# Hadoop arm build periodic job
+# Hadoop arm64 build periodic job
 - job:
     name: hadoop-build-arm64
     parent: init-test
