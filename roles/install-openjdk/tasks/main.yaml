@@ -8,7 +8,6 @@
 
 - name: Get host jvm path
   shell: echo $(dirname $(dirname $(update-alternatives --list javac)))
-  no_log: yes
   register: real_java_home
 
 - name: Set java env vars
