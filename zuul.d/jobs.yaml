@@ -2092,25 +2092,7 @@
       volcano_version: release-0.1
       run_kubeflow_tfbenchmarks: true
       run_volcano_tfbenchmarks: true
-    nodeset:
-      nodes:
-        - name: k8s-master
-          label: ubuntu-xenial-tf
-        - name: k8s-node-1
-          label: ubuntu-xenial-tf
-        - name: k8s-node-2
-          label: ubuntu-xenial-tf
-        - name: k8s-node-3
-          label: ubuntu-xenial-tf
-        - name: k8s-node-4
-          label: ubuntu-xenial-tf
-      groups:
-        - name: k8s-nodes
-          nodes:
-            - k8s-node-1
-            - k8s-node-2
-            - k8s-node-3
-            - k8s-node-4
+    nodeset: ubuntu-xenial-k8s-tf
     
 # grandson job for stein
 - job:
