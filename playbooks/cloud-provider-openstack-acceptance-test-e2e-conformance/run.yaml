@@ -116,11 +116,12 @@
           # Must run kubetest under kubernetes root directory
           cd '{{ k8s_src_dir }}'
           
+          #temproary change to solve memory issue
           make WHAT="test/e2e/e2e.test vendor/github.com/onsi/ginkgo/ginkgo cmd/kubectl"
 
           # Clean up the pre-built result folder in `install-k8s` role.
           # Otherwise, kubetest will fail due to some unknow conflicts.
-          rm -rf _output/
+          # rm -rf _output/
 
           kubetest --dump=$LOG_DIR \
               --test \
