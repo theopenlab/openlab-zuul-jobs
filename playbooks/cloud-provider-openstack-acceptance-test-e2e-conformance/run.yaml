@@ -116,7 +116,7 @@
           # Run e2e test using local deployment/provider
           # Must run kubetest under kubernetes root directory
           cd '{{ k8s_src_dir }}'
-          
+
           # temproary change to solve memory issue
           make WHAT="test/e2e/e2e.test vendor/github.com/onsi/ginkgo/ginkgo cmd/kubectl"
 
