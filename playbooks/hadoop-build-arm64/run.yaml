@@ -14,7 +14,7 @@
   # Step3 - Download the pre-built ARM64 version of protoc-gen-grpc-java-1.15.1 and put it in the local
   #         maven repo, then try to build agai, this try will success. The log of this try will be saved
   #         to hadoop_build_patch_protobuf_and_grpc.log.
-    - name: Step 1: Try to build Hadoop according to https://github.com/apache/hadoop/blob/trunk/BUILDING.txt
+    - name: Step 1 Try to build Hadoop according to https://github.com/apache/hadoop/blob/trunk/BUILDING.txt
       shell: |
         set -exo pipefail
         apt-get update
@@ -25,7 +25,7 @@
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ global_env }}'
-    - name: Step 2: Patch protobuf 2.5.0 and try again
+    - name: Step 2 Patch protobuf 2.5.0 and try again
       shell: |
         wget https://github.com/protocolbuffers/protobuf/releases/download/v2.5.0/protobuf-2.5.0.tar.bz2
         wget -O protobuf-2.5.0-arm64.patch https://www.dropbox.com/s/713wql5cw9dfxhx/protobuf-2.5.0-arm64.patch?dl=0
@@ -44,7 +44,7 @@
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ global_env }}'
-    - name:
+    - name: Step 3 Build local grpc 1.5.1 and try again
       shell: |
         mkdir -p ~/.m2/repository/io/grpc/protoc-gen-grpc-java/1.15.1/
         cd ~/.m2/repository/io/grpc/protoc-gen-grpc-java/1.15.1/
