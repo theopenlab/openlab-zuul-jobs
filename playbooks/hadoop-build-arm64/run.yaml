@@ -8,7 +8,7 @@
   # Step1 - Try to build Hadoop according to https://github.com/apache/hadoop/blob/trunk/BUILDING.txt,
   #         as protobuf 2.5.0 is not available in Ubuntu 16.04 ARM64 platform, this try will fail. The test log for
   #         This step will be saved to hadoop_build_no_patch.log.
-  # Step2 - Backport multi-arch patch to protobuf 2.5.0 source code and build protbuf 2.5.0 locally,
+  # Step2 - Backport multi-arch patch to protobuf 2.5.0 source code and build protobuf 2.5.0 locally,
   #         then try to build again, this try will also fail because there was no protoc-gen-grpc-java-1.15.1
   #         in maven central for ARM64 platform, the log of this step will be saved to hadoop_build_patch_protbuf.log.
   # Step3 - Download the pre-built ARM64 version of protoc-gen-grpc-java-1.15.1 and put it in the local
