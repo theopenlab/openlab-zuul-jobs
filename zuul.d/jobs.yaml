@@ -2205,5 +2205,5 @@
       - Project:apache/hadoop
       - Application:hadoop@master
       - OS:ubuntu-xenial
-      - Arch:aarch64
+      - Arch:arm64
       - BuildType:Compile
