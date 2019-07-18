@@ -12,7 +12,7 @@
   #         then try to build again, this try will also fail because there was no protoc-gen-grpc-java-1.15.1
   #         in maven central for ARM64 platform, the log of this step will be saved to hadoop_build_patch_protbuf.log.
   # Step3 - Download the pre-built ARM64 version of protoc-gen-grpc-java-1.15.1 and put it in the local
-  #         maven repo, then try to build agai, this try will success. The log of this try will be saved
+  #         maven repo, then try to build again, this try will success. The log of this try will be saved
   #         to hadoop_build_patch_protobuf_and_grpc.log.
     - name: Step 1 Try to build Hadoop according to https://github.com/apache/hadoop/blob/trunk/BUILDING.txt
       shell: |
