@@ -47,7 +47,7 @@
       environment: '{{ global_env }}'
     - name: Step 3 Build local grpc 1.5.1 and try again
       shell: |
-        set -ex pipefail
+        set -exo pipefail
         mkdir -p ~/.m2/repository/io/grpc/protoc-gen-grpc-java/1.15.1/
         cd ~/.m2/repository/io/grpc/protoc-gen-grpc-java/1.15.1/
         wget -r -nd -np -k -A 'protoc-*' http://home.apache.org/~aajisaka/repository/io/grpc/protoc-gen-grpc-java/1.15.1/
