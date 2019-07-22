@@ -2191,3 +2191,19 @@
       - OS:ubuntu-xenial
       - Arch:arm64
       - BuildType:Compile
+
+# Hadoop arm64 build periodic job
+- job:
+    name: hadoop-build-arm64
+    parent: init-test
+    description: |
+      Apache Hadoop build on arm64 server
+    run: playbooks/hadoop-build-arm64/run.yaml
+    nodeset: ubuntu-xenial-arm64
+    tags:
+      - Category:BigData
+      - Project:apache/hadoop
+      - Application:hadoop@master
+      - OS:ubuntu-xenial
+      - Arch:arm64
+      - BuildType:Compile
