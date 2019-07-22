@@ -2165,15 +2165,15 @@
     name: hbase-build-arm64
     parent: init-test
     description: |
-      Hbase build in openlab arm instance.
-    run: playbooks/hbase-arm-build/run.yaml
+      Apache HBase build on arm64 server
+    run: playbooks/hbase-build-arm64/run.yaml
     nodeset: ubuntu-xenial-arm64
     tags:
       - Category:BigData
       - Project:apache/hbase
       - Application:Hbase@master
       - OS:ubuntu-xenial
-      - Arch:aarch64
+      - Arch:arm64
       - BuildType:Compile
 
 # Hive arm build periodic job
@@ -2189,7 +2189,7 @@
       - Project:apache/hive
       - Application:Hive@master
       - OS:ubuntu-xenial
-      - Arch:aarch64
+      - Arch:arm64
       - BuildType:Compile
 
 # Hadoop arm64 build periodic job

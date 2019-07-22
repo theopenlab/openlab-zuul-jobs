@@ -21,7 +21,7 @@
       github:
         status: pending
         comment: false
-        status-url: https://status.openlabtesting.org/status
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
     success:
       github:
         status: 'success'
@@ -51,7 +51,7 @@
       github:
         status: pending
         comment: false
-        status-url: https://status.openlabtesting.org/status
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
     success:
       github:
         status: 'success'
@@ -78,7 +78,7 @@
       github:
         status: pending
         comment: false
-        status-url: https://status.openlabtesting.org/status
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
     success:
       github:
         status: 'success'
@@ -103,7 +103,7 @@
       github:
         status: pending
         comment: false
-        status-url: https://status.openlabtesting.org/status
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
     success:
       github:
         status: 'success'
@@ -128,7 +128,7 @@
       github:
         status: pending
         comment: false
-        status-url: https://status.openlabtesting.org/status
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
     success:
       github:
         status: 'success'
@@ -153,7 +153,7 @@
       github:
         status: pending
         comment: false
-        status-url: https://status.openlabtesting.org/status
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
     success:
       github:
         status: 'success'
@@ -178,7 +178,7 @@
       github:
         status: pending
         comment: false
-        status-url: https://status.openlabtesting.org/status
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
     success:
       github:
         status: 'success'
@@ -203,7 +203,7 @@
       github:
         status: pending
         comment: false
-        status-url: https://status.openlabtesting.org/status
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
     success:
       github:
         status: 'success'
@@ -228,7 +228,7 @@
       github:
         status: pending
         comment: false
-        status-url: https://status.openlabtesting.org/status
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
     success:
       github:
         status: 'success'
@@ -354,7 +354,7 @@
       github:
         status: pending
         comment: false
-        status-url: https://status.openlabtesting.org/status
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
     success:
       github:
         status: 'success'
@@ -379,7 +379,7 @@
       github:
         status: pending
         comment: false
-        status-url: https://status.openlabtesting.org/status
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
     success:
       github:
         status: 'success'
@@ -404,7 +404,7 @@
       github:
         status: pending
         comment: false
-        status-url: https://status.openlabtesting.org/status
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
     success:
       github:
         status: 'success'
@@ -429,7 +429,7 @@
       github:
         status: pending
         comment: false
-        status-url: https://status.openlabtesting.org/status
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
     success:
       github:
         status: 'success'
@@ -454,7 +454,7 @@
       github:
         status: pending
         comment: false
-        status-url: https://status.openlabtesting.org/status
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
     success:
       github:
         status: 'success'
@@ -491,7 +491,7 @@
       github:
         status: pending
         comment: false
-        status-url: https://status.openlabtesting.org/status
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
     success:
       github:
         status: 'success'
@@ -528,7 +528,7 @@
       github:
         status: pending
         comment: false
-        status-url: https://status.openlabtesting.org/status
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
     success:
       github:
         status: 'success'
@@ -565,7 +565,7 @@
       github:
         status: pending
         comment: false
-        status-url: https://status.openlabtesting.org/status
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
     success:
       github:
         status: 'success'
@@ -602,7 +602,7 @@
       github:
         status: pending
         comment: false
-        status-url: https://status.openlabtesting.org/status
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
     success:
       github:
         status: 'success'
@@ -639,7 +639,7 @@
       github:
         status: pending
         comment: false
-        status-url: https://status.openlabtesting.org/status
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
     success:
       github:
         status: 'success'
@@ -676,7 +676,7 @@
       github:
         status: pending
         comment: false
-        status-url: https://status.openlabtesting.org/status
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
     success:
       github:
         status: 'success'
@@ -713,7 +713,7 @@
       github:
         status: pending
         comment: false
-        status-url: https://status.openlabtesting.org/status
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
     success:
       github:
         status: 'success'
@@ -750,7 +750,7 @@
       github:
         status: pending
         comment: false
-        status-url: https://status.openlabtesting.org/status
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
     success:
       github:
         status: 'success'
@@ -787,7 +787,7 @@
       github:
         status: pending
         comment: false
-        status-url: https://status.openlabtesting.org/status
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
     success:
       github:
         status: 'success'
@@ -824,7 +824,7 @@
       github:
         status: pending
         comment: false
-        status-url: https://status.openlabtesting.org/status
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
     success:
       github:
         status: 'success'
@@ -861,7 +861,7 @@
       github:
         status: pending
         comment: false
-        status-url: https://status.openlabtesting.org/status
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
     success:
       github:
         status: 'success'
@@ -898,7 +898,7 @@
       github:
         status: pending
         comment: false
-        status-url: https://status.openlabtesting.org/status
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
     success:
       github:
         status: 'success'
@@ -935,7 +935,7 @@
       github:
         status: pending
         comment: false
-        status-url: https://status.openlabtesting.org/status
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
     success:
       github:
         status: 'success'
@@ -972,7 +972,7 @@
       github:
         status: pending
         comment: false
-        status-url: https://status.openlabtesting.org/status
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
     success:
       github:
         status: 'success'
@@ -1009,7 +1009,7 @@
       github:
         status: pending
         comment: false
-        status-url: https://status.openlabtesting.org/status
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
     success:
       github:
         status: 'success'
@@ -1046,7 +1046,7 @@
       github:
         status: pending
         comment: false
-        status-url: https://status.openlabtesting.org/status
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
     success:
       github:
         status: 'success'
