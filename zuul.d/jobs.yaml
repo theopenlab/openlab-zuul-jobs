@@ -2004,7 +2004,7 @@
       - Application:Kubernetes@master
       - Application:Docker@18.09
       - OS:ubuntu-xenial
-      - Arch:aarch64
+      - Arch:arm64
       - BuildType:Integration test
 
 - job:
