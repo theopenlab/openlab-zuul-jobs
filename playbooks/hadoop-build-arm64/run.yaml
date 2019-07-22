@@ -1,0 +1,64 @@
+- hosts: all
+  become: yes
+  roles:
+    - install-openjdk
+    - install-maven
+  tasks:
+  # According to the investigation, the whole job will be sperated to 3 steps:
+  # Step1 - Try to build Hadoop according to https://github.com/apache/hadoop/blob/trunk/BUILDING.txt,
+  #         as protobuf 2.5.0 is not available in Ubuntu 16.04 ARM64 platform, this try will fail. The test log for
+  #         This step will be saved to hadoop_build_no_patch.log.
+  # Step2 - Backport multi-arch patch to protobuf 2.5.0 source code and build protobuf 2.5.0 locally,
+  #         then try to build again, this try will also fail because there was no protoc-gen-grpc-java-1.15.1
+  #         in maven central for ARM64 platform, the log of this step will be saved to hadoop_build_patch_protbuf.log.
+  # Step3 - Download the pre-built ARM64 version of protoc-gen-grpc-java-1.15.1 and put it in the local
+  #         maven repo, then try to build again, this try will success. The log of this try will be saved
+  #         to hadoop_build_patch_protobuf_and_grpc.log.
+
+    - name: 'Step 1: Try to build Hadoop according to https://github.com/apache/hadoop/blob/trunk/BUILDING.txt'
+      shell: |
+        set -xo pipefail
+        apt-get update
+        apt-get install -y build-essential autoconf automake libtool cmake zlib1g-dev pkg-config libssl-dev libsasl2-dev
+        apt-get install -y protobuf-compiler
+        mvn package -Pdist -Pdoc -Psrc -Dtar -DskipTests 2>&1 | tee "{{ ansible_user_dir }}/workspace/logs/hadoop_build_no_patch.log"
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      ignore_errors: yes
+      environment: '{{ global_env }}'
+
+    - name: 'Step 2: Patch protobuf 2.5.0 and try again'
+      shell: |
+        set -xo pipefail
+        wget https://github.com/protocolbuffers/protobuf/releases/download/v2.5.0/protobuf-2.5.0.tar.bz2
+        wget -O protobuf-2.5.0-arm64.patch https://www.dropbox.com/s/713wql5cw9dfxhx/protobuf-2.5.0-arm64.patch?dl=0
+        tar xvfj protobuf-2.5.0.tar.bz2
+        cd protobuf-2.5.0
+        patch -p1 < ../protobuf-2.5.0-arm64.patch
+        ./autogen.sh
+        ./configure --prefix=/usr
+        make
+        make check
+        make install
+        protoc --version
+        cd ..
+        mvn package -Pdist -Pdoc -Psrc -Dtar -DskipTests 2>&1 | tee "{{ ansible_user_dir }}/workspace/logs/hadoop_build_patch_protbuf.log"
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      ignore_errors: yes
+      environment: '{{ global_env }}'
+
+    - name: 'Step 3: Build local grpc 1.5.1 and try again'
+      shell: |
+        set -exo pipefail
+        mkdir -p ~/.m2/repository/io/grpc/protoc-gen-grpc-java/1.15.1/
+        cd ~/.m2/repository/io/grpc/protoc-gen-grpc-java/1.15.1/
+        wget -r -nd -np -k -A 'protoc-*' http://home.apache.org/~aajisaka/repository/io/grpc/protoc-gen-grpc-java/1.15.1/
+        cd '{{ ansible_user_dir }}'/'{{ zuul.project.src_dir }}'
+        mvn package -Pdist -Pdoc -Psrc -Dtar -DskipTests 2>&1 | tee "{{ ansible_user_dir }}/workspace/logs/hadoop_build_patch_protobuf_and_grpc.log"
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
