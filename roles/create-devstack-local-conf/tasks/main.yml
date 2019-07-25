@@ -208,6 +208,18 @@
     - global_env.OS_BRANCH != 'stable/queens'
     - '"octavia" in enable_services'
 
+- name: create devstack local conf with barbican enabled
+  shell:
+    cmd: |
+      set -e
+      set -x
+      cat << EOF >> /tmp/dg-local.conf
+      enable_plugin barbican https://opendev.org/openstack/barbican
+      EOF
+    executable: /bin/bash
+  when:
+    - '"barbican" in enable_services'
+
 - name: create devstack local conf with fwaas v1 enabled
   shell:
     cmd: |
