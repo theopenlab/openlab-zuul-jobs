@@ -25,6 +25,12 @@
         label: ubuntu-xenial-vexxhost
 
 - nodeset:
+    name: ubuntu-xenial-citynetwork
+    nodes:
+      - name: ubuntu-xenial-citynetwork
+        label: ubuntu-xenial-citynetwork
+
+- nodeset:
     name: ubuntu-xenial-arm64
     nodes:
       - name: ubuntu-xenial-arm64
