@@ -533,6 +533,7 @@
       k8s_src_dir: '{{ ansible_user_dir }}/src/k8s.io/kubernetes'
       k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
       kubectl: '{{ ansible_user_dir }}/src/k8s.io/kubernetes/cluster/kubectl.sh'
+      cloud_name: vexxhost
 
 - job:
     name: cloud-provider-openstack-unittest
@@ -2207,6 +2208,7 @@
       k8s_src_dir: '{{ ansible_user_dir }}/src/k8s.io/kubernetes'
       k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
       kubectl: '{{ ansible_user_dir }}/src/k8s.io/kubernetes/cluster/kubectl.sh'
+      cloud_name: citynetwork
 
 - job:
     name: cloud-provider-openstack-unittest-citynetwork

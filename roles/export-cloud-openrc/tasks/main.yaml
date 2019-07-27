@@ -91,6 +91,25 @@
   no_log: yes
   when: cloud_name == 'vexxhost'
 
+- name: Set fact for citynetwork openrc
+  set_fact:
+    openrc:
+      OS_AUTH_TYPE: '{{ citynetwork_credentials.auth_type }}'
+      OS_IDENTITY_API_VERSION: '{{ citynetwork_credentials.identity_api_version }}'
+      OS_VOLUME_API_VERSION: '{{ citynetwork_credentials.volume_api_version }}'
+      OS_NETWORK_API_VERSION: '{{ citynetwork_credentials.network_api_version }}'
+      OS_INTERFACE: '{{ citynetwork_credentials.interface }}'
+      OS_AUTH_URL: '{{ citynetwork_credentials.auth_url }}'
+      OS_PROJECT_NAME: '{{ citynetwork_credentials.project_name }}'
+      OS_PROJECT_DOMAIN_ID: '{{ citynetwork_credentials.project_domain_id }}'
+      OS_USERNAME: '{{ citynetwork_credentials.username }}'
+      OS_USER_DOMAIN_NAME: '{{ citynetwork_credentials.user_domain_name }}'
+      OS_PASSWORD: '{{ citynetwork_credentials.password }}'
+      OS_REGION_NAME: '{{ citynetwork_credentials.region_name }}'
+      OS_DOMAIN_NAME: '{{ citynetwork_credentials.user_domain_name }}'
+  no_log: yes
+  when: cloud_name == 'citynetwork'
+
 - name: Set fact for fusioncloud openrc
   set_fact:
     openrc:

@@ -2,9 +2,7 @@
   become: yes
   roles:
     - config-golang
-    - role: export-cloud-openrc
-      vars:
-        cloud_name: 'vexxhost'
+    - export-cloud-openrc
     - install-k8s
   tasks:
     - name: Run kubernetes cinder acceptance tests with cloud-provider-openstack
