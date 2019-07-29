@@ -101,7 +101,7 @@
       OS_INTERFACE: '{{ citynetwork_credentials.interface }}'
       OS_AUTH_URL: '{{ citynetwork_credentials.auth_url }}'
       OS_PROJECT_NAME: '{{ citynetwork_credentials.project_name }}'
-      OS_PROJECT_DOMAIN_ID: '{{ citynetwork_credentials.project_domain_id }}'
+      OS_PROJECT_DOMAIN_NAME: '{{ citynetwork_credentials.project_domain_name }}'
       OS_USERNAME: '{{ citynetwork_credentials.username }}'
       OS_USER_DOMAIN_NAME: '{{ citynetwork_credentials.user_domain_name }}'
       OS_PASSWORD: '{{ citynetwork_credentials.password }}'
