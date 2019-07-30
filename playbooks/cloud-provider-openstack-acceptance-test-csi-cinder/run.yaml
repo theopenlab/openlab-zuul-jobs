@@ -1,9 +1,7 @@
 - hosts: all
   roles:
     - config-golang
-    - role: export-cloud-openrc
-      vars:
-        cloud_name: 'vexxhost'
+    - export-cloud-openrc
     - install-k8s
   become: yes
   tasks:

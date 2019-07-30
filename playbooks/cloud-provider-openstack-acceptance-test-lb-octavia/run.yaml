@@ -2,9 +2,7 @@
   become: yes
   roles:
     - config-golang
-    - role: export-cloud-openrc
-      vars:
-        cloud_name: 'vexxhost'
+    - export-cloud-openrc
     - install-k8s
   tasks:
     - name: Run lbass octavia acceptance tests with cloud-provider-openstack
@@ -33,7 +31,7 @@
           [LoadBalancer]
           use-octavia = true
           floating-network-id = $(openstack network list --external -f value -c ID | head -n 1)
-          subnet-id = $(openstack network list --internal -f value -c Subnets | head -n 1)
+          subnet-id = $(openstack network list --internal -f value -c Subnets | head -n 1 | cut -d "," -f1)
           [BlockStorage]
           bs-version = v3
           ignore-volume-az = yes
