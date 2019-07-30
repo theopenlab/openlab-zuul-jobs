@@ -2200,15 +2200,15 @@
       Base job for all types of cloud-provider-openstack test jobs
     pre-run: playbooks/cloud-provider-openstack-test/pre.yaml
     post-run: playbooks/cloud-provider-openstack-test/post.yaml
-    nodeset: ubuntu-xenial-citynetwork
+    nodeset: ubuntu-xenial-citynetwork-fra
     secrets:
-      - citynetwork_credentials
+      - citynetwork_credentials_fra
     vars:
       k8s_os_provider_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack'
       k8s_src_dir: '{{ ansible_user_dir }}/src/k8s.io/kubernetes'
       k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
       kubectl: '{{ ansible_user_dir }}/src/k8s.io/kubernetes/cluster/kubectl.sh'
-      cloud_name: citynetwork
+      cloud_name: citynetwork_fra
 
 - job:
     name: cloud-provider-openstack-unittest-citynetwork
@@ -2217,7 +2217,7 @@
       Run unit test of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-unittest/run.yaml
     secrets:
-      - citynetwork_credentials
+      - citynetwork_credentials_fra
 
 - job:
     name: cloud-provider-openstack-acceptance-test-k8s-cinder-citynetwork
@@ -2227,7 +2227,7 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-k8s-cinder/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-k8s-cinder/post.yaml
     secrets:
-      - citynetwork_credentials
+      - citynetwork_credentials_fra
 
 - job:
     name: cloud-provider-openstack-acceptance-test-e2e-conformance-citynetwork
@@ -2239,7 +2239,7 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/post.yaml
     secrets:
-      - citynetwork_credentials
+      - citynetwork_credentials_fra
       - gcp_account
       - dockerhub
 
@@ -2349,7 +2349,7 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/post.yaml
     secrets:
-      - citynetwork_credentials
+      - citynetwork_credentials_fra
 
 - job:
     name: cloud-provider-openstack-acceptance-test-lb-octavia-citynetwork
@@ -2359,4 +2359,4 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-lb-octavia/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-lb-octavia/post.yaml
     secrets:
-      - citynetwork_credentials
+      - citynetwork_credentials_fra

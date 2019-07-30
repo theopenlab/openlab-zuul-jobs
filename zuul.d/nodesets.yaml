@@ -31,6 +31,12 @@
         label: ubuntu-xenial-citynetwork
 
 - nodeset:
+    name: ubuntu-xenial-citynetwork-fra
+    nodes:
+      - name: ubuntu-xenial-fra
+        label: ubuntu-xenial-fra
+
+- nodeset:
     name: ubuntu-xenial-arm64
     nodes:
       - name: ubuntu-xenial-arm64
