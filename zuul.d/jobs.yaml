@@ -1965,22 +1965,20 @@
     name: spark-integration-test-minikube-k8s-v1.10.0
     parent: init-test
     description: |
-      Run integration tests of spark of v2.4.0 against v1.10.0 k8s cluster deployed by v0.30.0 minikube
+      Run integration tests of spark of v2.4.0 against v1.13.3 k8s cluster deployed by v0.34.1 minikube
     run: playbooks/spark-integration-test-minikube-k8s/run.yaml
     post-run: playbooks/spark-integration-test-minikube-k8s/post.yaml
     override-checkout: branch-2.4
     vars:
       k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
-      # the supported latest version of minikube is v0.30.0, and then the minikube can start
-      # k8s in v1.10.0
-      minikube_version: v0.30.0
-      kubernetes_version: v1.10.0
+      minikube_version: v0.34.1
+      kubernetes_version: v1.13.3
     tags:
       - Category:BigData
       - Project:apache/spark
       - Application:Spark@branch-2.4
-      - Application:Docker@18.06
-      - Application:Kubernetes@v1.10.0
+      - Application:Docker@19.03
+      - Application:Kubernetes@v1.13.3
       - OS:ubuntu-xenial
       - Arch:x86_64
       - BuildType:Integration test
