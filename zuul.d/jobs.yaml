@@ -525,15 +525,14 @@
       Base job for all types of cloud-provider-openstack test jobs
     pre-run: playbooks/cloud-provider-openstack-test/pre.yaml
     post-run: playbooks/cloud-provider-openstack-test/post.yaml
-    nodeset: ubuntu-xenial-vexxhost
     secrets:
-      - vexxhost_credentials
+      - citynetwork_credentials
     vars:
       k8s_os_provider_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack'
       k8s_src_dir: '{{ ansible_user_dir }}/src/k8s.io/kubernetes'
       k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
       kubectl: '{{ ansible_user_dir }}/src/k8s.io/kubernetes/cluster/kubectl.sh'
-      cloud_name: vexxhost
+      cloud_name: citynetwork
 
 - job:
     name: cloud-provider-openstack-unittest
@@ -541,8 +540,9 @@
     description: |
       Run unit test of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-unittest/run.yaml
+    nodeset: ubuntu-xenial-citynetwork
     secrets:
-      - vexxhost_credentials
+      - citynetwork_credentials
 
 - job:
     name: cloud-provider-openstack-format
@@ -559,8 +559,9 @@
       Run cinder in-tree acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-k8s-cinder/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-k8s-cinder/post.yaml
+    nodeset: ubuntu-xenial-citynetwork
     secrets:
-      - vexxhost_credentials
+      - citynetwork_credentials
 
 - job:
     name: cloud-provider-openstack-acceptance-test-e2e-conformance
@@ -571,8 +572,9 @@
       go_version: '1.12.1'
     run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/post.yaml
+    nodeset: ubuntu-xenial-citynetwork
     secrets:
-      - vexxhost_credentials
+      - citynetwork_credentials
       - gcp_account
       - dockerhub
 
@@ -619,6 +621,7 @@
     parent: cloud-provider-openstack-acceptance-test-e2e-conformance
     description: |
       Run Kubernetes E2E Conformance tests against release-1.13 branch of Kubernetes
+    nodeset: ubuntu-xenial-citynetwork
     vars:
       go_version: '1.12'
       k8s_version: 'release-1.13'
@@ -639,6 +642,7 @@
     parent: cloud-provider-openstack-acceptance-test-e2e-conformance
     description: |
       Run Kubernetes E2E Conformance tests against release-1.14 branch of Kubernetes
+    nodeset: ubuntu-xenial-citynetwork
     vars:
       go_version: '1.12.1'
       k8s_version: 'release-1.14'
@@ -659,6 +663,7 @@
     parent: cloud-provider-openstack-acceptance-test-e2e-conformance
     description: |
       Run Kubernetes E2E Conformance tests against release-1.15 branch of Kubernetes
+    nodeset: ubuntu-xenial-citynetwork
     vars:
       go_version: '1.12.1'
       k8s_version: 'release-1.15'
@@ -690,8 +695,9 @@
       Run cinder csi acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/post.yaml
+    nodeset: ubuntu-xenial-citynetwork
     secrets:
-      - vexxhost_credentials
+      - citynetwork_credentials
 
 - job:
     name: cloud-provider-openstack-acceptance-test-manila-provisioner
@@ -702,6 +708,8 @@
     post-run: playbooks/cloud-provider-openstack-acceptance-test-manila-provisioner/post.yaml
     nodeset: ubuntu-xenial
 
+# TODO(wxy): Move lb test to citynetwork once octavia is available on
+# citynetwork.
 - job:
     name: cloud-provider-openstack-acceptance-test-lb-octavia
     parent: cloud-provider-openstack-test
@@ -709,6 +717,9 @@
       Run lb acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-lb-octavia/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-lb-octavia/post.yaml
+    nodeset: ubuntu-xenial-vexxhost
+    vars:
+      cloud_name: vexxhost
     secrets:
       - vexxhost_credentials
 
@@ -2190,173 +2201,3 @@
       - OS:ubuntu-xenial
       - Arch:arm64
       - BuildType:Compile
-
-# Temp Kubernetes cloud-provider-openstack jobs on citynetwork cloud, these
-# jobs will be removed later.
-- job:
-    name: cloud-provider-openstack-test-citynetwork
-    parent: golang-test
-    description: |
-      Base job for all types of cloud-provider-openstack test jobs
-    pre-run: playbooks/cloud-provider-openstack-test/pre.yaml
-    post-run: playbooks/cloud-provider-openstack-test/post.yaml
-    nodeset: ubuntu-xenial-citynetwork-fra
-    secrets:
-      - citynetwork_credentials_fra
-    vars:
-      k8s_os_provider_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack'
-      k8s_src_dir: '{{ ansible_user_dir }}/src/k8s.io/kubernetes'
-      k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
-      kubectl: '{{ ansible_user_dir }}/src/k8s.io/kubernetes/cluster/kubectl.sh'
-      cloud_name: citynetwork_fra
-
-- job:
-    name: cloud-provider-openstack-unittest-citynetwork
-    parent: cloud-provider-openstack-test-citynetwork
-    description: |
-      Run unit test of cloud-provider-openstack
-    run: playbooks/cloud-provider-openstack-unittest/run.yaml
-    secrets:
-      - citynetwork_credentials_fra
-
-- job:
-    name: cloud-provider-openstack-acceptance-test-k8s-cinder-citynetwork
-    parent: cloud-provider-openstack-test-citynetwork
-    description: |
-      Run cinder in-tree acceptance tests of cloud-provider-openstack
-    run: playbooks/cloud-provider-openstack-acceptance-test-k8s-cinder/run.yaml
-    post-run: playbooks/cloud-provider-openstack-acceptance-test-k8s-cinder/post.yaml
-    secrets:
-      - citynetwork_credentials_fra
-
-- job:
-    name: cloud-provider-openstack-acceptance-test-e2e-conformance-citynetwork
-    parent: cloud-provider-openstack-test-citynetwork
-    description: |
-      Run Kubernetes E2E Conformance tests against Kubernetes master
-    vars:
-      go_version: '1.12.1'
-    run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/run.yaml
-    post-run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/post.yaml
-    secrets:
-      - citynetwork_credentials_fra
-      - gcp_account
-      - dockerhub
-
-- job:
-    name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.10-citynetwork
-    parent: cloud-provider-openstack-acceptance-test-e2e-conformance-citynetwork
-    description: |
-      Run Kubernetes E2E Conformance tests against Kubernetes v1.10
-    vars:
-      go_version: '1.9.3'
-      k8s_version: 'release-1.10'
-
-- job:
-    name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.11-citynetwork
-    parent: cloud-provider-openstack-acceptance-test-e2e-conformance-citynetwork
-    description: |
-      Run Kubernetes E2E Conformance tests against Kubernetes v1.11
-    vars:
-      go_version: '1.10.3'
-      k8s_version: 'release-1.11'
-
-- job:
-    name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.12-citynetwork
-    parent: cloud-provider-openstack-acceptance-test-e2e-conformance-citynetwork
-    description: |
-      Run Kubernetes E2E Conformance tests against release-1.12 branch of Kubernetes
-    vars:
-      go_version: '1.10.8'
-      k8s_version: 'release-1.12'
-    tags:
-      - Category:Cloud
-      - Project:kubernetes/cloud-provider-openstack
-      - Application:cloud-provider-openstack@release-1.12
-      - Application:Kubernetes@release-1.12
-      - Application:Docker.io@v18.09
-      - Application:Etcd@v3.3.10
-      - Application:Go@1.10.8
-      - OS:ubuntu-xenial
-      - Arch:x86_64
-      - BuildType:Integration test
-
-- job:
-    name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.13-citynetwork
-    parent: cloud-provider-openstack-acceptance-test-e2e-conformance-citynetwork
-    description: |
-      Run Kubernetes E2E Conformance tests against release-1.13 branch of Kubernetes
-    vars:
-      go_version: '1.12'
-      k8s_version: 'release-1.13'
-    tags:
-      - Category:Cloud
-      - Project:kubernetes/cloud-provider-openstack
-      - Application:cloud-provider-openstack@release-1.13
-      - Application:Kubernetes@release-1.13
-      - Application:Docker.io@v18.09
-      - Application:Etcd@v3.3.10
-      - Application:Go@1.12
-      - OS:ubuntu-xenial
-      - Arch:x86_64
-      - BuildType:Integration test
-
-- job:
-    name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.14-citynetwork
-    parent: cloud-provider-openstack-acceptance-test-e2e-conformance-citynetwork
-    description: |
-      Run Kubernetes E2E Conformance tests against release-1.14 branch of Kubernetes
-    vars:
-      go_version: '1.12.1'
-      k8s_version: 'release-1.14'
-    tags:
-      - Category:Cloud
-      - Project:kubernetes/cloud-provider-openstack
-      - Application:cloud-provider-openstack@release-1.14
-      - Application:Kubernetes@release-1.14
-      - Application:Docker.io@v18.09
-      - Application:Etcd@v3.3.10
-      - Application:Go@1.12.1
-      - OS:ubuntu-xenial
-      - Arch:x86_64
-      - BuildType:Integration test
-
-- job:
-    name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.15-citynetwork
-    parent: cloud-provider-openstack-acceptance-test-e2e-conformance-citynetwork
-    description: |
-      Run Kubernetes E2E Conformance tests against release-1.15 branch of Kubernetes
-    vars:
-      go_version: '1.12.1'
-      k8s_version: 'release-1.15'
-    tags:
-      - Category:Cloud
-      - Project:kubernetes/cloud-provider-openstack
-      - Application:cloud-provider-openstack@release-1.15
-      - Application:Kubernetes@release-1.15
-      - Application:Docker.io@v18.09
-      - Application:Etcd@v3.3.10
-      - Application:Go@1.12.1
-      - OS:ubuntu-xenial
-      - Arch:x86_64
-      - BuildType:Integration test
-
-- job:
-    name: cloud-provider-openstack-acceptance-test-csi-cinder-citynetwork
-    parent: cloud-provider-openstack-test-citynetwork
-    description: |
-      Run cinder csi acceptance tests of cloud-provider-openstack
-    run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/run.yaml
-    post-run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/post.yaml
-    secrets:
-      - citynetwork_credentials_fra
-
-- job:
-    name: cloud-provider-openstack-acceptance-test-lb-octavia-citynetwork
-    parent: cloud-provider-openstack-test-citynetwork
-    description: |
-      Run lb acceptance tests of cloud-provider-openstack
-    run: playbooks/cloud-provider-openstack-acceptance-test-lb-octavia/run.yaml
-    post-run: playbooks/cloud-provider-openstack-acceptance-test-lb-octavia/post.yaml
-    secrets:
-      - citynetwork_credentials_fra
