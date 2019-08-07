@@ -19,7 +19,7 @@
       shell:
         cmd: |
           # Swith to bazel 0.26.1
-          cp /opt/bazel/bazel-0.26.1/bazel /usr/local/bin
+          cp /opt/bazel/bazel-0.24/output/bazel /usr/local/bin
 
           export LOG_DIR='{{ k8s_log_dir }}'
           # Add a walk-around start time to the e2e.log file to make the
