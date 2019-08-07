@@ -717,7 +717,7 @@
       Run lb acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-lb-octavia/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-lb-octavia/post.yaml
-    nodeset: ubuntu-xenial-vexxhost
+    nodeset: ubuntu-xenial-vexxhost-lb
     vars:
       cloud_name: vexxhost
     secrets:
