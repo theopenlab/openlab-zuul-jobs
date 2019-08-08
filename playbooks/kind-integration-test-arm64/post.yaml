@@ -24,7 +24,7 @@
               PIPELINE_LOGS_DIR='pr-logs'
           fi
           # upload e2e log to google storage
-          python upload_e2e.py --junit=$LOG_DIR/junit*.xml --log=$LOG_DIR/e2e.log \
+          python3 upload_e2e.py --junit=$LOG_DIR/junit*.xml --log=$LOG_DIR/e2e.log \
               --bucket=gs://k8s-conformance-kind-arm64-openlab/$PIPELINE_LOGS_DIR/ci-'{{ zuul.job }}' \
               --key-file='{{ hostvars[inventory_hostname]["gcp_key_file"] }}'
         executable: /bin/bash
