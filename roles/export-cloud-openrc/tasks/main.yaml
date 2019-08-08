@@ -111,26 +111,6 @@
   no_log: yes
   when: cloud_name == 'citynetwork'
 
-- name: Set fact for citynetwork fra openrc
-  set_fact:
-    openrc:
-      OS_AUTH_TYPE: '{{ citynetwork_credentials_fra.auth_type }}'
-      OS_IDENTITY_API_VERSION: '{{ citynetwork_credentials_fra.identity_api_version }}'
-      OS_VOLUME_API_VERSION: '{{ citynetwork_credentials_fra.volume_api_version }}'
-      OS_NETWORK_API_VERSION: '{{ citynetwork_credentials_fra.network_api_version }}'
-      OS_INTERFACE: '{{ citynetwork_credentials_fra.interface }}'
-      OS_AUTH_URL: '{{ citynetwork_credentials_fra.auth_url }}'
-      OS_PROJECT_ID: '{{ citynetwork_credentials_fra.project_id }}'
-      OS_PROJECT_NAME: '{{ citynetwork_credentials_fra.project_name }}'
-      OS_PROJECT_DOMAIN_NAME: '{{ citynetwork_credentials_fra.project_domain_name }}'
-      OS_USERNAME: '{{ citynetwork_credentials_fra.username }}'
-      OS_USER_DOMAIN_NAME: '{{ citynetwork_credentials_fra.user_domain_name }}'
-      OS_PASSWORD: '{{ citynetwork_credentials_fra.password }}'
-      OS_REGION_NAME: '{{ citynetwork_credentials_fra.region_name }}'
-      OS_DOMAIN_NAME: '{{ citynetwork_credentials_fra.user_domain_name }}'
-  no_log: yes
-  when: cloud_name == 'citynetwork_fra'
-
 - name: Set fact for fusioncloud openrc
   set_fact:
     openrc:
