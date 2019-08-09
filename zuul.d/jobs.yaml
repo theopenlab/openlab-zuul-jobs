@@ -525,14 +525,11 @@
       Base job for all types of cloud-provider-openstack test jobs
     pre-run: playbooks/cloud-provider-openstack-test/pre.yaml
     post-run: playbooks/cloud-provider-openstack-test/post.yaml
-    secrets:
-      - citynetwork_credentials
     vars:
       k8s_os_provider_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack'
       k8s_src_dir: '{{ ansible_user_dir }}/src/k8s.io/kubernetes'
       k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
       kubectl: '{{ ansible_user_dir }}/src/k8s.io/kubernetes/cluster/kubectl.sh'
-      cloud_name: citynetwork
 
 - job:
     name: cloud-provider-openstack-unittest
@@ -543,6 +540,8 @@
     nodeset: ubuntu-xenial-citynetwork
     secrets:
       - citynetwork_credentials
+    vars:
+      cloud_name: citynetwork
 
 - job:
     name: cloud-provider-openstack-format
@@ -562,6 +561,8 @@
     nodeset: ubuntu-xenial-citynetwork
     secrets:
       - citynetwork_credentials
+    vars:
+      cloud_name: citynetwork
 
 - job:
     name: cloud-provider-openstack-acceptance-test-e2e-conformance
@@ -570,6 +571,7 @@
       Run Kubernetes E2E Conformance tests against Kubernetes master
     vars:
       go_version: '1.12.1'
+      cloud_name: citynetwork
     run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/post.yaml
     nodeset: ubuntu-xenial-citynetwork
@@ -698,6 +700,8 @@
     nodeset: ubuntu-xenial-citynetwork
     secrets:
       - citynetwork_credentials
+    vars:
+      cloud_name: citynetwork
 
 - job:
     name: cloud-provider-openstack-acceptance-test-manila-provisioner
@@ -718,10 +722,10 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-lb-octavia/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-lb-octavia/post.yaml
     nodeset: ubuntu-xenial-vexxhost-lb
-    vars:
-      cloud_name: vexxhost
     secrets:
       - vexxhost_credentials
+    vars:
+      cloud_name: vexxhost
 
 - job:
     name: cloud-provider-openstack-acceptance-test-keystone-authentication-authorization
