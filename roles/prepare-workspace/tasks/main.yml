@@ -17,11 +17,8 @@
   shell: hostname
   register: real_hostname
 
-- hosts: all
-  become: yes
-  tasks:
-    - name: Update the /etc/hosts file with node name if possible
-      lineinfile:
-        path: "/etc/hosts"
-        regexp: "^127.0.0.1"
-        line: "127.0.0.1 {{ real_hostname.stdout }} localhost"
+- name: Update the /etc/hosts file with node name if possible
+  lineinfile:
+    path: "/etc/hosts"
+    regexp: "^127.0.0.1"
+    line: "127.0.0.1 {{ real_hostname.stdout }} localhost"
