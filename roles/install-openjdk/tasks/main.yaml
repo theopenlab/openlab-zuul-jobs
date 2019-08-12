@@ -58,7 +58,6 @@
 
 - name: Show installed scala info
   shell: |
-    set -ex
     which scala
     scala -version
   args:
