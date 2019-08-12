@@ -1,2 +1,4 @@
 ---
 java_version: '8'
+with_scala: false
+scala_version: '2.13.0'
