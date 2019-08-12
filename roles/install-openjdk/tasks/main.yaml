@@ -60,6 +60,12 @@
   shell: |
     which scala
     scala -version
+
+    # scala 2.11.0 returns error 1 even there is no error. Ignore the error.
+    if [[ "{{ scala_version }}" == "2.11.0" ]];then
+      exit 0
+    fi
+
   args:
     executable: /bin/bash
   environment: '{{ global_env }}'
