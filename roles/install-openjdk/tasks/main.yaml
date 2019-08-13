@@ -30,3 +30,44 @@
   args:
     executable: /bin/bash
   environment: '{{ global_env }}'
+
+- name: Install scala
+  shell: |
+    set -xe
+    wget https://downloads.lightbend.com/scala/{{ scala_version }}/scala-{{ scala_version }}.tgz
+    tar -zxvf scala-{{ scala_version }}.tgz -C /usr/local
+  args:
+    executable: /bin/bash
+  when:
+    - with_scala|default(false)|bool
+
+- name: Set scala env vars
+  set_fact:
+    scala_env:
+      PATH: '/usr/local/scala-{{ scala_version }}/bin:{{ ansible_env.PATH }}'
+  no_log: yes
+  when:
+    - with_scala|default(false)|bool
+
+- name: Merge scala env vars into global env
+  set_fact:
+    global_env: '{{ global_env | combine(scala_env) }}'
+  no_log: yes
+  when:
+    - with_scala|default(false)|bool
+
+- name: Show installed scala info
+  shell: |
+    which scala
+    scala -version
+
+    # scala 2.11.0 returns error 1 even there is no error. Ignore the error.
+    if [[ "{{ scala_version }}" == "2.11.0" ]];then
+      exit 0
+    fi
+
+  args:
+    executable: /bin/bash
+  environment: '{{ global_env }}'
+  when:
+    - with_scala|default(false)|bool

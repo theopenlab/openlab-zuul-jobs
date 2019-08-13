@@ -3,7 +3,7 @@
   roles:
     - install-openjdk
     - role: install-docker
-      docker_version: 18.06
+      docker_version: 19.03
     - create-single-k8s-cluster-with-minikube
   tasks:
     - name: Run integration tests of Spark with k8s cluster manager
