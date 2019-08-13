@@ -1973,7 +1973,7 @@
       - BuildType:Integration test
 
 - job:
-    name: spark-integration-test-minikube-k8s-v1.10.0
+    name: spark-integration-test-minikube-k8s-v1.13.3
     parent: init-test
     description: |
       Run integration tests of spark of v2.4.0 against v1.13.3 k8s cluster deployed by v0.34.1 minikube
