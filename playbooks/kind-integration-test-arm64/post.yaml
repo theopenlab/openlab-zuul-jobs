@@ -8,6 +8,11 @@
         cmd: |
           set -e
           set -x
+          # upgrade python to 3.6 for upload_e2e.py
+          add-apt-repository ppa:deadsnakes/ppa -y
+          apt-get update
+          apt-get install python3.6 -y
+
           # install gsutil, upload_e2e.py depends on it
           export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)"
           echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
@@ -24,7 +29,7 @@
               PIPELINE_LOGS_DIR='pr-logs'
           fi
           # upload e2e log to google storage
-          python3 upload_e2e.py --junit=$LOG_DIR/junit*.xml --log=$LOG_DIR/e2e.log \
+          python3.6 upload_e2e.py --junit=$LOG_DIR/junit*.xml --log=$LOG_DIR/e2e.log \
               --bucket=gs://k8s-conformance-kind-arm64-openlab/$PIPELINE_LOGS_DIR/ci-'{{ zuul.job }}' \
               --key-file='{{ hostvars[inventory_hostname]["gcp_key_file"] }}'
         executable: /bin/bash
