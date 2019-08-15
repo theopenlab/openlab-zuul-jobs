@@ -1,0 +1,25 @@
+# We can install specify version gcc/g++ in task, like this:
+# Note that this role is only for python3 setup.
+#- roles:
+#  - role: config-python3
+#      python_version: '3.5'
+---
+- name: Check if python3 has satisfied requirement
+  shell: python3 --version 2>&1 |grep -Eo '([0-9]+\.)+[0-9]+' | cut -d '.' -f'1,2'
+  ignore_errors: yes
+  register: curr_python_version
+
+- name: Install python
+  shell: |
+    set -ex
+    # 3.5 ==> 3
+    major_version=`echo {{ python_version }} | cut -d '.' -f1`
+    # Install python{{ python_version }}
+    add-apt-repository ppa:deadsnakes/ppa -y
+    apt-get update
+    apt-get install python{{ python_version }} python$major_version-dev libssl-dev -y
+    update-alternatives --install $(which python$major_version) python$major_version $(which python{{ python_version }}) 1
+  when:
+    - curr_python_version.stdout != python_version
+  args:
+    executable: /bin/bash
