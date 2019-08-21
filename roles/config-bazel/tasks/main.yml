@@ -1,0 +1,23 @@
+# We can install specify version bazel in task, like this:
+#- roles:
+#  - role: config-bazel
+#      bazel_version: '0.28.1'
+---
+- name: Check if bazel has satisfied requirement
+  shell: bazel --version |grep -Eo '([0-9]+\.)+[0-9]+'
+  ignore_errors: yes
+  register: curr_bazel_version
+
+- name: Install bazel
+  shell: |
+    set -ex
+    apt-get update
+    apt-get -y install build-essential openjdk-8-jdk python zip unzip
+    wget https://github.com/theopenlab/package/releases/download/master/bazel.{{ bazel_version }}
+    chmod +x ./bazel.{{ bazel_version }}
+    cp bazel.{{ bazel_version }} /usr/local/bin/bazel
+    bazel version
+  when:
+    - curr_bazel_version.stdout != bazel_version
+  args:
+    executable: /bin/bash
