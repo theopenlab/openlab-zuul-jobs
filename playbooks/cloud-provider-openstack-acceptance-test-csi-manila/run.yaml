@@ -1,0 +1,201 @@
+- hosts: all
+  roles:
+    - config-golang
+    - export-cloud-openrc
+    - install-k8s
+  become: yes
+  tasks:
+    - name: Run csi manila acceptance tests with cloud-provider-openstack
+      shell:
+        cmd: |
+          set -x
+          set -e
+          set -o pipefail
+
+          #
+          # Preparation
+          #
+
+          export API_HOST_IP=$(ip route get 1.1.1.1 | awk '{print $7}')
+          export KUBELET_HOST="0.0.0.0"
+          export ALLOW_SECURITY_CONTEXT=true
+          export ENABLE_CRI=false
+          export ENABLE_HOSTPATH_PROVISIONER=true
+          export ENABLE_SINGLE_CA_SIGNER=true
+          export KUBE_ENABLE_CLUSTER_DNS=false
+          export LOG_LEVEL=4
+          export ALLOW_PRIVILEGED=true
+          # Just kick off all the processes and drop down to the command line
+          export ENABLE_DAEMON=true
+
+          # We need this for snapshots support, at least for now
+          export FEATURE_GATES="VolumeSnapshotDataSource=true"
+
+          mkdir -p '{{ k8s_log_dir }}'
+          export LOG_DIR='{{ k8s_log_dir }}'
+
+          # Start local Kubernetes cluster
+          # -E preserves the current env vars, but we need to special case PATH
+          # Must run local-up-cluster.sh under kubernetes root directory
+          pushd '{{ k8s_src_dir }}'
+          sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
+          popd
+
+          # Set up kubectl
+          '{{ kubectl }}' config set-cluster local --server=https://localhost:6443 --certificate-authority=/var/run/kubernetes/server-ca.crt
+          '{{ kubectl }}' config set-credentials myself --client-key=/var/run/kubernetes/client-admin.key --client-certificate=/var/run/kubernetes/client-admin.crt
+          '{{ kubectl }}' config set-context local --cluster=local --user=myself
+          '{{ kubectl }}' config use-context local
+
+          # Install Helm
+          # We only need the client
+          curl -L https://git.io/get_helm.sh | bash
+          helm init --client-only
+
+          # Build CSI Manila plugin
+          make manila-csi-plugin
+          # Build a Docker image
+          mv manila-csi-plugin cluster/images/manila-csi-plugin/ && docker build -t manila-csi-plugin cluster/images/manila-csi-plugin
+
+          #
+          # Deployment
+          #
+
+          # Deploy CSI NFS node plugin
+          # We don't actually need to register csi-nfs with k8s CSI machinery,
+          # just simply having the nodeplugin running is enough in this case.
+          cat << YAML | /root/src/k8s.io/kubernetes/cluster/kubectl.sh create -f -
+          kind: DaemonSet
+          apiVersion: apps/v1
+          metadata:
+            name: csi-nodeplugin-nfsplugin
+          spec:
+            selector:
+              matchLabels:
+                app: csi-nodeplugin-nfsplugin
+            template:
+              metadata:
+                labels:
+                  app: csi-nodeplugin-nfsplugin
+              spec:
+                containers:
+                  - name: nfs
+                    securityContext:
+                      privileged: true
+                      capabilities:
+                        add: ["SYS_ADMIN"]
+                      allowPrivilegeEscalation: true
+                    image: quay.io/k8scsi/nfsplugin:canary
+                    args:
+                      - "--nodeid=$(NODE_ID)"
+                      - "--endpoint=unix://plugin/csi.sock"
+                    env:
+                      - name: NODE_ID
+                        valueFrom:
+                          fieldRef:
+                            fieldPath: spec.nodeName
+                    imagePullPolicy: IfNotPresent
+                    volumeMounts:
+                      - name: plugin-dir
+                        mountPath: /plugin
+                      - name: pods-mount-dir
+                        mountPath: /var/lib/kubelet/pods
+                        mountPropagation: Bidirectional
+                volumes:
+                  - name: plugin-dir
+                    hostPath:
+                      path: /var/lib/kubelet/plugins/csi-nfsplugin
+                      type: DirectoryOrCreate
+                  - name: pods-mount-dir
+                    hostPath:
+                      path: /var/lib/kubelet/pods
+                      type: Directory
+          YAML
+
+          # Deploy CSI Manila
+          cat << YAML >> override-helm-values.yaml
+          nameOverride: manila-csi
+          shareProtocols:
+            - protocolSelector: NFS
+              fwdNodePluginEndpoint:
+                dir: /var/lib/kubelet/plugins/csi-nfsplugin
+                sockFile: csi.sock
+          YAML
+          helm template examples/manila-csi-plugin/helm-deployment -f override-helm-values.yaml --name sharedstorage | '{{ kubectl }}' create -f -
+
+          #
+          # Prepare the prerequisites for the tests
+          #
+
+          # Create OpenStack secret
+          cat << YAML | '{{ kubectl }}' create -f -
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: csi-manila-secrets
+            namespace: default
+          stringData:
+            os-authURL: "$OS_AUTH_URL"
+            os-region: "$OS_REGION_NAME"
+            os-userName: "$OS_USERNAME"
+            os-password: "$OS_PASSWORD"
+            os-projectName: "$OS_PROJECT_NAME"
+            os-domainID: "$OS_USER_DOMAIN_ID"
+          YAML
+
+          # Create storage and snapshot classes
+          '{{ kubectl }}' create -f examples/manila-csi-plugin/nfs/dynamic-provisioning/storageclass.yaml
+          # It takes a looong time till the snapshot controller spools up...
+          timeout 300 bash -c 'while [[ -z "$({{ kubectl }} api-resources --api-group=snapshot.storage.k8s.io -o=name)" ]]; do sleep 1; done'
+          '{{ kubectl }}' create -f examples/manila-csi-plugin/nfs/snapshot/snapshotclass.yaml
+
+          #
+          # Perform the tests
+          #
+
+          function dump_container_logs {
+            '{{ kubectl }}' describe pods > "$LOG_DIR/pods.txt"
+            '{{ kubectl }}' describe pvc > "$LOG_DIR/pvcs.txt"
+            '{{ kubectl }}' describe pv > "$LOG_DIR/pvs.txt"
+            '{{ kubectl }}' describe volumesnapshots > "$LOG_DIR/snapshots.txt"
+            '{{ kubectl }}' describe volumesnapshotcontents > "$LOG_DIR/snapshotcontents.txt"
+
+            controllerplugin_pod=$('{{ kubectl }}' get pods -l app=manila-csi -l component=controllerplugin -o=name | head -n 1)
+            nodeplugin_pod=$('{{ kubectl }}' get pods -l app=manila-csi -l component=nodeplugin -o=name | head -n 1)
+
+            if [[ ! -z "$controllerplugin_pod" ]]; then
+              '{{ kubectl }}' logs "$controllerplugin_pod" -c nfs-nodeplugin > "$LOG_DIR/csi-controllerplugin.txt"
+              '{{ kubectl }}' logs "$controllerplugin_pod" -c nfs-provisioner > "$LOG_DIR/csi-provisioner.txt"
+              '{{ kubectl }}' logs "$controllerplugin_pod" -c nfs-snapshotter > "$LOG_DIR/csi-snapshotter.txt"
+            fi
+
+            if [[ ! -z "$nodeplugin_pod" ]]; then
+              '{{ kubectl }}' logs "$nodeplugin_pod" -c nfs-nodeplugin > "$LOG_DIR/csi-nodeplugin.txt"
+              '{{ kubectl }}' logs "$nodeplugin_pod" -c nfs-registrar > "$LOG_DIR/csi-registrar.txt"
+            fi
+          }
+
+          trap dump_container_logs EXIT
+
+          '{{ kubectl }}' create -f examples/manila-csi-plugin/nfs/dynamic-provisioning/pvc.yaml
+          '{{ kubectl }}' create -f examples/manila-csi-plugin/nfs/dynamic-provisioning/pod.yaml
+          '{{ kubectl }}' wait --for=condition=Ready pod/new-nfs-share-pod --timeout=300s
+          '{{ kubectl }}' exec new-nfs-share-pod -- bash -c "echo 'hello' >> /var/lib/www/test"
+          '{{ kubectl }}' create -f examples/manila-csi-plugin/nfs/snapshot/snapshotcreate.yaml
+          sleep 60 # We need to wait till the snapshot is created
+          '{{ kubectl }}' exec new-nfs-share-pod -- bash -c "echo 'WORLD' >> /var/lib/www/test"
+          '{{ kubectl }}' create -f examples/manila-csi-plugin/nfs/snapshot/snapshotrestore.yaml
+          '{{ kubectl }}' create -f examples/manila-csi-plugin/nfs/snapshot/pod.yaml
+          '{{ kubectl }}' wait --for=condition=Ready pod/new-nfs-share-snap-restore-pod --timeout=300s
+          '{{ kubectl }}' exec new-nfs-share-snap-restore-pod -- bash -c "echo 'HELLO' >> /var/lib/www/test"
+
+          valShare="$('{{ kubectl }}' exec new-nfs-share-pod -- cat /var/lib/www/test | tr -d '\r\n')"
+          valSnapShare="$('{{ kubectl }}' exec new-nfs-share-snap-restore-pod -- cat /var/lib/www/test | tr -d '\r\n')"
+
+          [[ "$valShare" == "helloWORLD" ]]
+          [[ "$valSnapShare" == "helloHELLO" ]]
+
+        executable: /bin/bash
+        chdir: '{{ k8s_os_provider_src_dir }}'
+      environment: '{{ global_env }}'
+
