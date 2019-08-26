@@ -26,8 +26,6 @@
           # upload step running
           date +"%b %e %H:%M:%S.999: START " | tee $LOG_DIR/e2e.log
           go get k8s.io/kubernetes
-          go get k8s.io/kubeadm
-          go get k8s.io/test-infra/kubetest
           # Install Kind@Master
           mkdir -p $GOPATH/src/sigs.k8s.io/
           mv '{{ zuul.project.src_dir }}' $GOPATH/src/sigs.k8s.io/
@@ -40,14 +38,12 @@
           sed -i \
             's#kind build node-image#kind build node-image --base-image kindest/base:latest#' \
             $GOPATH/src/sigs.k8s.io/kind/hack/ci/e2e.sh
-          sed -i \
-            '/export KUBERNETES_CONFORMANCE_TEST/i\    KUBETEST_ARGS="${KUBETEST_ARGS} --dump=$GOPATH/src/k8s.io/kubernetes/_artifacts/"' \
-            $GOPATH/src/sigs.k8s.io/kind/hack/ci/e2e.sh
           go install .
-          cd $GOPATH/src/k8s.io/test-infra/kubetest && go install .
           # Checkout K8S to v1.14.3 and run tests
           cd $GOPATH/src/k8s.io/kubernetes && git checkout v1.14.3
+          # e2e.sh script logs everything into ARTIFACTS
+          export ARTIFACTS=$LOG_DIR
+          # setup kind cluster and run tests
           $GOPATH/src/sigs.k8s.io/kind/hack/ci/e2e.sh | tee -a $LOG_DIR/e2e.log
-          cp -R $GOPATH/src/k8s.io/kubernetes/_artifacts/* $LOG_DIR
         executable: /bin/bash
       environment: '{{ global_env }}'
