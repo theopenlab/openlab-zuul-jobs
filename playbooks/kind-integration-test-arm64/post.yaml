@@ -1,6 +1,8 @@
 - hosts: all
   roles:
-    - export-kind-gcp-account
+    - role: export-kind-gcp-account
+    - role: config-bazel
+      bazel_version: 0.23.2
   become: yes
   tasks:
     - name: Upload conformance test result to testgrid
