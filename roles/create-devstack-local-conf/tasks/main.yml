@@ -39,8 +39,7 @@
       enable_plugin heat git://opendev.org/openstack/heat
       EOF
     executable: /bin/bash
-  when:
-    - '"heat" in enable_services'
+  when: ('"heat" in enable_services')  or ('"manila" in enable_services')
 
 # Populate local conf with trove service enabled
 - name: create devstack local conf with Trove enabled
@@ -147,7 +146,6 @@
       #MANILA_SERVICE_IMAGE_ENABLED=True
       #MANILA_DEFAULT_SHARE_TYPE_EXTRA_SPECS='snapshot_support=True create_share_from_snapshot_support=True'
 
-      enable_plugin heat git://opendev.org/openstack/heat
       enable_plugin manila git://opendev.org/openstack/manila
       EOF
     executable: /bin/bash
@@ -174,12 +172,6 @@
       cat << EOF >> /tmp/dg-local.conf
       enable_service neutron-lbaasv2,octavia,o-cw,o-hm,o-hk,o-api
       enable_plugin neutron-lbaas https://opendev.org/openstack/neutron-lbaas
-      enable_plugin octavia https://opendev.org/openstack/octavia
-      enable_plugin barbican https://opendev.org/openstack/barbican
-      # Avoid to confict with vm fixed ip in some public cloud
-      OCTAVIA_MGMT_SUBNET=192.168.10.0/24
-      OCTAVIA_MGMT_SUBNET_START=192.168.10.2
-      OCTAVIA_MGMT_SUBNET_END=192.168.10.200
       EOF
     executable: /bin/bash
   when:
@@ -195,18 +187,14 @@
       cat << EOF >> /tmp/dg-local.conf
       enable_service $services
       enable_plugin octavia https://opendev.org/openstack/octavia
-      enable_plugin barbican https://opendev.org/openstack/barbican
       # Avoid to confict with vm fixed ip in some public cloud
       OCTAVIA_MGMT_SUBNET=192.168.10.0/24
       OCTAVIA_MGMT_SUBNET_START=192.168.10.2
       OCTAVIA_MGMT_SUBNET_END=192.168.10.200
       EOF
     executable: /bin/bash
-  when:
-    - global_env.OS_BRANCH != 'stable/mitaka'
-    - global_env.OS_BRANCH != 'stable/newton'
-    - global_env.OS_BRANCH != 'stable/queens'
-    - '"octavia" in enable_services'
+  when: ('"lbaas" in enable_services') or
+        ('"octavia" in enable_services' and global_env.OS_BRANCH not in ['stable/mitaka', 'stable/newton', 'stable/queens'])
 
 - name: create devstack local conf with barbican enabled
   shell:
@@ -217,8 +205,7 @@
       enable_plugin barbican https://opendev.org/openstack/barbican
       EOF
     executable: /bin/bash
-  when:
-    - '"barbican" in enable_services'
+  when:  ('"barbican" in enable_services') or ('"octavia" in enable_services') or ('"lbaas" in enable_services')
 
 - name: create devstack local conf with fwaas v1 enabled
   shell:
