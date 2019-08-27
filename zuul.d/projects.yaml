@@ -42,7 +42,7 @@
       jobs:
         - spark-integration-test-kubeadm-k8s-v1.14.0:
             branches: master
-        - spark-integration-test-minikube-k8s-v1.10.0:
+        - spark-integration-test-minikube-k8s-v1.13.3:
             branches: master
 
 ####################### periodic jobs on 02:00/14:00 ##########################

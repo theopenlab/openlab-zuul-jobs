@@ -7,6 +7,8 @@
       arch: arm64
     - role: install-docker
       docker_version: 18.09
+    - role: config-bazel
+      bazel_version: 0.23.2
 
   tasks:
 
@@ -18,9 +20,6 @@
     - name: Run e2e tests
       shell:
         cmd: |
-          # Swith to bazel 0.23.2
-          cp /opt/bazel/bazel-0.23/output/bazel /usr/local/bin
-
           export LOG_DIR='{{ k8s_log_dir }}'
           # Add a walk-around start time to the e2e.log file to make the
           # upload step running

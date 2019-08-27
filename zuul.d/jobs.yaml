@@ -708,18 +708,33 @@
     post-run: playbooks/cloud-provider-openstack-acceptance-test-manila-provisioner/post.yaml
     nodeset: ubuntu-xenial
 
+# TODO(wxy): Delete this base job once lb job is moved to citynetwork.
+- job:
+    name: cloud-provider-openstack-test-lb
+    parent: golang-test
+    description: |
+      Base job for all types of cloud-provider-openstack-acceptance-test-lb-octavia test jobs
+    pre-run: playbooks/cloud-provider-openstack-test/pre.yaml
+    post-run: playbooks/cloud-provider-openstack-test/post.yaml
+    secrets:
+      - vexxhost_credentials
+    vars:
+      k8s_os_provider_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack'
+      k8s_src_dir: '{{ ansible_user_dir }}/src/k8s.io/kubernetes'
+      k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
+      kubectl: '{{ ansible_user_dir }}/src/k8s.io/kubernetes/cluster/kubectl.sh'
+      cloud_name: vexxhost
+
 # TODO(wxy): Move lb test to citynetwork once octavia is available on
 # citynetwork.
 - job:
     name: cloud-provider-openstack-acceptance-test-lb-octavia
-    parent: cloud-provider-openstack-test
+    parent: cloud-provider-openstack-test-lb
     description: |
       Run lb acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-lb-octavia/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-lb-octavia/post.yaml
     nodeset: ubuntu-xenial-vexxhost-lb
-    vars:
-      cloud_name: vexxhost
     secrets:
       - vexxhost_credentials
 
@@ -1973,7 +1988,7 @@
       - BuildType:Integration test
 
 - job:
-    name: spark-integration-test-minikube-k8s-v1.10.0
+    name: spark-integration-test-minikube-k8s-v1.13.3
     parent: init-test
     description: |
       Run integration tests of spark of v2.4.0 against v1.13.3 k8s cluster deployed by v0.34.1 minikube

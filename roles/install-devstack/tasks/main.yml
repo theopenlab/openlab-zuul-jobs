@@ -27,6 +27,14 @@
     cmd: |
       set -e
       set -x
+      # As openstack/requirements already upgrade requests to 2.22.0,
+      # but didn't provider a 2.22.0 version for python34 which we used.
+      # Install python3.5
+      add-apt-repository ppa:deadsnakes/ppa -y
+      apt-get update
+      apt-get install python3.5 python3.5-dev libssl-dev -y
+      update-alternatives --install $(which python3) python3 $(which python3.5) 1
+
       # Because the pip10 cannot uninstall/upgrade the pre-installed distutils packages
       # see: https://github.com/pypa/pip/issues/4805
       sed -i '/"Running gate_hook"/ a\
