@@ -3,6 +3,13 @@
     - config-golang
     - export-cloud-openrc
     - install-k8s
+    - clone-devstack-gate-to-workspace
+    - role: create-devstack-local-conf
+      enable_services:
+        - 'manila'
+    - role: install-devstack
+      environment:
+        OVERRIDE_ENABLED_SERVICES: 'key,mysql,rabbit,manila,m-api,m-sch,m-shr,m-dat'
   become: yes
   tasks:
     - name: Run csi manila acceptance tests with cloud-provider-openstack
