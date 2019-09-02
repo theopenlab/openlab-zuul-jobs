@@ -1055,3 +1055,29 @@
       github:
         status: 'failure'
       mysql:
+
+- pipeline:
+    name: arm_comment_only
+    description: |
+      This pipeline is triggered by github comment only for ARM test. Before CI
+      job is stable enough, users don't want to see the job runs in every PR.
+      Use this pipeline for testing the new built CI.
+    manager: independent
+    trigger:
+      github:
+        - event: pull_request
+          action: comment
+          comment: (?i)^\s*check_arm\s*$
+    start:
+      github:
+        status: pending
+        comment: false
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
+    success:
+      github:
+        status: 'success'
+      mysql:
+    failure:
+      github:
+        status: 'failure'
+      mysql:
