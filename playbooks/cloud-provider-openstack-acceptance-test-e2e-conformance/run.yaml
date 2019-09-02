@@ -107,6 +107,7 @@
           # Build all binaries
           export KUBE_FASTBUILD=true
           export KUBERNETES_CONFORMANCE_TEST=y
+          export GO111MODULE=on
 
           # TEMP - Dump Memory Every Second
           free -lmthw -c10000 >> $LOG_DIR/system_memory.log &
