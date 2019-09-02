@@ -39,7 +39,7 @@
       enable_plugin heat git://opendev.org/openstack/heat
       EOF
     executable: /bin/bash
-  when: ('"heat" in enable_services')  or ('"manila" in enable_services')
+  when: ("heat" in enable_services)  or ("manila" in enable_services)
 
 # Populate local conf with trove service enabled
 - name: create devstack local conf with Trove enabled
@@ -193,8 +193,8 @@
       OCTAVIA_MGMT_SUBNET_END=192.168.10.200
       EOF
     executable: /bin/bash
-  when: ('"lbaas" in enable_services') or
-        ('"octavia" in enable_services' and global_env.OS_BRANCH not in ['stable/mitaka', 'stable/newton', 'stable/queens'])
+  when: ("lbaas" in enable_services) or
+        ("octavia" in enable_services and global_env.OS_BRANCH not in ["stable/mitaka", "stable/newton", "stable/queens"])
 
 - name: create devstack local conf with barbican enabled
   shell:
@@ -205,7 +205,7 @@
       enable_plugin barbican https://opendev.org/openstack/barbican
       EOF
     executable: /bin/bash
-  when:  ('"barbican" in enable_services') or ('"octavia" in enable_services') or ('"lbaas" in enable_services')
+  when:  ("barbican" in enable_services) or ("octavia" in enable_services) or ("lbaas" in enable_services)
 
 - name: create devstack local conf with fwaas v1 enabled
   shell:
