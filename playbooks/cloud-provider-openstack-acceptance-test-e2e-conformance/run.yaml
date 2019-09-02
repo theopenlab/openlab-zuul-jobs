@@ -103,6 +103,7 @@
           export KUBECONFIG=/var/run/kubernetes/admin.kubeconfig
 
           # Build kubetest
+          export GO111MODULE=on
           go get -u k8s.io/test-infra/kubetest
           # Build all binaries
           export KUBE_FASTBUILD=true
