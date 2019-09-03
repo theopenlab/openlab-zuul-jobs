@@ -2214,3 +2214,19 @@
       - OS:ubuntu-xenial
       - Arch:arm64
       - BuildType:Compile
+
+# Flink arm64 nightly test periodic job
+- job:
+    name: flink-nightly-test
+    parent: init-test
+    description: |
+      Apache Flink nightly test
+    run: playbooks/flink-nightly-test/run.yaml
+    nodeset: ubuntu-xenial-arm64
+    tags:
+      - Category:BigData
+      - Project:apache/flink
+      - Application:flink@master
+      - OS:ubuntu-xenial
+      - Arch:arm64
+      - BuildType:Integration test

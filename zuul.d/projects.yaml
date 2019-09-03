@@ -235,9 +235,17 @@
         - rust-openstack-0.2.3-acceptance-queens:
             branches: master
 
+#- project:
+#    name: apache/hbase
+#    periodic-10/22:
+#      jobs:
+#        - hbase-build-arm64:
+#            branches: master
+
+
 - project:
-    name: apache/hbase
+    name: apache/flink
     periodic-10/22:
       jobs:
-        - hbase-build-arm64:
+        - flink-nightly-test:
             branches: master

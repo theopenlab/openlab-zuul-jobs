@@ -1,0 +1,21 @@
+- hosts: all
+  become: yes
+  roles:
+    - role: install-openjdk
+      java_version: '8'
+      with_scala: true
+      scala_version: '2.11.0'
+    - role: install-maven
+      maven_version: '3.2.5'
+  tasks:
+    - name: End to end test
+      shell: |
+        set -xeo pipefail
+        # e2e - misc - hadoop 2.8
+        export PROFILE="-Dinclude-hadoop -Dhadoop.version=2.8.3 -De2e-metrics"
+        ./tools/travis/nightly.sh split_misc.sh
+        # This is for Flink nightly test POC. More test will be added later.
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
