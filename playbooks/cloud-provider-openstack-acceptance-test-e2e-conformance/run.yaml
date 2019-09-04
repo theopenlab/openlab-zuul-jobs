@@ -107,7 +107,6 @@
           export GOPROXY=https://proxy.golang.org
           export GOSUMDB=sum.golang.org
           go get k8s.io/test-infra/kubetest
-          
           # Build all binaries
           export KUBE_FASTBUILD=true
           export KUBERNETES_CONFORMANCE_TEST=y
