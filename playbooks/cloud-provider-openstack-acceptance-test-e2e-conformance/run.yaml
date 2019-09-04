@@ -103,6 +103,7 @@
           export KUBECONFIG=/var/run/kubernetes/admin.kubeconfig
 
           # Build kubetest
+          # go get kubetest is failing from k8s or cpo directory
           cd ..
           export GO111MODULE=on
           export GOPROXY=https://proxy.golang.org
@@ -117,7 +118,7 @@
 
           # Run e2e test using local deployment/provider
           # Must run kubetest under kubernetes root directory
-          pushd '{{ k8s_src_dir }}'
+          cd '{{ k8s_src_dir }}'
 
           # temproary change to solve memory issue
           make WHAT="test/e2e/e2e.test vendor/github.com/onsi/ginkgo/ginkgo cmd/kubectl"
