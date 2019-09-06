@@ -32,6 +32,8 @@
           EOF
 
           export API_HOST_IP=$(ip route get 1.1.1.1 | awk '{print $7}')
+          # To fix k8s v1.16 node port service tests, failing due to blocked ports
+          export NODE_PORT_RANGE=30000-30010
           export KUBELET_HOST="0.0.0.0"
           export ALLOW_SECURITY_CONTEXT=true
           export ENABLE_CRI=false
