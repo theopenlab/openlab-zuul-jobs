@@ -570,6 +570,7 @@
       Run Kubernetes E2E Conformance tests against Kubernetes master
     vars:
       go_version: '1.12.1'
+      etcd_version: 'v3.3.15'
     run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/post.yaml
     nodeset: ubuntu-xenial-citynetwork
