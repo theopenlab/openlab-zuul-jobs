@@ -36,6 +36,17 @@
         - openstacksdk-ansible-v2.8.0-functional-devstack-mitaka:
             branches: devel
 
+- project:
+    name: apache/spark
+    periodic-12:
+      jobs:
+        - spark-integration-test-kubeadm-k8s-v1.14.0:
+            branches: master
+        - spark-integration-test-minikube-k8s-v1.13.3:
+            branches: master
+        - spark-master-unit-test-hadoop-2.7-arm64:
+            branches: master
+
 ####################### periodic jobs on 02:00/14:00 ##########################
 - project:
     name: terraform-providers/terraform-provider-openstack
@@ -187,17 +198,6 @@
       jobs:
         - hadoop-build-arm64:
             branches: trunk
-
-- project:
-    name: apache/spark
-    periodic-20:
-      jobs:
-        - spark-integration-test-kubeadm-k8s-v1.14.0:
-            branches: master
-        - spark-integration-test-minikube-k8s-v1.13.3:
-            branches: master
-        - spark-master-unit-test-hadoop-2.7-arm64:
-            branches: master
 
 ####################### periodic jobs on 10:00/22:00 ##########################
 - project:
