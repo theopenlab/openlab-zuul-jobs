@@ -4,6 +4,8 @@
     - install-openjdk
     - install-maven
 
+- hosts: all
+  tasks:
     - name: 'Test Spark on Commits before 2019/9/9'
       shell:
         cmd: |
