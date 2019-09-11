@@ -38,7 +38,7 @@
 
 - project:
     name: apache/spark
-    periodic-0/12:
+    periodic-12:
       jobs:
         - spark-integration-test-kubeadm-k8s-v1.14.0:
             branches: master
@@ -78,7 +78,7 @@
 
 - project:
     name: containerd/containerd
-    periodic-2/14:
+    periodic-14:
       jobs:
         - containerd-build-arm64:
             branches: master
@@ -114,7 +114,7 @@
 
 - project:
     name: envoyproxy/envoy
-    periodic-4/16:
+    periodic-16:
       jobs:
         - envoy-build-arm64:
             branches: master
@@ -141,14 +141,14 @@
 
 - project:
     name: kubernetes-sigs/kind
-    periodic-6/18:
+    periodic-6:
       jobs:
         - kind-integration-test-arm64:
             branches: master
 
 - project:
     name: apache/hive
-    periodic-6/18:
+    periodic-18:
       jobs:
         - hive-build-arm64:
             branches: master
@@ -194,7 +194,7 @@
 
 - project:
     name: apache/hadoop
-    periodic-8/20:
+    periodic-8:
       jobs:
         - hadoop-build-arm64:
             branches: trunk
@@ -239,7 +239,7 @@
 
 - project:
     name: apache/hbase
-    periodic-10/22:
+    periodic-22:
       jobs:
         - hbase-build-arm64:
             branches: master
