@@ -1,0 +1,27 @@
+- hosts: all
+  become: yes
+  roles:
+    - install-openjdk
+    - install-maven
+
+- hosts: all
+  tasks:
+    - name: 'Test Spark on Commits before 2019/9/9'
+      shell:
+        cmd: |
+          set -ex
+
+          # fix kafka authfail tests
+          sudo sed -i -e 's/^127.0.0.1 .*$/127.0.0.1 localhost '$(hostname)'/g' /etc/hosts
+
+          ./build/mvn clean install -DskipTests -Phadoop-{{ hadoop_version }} -Pyarn -Phive -Phive-thriftserver -Pkinesis-asl -Pmesos 2>&1 | sudo tee "{{ ansible_user_dir }}/workspace/logs/spark_build.log"
+
+          # install org.openlabtesting.leveldbjni which supports aarch64
+          wget https://repo1.maven.org/maven2/org/openlabtesting/leveldbjni/leveldbjni-all/1.8/leveldbjni-all-1.8.jar
+          mvn install:install-file -DgroupId=org.fusesource.leveldbjni -DartifactId=leveldbjni-all -Dversion=1.8 -Dpackaging=jar -Dfile=leveldbjni-all-1.8.jar
+
+          ./build/mvn test -Phadoop-{{ hadoop_version }} -Pyarn -Phive -Phive-thriftserver -Pkinesis-asl -Pmesos 2>&1 | sudo tee "{{ ansible_user_dir }}/workspace/logs/spark_test.log"
+
+        chdir: '{{ zuul.project.src_dir }}'
+        executable: /bin/bash
+      environment: '{{ global_env }}'
