@@ -243,3 +243,10 @@
       jobs:
         - hbase-build-arm64:
             branches: master
+
+- project:
+    name: theopenlab/spark
+    periodic-10:
+      jobs:
+        - spark-unchanged-branch-unit-test-hadoop-2.7-arm64:
+            branches: test-branch20190909

@@ -2237,3 +2237,27 @@
       - Arch:arm64
       - BuildType:Unit test
     timeout: 54000
+
+# TODO(bzhaoopenstack) Notes: This is a demo job, once the upstream begin
+# to discuss, this job will be removed asap.
+# The forked Spark arm64 build and run unit tests periodic job with the commits
+# before 20190909
+- job:
+    name: spark-unchanged-branch-unit-test-hadoop-2.7-arm64
+    parent: init-test
+    description: |
+      The forked Apache Spark build and run unit tests with a unchanged
+      branch before 20190909 on arm64 server
+    run: playbooks/spark-unchanged-branch-unit-test/run.yaml
+    vars:
+      hadoop_version: 2.7
+    nodeset: ubuntu-xenial-arm64
+    tags:
+      - Category:BigData
+      - Project:theopenlab/spark
+      - Application:Spark@test-branch20190909
+      - Application:Hadoop@2.7
+      - OS:ubuntu-xenial
+      - Arch:arm64
+      - BuildType:Unit test
+    timeout: 54000
