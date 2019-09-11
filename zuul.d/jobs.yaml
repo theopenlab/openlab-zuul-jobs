@@ -625,6 +625,7 @@
     vars:
       go_version: '1.12'
       k8s_version: 'release-1.13'
+      etcd_version: 'v3.3.10'
     tags:
       - Category:Cloud
       - Project:kubernetes/cloud-provider-openstack
@@ -646,6 +647,7 @@
     vars:
       go_version: '1.12.1'
       k8s_version: 'release-1.14'
+      etcd_version: 'v3.3.10'
     tags:
       - Category:Cloud
       - Project:kubernetes/cloud-provider-openstack
@@ -667,6 +669,7 @@
     vars:
       go_version: '1.12.1'
       k8s_version: 'release-1.15'
+      etcd_version: 'v3.3.10'
     tags:
       - Category:Cloud
       - Project:kubernetes/cloud-provider-openstack
@@ -2214,3 +2217,23 @@
       - OS:ubuntu-xenial
       - Arch:arm64
       - BuildType:Compile
+
+# Spark arm64 build and run unit tests periodic job
+- job:
+    name: spark-master-unit-test-hadoop-2.7-arm64
+    parent: init-test
+    description: |
+      Apache Spark build and run unit tests on arm64 server
+    run: playbooks/spark-unit-test-arm64/run.yaml
+    vars:
+      hadoop_version: 2.7
+    nodeset: ubuntu-xenial-arm64
+    tags:
+      - Category:BigData
+      - Project:apache/spark
+      - Application:Spark@master
+      - Application:Hadoop@2.7
+      - OS:ubuntu-xenial
+      - Arch:arm64
+      - BuildType:Unit test
+    timeout: 54000

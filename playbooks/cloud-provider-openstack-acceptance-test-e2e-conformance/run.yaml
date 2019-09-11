@@ -32,6 +32,8 @@
           EOF
 
           export API_HOST_IP=$(ip route get 1.1.1.1 | awk '{print $7}')
+          # To fix k8s v1.16 node port service tests, failing due to blocked ports
+          export NODE_PORT_RANGE=30000-30010
           export KUBELET_HOST="0.0.0.0"
           export ALLOW_SECURITY_CONTEXT=true
           export ENABLE_CRI=false
@@ -103,10 +105,21 @@
           export KUBECONFIG=/var/run/kubernetes/admin.kubeconfig
 
           # Build kubetest
-          go get -u k8s.io/test-infra/kubetest
+          # go get kubetest is failing from k8s or cpo directory
+          cd ..
+          export GO111MODULE=on
+          export GOPROXY=https://proxy.golang.org
+          export GOSUMDB=sum.golang.org
+          go get k8s.io/test-infra/kubetest
           # Build all binaries
           export KUBE_FASTBUILD=true
           export KUBERNETES_CONFORMANCE_TEST=y
+          # Go modules not supported by kubernetes before v1.15
+          if [ '{{ k8s_version }}' == 'release-1.13' ] || [ '{{ k8s_version }}' == 'release-1.14' ]; then
+            unset GO111MODULE
+            unset GOSUMDB
+            unset GOPROXY
+          fi
 
           # TEMP - Dump Memory Every Second
           free -lmthw -c10000 >> $LOG_DIR/system_memory.log &
