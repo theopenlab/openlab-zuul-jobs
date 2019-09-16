@@ -10,7 +10,7 @@
       shell:
         cmd: |
           set -ex
-          ./build/mvn -B -e clean install -DskipTests -Phadoop-{{ hadoop_version }} -Pyarn -Phive -Phive-thriftserver -Pkinesis-asl -Pmesos 2>&1 | sudo tee "{{ ansible_user_dir }}/workspace/logs/spark_build.log"
+          ./build/mvn -B -e clean install -DskipTests -Phadoop-{{ hadoop_version }} -Pyarn -Phive -Phive-thriftserver -Pkinesis-asl -Pmesos 2>&1 | tee "{{ ansible_user_dir }}/workspace/logs/spark_build.log"
 
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
@@ -22,7 +22,7 @@
           set -xo pipefail
 
           # mvn test will failed due to the leveldbjni has no aarch64 supporting
-          ./build/mvn -B -e test 2>&1 | sudo tee "{{ ansible_user_dir }}/workspace/logs/spark_test_original.log"
+          ./build/mvn -B -e test 2>&1 | tee "{{ ansible_user_dir }}/workspace/logs/spark_test_original.log"
 
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
@@ -32,7 +32,7 @@
     - name: 'Step3: Run Spark test with org.openlabtesting.leveldbjni which support aarch64'
       shell:
         cmd: |
-          set -ex
+          set -exo pipefail
 
           # fix kafka authfail tests
           sudo sed -i -e 's/^127.0.0.1 .*$/127.0.0.1 localhost '$(hostname)'/g' /etc/hosts
@@ -42,7 +42,7 @@
           ./build/mvn install:install-file -DgroupId=org.fusesource.leveldbjni -DartifactId=leveldbjni-all -Dversion=1.8 -Dpackaging=jar -Dfile=leveldbjni-all-1.8.jar
 
           # run mvn test
-          ./build/mvn -B -e test -Phadoop-{{ hadoop_version }} -Pyarn -Phive -Phive-thriftserver -Pkinesis-asl -Pmesos 2>&1 | sudo tee "{{ ansible_user_dir }}/workspace/logs/spark_test.log"
+          ./build/mvn -B -e test -Phadoop-{{ hadoop_version }} -Pyarn -Phive -Phive-thriftserver -Pkinesis-asl -Pmesos 2>&1 | tee "{{ ansible_user_dir }}/workspace/logs/spark_test.log"
 
         chdir: '{{ zuul.project.src_dir }}'
         executable: /bin/bash
