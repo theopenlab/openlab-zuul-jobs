@@ -1,0 +1,92 @@
+- hosts: k8s-master
+  become: yes
+  roles:
+    - role: create-multinodes-k8s-cluster-with-kubeadm
+      k8s_role_to_deploy:
+        - master
+  tasks:
+    - name: get kubeadm join command
+      shell: kubeadm token create --print-join-command
+      register: kubeadm_join_cmd
+
+- hosts: k8s-node-1,k8s-node-2
+  become: yes
+  roles:
+    - role: create-multinodes-k8s-cluster-with-kubeadm
+      k8s_role_to_deploy:
+        - node
+      kubeadm_join_cmd: "{{ hostvars['k8s-master']['kubeadm_join_cmd']['stdout'] }}"
+
+- hosts: k8s-master
+  become: yes
+  tasks:
+    - name: config CPO
+      shell: |
+          set -o pipefail
+          set -ex
+
+          mkdir -p /etc/kubernetes/
+          cat << EOF >> /etc/kubernetes/cloud-config
+          [Global]
+          domain-name = $OS_USER_DOMAIN_NAME
+          tenant-id = $OS_PROJECT_ID
+          auth-url = $OS_AUTH_URL
+          password = $OS_PASSWORD
+          username = $OS_USERNAME
+          region = $OS_REGION_NAME
+          [BlockStorage]
+          bs-version = v3
+          ignore-volume-az = yes
+          EOF
+
+          export CLOUD_CONFIG=/etc/kubernetes/cloud-config
+
+          # Replace custom cloud config
+          {
+              cloud_cfg=$(base64 -w 0 ${CLOUD_CONFIG})
+              sed "s/cloud\.conf:.*$/cloud.conf: $cloud_cfg/g" -i manifests/cinder-csi-plugin/csi-secret-cinderplugin.yaml
+          } > /dev/null 2>&1
+
+          # Enable services
+          kubectl create -f manifests/cinder-csi-plugin
+          sleep 5
+          # If services up
+          if timeout 300 bash -c '
+              while :
+              do
+                 kubectl get pod | sed "1d" | awk '\''$2 != "2/2" || $3 != "Running" {err = 1} END {exit err}'\'' && break
+                  sleep 1
+              done
+              '
+          then
+             echo 'Run services successful'
+              kubectl get pod
+          else
+              echo 'Run services failed'
+              kubectl get pod
+              exit 1
+          fi
+
+          # TODO: need to check if storage class need to be created
+          # runt tests
+      args:
+        executable: /bin/bash
+
+    - name: Run test
+      shell: |
+          set -o pipefail
+          set -ex
+          # Set admin kubeconfig for running e2e tests
+          export KUBECONFIG=/etc/kubernetes/admin.conf
+
+          # Build kubetest
+          # go get kubetest is failing from k8s or cpo directory
+          cd ..
+          export GO111MODULE=on
+          export GOPROXY=https://proxy.golang.org
+          export GOSUMDB=sum.golang.org
+          go get k8s.io/test-infra/kubetest
+          kubetest --test --test_args="--ginkgo.focus=\[sig-storage\]\sIn-tree\sVolumes\s\[Driver:\s{kubernetes.io/cinder}\]\s\[Testpattern:\sDynamic\sPV|allowedTopologies|Pod\sDisks|PersistentVolumes\sDefault --ginkgo.skip=\\[Disruptive\\]|\\[Serial\\]|\\[Feature:.+\\]" --provider=local --storage.migratedPlugins=kubernetes.io/cinder"
+
+      args:
+        executable: /bin/bash
