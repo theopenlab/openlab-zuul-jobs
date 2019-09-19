@@ -570,7 +570,6 @@
       Run Kubernetes E2E Conformance tests against Kubernetes master
     vars:
       go_version: '1.12.1'
-      etcd_version: 'v3.3.15'
     run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/post.yaml
     nodeset: ubuntu-xenial-citynetwork
@@ -626,6 +625,7 @@
     vars:
       go_version: '1.12'
       k8s_version: 'release-1.13'
+      etcd_version: 'v3.3.10'
     tags:
       - Category:Cloud
       - Project:kubernetes/cloud-provider-openstack
@@ -647,6 +647,7 @@
     vars:
       go_version: '1.12.1'
       k8s_version: 'release-1.14'
+      etcd_version: 'v3.3.10'
     tags:
       - Category:Cloud
       - Project:kubernetes/cloud-provider-openstack
@@ -668,6 +669,7 @@
     vars:
       go_version: '1.12.1'
       k8s_version: 'release-1.15'
+      etcd_version: 'v3.3.10'
     tags:
       - Category:Cloud
       - Project:kubernetes/cloud-provider-openstack
@@ -2234,4 +2236,76 @@
       - OS:ubuntu-xenial
       - Arch:arm64
       - BuildType:Unit test
+    timeout: 54000
+
+# TODO(bzhaoopenstack) Notes: This is a demo job, once the upstream begin
+# to discuss, this job will be removed asap.
+# The forked Spark arm64 build and run unit tests periodic job with the commits
+# before 20190909
+- job:
+    name: spark-unchanged-branch-unit-test-hadoop-2.7-arm64
+    parent: init-test
+    description: |
+      The forked Apache Spark build and run unit tests with a unchanged
+      branch before 20190909 on arm64 server
+    run: playbooks/spark-unchanged-branch-unit-test/run.yaml
+    vars:
+      hadoop_version: 2.7
+    nodeset: ubuntu-xenial-arm64
+    tags:
+      - Category:BigData
+      - Project:theopenlab/spark
+      - Application:Spark@test-branch20190909
+      - Application:Hadoop@2.7
+      - OS:ubuntu-xenial
+      - Arch:arm64
+      - BuildType:Unit test
+    timeout: 54000
+
+- job:
+    name: flink-end-to-end-test-part1
+    parent: init-test
+    description: |
+      The flink e2e test which contains split_checkpoints.sh, split_sticky.sh
+    run: playbooks/flink-end-to-end-test/run_part1.yaml
+    nodeset: ubuntu-xenial-arm64
+    tags:
+      - Category:BigData
+      - Project:apache/flink
+      - Application:Flink@master
+      - OS:ubuntu-xenial
+      - Arch:arm64
+      - BuildType:Integration test
+    timeout: 54000
+
+- job:
+    name: flink-end-to-end-test-part2
+    parent: init-test
+    description: |
+      The flink e2e test which contains split_heavy.sh, split_ha.sh
+    run: playbooks/flink-end-to-end-test/run_part2.yaml
+    nodeset: ubuntu-xenial-arm64
+    tags:
+      - Category:BigData
+      - Project:apache/flink
+      - Application:Flink@master
+      - OS:ubuntu-xenial
+      - Arch:arm64
+      - BuildType:Integration test
+    timeout: 54000
+
+- job:
+    name: flink-end-to-end-test-part3
+    parent: init-test
+    description: |
+      The flink e2e test which contains split_misc.sh, split_misc_hadoopfree.sh
+    run: playbooks/flink-end-to-end-test/run_part3.yaml
+    nodeset: ubuntu-xenial-arm64
+    tags:
+      - Category:BigData
+      - Project:apache/flink
+      - Application:Flink@master
+      - OS:ubuntu-xenial
+      - Arch:arm64
+      - BuildType:Integration test
     timeout: 54000

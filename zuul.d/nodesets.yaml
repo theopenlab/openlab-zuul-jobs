@@ -74,3 +74,13 @@
           - k8s-node-2
           - k8s-node-3
           - k8s-node-4
+
+- nodeset:
+    name: ubuntu-xenial-k8s-cluster-cpo
+    nodes:
+      - name: k8s-master
+        label: ubuntu-xenial-citynetwork
+      - name: k8s-node-1
+        label: ubuntu-xenial-citynetwork
+      - name: k8s-node-2
+        label: ubuntu-xenial-citynetwork
