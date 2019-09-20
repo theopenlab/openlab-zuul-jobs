@@ -764,6 +764,8 @@
       Run cinder CSI driver migration test
     run: playbooks/cloud-provider-openstack-multinode-csi-migration-test/run.yaml
     nodeset: ubuntu-xenial-k8s-cluster-cpo
+    secrets:
+      - citynetwork_credentials
 
 - job:
     name: cluster-api-provider-openstack-image-build
