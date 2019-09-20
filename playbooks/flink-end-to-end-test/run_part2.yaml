@@ -41,9 +41,9 @@
 
 
     - name: Run split_heavy.sh e2e test
-      shell: |
-        set -xo pipefail
-        ./tools/travis/nightly.sh split_heavy.sh
+      shell:
+        cmd: |
+          ./tools/travis/nightly.sh split_heavy.sh | tee split_heavy.log
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
@@ -51,9 +51,9 @@
       environment: '{{ global_env }}'
 
     - name: Run split_ha.sh e2e test
-      shell: |
-        set -xo pipefail
-        ./tools/travis/nightly.sh split_ha.sh
+      shell:
+        cmd: |
+          ./tools/travis/nightly.sh split_ha.sh | tee split_ha.log
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
