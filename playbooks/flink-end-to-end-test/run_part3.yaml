@@ -1,5 +1,5 @@
 - hosts: all
-  become: no
+  become: yes
   roles:
     - role: install-openjdk
       java_version: '8'
@@ -7,6 +7,9 @@
       scala_version: '2.11.0'
     - role: install-maven
       maven_version: '3.2.5'
+
+- hosts: all
+  become: no
   tasks:
     - name: Build and install frocksdb
       shell:
