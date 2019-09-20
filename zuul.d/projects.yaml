@@ -250,3 +250,14 @@
       jobs:
         - spark-unchanged-branch-unit-test-hadoop-2.7-arm64:
             branches: test-branch20190909
+
+- project:
+    name: apache/flink
+    periodic-20:
+      jobs:
+        - flink-end-to-end-test-part1:
+            branches: master
+        - flink-end-to-end-test-part2:
+            branches: master
+        - flink-end-to-end-test-part3:
+            branches: master

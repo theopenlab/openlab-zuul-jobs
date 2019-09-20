@@ -1,0 +1,150 @@
+- hosts: all
+  become: yes
+  roles:
+    - role: install-openjdk
+      java_version: '8'
+      with_scala: true
+      scala_version: '2.11.0'
+    - role: install-maven
+      maven_version: '3.2.5'
+
+- hosts: all
+  become: no
+  tasks:
+    - name: Build and install frocksdb
+      shell:
+        cmd: |
+          git clone https://github.com/dataArtisans/frocksdb.git
+          cd frocksdb
+          git checkout origin/FRocksDB-5.17.2
+          apt update
+          apt install -y gcc g++ make
+          export DEBUG_LEVEL=0
+          make -j8 rocksdbjava
+
+          mvn install:install-file -DgroupId=com.data-artisans \
+          -DartifactId=frocksdbjni -Dversion=5.17.2-artisans-1.0 \
+          -Dpackaging=jar -Dfile=java/target/rocksdbjni-5.17.2-linux64.jar
+      args:
+        executable: /bin/bash
+        chdir: '/opt'
+      environment: '{{ global_env }}'
+
+    - name: Comment out docker installation
+      lineinfile:
+        path: "/home/zuul/src/github.com/apache/flink/tools/travis/nightly.sh"
+        regexp: "^.*setup_docker.sh"
+        line: "# source ${HERE}/setup_docker.sh"
+
+    - name: Comment out k8s installation
+      lineinfile:
+        path: "/home/zuul/src/github.com/apache/flink/tools/travis/nightly.sh"
+        regexp: "^.*setup_kubernetes.sh"
+        line: "# source ${HERE}/setup_kubernetes.sh"
+
+    # TODO(wxy): Should fix in apache/flink
+    - name: Disable xpack.ml for elasticsearch 6.0+
+      shell: |
+        set -xo pipefail
+
+        cat << EOF >> Disable_xpack_ml.patch
+        From 833d65d0455ca67cd04b3ce2be6b8e48100073ca Mon Sep 17 00:00:00 2001
+        From: wangxiyuan <wangxiyuan@huawei.com>
+        Date: Thu, 19 Sep 2019 15:20:51 +0800
+        Subject: [PATCH] Update elasticsearch
+
+        ---
+         flink-end-to-end-tests/test-scripts/elasticsearch-common.sh | 6 ++++--
+         flink-end-to-end-tests/test-scripts/test_sql_client.sh      | 2 +-
+         .../test-scripts/test_streaming_elasticsearch.sh            | 2 +-
+         3 files changed, 6 insertions(+), 4 deletions(-)
+
+        diff --git a/flink-end-to-end-tests/test-scripts/elasticsearch-common.sh b/flink-end-to-end-tests/test-scripts/elasticsearch-common.sh
+        index 695905222f..9fae78efae 100644
+        --- a/flink-end-to-end-tests/test-scripts/elasticsearch-common.sh
+        +++ b/flink-end-to-end-tests/test-scripts/elasticsearch-common.sh
+        @@ -26,7 +26,7 @@ function setup_elasticsearch {
+             mkdir -p $TEST_DATA_DIR
+
+             local downloadUrl=$1
+        -
+        +    local elasticsearch_version=${2-0}
+             # start downloading Elasticsearch
+             echo "Downloading Elasticsearch from $downloadUrl ..."
+             curl "$downloadUrl" > $TEST_DATA_DIR/elasticsearch.tar.gz
+        @@ -34,7 +34,9 @@ function setup_elasticsearch {
+             local elasticsearchDir=$TEST_DATA_DIR/elasticsearch
+             mkdir -p $elasticsearchDir
+             tar xzf $TEST_DATA_DIR/elasticsearch.tar.gz -C $elasticsearchDir --strip-components=1
+        -
+        +    if [ $elasticsearch_version -ge 6 ]; then
+        +      echo xpack.ml.enabled: false >> $elasticsearchDir/config/elasticsearch.yml
+        +    fi
+             # start Elasticsearch cluster
+             $elasticsearchDir/bin/elasticsearch &
+         }
+        diff --git a/flink-end-to-end-tests/test-scripts/test_sql_client.sh b/flink-end-to-end-tests/test-scripts/test_sql_client.sh
+        index 5798545279..262817ee6e 100755
+        --- a/flink-end-to-end-tests/test-scripts/test_sql_client.sh
+        +++ b/flink-end-to-end-tests/test-scripts/test_sql_client.sh
+        @@ -101,7 +101,7 @@ echo "Preparing Elasticsearch..."
+         ELASTICSEARCH_VERSION=6
+         DOWNLOAD_URL='https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.3.1.tar.gz'
+
+        -setup_elasticsearch $DOWNLOAD_URL
+        +setup_elasticsearch $DOWNLOAD_URL $ELASTICSEARCH_VERSION
+         wait_elasticsearch_working
+
+         ################################################################################
+        diff --git a/flink-end-to-end-tests/test-scripts/test_streaming_elasticsearch.sh b/flink-end-to-end-tests/test-scripts/test_streaming_elasticsearch.sh
+        index f37ee73d22..e2ee273d43 100755
+        --- a/flink-end-to-end-tests/test-scripts/test_streaming_elasticsearch.sh
+        +++ b/flink-end-to-end-tests/test-scripts/test_streaming_elasticsearch.sh
+        @@ -25,7 +25,7 @@ DOWNLOAD_URL=$2
+
+         mkdir -p $TEST_DATA_DIR
+
+        -setup_elasticsearch $DOWNLOAD_URL
+        +setup_elasticsearch $DOWNLOAD_URL $ELASTICSEARCH_VERSION
+         wait_elasticsearch_working
+
+         start_cluster
+        --
+        2.21.0.windows.1
+        EOF
+
+        git am Disable_xpack_ml.patch
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      ignore_errors: yes
+      environment: '{{ global_env }}'
+
+    # TODO(wxy): Should fix in apache/flink
+    - name: Hacking add prometheus arm package
+      lineinfile:
+        path: "/home/zuul/src/github.com/apache/flink/flink-end-to-end-tests/flink-metrics-reporter-prometheus-test/src/test/java/org/apache/flink/metrics/prometheus/tests/PrometheusReporterEndToEndITCase.java"
+        regexp: "^.*linux-amd64.*"
+        line: "\t\t\t\tPROMETHEUS_FILE_NAME = base + \"linux-arm64\";"
+
+    - name: Run split_misc.sh e2e test
+      shell: |
+        set -xo pipefail
+        export PROFILE="-Dinclude-hadoop -Dhadoop.version=2.8.3 -Dscala-2.12 -De2e-metrics"
+        ./tools/travis/nightly.sh split_misc.sh
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      ignore_errors: yes
+      environment: '{{ global_env }}'
+
+    - name: Run split_misc_hadoopfree.sh e2e test
+      shell: |
+        set -xo pipefail
+        export PROFILE="-Dinclude-hadoop -Dhadoop.version=2.8.3 -Dscala-2.12 -De2e-metrics"
+        ./tools/travis/nightly.sh split_misc_hadoopfree.sh
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      ignore_errors: yes
+      environment: '{{ global_env }}'
