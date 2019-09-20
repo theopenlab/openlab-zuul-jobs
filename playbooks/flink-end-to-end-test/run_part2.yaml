@@ -30,14 +30,14 @@
     - name: Comment out docker installation
       lineinfile:
         path: "/home/zuul/src/github.com/apache/flink/tools/travis/nightly.sh"
-        regexp: "^source ${HERE}/setup_docker.sh"
-        line: "#source ${HERE}/setup_docker.sh"
+        regexp: "^.*setup_docker.sh"
+        line: "# source ${HERE}/setup_docker.sh"
 
     - name: Comment out k8s installation
       lineinfile:
         path: "/home/zuul/src/github.com/apache/flink/tools/travis/nightly.sh"
-        regexp: "^source ${HERE}/setup_kubernetes.sh"
-        line: "#source ${HERE}/setup_kubernetes.sh"
+        regexp: "^.*setup_kubernetes.sh"
+        line: "# source ${HERE}/setup_kubernetes.sh"
 
 
     - name: Run split_heavy.sh e2e test
