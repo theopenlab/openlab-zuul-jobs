@@ -21,7 +21,8 @@
   become: yes
   tasks:
     - name: config CPO
-      shell: |
+      shell:
+        cmd: |
           set -o pipefail
           set -ex
 
@@ -73,7 +74,8 @@
         executable: /bin/bash
 
     - name: Run test
-      shell: |
+      shell:
+        cmd: |
           set -o pipefail
           set -ex
           # Set admin kubeconfig for running e2e tests
