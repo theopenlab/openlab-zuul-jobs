@@ -17,6 +17,6 @@
 
       # Build k8s cmd
       git clone https://github.com/kubernetes/kubernetes '{{ k8s_src_dir }}' -b '{{ k8s_version }}'
-      make -C '{{ k8s_src_dir }}' WHAT="cmd/kubectl cmd/kube-apiserver cmd/kube-controller-manager cmd/cloud-controller-manager cmd/kubelet cmd/kube-proxy cmd/kube-scheduler"
+      make -C '{{ k8s_src_dir }}' WHAT="cmd/kubectl cmd/hyperkube cmd/kube-apiserver cmd/kube-controller-manager cmd/cloud-controller-manager cmd/kubelet cmd/kube-proxy cmd/kube-scheduler"
     executable: /bin/bash
   environment: '{{ global_env }}'
