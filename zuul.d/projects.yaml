@@ -177,19 +177,19 @@
     name: gophercloud/gophercloud
     periodic-8/20:
       jobs:
-        - gophercloud-v0.1.0-acceptance-test-stein:
+        - gophercloud-v0.4.0-acceptance-test-stein:
             branches: master
-        - gophercloud-v0.1.0-acceptance-test-rocky:
+        - gophercloud-v0.4.0-acceptance-test-rocky:
             branches: master
-        - gophercloud-v0.1.0-acceptance-test-queens:
+        - gophercloud-v0.4.0-acceptance-test-queens:
             branches: master
-        - gophercloud-v0.1.0-acceptance-test-pike:
+        - gophercloud-v0.4.0-acceptance-test-pike:
             branches: master
-        - gophercloud-v0.1.0-acceptance-test-ocata:
+        - gophercloud-v0.4.0-acceptance-test-ocata:
             branches: master
-        - gophercloud-v0.1.0-acceptance-test-newton:
+        - gophercloud-v0.4.0-acceptance-test-newton:
             branches: master
-        - gophercloud-v0.1.0-acceptance-test-mitaka:
+        - gophercloud-v0.4.0-acceptance-test-mitaka:
             branches: master
 
 - project:
