@@ -41,9 +41,9 @@
 
 
     - name: Run split_checkpoints.sh e2e test
-      shell: |
-        set -xo pipefail
-        ./tools/travis/nightly.sh split_checkpoints.sh
+      shell:
+        cmd: |
+          ./tools/travis/nightly.sh split_checkpoints.sh | tee split_checkpoints.log
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
@@ -51,9 +51,9 @@
       environment: '{{ global_env }}'
 
     - name: Run split_sticky.sh e2e test
-      shell: |
-        set -xo pipefail
-        ./tools/travis/nightly.sh split_sticky.sh
+      shell:
+        cmd: |
+          ./tools/travis/nightly.sh split_sticky.sh | tee split_sticky.log
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
