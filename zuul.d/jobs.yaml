@@ -342,15 +342,15 @@
 ## ========== gophercloud + openstack jobs ==============
 ## grandson job for stein
 - job:
-    name: gophercloud-v0.1.0-acceptance-test-stein
+    name: gophercloud-v0.4.0-acceptance-test-stein
     parent: gophercloud-acceptance-test-stein
     description: |
-      Run gophercloud v0.1.0 acceptance test on stein branch of OpenStack
-    override-checkout: v0.1.0
+      Run gophercloud v0.4.0 acceptance test on stein branch of OpenStack
+    override-checkout: v0.4.0
     tags:
       - Category:Cloud
       - Project:gophercloud/gophercloud
-      - Application:gophercloud@v0.1.0
+      - Application:gophercloud@v0.4.0
       - Application:OpenStack@stein
       - Application:Go@1.12.1
       - Arch:x86_64
@@ -359,15 +359,15 @@
 
 ## grandson job for rocky
 - job:
-    name: gophercloud-v0.1.0-acceptance-test-rocky
+    name: gophercloud-v0.4.0-acceptance-test-rocky
     parent: gophercloud-acceptance-test-rocky
     description: |
-      Run gophercloud v0.1.0 acceptance test on rocky branch of OpenStack
-    override-checkout: v0.1.0
+      Run gophercloud v0.4.0 acceptance test on rocky branch of OpenStack
+    override-checkout: v0.4.0
     tags:
       - Category:Cloud
       - Project:gophercloud/gophercloud
-      - Application:gophercloud@v0.1.0
+      - Application:gophercloud@v0.4.0
       - Application:OpenStack@rocky
       - Application:Go@1.12.1
       - Arch:x86_64
@@ -376,15 +376,15 @@
 
 ## grandson job for queens
 - job:
-    name: gophercloud-v0.1.0-acceptance-test-queens
+    name: gophercloud-v0.4.0-acceptance-test-queens
     parent: gophercloud-acceptance-test-queens
     description: |
-      Run gophercloud v0.1.0 acceptance test on queens branch of OpenStack
-    override-checkout: v0.1.0
+      Run gophercloud v0.4.0 acceptance test on queens branch of OpenStack
+    override-checkout: v0.4.0
     tags:
       - Category:Cloud
       - Project:gophercloud/gophercloud
-      - Application:gophercloud@v0.1.0
+      - Application:gophercloud@v0.4.0
       - Application:OpenStack@queens
       - Application:Go@1.12.1
       - Arch:x86_64
@@ -393,15 +393,15 @@
 
 ## grandson job for pike
 - job:
-    name: gophercloud-v0.1.0-acceptance-test-pike
+    name: gophercloud-v0.4.0-acceptance-test-pike
     parent: gophercloud-acceptance-test-pike
     description: |
-      Run gophercloud v0.1.0 acceptance test on pike branch of OpenStack
-    override-checkout: v0.1.0
+      Run gophercloud v0.4.0 acceptance test on pike branch of OpenStack
+    override-checkout: v0.4.0
     tags:
       - Category:Cloud
       - Project:gophercloud/gophercloud
-      - Application:gophercloud@v0.1.0
+      - Application:gophercloud@v0.4.0
       - Application:OpenStack@pike
       - Application:Go@1.12.1
       - Arch:x86_64
@@ -410,15 +410,15 @@
 
 ## grandson job for ocata
 - job:
-    name: gophercloud-v0.1.0-acceptance-test-ocata
+    name: gophercloud-v0.4.0-acceptance-test-ocata
     parent: gophercloud-acceptance-test-ocata
     description: |
-      Run gophercloud v0.1.0 acceptance test on ocata branch of OpenStack
-    override-checkout: v0.1.0
+      Run gophercloud v0.4.0 acceptance test on ocata branch of OpenStack
+    override-checkout: v0.4.0
     tags:
       - Category:Cloud
       - Project:gophercloud/gophercloud
-      - Application:gophercloud@v0.1.0
+      - Application:gophercloud@v0.4.0
       - Application:OpenStack@ocata
       - Application:Go@1.12.1
       - Arch:x86_64
@@ -427,15 +427,15 @@
 
 ## grandson job for newton
 - job:
-    name: gophercloud-v0.1.0-acceptance-test-newton
+    name: gophercloud-v0.4.0-acceptance-test-newton
     parent: gophercloud-acceptance-test-newton
     description: |
-      Run gophercloud v0.1.0 acceptance test on newton branch of OpenStack
-    override-checkout: v0.1.0
+      Run gophercloud v0.4.0 acceptance test on newton branch of OpenStack
+    override-checkout: v0.4.0
     tags:
       - Category:Cloud
       - Project:gophercloud/gophercloud
-      - Application:gophercloud@v0.1.0
+      - Application:gophercloud@v0.4.0
       - Application:OpenStack@newton
       - Application:Go@1.12.1
       - Arch:x86_64
@@ -444,15 +444,15 @@
 
 ## grandson job for mitaka
 - job:
-    name: gophercloud-v0.1.0-acceptance-test-mitaka
+    name: gophercloud-v0.4.0-acceptance-test-mitaka
     parent: gophercloud-acceptance-test-mitaka
     description: |
-      Run gophercloud v0.1.0 acceptance test on mitaka branch of OpenStack
-    override-checkout: v0.1.0
+      Run gophercloud v0.4.0 acceptance test on mitaka branch of OpenStack
+    override-checkout: v0.4.0
     tags:
       - Category:Cloud
       - Project:gophercloud/gophercloud
-      - Application:gophercloud@v0.1.0
+      - Application:gophercloud@v0.4.0
       - Application:OpenStack@mitaka
       - Application:Go@1.12.1
       - Arch:x86_64
