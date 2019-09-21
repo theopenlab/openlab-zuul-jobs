@@ -39,6 +39,45 @@
         regexp: "^.*setup_kubernetes.sh"
         line: "# source ${HERE}/setup_kubernetes.sh"
 
+    # Todo(wxy): maven shade plugin 3.2.1 doesn't work on ARM. Fix it in Flink
+    - name: Bump maven shade plugin down to 3.0.0
+      shell:
+        cmd: |
+          set -xo pipefail
+
+          cat << EOF >> Fix_shade_version.patch
+          From bab3e023224303b04dbb7ddc50afd6d9f50adb28 Mon Sep 17 00:00:00 2001
+          From: wangxiyuan <wangxiyuan@huawei.com>
+          Date: Sat, 21 Sep 2019 20:36:19 +0800
+          Subject: [PATCH] Fix shade version for ARM
+
+          ---
+           pom.xml | 2 +-
+           1 file changed, 1 insertion(+), 1 deletion(-)
+
+          diff --git a/pom.xml b/pom.xml
+          index 5a8b598391..574557ba1d 100644
+          --- a/pom.xml
+          +++ b/pom.xml
+          @@ -782,7 +782,7 @@ under the License.
+                                  <plugin>
+                                      <groupId>org.apache.maven.plugins</groupId>
+                                      <artifactId>maven-shade-plugin</artifactId>
+          -							<version>3.2.1</version>
+          +							<version>3.0.0</version>
+                                  </plugin>
+                                  <plugin>
+                                      <groupId>com.github.siom79.japicmp</groupId>
+          --
+          2.21.0.windows.1
+          EOF
+
+          git am Fix_shade_version.patch
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      ignore_errors: yes
+      environment: '{{ global_env }}'
 
     - name: Run split_checkpoints.sh e2e test
       shell:
