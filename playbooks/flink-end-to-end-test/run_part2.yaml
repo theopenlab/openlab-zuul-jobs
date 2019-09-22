@@ -39,6 +39,16 @@
         regexp: "^.*setup_kubernetes.sh"
         line: "# source ${HERE}/setup_kubernetes.sh"
 
+    - name: Add git author info
+      shell:
+        cmd: |
+          git config --global user.email "info@openlabtesting.org"
+          git config --global user.name "OpenLab"
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
+
     # Todo(wxy): maven shade plugin 3.2.1 doesn't work on ARM. Fix it in Flink
     - name: Bump maven shade plugin down to 3.0.0
       shell:
@@ -59,15 +69,14 @@
           index 5a8b598391..574557ba1d 100644
           --- a/pom.xml
           +++ b/pom.xml
-          @@ -782,7 +782,7 @@ under the License.
-                                  <plugin>
-                                      <groupId>org.apache.maven.plugins</groupId>
-                                      <artifactId>maven-shade-plugin</artifactId>
+          				 		<plugin>
+           							<groupId>org.apache.maven.plugins</groupId>
+           							<artifactId>maven-shade-plugin</artifactId>
           -							<version>3.2.1</version>
           +							<version>3.0.0</version>
-                                  </plugin>
-                                  <plugin>
-                                      <groupId>com.github.siom79.japicmp</groupId>
+           						</plugin>
+           						<plugin>
+           							<groupId>com.github.siom79.japicmp</groupId>
           --
           2.21.0.windows.1
           EOF
