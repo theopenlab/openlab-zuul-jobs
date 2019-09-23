@@ -75,24 +75,24 @@
           --- a/flink-end-to-end-tests/test-scripts/elasticsearch-common.sh
           +++ b/flink-end-to-end-tests/test-scripts/elasticsearch-common.sh
           @@ -26,7 +26,7 @@ function setup_elasticsearch {
-               mkdir -p $TEST_DATA_DIR
+               mkdir -p \$TEST_DATA_DIR
 
-               local downloadUrl=$1
+               local downloadUrl=\$1
           -
-          +    local elasticsearch_version=${2-0}
+          +    local elasticsearch_version=\${2-0}
                # start downloading Elasticsearch
-               echo "Downloading Elasticsearch from $downloadUrl ..."
-               curl "$downloadUrl" > $TEST_DATA_DIR/elasticsearch.tar.gz
+               echo "Downloading Elasticsearch from \$downloadUrl ..."
+               curl "\$downloadUrl" > \$TEST_DATA_DIR/elasticsearch.tar.gz
           @@ -34,7 +34,9 @@ function setup_elasticsearch {
-               local elasticsearchDir=$TEST_DATA_DIR/elasticsearch
-               mkdir -p $elasticsearchDir
-               tar xzf $TEST_DATA_DIR/elasticsearch.tar.gz -C $elasticsearchDir --strip-components=1
+               local elasticsearchDir=\$TEST_DATA_DIR/elasticsearch
+               mkdir -p \$elasticsearchDir
+               tar xzf \$TEST_DATA_DIR/elasticsearch.tar.gz -C \$elasticsearchDir --strip-components=1
           -
-          +    if [ $elasticsearch_version -ge 6 ]; then
-          +      echo xpack.ml.enabled: false >> $elasticsearchDir/config/elasticsearch.yml
+          +    if [ \$elasticsearch_version -ge 6 ]; then
+          +      echo xpack.ml.enabled: false >> \$elasticsearchDir/config/elasticsearch.yml
           +    fi
                # start Elasticsearch cluster
-               $elasticsearchDir/bin/elasticsearch &
+               \$elasticsearchDir/bin/elasticsearch &
            }
           diff --git a/flink-end-to-end-tests/test-scripts/test_sql_client.sh b/flink-end-to-end-tests/test-scripts/test_sql_client.sh
           index 5798545279..262817ee6e 100755
@@ -102,8 +102,8 @@
            ELASTICSEARCH_VERSION=6
            DOWNLOAD_URL='https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.3.1.tar.gz'
 
-          -setup_elasticsearch $DOWNLOAD_URL
-          +setup_elasticsearch $DOWNLOAD_URL $ELASTICSEARCH_VERSION
+          -setup_elasticsearch \$DOWNLOAD_URL
+          +setup_elasticsearch \$DOWNLOAD_URL \$ELASTICSEARCH_VERSION
            wait_elasticsearch_working
 
            ################################################################################
@@ -111,12 +111,12 @@
           index f37ee73d22..e2ee273d43 100755
           --- a/flink-end-to-end-tests/test-scripts/test_streaming_elasticsearch.sh
           +++ b/flink-end-to-end-tests/test-scripts/test_streaming_elasticsearch.sh
-          @@ -25,7 +25,7 @@ DOWNLOAD_URL=$2
+          @@ -25,7 +25,7 @@ DOWNLOAD_URL=\$2
 
-           mkdir -p $TEST_DATA_DIR
+           mkdir -p \$TEST_DATA_DIR
 
-          -setup_elasticsearch $DOWNLOAD_URL
-          +setup_elasticsearch $DOWNLOAD_URL $ELASTICSEARCH_VERSION
+          -setup_elasticsearch \$DOWNLOAD_URL
+          +setup_elasticsearch \$DOWNLOAD_URL \$ELASTICSEARCH_VERSION
            wait_elasticsearch_working
 
            start_cluster
