@@ -92,6 +92,10 @@
     - name: Run split_heavy.sh e2e test
       shell:
         cmd: |
+          set -xo pipefail
+
+          iptables -F
+
           ./tools/travis/nightly.sh split_heavy.sh | tee split_heavy.log
       args:
         executable: /bin/bash
@@ -102,6 +106,8 @@
     - name: Run split_ha.sh e2e test
       shell:
         cmd: |
+          set -xo pipefail
+
           ./tools/travis/nightly.sh split_ha.sh | tee split_ha.log
       args:
         executable: /bin/bash
