@@ -92,6 +92,10 @@
     - name: Run split_checkpoints.sh e2e test
       shell:
         cmd: |
+          set -xo pipefail
+
+          iptables -F
+
           ./tools/travis/nightly.sh split_checkpoints.sh | tee split_checkpoints.log
       args:
         executable: /bin/bash
@@ -102,6 +106,8 @@
     - name: Run split_sticky.sh e2e test
       shell:
         cmd: |
+          set -xo pipefail
+
           ./tools/travis/nightly.sh split_sticky.sh | tee split_sticky.log
       args:
         executable: /bin/bash
