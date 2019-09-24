@@ -7,6 +7,10 @@
       scala_version: '2.11.0'
     - role: install-maven
       maven_version: '3.2.5'
+  tasks:
+    - name: clean up iptable rules
+      shell: iptables -F
+
 
 - hosts: all
   become: no
@@ -181,6 +185,8 @@
     - name: Run split_misc.sh e2e test
       shell:
         cmd: |
+          set -xo pipefail
+
           export PROFILE="-Dinclude-hadoop -Dhadoop.version=2.8.3 -Dscala-2.12 -De2e-metrics"
 
           ./tools/travis/nightly.sh split_misc.sh | tee split_misc.log
@@ -193,6 +199,8 @@
     - name: Run split_misc_hadoopfree.sh e2e test
       shell:
         cmd: |
+          set -xo pipefail
+
           export PROFILE="-Dinclude-hadoop -Dhadoop.version=2.8.3 -Dscala-2.12 -De2e-metrics"
 
           ./tools/travis/nightly.sh split_misc_hadoopfree.sh | tee split_misc_hadoopfree.log
