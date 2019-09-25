@@ -44,8 +44,6 @@
             branches: master
         - spark-integration-test-minikube-k8s-v1.13.3:
             branches: master
-        - spark-master-unit-test-hadoop-2.7-arm64:
-            branches: master
 
 ####################### periodic jobs on 02:00/14:00 ##########################
 - project:
@@ -260,4 +258,11 @@
         - flink-end-to-end-test-part2:
             branches: master
         - flink-end-to-end-test-part3:
+            branches: master
+
+- project:
+    name: apache/spark
+    periodic-0:
+      jobs:
+        - spark-master-unit-test-hadoop-2.7-arm64:
             branches: master
