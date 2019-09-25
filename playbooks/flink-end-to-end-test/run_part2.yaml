@@ -96,11 +96,10 @@
 
           iptables -F
 
-          ./tools/travis/nightly.sh split_heavy.sh | tee split_heavy.log
+          ./tools/travis/nightly.sh split_heavy.sh
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
-      ignore_errors: yes
       environment: '{{ global_env }}'
 
     - name: Run split_ha.sh e2e test
@@ -108,9 +107,8 @@
         cmd: |
           set -xo pipefail
 
-          ./tools/travis/nightly.sh split_ha.sh | tee split_ha.log
+          ./tools/travis/nightly.sh split_ha.sh
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
-      ignore_errors: yes
       environment: '{{ global_env }}'
