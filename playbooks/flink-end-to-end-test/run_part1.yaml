@@ -86,7 +86,6 @@
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
-      ignore_errors: yes
       environment: '{{ global_env }}'
 
     - name: Run split_checkpoints.sh e2e test
@@ -96,11 +95,10 @@
 
           iptables -F
 
-          ./tools/travis/nightly.sh split_checkpoints.sh | tee split_checkpoints.log
+          ./tools/travis/nightly.sh split_checkpoints.sh
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
-      ignore_errors: yes
       environment: '{{ global_env }}'
 
     - name: Run split_sticky.sh e2e test
@@ -108,9 +106,8 @@
         cmd: |
           set -xo pipefail
 
-          ./tools/travis/nightly.sh split_sticky.sh | tee split_sticky.log
+          ./tools/travis/nightly.sh split_sticky.sh
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
-      ignore_errors: yes
       environment: '{{ global_env }}'

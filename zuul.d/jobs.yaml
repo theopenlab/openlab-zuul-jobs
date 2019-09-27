@@ -2268,6 +2268,7 @@
     description: |
       The flink e2e test which contains split_checkpoints.sh, split_sticky.sh
     run: playbooks/flink-end-to-end-test/run_part1.yaml
+    post-run: playbooks/flink-end-to-end-test/post.yaml
     nodeset: ubuntu-xenial-arm64
     tags:
       - Category:BigData
@@ -2284,6 +2285,7 @@
     description: |
       The flink e2e test which contains split_heavy.sh, split_ha.sh
     run: playbooks/flink-end-to-end-test/run_part2.yaml
+    post-run: playbooks/flink-end-to-end-test/post.yaml
     nodeset: ubuntu-xenial-arm64
     tags:
       - Category:BigData
@@ -2300,6 +2302,7 @@
     description: |
       The flink e2e test which contains split_misc.sh, split_misc_hadoopfree.sh
     run: playbooks/flink-end-to-end-test/run_part3.yaml
+    post-run: playbooks/flink-end-to-end-test/post.yaml
     nodeset: ubuntu-xenial-arm64
     tags:
       - Category:BigData
