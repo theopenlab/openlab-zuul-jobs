@@ -1,6 +1,11 @@
 - hosts: all
   become: yes
   tasks:
+    - name: Install lxml
+      pip:
+        name: lxml
+        executable: pip3
+
     - name: Get Flink version
       xml:
         path: '{{ ansible_user_dir }}/src/github.com/apache/flink/pom.xml'
