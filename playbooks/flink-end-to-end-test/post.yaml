@@ -12,7 +12,9 @@
           ns: http://maven.apache.org/POM/4.0.0
         content: text
       register: flink_version
+
     - name: Fetch e2e test log
       copy:
         src: "{{ ansible_user_dir }}/src/github.com/apache/flink/flink-dist/target/flink-{{ flink_version.matches[0]['{http://maven.apache.org/POM/4.0.0}version'] }}-bin/flink-{{ flink_version.matches[0]['{http://maven.apache.org/POM/4.0.0}version'] }}/log/"
         dest: '{{ ansible_user_dir }}/workspace/'
+        remote_src: yes
