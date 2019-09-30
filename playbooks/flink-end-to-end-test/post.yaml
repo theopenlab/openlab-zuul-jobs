@@ -2,9 +2,7 @@
   become: yes
   tasks:
     - name: Install lxml
-      pip:
-        name: lxml
-        executable: pip3
+      shell: apt install python-lxml python3-lxml -y
 
     - name: Get Flink version
       xml:
