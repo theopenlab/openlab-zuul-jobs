@@ -134,45 +134,6 @@
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ global_env }}'
 
-    # Todo(wxy): maven shade plugin 3.2.1 doesn't work on ARM. Fix it in Flink
-    - name: Bump maven shade plugin down to 3.0.0
-      shell:
-        cmd: |
-          set -xo pipefail
-
-          cat << EOF >> Fix_shade_version.patch
-          From 82d9a339400da21e05eb0d601d3db55da08982ad Mon Sep 17 00:00:00 2001
-          From: wangxiyuan <wangxiyuan@huawei.com>
-          Date: Mon, 23 Sep 2019 10:21:34 +0800
-          Subject: [PATCH] Patch maven shade plugin
-
-          ---
-           pom.xml | 2 +-
-           1 file changed, 1 insertion(+), 1 deletion(-)
-
-          diff --git a/pom.xml b/pom.xml
-          index 5a8b598391..bb2133270b 100644
-          --- a/pom.xml
-          +++ b/pom.xml
-          @@ -1685,7 +1685,7 @@ under the License.
-           				<plugin>
-           					<groupId>org.apache.maven.plugins</groupId>
-           					<artifactId>maven-shade-plugin</artifactId>
-          -					<version>3.2.1</version>
-          +					<version>3.1.0</version>
-           				</plugin>
-
-           				<plugin>
-          --
-          2.21.0.windows.1
-          EOF
-
-          git am Fix_shade_version.patch
-      args:
-        executable: /bin/bash
-        chdir: '{{ zuul.project.src_dir }}'
-      environment: '{{ global_env }}'
-
     # TODO(wxy): Should fix in apache/flink
     - name: Hacking add prometheus arm package
       lineinfile:
