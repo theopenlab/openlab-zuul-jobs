@@ -115,7 +115,7 @@
           export KUBE_FASTBUILD=true
           export KUBERNETES_CONFORMANCE_TEST=y
           # Go modules not supported by kubernetes before v1.15
-          if [ '{{ k8s_version }}' == 'release-1.13' ] || [ '{{ k8s_version }}' == 'release-1.14' ]; then
+          if [ '{{ k8s_version }}' == 'release-1.14' ]; then
             unset GO111MODULE
             unset GOSUMDB
             unset GOPROXY
