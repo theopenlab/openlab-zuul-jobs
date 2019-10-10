@@ -569,7 +569,7 @@
     description: |
       Run Kubernetes E2E Conformance tests against Kubernetes master
     vars:
-      go_version: '1.12.1'
+      go_version: '1.12.4'
     run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/post.yaml
     nodeset: ubuntu-xenial-citynetwork
