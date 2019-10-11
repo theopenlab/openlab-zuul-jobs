@@ -685,6 +685,28 @@
       - BuildType:Integration test
 
 - job:
+    name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.16
+    parent: cloud-provider-openstack-acceptance-test-e2e-conformance
+    description: |
+      Run Kubernetes E2E Conformance tests against release-1.16 branch of Kubernetes
+    nodeset: ubuntu-xenial-citynetwork
+    vars:
+      go_version: '1.12.4'
+      k8s_version: 'release-1.16'
+      etcd_version: 'v3.3.15'
+    tags:
+      - Category:Cloud
+      - Project:kubernetes/cloud-provider-openstack
+      - Application:cloud-provider-openstack@release-1.16
+      - Application:Kubernetes@release-1.16
+      - Application:Docker.io@v18.09
+      - Application:Etcd@v3.3.15
+      - Application:Go@1.12.4
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
+
+- job:
     name: cloud-provider-openstack-acceptance-test-standalone-cinder
     parent: cloud-provider-openstack-test
     description: |
