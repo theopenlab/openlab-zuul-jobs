@@ -108,9 +108,13 @@
           # go get kubetest is failing from k8s or cpo directory
           cd ..
           export GO111MODULE=on
-          export GOPROXY=https://proxy.golang.org
-          export GOSUMDB=sum.golang.org
-          go get k8s.io/test-infra/kubetest
+          # export GOPROXY=https://proxy.golang.org
+          # export GOSUMDB=sum.golang.org
+
+          git clone https://github.com/kubernetes/test-infra
+          cd test-infra
+          GOBIN='{{ k8s_src_dir }}' go install ./kubetest
+
           # Build all binaries
           export KUBE_FASTBUILD=true
           export KUBERNETES_CONFORMANCE_TEST=y
@@ -135,7 +139,7 @@
           # Otherwise, kubetest will fail due to some unknow conflicts.
           # rm -rf _output/
 
-          kubetest --dump=$LOG_DIR \
+          ./kubetest --dump=$LOG_DIR \
               --test \
               --deployment=local \
               --provider=local \
