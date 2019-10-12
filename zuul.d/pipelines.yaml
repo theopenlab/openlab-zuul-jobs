@@ -1265,12 +1265,12 @@
     success:
       smtp:
         from: info@openlabtesting.org
-        to: build@flink.apache.org
+        to: builds@flink.apache.org
         subject: Daily Flink ARM Cron Job Test Result - SUCCESS
       mysql:
     failure:
       smtp:
         from: info@openlabtesting.org
-        to: build@flink.apache.org
+        to: builds@flink.apache.org
         subject: Daily Flink ARM Cron Job Test Result - FAILED
       mysql:
