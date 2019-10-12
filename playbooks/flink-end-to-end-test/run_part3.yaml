@@ -135,6 +135,44 @@
       environment: '{{ global_env }}'
 
     # TODO(wxy): Should fix in apache/flink
+    - name: Increase akka timeout
+      shell:
+        cmd: |
+          set -xo pipefail
+
+          cat << EOF >> Increase_akka_timeout.patch
+          From 7bd2baa7d3497072bc79b110d7c30c346198bcfe Mon Sep 17 00:00:00 2001
+          From: wangxiyuan <wangxiyuan@huawei.com>
+          Date: Tue, 8 Oct 2019 14:12:29 +0800
+          Subject: [PATCH] increase akka timeout
+
+          ---
+           flink-end-to-end-tests/test-scripts/test_cli.sh | 1 +
+           1 file changed, 1 insertion(+)
+
+          diff --git a/flink-end-to-end-tests/test-scripts/test_cli.sh b/flink-end-to-end-tests/test-scripts/test_cli.sh
+          index 4b04890a40..1386a82374 100755
+          --- a/flink-end-to-end-tests/test-scripts/test_cli.sh
+          +++ b/flink-end-to-end-tests/test-scripts/test_cli.sh
+          @@ -23,6 +23,7 @@ source "\$(dirname "\$0")"/common.sh
+
+           TEST_PROGRAM_JAR=\$END_TO_END_DIR/flink-cli-test/target/PeriodicStreamingJob.jar
+
+          +set_config_key "akka.ask.timeout" "60 s"
+           start_cluster
+           \$FLINK_DIR/bin/taskmanager.sh start
+           \$FLINK_DIR/bin/taskmanager.sh start
+          --
+          2.21.0.windows.1
+          EOF
+
+          git am Increase_akka_timeout.patch
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
+
+    # TODO(wxy): Should fix in apache/flink
     - name: Hacking add prometheus arm package
       lineinfile:
         path: "/home/zuul/src/github.com/apache/flink/flink-end-to-end-tests/flink-metrics-reporter-prometheus-test/src/test/java/org/apache/flink/metrics/prometheus/tests/PrometheusReporterEndToEndITCase.java"

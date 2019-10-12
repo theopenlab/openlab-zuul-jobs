@@ -560,6 +560,8 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-k8s-cinder/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-k8s-cinder/post.yaml
     nodeset: ubuntu-xenial-citynetwork
+    vars:
+      go_version: '1.12.10'
     secrets:
       - citynetwork_credentials
 
@@ -569,7 +571,7 @@
     description: |
       Run Kubernetes E2E Conformance tests against Kubernetes master
     vars:
-      go_version: '1.12.1'
+      go_version: '1.12.4'
     run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/post.yaml
     nodeset: ubuntu-xenial-citynetwork
@@ -683,6 +685,28 @@
       - BuildType:Integration test
 
 - job:
+    name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.16
+    parent: cloud-provider-openstack-acceptance-test-e2e-conformance
+    description: |
+      Run Kubernetes E2E Conformance tests against release-1.16 branch of Kubernetes
+    nodeset: ubuntu-xenial-citynetwork
+    vars:
+      go_version: '1.12.4'
+      k8s_version: 'release-1.16'
+      etcd_version: 'v3.3.15'
+    tags:
+      - Category:Cloud
+      - Project:kubernetes/cloud-provider-openstack
+      - Application:cloud-provider-openstack@release-1.16
+      - Application:Kubernetes@release-1.16
+      - Application:Docker.io@v18.09
+      - Application:Etcd@v3.3.15
+      - Application:Go@1.12.4
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
+
+- job:
     name: cloud-provider-openstack-acceptance-test-standalone-cinder
     parent: cloud-provider-openstack-test
     description: |
@@ -699,6 +723,8 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/post.yaml
     nodeset: ubuntu-xenial-citynetwork
+    vars:
+      go_version: '1.12.10'
     secrets:
       - citynetwork_credentials
 
@@ -748,6 +774,8 @@
       Run keystone auth acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-keystone-authentication-authorization/run.yaml
     nodeset: ubuntu-xenial
+    vars:
+      go_version: '1.12.10'
 
 - job:
     name: cloud-provider-openstack-acceptance-test-flexvolume-cinder
@@ -756,6 +784,8 @@
       Run cinder flexvolume acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-flexvolume-cinder/run.yaml
     nodeset: ubuntu-xenial
+    vars:
+      go_version: '1.12.10'
 
 - job:
     name: cluster-api-provider-openstack-image-build
