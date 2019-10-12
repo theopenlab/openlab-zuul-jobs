@@ -1,6 +1,9 @@
 - hosts: all
   become: yes
   tasks:
+    - name: Install lxml
+      shell: apt install python-lxml python3-lxml -y
+
     - name: Get Flink version
       xml:
         path: '{{ ansible_user_dir }}/src/github.com/apache/flink/pom.xml'
@@ -9,7 +12,11 @@
           ns: http://maven.apache.org/POM/4.0.0
         content: text
       register: flink_version
+
     - name: Fetch e2e test log
-      copy:
-        src: "{{ ansible_user_dir }}/src/github.com/apache/flink/flink-dist/target/flink-{{ flink_version.matches[0]['{http://maven.apache.org/POM/4.0.0}version'] }}-bin/flink-{{ flink_version.matches[0]['{http://maven.apache.org/POM/4.0.0}version'] }}/log/"
-        dest: '{{ ansible_user_dir }}/workspace/'
+      shell:
+        cmd: |
+          cp -r "flink-dist/target/flink-{{ flink_version.matches[0]['{http://maven.apache.org/POM/4.0.0}version'] }}-bin/flink-{{ flink_version.matches[0]['{http://maven.apache.org/POM/4.0.0}version'] }}/log/" "{{ ansible_user_dir }}/workspace/test_results/"
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
