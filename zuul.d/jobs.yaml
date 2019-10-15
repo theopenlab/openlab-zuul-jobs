@@ -715,9 +715,6 @@
       Run manila csi acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-csi-manila/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-csi-manila/post.yaml
-    nodeset: ubuntu-xenial-citynetwork
-    secrets:
-      - citynetwork_credentials
 
 # TODO(wxy): Delete this base job once lb job is moved to citynetwork.
 - job:
