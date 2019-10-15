@@ -1251,3 +1251,26 @@
       github:
         status: 'failure'
       mysql:
+
+- pipeline:
+    name: periodic-20-flink-mail
+    description: |
+      This pipeline is used for send Flink periodic job result to spefied
+      maillist for Apache Flink
+    manager: independent
+    precedence: high
+    trigger:
+      timer:
+        - time: '0 20 * * *'
+    success:
+      smtp:
+        from: info@openlabtesting.org
+        to: builds@flink.apache.org
+        subject: Daily Flink ARM Cron Job Test Result - SUCCESS
+      mysql:
+    failure:
+      smtp:
+        from: info@openlabtesting.org
+        to: builds@flink.apache.org
+        subject: Daily Flink ARM Cron Job Test Result - FAILED
+      mysql:
