@@ -1,7 +1,6 @@
 - hosts: all
   roles:
     - config-golang
-    - export-cloud-openrc
     - install-k8s
     - clone-devstack-gate-to-workspace
     - role: create-devstack-local-conf
