@@ -244,7 +244,7 @@
 
 - project:
     name: theopenlab/spark
-    periodic-10:
+    periodic-12:
       jobs:
         - spark-unchanged-branch-unit-test-hadoop-2.7-arm64:
             branches: test-branch20190909
@@ -262,7 +262,9 @@
 
 - project:
     name: apache/spark
-    periodic-0:
+    periodic-10:
       jobs:
         - spark-master-unit-test-hadoop-2.7-arm64:
+            branches: master
+        - spark-master-unit-test-hadoop-3.2-arm64:
             branches: master
