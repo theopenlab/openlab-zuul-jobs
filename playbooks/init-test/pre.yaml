@@ -1,4 +1,15 @@
 - hosts: all
-  become: yes
   roles:
     - prepare-workspace
+  tasks:
+    - name: Get local hostname
+      become: yes
+      shell: hostname
+      register: result
+
+    - name: Set /etc/hosts with node name
+      become: yes
+      lineinfile:
+        path: "/etc/hosts"
+        regexp: "^127.0.0.1"
+        line: "127.0.0.1 {{ result.stdout }} localhost"

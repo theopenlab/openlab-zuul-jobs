@@ -342,15 +342,15 @@
 ## ========== gophercloud + openstack jobs ==============
 ## grandson job for stein
 - job:
-    name: gophercloud-v0.1.0-acceptance-test-stein
+    name: gophercloud-v0.4.0-acceptance-test-stein
     parent: gophercloud-acceptance-test-stein
     description: |
-      Run gophercloud v0.1.0 acceptance test on stein branch of OpenStack
-    override-checkout: v0.1.0
+      Run gophercloud v0.4.0 acceptance test on stein branch of OpenStack
+    override-checkout: v0.4.0
     tags:
       - Category:Cloud
       - Project:gophercloud/gophercloud
-      - Application:gophercloud@v0.1.0
+      - Application:gophercloud@v0.4.0
       - Application:OpenStack@stein
       - Application:Go@1.12.1
       - Arch:x86_64
@@ -359,15 +359,15 @@
 
 ## grandson job for rocky
 - job:
-    name: gophercloud-v0.1.0-acceptance-test-rocky
+    name: gophercloud-v0.4.0-acceptance-test-rocky
     parent: gophercloud-acceptance-test-rocky
     description: |
-      Run gophercloud v0.1.0 acceptance test on rocky branch of OpenStack
-    override-checkout: v0.1.0
+      Run gophercloud v0.4.0 acceptance test on rocky branch of OpenStack
+    override-checkout: v0.4.0
     tags:
       - Category:Cloud
       - Project:gophercloud/gophercloud
-      - Application:gophercloud@v0.1.0
+      - Application:gophercloud@v0.4.0
       - Application:OpenStack@rocky
       - Application:Go@1.12.1
       - Arch:x86_64
@@ -376,15 +376,15 @@
 
 ## grandson job for queens
 - job:
-    name: gophercloud-v0.1.0-acceptance-test-queens
+    name: gophercloud-v0.4.0-acceptance-test-queens
     parent: gophercloud-acceptance-test-queens
     description: |
-      Run gophercloud v0.1.0 acceptance test on queens branch of OpenStack
-    override-checkout: v0.1.0
+      Run gophercloud v0.4.0 acceptance test on queens branch of OpenStack
+    override-checkout: v0.4.0
     tags:
       - Category:Cloud
       - Project:gophercloud/gophercloud
-      - Application:gophercloud@v0.1.0
+      - Application:gophercloud@v0.4.0
       - Application:OpenStack@queens
       - Application:Go@1.12.1
       - Arch:x86_64
@@ -393,15 +393,15 @@
 
 ## grandson job for pike
 - job:
-    name: gophercloud-v0.1.0-acceptance-test-pike
+    name: gophercloud-v0.4.0-acceptance-test-pike
     parent: gophercloud-acceptance-test-pike
     description: |
-      Run gophercloud v0.1.0 acceptance test on pike branch of OpenStack
-    override-checkout: v0.1.0
+      Run gophercloud v0.4.0 acceptance test on pike branch of OpenStack
+    override-checkout: v0.4.0
     tags:
       - Category:Cloud
       - Project:gophercloud/gophercloud
-      - Application:gophercloud@v0.1.0
+      - Application:gophercloud@v0.4.0
       - Application:OpenStack@pike
       - Application:Go@1.12.1
       - Arch:x86_64
@@ -410,15 +410,15 @@
 
 ## grandson job for ocata
 - job:
-    name: gophercloud-v0.1.0-acceptance-test-ocata
+    name: gophercloud-v0.4.0-acceptance-test-ocata
     parent: gophercloud-acceptance-test-ocata
     description: |
-      Run gophercloud v0.1.0 acceptance test on ocata branch of OpenStack
-    override-checkout: v0.1.0
+      Run gophercloud v0.4.0 acceptance test on ocata branch of OpenStack
+    override-checkout: v0.4.0
     tags:
       - Category:Cloud
       - Project:gophercloud/gophercloud
-      - Application:gophercloud@v0.1.0
+      - Application:gophercloud@v0.4.0
       - Application:OpenStack@ocata
       - Application:Go@1.12.1
       - Arch:x86_64
@@ -427,15 +427,15 @@
 
 ## grandson job for newton
 - job:
-    name: gophercloud-v0.1.0-acceptance-test-newton
+    name: gophercloud-v0.4.0-acceptance-test-newton
     parent: gophercloud-acceptance-test-newton
     description: |
-      Run gophercloud v0.1.0 acceptance test on newton branch of OpenStack
-    override-checkout: v0.1.0
+      Run gophercloud v0.4.0 acceptance test on newton branch of OpenStack
+    override-checkout: v0.4.0
     tags:
       - Category:Cloud
       - Project:gophercloud/gophercloud
-      - Application:gophercloud@v0.1.0
+      - Application:gophercloud@v0.4.0
       - Application:OpenStack@newton
       - Application:Go@1.12.1
       - Arch:x86_64
@@ -444,15 +444,15 @@
 
 ## grandson job for mitaka
 - job:
-    name: gophercloud-v0.1.0-acceptance-test-mitaka
+    name: gophercloud-v0.4.0-acceptance-test-mitaka
     parent: gophercloud-acceptance-test-mitaka
     description: |
-      Run gophercloud v0.1.0 acceptance test on mitaka branch of OpenStack
-    override-checkout: v0.1.0
+      Run gophercloud v0.4.0 acceptance test on mitaka branch of OpenStack
+    override-checkout: v0.4.0
     tags:
       - Category:Cloud
       - Project:gophercloud/gophercloud
-      - Application:gophercloud@v0.1.0
+      - Application:gophercloud@v0.4.0
       - Application:OpenStack@mitaka
       - Application:Go@1.12.1
       - Arch:x86_64
@@ -560,6 +560,8 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-k8s-cinder/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-k8s-cinder/post.yaml
     nodeset: ubuntu-xenial-citynetwork
+    vars:
+      go_version: '1.12.10'
     secrets:
       - citynetwork_credentials
 
@@ -569,7 +571,7 @@
     description: |
       Run Kubernetes E2E Conformance tests against Kubernetes master
     vars:
-      go_version: '1.12.1'
+      go_version: '1.12.4'
     run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/post.yaml
     nodeset: ubuntu-xenial-citynetwork
@@ -625,6 +627,7 @@
     vars:
       go_version: '1.12'
       k8s_version: 'release-1.13'
+      etcd_version: 'v3.3.10'
     tags:
       - Category:Cloud
       - Project:kubernetes/cloud-provider-openstack
@@ -646,6 +649,7 @@
     vars:
       go_version: '1.12.1'
       k8s_version: 'release-1.14'
+      etcd_version: 'v3.3.10'
     tags:
       - Category:Cloud
       - Project:kubernetes/cloud-provider-openstack
@@ -667,6 +671,7 @@
     vars:
       go_version: '1.12.1'
       k8s_version: 'release-1.15'
+      etcd_version: 'v3.3.10'
     tags:
       - Category:Cloud
       - Project:kubernetes/cloud-provider-openstack
@@ -675,6 +680,28 @@
       - Application:Docker.io@v18.09
       - Application:Etcd@v3.3.10
       - Application:Go@1.12.1
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
+
+- job:
+    name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.16
+    parent: cloud-provider-openstack-acceptance-test-e2e-conformance
+    description: |
+      Run Kubernetes E2E Conformance tests against release-1.16 branch of Kubernetes
+    nodeset: ubuntu-xenial-citynetwork
+    vars:
+      go_version: '1.12.4'
+      k8s_version: 'release-1.16'
+      etcd_version: 'v3.3.15'
+    tags:
+      - Category:Cloud
+      - Project:kubernetes/cloud-provider-openstack
+      - Application:cloud-provider-openstack@release-1.16
+      - Application:Kubernetes@release-1.16
+      - Application:Docker.io@v18.09
+      - Application:Etcd@v3.3.15
+      - Application:Go@1.12.4
       - OS:ubuntu-xenial
       - Arch:x86_64
       - BuildType:Integration test
@@ -696,6 +723,8 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/post.yaml
     nodeset: ubuntu-xenial-citynetwork
+    vars:
+      go_version: '1.12.10'
     secrets:
       - citynetwork_credentials
 
@@ -753,6 +782,8 @@
       Run keystone auth acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-keystone-authentication-authorization/run.yaml
     nodeset: ubuntu-xenial
+    vars:
+      go_version: '1.12.10'
 
 - job:
     name: cloud-provider-openstack-acceptance-test-flexvolume-cinder
@@ -761,6 +792,8 @@
       Run cinder flexvolume acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-flexvolume-cinder/run.yaml
     nodeset: ubuntu-xenial
+    vars:
+      go_version: '1.12.10'
 
 - job:
     name: cluster-api-provider-openstack-image-build
@@ -2002,7 +2035,7 @@
       Run integration tests of spark of v2.4.0 against v1.13.3 k8s cluster deployed by v0.34.1 minikube
     run: playbooks/spark-integration-test-minikube-k8s/run.yaml
     post-run: playbooks/spark-integration-test-minikube-k8s/post.yaml
-    override-checkout: branch-2.4
+    override-checkout: v2.4.0
     vars:
       k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
       minikube_version: v0.34.1
@@ -2010,7 +2043,7 @@
     tags:
       - Category:BigData
       - Project:apache/spark
-      - Application:Spark@branch-2.4
+      - Application:Spark@v2.4.0
       - Application:Docker@19.03
       - Application:Kubernetes@v1.13.3
       - OS:ubuntu-xenial
@@ -2222,3 +2255,117 @@
       - OS:ubuntu-xenial
       - Arch:arm64
       - BuildType:Compile
+
+# Spark arm64 build and run unit tests periodic jobs
+- job:
+    name: spark-master-unit-test-hadoop-2.7-arm64
+    parent: init-test
+    description: |
+      Apache Spark build and run unit tests on arm64 server with hadoop2.7
+    run: playbooks/spark-unit-test-arm64/run.yaml
+    vars:
+      hadoop_version: 2.7
+    nodeset: ubuntu-xenial-arm64
+    tags:
+      - Category:BigData
+      - Project:apache/spark
+      - Application:Spark@master
+      - Application:Hadoop@2.7
+      - OS:ubuntu-xenial
+      - Arch:arm64
+      - BuildType:Unit test
+    timeout: 54000
+
+- job:
+    name: spark-master-unit-test-hadoop-3.2-arm64
+    parent: init-test
+    description: |
+      Apache Spark build and run unit tests on arm64 server with hadoop3.2
+    run: playbooks/spark-unit-test-arm64/run.yaml
+    vars:
+      hadoop_version: 3.2
+    nodeset: ubuntu-xenial-arm64
+    tags:
+      - Category:BigData
+      - Project:apache/spark
+      - Application:Spark@master
+      - Application:Hadoop@3.2
+      - OS:ubuntu-xenial
+      - Arch:arm64
+      - BuildType:Unit test
+    timeout: 54000
+
+# TODO(bzhaoopenstack) Notes: This is a demo job, once the upstream begin
+# to discuss, this job will be removed asap.
+# The forked Spark arm64 build and run unit tests periodic job with the commits
+# before 20190909
+- job:
+    name: spark-unchanged-branch-unit-test-hadoop-2.7-arm64
+    parent: init-test
+    description: |
+      The forked Apache Spark build and run unit tests with a unchanged
+      branch before 20190909 on arm64 server
+    run: playbooks/spark-unchanged-branch-unit-test/run.yaml
+    vars:
+      hadoop_version: 2.7
+    nodeset: ubuntu-xenial-arm64
+    tags:
+      - Category:BigData
+      - Project:theopenlab/spark
+      - Application:Spark@test-branch20190909
+      - Application:Hadoop@2.7
+      - OS:ubuntu-xenial
+      - Arch:arm64
+      - BuildType:Unit test
+    timeout: 54000
+
+- job:
+    name: flink-end-to-end-test-part1
+    parent: init-test
+    description: |
+      The flink e2e test which contains split_checkpoints.sh, split_sticky.sh
+    run: playbooks/flink-end-to-end-test/run_part1.yaml
+    post-run: playbooks/flink-end-to-end-test/post.yaml
+    nodeset: ubuntu-xenial-arm64
+    tags:
+      - Category:BigData
+      - Project:apache/flink
+      - Application:Flink@master
+      - OS:ubuntu-xenial
+      - Arch:arm64
+      - BuildType:Integration test
+    timeout: 54000
+
+- job:
+    name: flink-end-to-end-test-part2
+    parent: init-test
+    description: |
+      The flink e2e test which contains split_heavy.sh, split_ha.sh
+    run: playbooks/flink-end-to-end-test/run_part2.yaml
+    post-run: playbooks/flink-end-to-end-test/post.yaml
+    nodeset: ubuntu-xenial-arm64
+    tags:
+      - Category:BigData
+      - Project:apache/flink
+      - Application:Flink@master
+      - OS:ubuntu-xenial
+      - Arch:arm64
+      - BuildType:Integration test
+    timeout: 54000
+
+- job:
+    name: flink-end-to-end-test-part3
+    parent: init-test
+    description: |
+      The flink e2e test which contains split_misc.sh, split_misc_hadoopfree.sh
+    run: playbooks/flink-end-to-end-test/run_part3.yaml
+    post-run: playbooks/flink-end-to-end-test/post.yaml
+    nodeset: ubuntu-xenial-arm64
+    tags:
+      - Category:BigData
+      - Project:apache/flink
+      - Application:Flink@master
+      - OS:ubuntu-xenial
+      - Arch:arm64
+      - BuildType:Integration test
+    timeout: 54000

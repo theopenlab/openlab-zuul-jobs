@@ -77,6 +77,9 @@
           export CLOUD_CONFIG=/etc/kubernetes/cloud-config
           # Specify the OCCM binary
           export EXTERNAL_CLOUD_PROVIDER_BINARY="$PWD/openstack-cloud-controller-manager"
+          # set auth options
+          export AUTHORIZATION_WEBHOOK_CONFIG_FILE=/etc/kubernetes/webhook.kubeconfig
+          export AUTHENTICATION_WEBHOOK_CONFIG_FILE=/etc/kubernetes/webhook.kubeconfig
 
           # location of where the kubernetes processes log their output
           mkdir -p '{{ k8s_log_dir }}'
@@ -95,8 +98,6 @@
 
           K8S_INSTALL_SCRIPT='{{ k8s_src_dir }}/hack/local-up-cluster.sh'
           sed -i -e "/kube::util::wait_for_url.*$/,+1d" "$K8S_INSTALL_SCRIPT"
-          sed -i -e '/hyperkube\" kube-apiserver.*$/a \      --authentication-token-webhook-config-file=/etc/kubernetes/webhook.kubeconfig \\' "$K8S_INSTALL_SCRIPT"
-          sed -i -e '/hyperkube\" kube-apiserver.*$/a \      --authorization-webhook-config-file=/etc/kubernetes/webhook.kubeconfig \\' "$K8S_INSTALL_SCRIPT"
 
           # -E preserves the current env vars, but we need to special case PATH
           # Must run local-up-cluster.sh under kubernetes root directory

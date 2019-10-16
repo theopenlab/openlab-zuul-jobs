@@ -38,7 +38,7 @@
 
 - project:
     name: apache/spark
-    periodic-0/12:
+    periodic-12:
       jobs:
         - spark-integration-test-kubeadm-k8s-v1.14.0:
             branches: master
@@ -76,7 +76,7 @@
 
 - project:
     name: containerd/containerd
-    periodic-2/14:
+    periodic-14:
       jobs:
         - containerd-build-arm64:
             branches: master
@@ -103,16 +103,16 @@
       jobs:
         - cloud-provider-openstack-acceptance-test-e2e-conformance:
             branches: master
+        - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.16:
+            branches: release-1.16
         - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.15:
             branches: release-1.15
         - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.14:
             branches: release-1.14
-        - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.13:
-            branches: release-1.13
 
 - project:
     name: envoyproxy/envoy
-    periodic-4/16:
+    periodic-16:
       jobs:
         - envoy-build-arm64:
             branches: master
@@ -139,14 +139,14 @@
 
 - project:
     name: kubernetes-sigs/kind
-    periodic-6/18:
+    periodic-6:
       jobs:
         - kind-integration-test-arm64:
             branches: master
 
 - project:
     name: apache/hive
-    periodic-6/18:
+    periodic-18:
       jobs:
         - hive-build-arm64:
             branches: master
@@ -175,24 +175,24 @@
     name: gophercloud/gophercloud
     periodic-8/20:
       jobs:
-        - gophercloud-v0.1.0-acceptance-test-stein:
+        - gophercloud-v0.4.0-acceptance-test-stein:
             branches: master
-        - gophercloud-v0.1.0-acceptance-test-rocky:
+        - gophercloud-v0.4.0-acceptance-test-rocky:
             branches: master
-        - gophercloud-v0.1.0-acceptance-test-queens:
+        - gophercloud-v0.4.0-acceptance-test-queens:
             branches: master
-        - gophercloud-v0.1.0-acceptance-test-pike:
+        - gophercloud-v0.4.0-acceptance-test-pike:
             branches: master
-        - gophercloud-v0.1.0-acceptance-test-ocata:
+        - gophercloud-v0.4.0-acceptance-test-ocata:
             branches: master
-        - gophercloud-v0.1.0-acceptance-test-newton:
+        - gophercloud-v0.4.0-acceptance-test-newton:
             branches: master
-        - gophercloud-v0.1.0-acceptance-test-mitaka:
+        - gophercloud-v0.4.0-acceptance-test-mitaka:
             branches: master
 
 - project:
     name: apache/hadoop
-    periodic-8/20:
+    periodic-8:
       jobs:
         - hadoop-build-arm64:
             branches: trunk
@@ -237,7 +237,34 @@
 
 - project:
     name: apache/hbase
-    periodic-10/22:
+    periodic-22:
       jobs:
         - hbase-build-arm64:
+            branches: master
+
+- project:
+    name: theopenlab/spark
+    periodic-12:
+      jobs:
+        - spark-unchanged-branch-unit-test-hadoop-2.7-arm64:
+            branches: test-branch20190909
+
+- project:
+    name: apache/flink
+    periodic-20:
+      jobs:
+        - flink-end-to-end-test-part1:
+            branches: master
+        - flink-end-to-end-test-part2:
+            branches: master
+        - flink-end-to-end-test-part3:
+            branches: master
+
+- project:
+    name: apache/spark
+    periodic-10:
+      jobs:
+        - spark-master-unit-test-hadoop-2.7-arm64:
+            branches: master
+        - spark-master-unit-test-hadoop-3.2-arm64:
             branches: master

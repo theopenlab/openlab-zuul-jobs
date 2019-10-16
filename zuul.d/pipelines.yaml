@@ -339,6 +339,176 @@
     failure:
       mysql:
 
+# For limited testing resource, we split the periodic jobs into a single timer
+# trigger for saving resources.
+- pipeline:
+    name: periodic-0
+    description: |
+      Jobs in this queue are triggered on a timer. UTC-0 00:00
+    manager: independent
+    precedence: high
+    trigger:
+      timer:
+        - time: '0 0 * * *'
+    success:
+      mysql:
+    failure:
+      mysql:
+
+- pipeline:
+    name: periodic-2
+    description: |
+      Jobs in this queue are triggered on a timer. UTC-0 02:00
+    manager: independent
+    precedence: high
+    trigger:
+      timer:
+        - time: '0 2 * * *'
+    success:
+      mysql:
+    failure:
+      mysql:
+
+- pipeline:
+    name: periodic-4
+    description: |
+      Jobs in this queue are triggered on a timer. UTC-0 04:00
+    manager: independent
+    precedence: high
+    trigger:
+      timer:
+        - time: '0 4 * * *'
+    success:
+      mysql:
+    failure:
+      mysql:
+
+- pipeline:
+    name: periodic-6
+    description: |
+      Jobs in this queue are triggered on a timer. UTC-0 06:00
+    manager: independent
+    precedence: high
+    trigger:
+      timer:
+        - time: '0 6 * * *'
+    success:
+      mysql:
+    failure:
+      mysql:
+
+- pipeline:
+    name: periodic-8
+    description: |
+      Jobs in this queue are triggered on a timer. UTC-0 08:00
+    manager: independent
+    precedence: high
+    trigger:
+      timer:
+        - time: '0 8 * * *'
+    success:
+      mysql:
+    failure:
+      mysql:
+
+- pipeline:
+    name: periodic-10
+    description: |
+      Jobs in this queue are triggered on a timer. UTC-0 10:00
+    manager: independent
+    precedence: high
+    trigger:
+      timer:
+        - time: '0 10 * * *'
+    success:
+      mysql:
+    failure:
+      mysql:
+
+- pipeline:
+    name: periodic-12
+    description: |
+      Jobs in this queue are triggered on a timer. UTC-0 12:00
+    manager: independent
+    precedence: high
+    trigger:
+      timer:
+        - time: '0 12 * * *'
+    success:
+      mysql:
+    failure:
+      mysql:
+
+- pipeline:
+    name: periodic-14
+    description: |
+      Jobs in this queue are triggered on a timer. UTC-0 14:00
+    manager: independent
+    precedence: high
+    trigger:
+      timer:
+        - time: '0 14 * * *'
+    success:
+      mysql:
+    failure:
+      mysql:
+
+- pipeline:
+    name: periodic-16
+    description: |
+      Jobs in this queue are triggered on a timer. UTC-0 16:00
+    manager: independent
+    precedence: high
+    trigger:
+      timer:
+        - time: '0 16 * * *'
+    success:
+      mysql:
+    failure:
+      mysql:
+
+- pipeline:
+    name: periodic-18
+    description: |
+      Jobs in this queue are triggered on a timer. UTC-0 18:00
+    manager: independent
+    precedence: high
+    trigger:
+      timer:
+        - time: '0 18 * * *'
+    success:
+      mysql:
+    failure:
+      mysql:
+
+- pipeline:
+    name: periodic-20
+    description: |
+      Jobs in this queue are triggered on a timer. UTC-0 20:00
+    manager: independent
+    precedence: high
+    trigger:
+      timer:
+        - time: '0 20 * * *'
+    success:
+      mysql:
+    failure:
+      mysql:
+
+- pipeline:
+    name: periodic-22
+    description: |
+      Jobs in this queue are triggered on a timer. UTC-0 22:00
+    manager: independent
+    precedence: high
+    trigger:
+      timer:
+        - time: '0 22 * * *'
+    success:
+      mysql:
+    failure:
+      mysql:
+
 - pipeline:
     name: recheck-designate
     description: |
@@ -1091,4 +1261,53 @@
     failure:
       github:
         status: 'failure'
+      mysql:
+
+- pipeline:
+    name: arm_comment_only
+    description: |
+      This pipeline is triggered by github comment only for ARM test. Before CI
+      job is stable enough, users don't want to see the job runs in every PR.
+      Use this pipeline for testing the new built CI.
+    manager: independent
+    trigger:
+      github:
+        - event: pull_request
+          action: comment
+          comment: (?i)^\s*check_arm\s*$
+    start:
+      github:
+        status: pending
+        comment: false
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
+    success:
+      github:
+        status: 'success'
+      mysql:
+    failure:
+      github:
+        status: 'failure'
+      mysql:
+
+- pipeline:
+    name: periodic-20-flink-mail
+    description: |
+      This pipeline is used for send Flink periodic job result to spefied
+      maillist for Apache Flink
+    manager: independent
+    precedence: high
+    trigger:
+      timer:
+        - time: '0 20 * * *'
+    success:
+      smtp:
+        from: info@openlabtesting.org
+        to: builds@flink.apache.org
+        subject: Daily Flink ARM Cron Job Test Result - SUCCESS
+      mysql:
+    failure:
+      smtp:
+        from: info@openlabtesting.org
+        to: builds@flink.apache.org
+        subject: Daily Flink ARM Cron Job Test Result - FAILED
       mysql:
