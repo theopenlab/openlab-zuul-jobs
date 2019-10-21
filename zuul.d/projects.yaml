@@ -144,12 +144,13 @@
         - kind-integration-test-arm64:
             branches: master
 
-- project:
-    name: apache/hive
-    periodic-18:
-      jobs:
-        - hive-build-arm64:
-            branches: master
+# Disable hive arm test
+#- project:
+#    name: apache/hive
+ #   periodic-18:
+  #    jobs:
+   #     - hive-build-arm64:
+    #        branches: master
 
 ####################### periodic jobs on 08:00/20:00 ##########################
 - project:
@@ -235,19 +236,13 @@
         - rust-openstack-0.2.3-acceptance-queens:
             branches: master
 
-- project:
-    name: apache/hbase
-    periodic-22:
-      jobs:
-        - hbase-build-arm64:
-            branches: master
-
-- project:
-    name: theopenlab/spark
-    periodic-12:
-      jobs:
-        - spark-unchanged-branch-unit-test-hadoop-2.7-arm64:
-            branches: test-branch20190909
+# Disable hbase arm test
+#- project:
+ #   name: apache/hbase
+  #  periodic-22:
+   #   jobs:
+    #    - hbase-build-arm64:
+     #       branches: master
 
 - project:
     name: apache/flink
@@ -264,7 +259,8 @@
     name: apache/spark
     periodic-10:
       jobs:
-        - spark-master-unit-test-hadoop-2.7-arm64:
-            branches: master
+        # Disable job, this job is running in community already
+        #- spark-master-unit-test-hadoop-2.7-arm64:
+         #   branches: master
         - spark-master-unit-test-hadoop-3.2-arm64:
             branches: master
