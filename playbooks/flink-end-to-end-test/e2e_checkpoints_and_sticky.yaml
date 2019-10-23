@@ -1,12 +1,7 @@
+- import_playbook: common.yaml
+
 - hosts: all
   become: yes
-  roles:
-    - role: install-openjdk
-      java_version: '8'
-      with_scala: true
-      scala_version: '2.11.0'
-    - role: install-maven
-      maven_version: '3.2.5'
   tasks:
     - name: Build and install frocksdb
       shell:
@@ -39,25 +34,23 @@
         regexp: "^.*setup_kubernetes.sh"
         line: "# source ${HERE}/setup_kubernetes.sh"
 
-    - name: Run split_heavy.sh e2e test
+    - name: Run split_checkpoints.sh e2e test
       shell:
         cmd: |
           set -xo pipefail
 
-          iptables -F
-
-          ./tools/travis/nightly.sh split_heavy.sh
+          ./tools/travis/nightly.sh split_checkpoints.sh
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ global_env }}'
 
-    - name: Run split_ha.sh e2e test
+    - name: Run split_sticky.sh e2e test
       shell:
         cmd: |
           set -xo pipefail
 
-          ./tools/travis/nightly.sh split_ha.sh
+          ./tools/travis/nightly.sh split_sticky.sh
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'

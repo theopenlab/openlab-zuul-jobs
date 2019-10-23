@@ -1,0 +1,12 @@
+- hosts: all
+  become: yes
+  roles:
+    - role: install-openjdk
+      java_version: '8'
+      with_scala: true
+      scala_version: '2.11.0'
+    - role: install-maven
+      maven_version: '3.2.5'
+  tasks:
+    - name: clean up iptable rules
+      shell: iptables -F

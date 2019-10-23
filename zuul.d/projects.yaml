@@ -248,11 +248,15 @@
     name: apache/flink
     periodic-20:
       jobs:
-        - flink-end-to-end-test-part1:
+        - flink-build-and-test-arm64-core:
             branches: master
-        - flink-end-to-end-test-part2:
+        - flink-build-and-test-arm64-tests:
             branches: master
-        - flink-end-to-end-test-part3:
+        - flink-end-to-end-test-checkpoints-and-sticky:
+            branches: master
+        - flink-end-to-end-test-heavy-and-ha:
+            branches: master
+        - flink-end-to-end-test-misc-hadoopfree-and-misc:
             branches: master
 
 - project:
