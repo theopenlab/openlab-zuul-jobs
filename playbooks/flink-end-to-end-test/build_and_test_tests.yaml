@@ -19,7 +19,7 @@
           -Dpackaging=jar -Dfile=java/target/rocksdbjni-5.17.2-linux64.jar
       args:
         executable: /bin/bash
-        chdir: '{{ zuul.project.src_dir }}'
+        chdir: '/opt/'
       environment: '{{ global_env }}'
 
     - name: Build Flink Tests
@@ -28,7 +28,7 @@
           set -xe
           mvn clean install -nsu -Dflink.convergence.phase=install -Pcheck-convergence -Dflink.forkCount=2 \
           -Dflink.forkCountTestPackage=2 -Dmaven.javadoc.skip=true -B -DskipTests -Dhadoop.version=2.8.3 \
-          -Pinclude-kinesis -Dinclude_hadoop_aws -Dscala-2.11 -am \
+          -Dinclude_hadoop_aws -Dscala-2.11 -am \
           -pl flink-tests
       args:
         executable: /bin/bash
@@ -40,7 +40,7 @@
         cmd: |
           set -xe
           mvn -nsu -Dflink.forkCount=2 -Dflink.forkCountTestPackage=2 -Dfast -B -Pskip-webui-build -Dflink.tests.force-openssl \
-          -Dhadoop.version=2.8.3 -Pinclude-kinesis -Dinclude_hadoop_aws -Dscala-2.11 -fn -pl flink-tests \
+          -Dhadoop.version=2.8.3 -Dinclude_hadoop_aws -Dscala-2.11 -fn -pl flink-tests \
           verify
       args:
         executable: /bin/bash
