@@ -1,0 +1,120 @@
+- hosts: all
+  become: yes
+  roles:
+    - install-openjdk
+    - install-maven
+  tasks:
+    - name: workarounds and requirements
+      shell: |
+        set -ex
+        apt-get update -y
+        echo $PATH
+
+        # Need to keep the localhost in the 1st line
+        sed  -i '2i\127.0.0.1 '$(hostname)'' /etc/hosts
+        # fix tests in org.apache.hadoop.yarn.server.resourcemanager.recovery.TestFSRMStateStore
+        sed  -i '3i\127.0.0.1 '$(hostname).'' /etc/hosts
+
+        apt-get install -y build-essential autoconf automake libtool cmake zlib1g-dev pkg-config libssl-dev libsasl2-dev
+
+        # Install Docker
+        type docker || curl -sSL https://get.docker.com/ | sh -
+
+        # Install patched protoc-2.5.0
+        curl -Lo /opt/protobuf-2.5.0-aarch64.tar.gz  https://git.io/JeOpb
+        mkdir -p /opt/protobuf-2.5.0-aarch64 && tar zxf /opt/protobuf-2.5.0-aarch64.tar.gz -C /opt/protobuf-2.5.0-aarch64/
+        echo /opt/protobuf-2.5.0-aarch64/lib/ > /etc/ld.so.conf.d/protobuf-2.5.0-aarch64.conf
+        ldconfig
+        export PATH=/opt/protobuf-2.5.0-aarch64/bin:$PATH
+        protoc --version
+
+        wget -O /opt/phantomjs-2.1.1-linux-aarch64.tar.bz2 https://github.com/liusheng/phantomjs/releases/download/2.1.1/phantomjs-2.1.1-linux-aarch64.tar.bz2
+        tar jxvf /opt/phantomjs-2.1.1-linux-aarch64.tar.bz2 -C /opt/
+        cp /opt/phantomjs-2.1.1-linux-aarch64/bin/phantomjs /usr/bin/
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
+
+    - name: Install hadoop and run tests
+      become: no
+      shell: |
+        set -ex
+
+        # NOTE: the tests of TestAuxServices need to create some file and directories which must not have group
+        # and other permissions, and the files' parents direcotries(must not writable by group or other).
+        # so we need change all the permissions of directories and the "umask" the umask will effect the new
+        # created files and directories' permissions e.g. the 077 means the new created permissions: 777 - 077 = 700 (files: 666 - 077 = 600)
+        chmod go-w "{{ ansible_user_dir }}/src" -R
+        echo "umask 022" >> ~/.profile
+        . ~/.profile
+        umask
+
+        export JAVA_HOME=`dirname $(dirname $(update-alternatives --list javac))`
+        export PATH=$JAVA_HOME/bin:/opt/apache-maven-3.6.2/bin:/opt/hadoop-3.3.0-SNAPSHOT/bin:$PATH
+        export PATH=/opt/protobuf-2.5.0-aarch64/bin:$PATH
+        protoc --version
+
+        # Install protoc-gen-grpc-java for ARM platform
+        mkdir -p ~/.m2/repository/io/grpc/protoc-gen-grpc-java/1.15.1/
+        pushd ~/.m2/repository/io/grpc/protoc-gen-grpc-java/1.15.1/
+        wget http://home.apache.org/~aajisaka/repository/io/grpc/protoc-gen-grpc-java/1.15.1/protoc-gen-grpc-java-1.15.1-linux-aarch_64.exe
+        wget http://home.apache.org/~aajisaka/repository/io/grpc/protoc-gen-grpc-java/1.15.1/protoc-gen-grpc-java-1.15.1.pom
+        wget http://home.apache.org/~aajisaka/repository/io/grpc/protoc-gen-grpc-java/1.15.1/protoc-gen-grpc-java-1.15.1.pom.sha1
+        popd
+
+        # TestNMLeveldbStateStoreService
+        # wget -O leveldbjni-all-1.8.jar https://repo1.maven.org/maven2/org/openlabtesting/leveldbjni/leveldbjni-all/1.8/leveldbjni-all-1.8.jar
+        # mvn install:install-file -DgroupId=org.fusesource.leveldbjni -DartifactId=leveldbjni-all -Dversion=1.8 -Dpackaging=jar -Dfile=leveldbjni-all-1.8.jar
+
+        # Install manually compiled netty-all package
+        wget -O netty-all-4.1.27-linux-aarch64.jar https://git.io/Je8K3
+        mvn install:install-file -DgroupId=io.netty -Dfile=netty-all-4.1.27-linux-aarch64.jar -DartifactId=netty-all -Dversion=4.1.27.Final -Dpackaging=jar
+
+        # Install hadoop in Maven local repo -Pdist,native
+        mvn clean install -e -B -Pdist,native -Dtar -DskipTests -Dmaven.javadoc.skip 2>&1 | tee "{{ ansible_user_dir }}/workspace/logs/hadoop_build.log"
+
+        # Compile hadoop
+        sudo cp -r hadoop-dist/target/hadoop-3.3.0-SNAPSHOT /opt/
+        hadoop version
+        # hadoop checknative -a
+
+        pushd hadoop-yarn-project/
+        mvn test -B -e -fae -Pparallel-tests | tee "{{ ansible_user_dir }}/workspace/logs/hadoop_yarn_test.log"
+        popd
+
+        # ----------------------------------- current issues -----------------------------------------
+        # Fail sometimes
+        # org.apache.hadoop.yarn.client.api.impl.TestAtAMRMProxyPolicyMRMClient
+
+        # ARM server performance related issues:
+        # 1. TestLocalityMulticastAMRMProxyPolicy (timeout sometime)
+        # 2. TestNodeManagerResync (timeout sometime, enlarge timeout)
+        # 3. TestRMApplicationHistoryWriter.testRMWritingMassiveHistoryForCapacitySche (limit of waitCount to lager)
+
+        # Unknown reason issues (pass sometimes):
+        # TestSchedulingRequestContainerAllocationAsync.testFourThreadsAsyncContainerAllocation (Errors: 3)
+        # TestSchedulingRequestContainerAllocationAsync.testSingleThreadAsyncContainerAllocation
+        # TestSchedulingRequestContainerAllocationAsync.testTwoThreadsAsyncContainerAllocation
+
+        # no netty_transport_native_epoll_aarch_64 in java.library.path(fixed)
+        # TestCsiClient.testIdentityService
+
+        # https://issues.apache.org/jira/browse/YARN-9511(fixed)
+        #Failures:
+        #  TestAuxServices.testAuxServiceRecoverySetup:717 expected:<2> but was:<0>
+        #  TestAuxServices.testAuxServicesManifestPermissions:874 expected:<2> but was:<0>
+        #  TestAuxServices.testAuxServicesMeta:638 Invalid mix of services expected:<6> but was:<1>
+        #  TestAuxServices.testAuxServices:610 Invalid mix of services expected:<6> but was:<1>
+        #  TestAuxServices.testCustomizedAuxServiceClassPath:416
+        #  TestAuxServices.testManualReload:919 expected:<2> but was:<0>
+        #  TestAuxServices.testRemoteAuxServiceClassPath:313 The permission of the jar is wrong.Should throw out exception.
+        #  TestAuxServices.testRemoveManifest:897 expected:<2> but was:<0>
+        #  TestAuxServices.testValidAuxServiceName:698 Should receive the exception.
+        #Errors:
+        #  TestAuxServices.testAuxUnexpectedStop:664 » NoSuchElement
+        #  TestAuxServices.testRemoteAuxServiceClassPath:334 » YarnRuntime The remote jar...
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'

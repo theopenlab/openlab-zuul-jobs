@@ -2243,10 +2243,26 @@
     tags:
       - Category:BigData
       - Project:apache/hadoop
-      - Application:hadoop@master
+      - Application:hadoop@trunk
       - OS:ubuntu-xenial
       - Arch:arm64
       - BuildType:Compile
+
+# Hadoop YARN build and run unit tests
+- job:
+    name: hadoop-yarn-unit-test-arm64
+    parent: init-test
+    description: |
+      Apache Hadoop YARN build and run unit tests on arm64 server
+    run: playbooks/hadoop-yarn-unit-test-arm64/run.yaml
+    nodeset: ubuntu-xenial-arm64
+    tags:
+      - Category:BigData
+      - Project:apache/hadoop
+      - Application:hadoop@trunk
+      - OS:ubuntu-xenial
+      - Arch:arm64
+      - BuildType:Unit test
 
 # Spark arm64 build and run unit tests periodic jobs
 - job:

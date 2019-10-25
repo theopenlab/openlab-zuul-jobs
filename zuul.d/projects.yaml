@@ -191,11 +191,18 @@
         - gophercloud-v0.4.0-acceptance-test-mitaka:
             branches: master
 
+# - project:
+#     name: apache/hadoop
+#     periodic-8:
+#       jobs:
+#         - hadoop-build-arm64:
+#             branches: trunk
+
 - project:
     name: apache/hadoop
     periodic-8:
       jobs:
-        - hadoop-build-arm64:
+        - hadoop-yarn-unit-test-arm64:
             branches: trunk
 
 ####################### periodic jobs on 10:00/22:00 ##########################
@@ -259,12 +266,12 @@
         - flink-end-to-end-test-misc-hadoopfree-and-misc:
             branches: master
 
-- project:
-    name: apache/spark
-    periodic-10:
-      jobs:
-        # Disable job, this job is running in community already
-        #- spark-master-unit-test-hadoop-2.7-arm64:
-         #   branches: master
-        - spark-master-unit-test-hadoop-3.2-arm64:
-            branches: master
+# - project:
+#     name: apache/spark
+#     periodic-10:
+#       jobs:
+#         # Disable job, this job is running in community already
+#         #- spark-master-unit-test-hadoop-2.7-arm64:
+#          #   branches: master
+#         - spark-master-unit-test-hadoop-3.2-arm64:
+#             branches: master
