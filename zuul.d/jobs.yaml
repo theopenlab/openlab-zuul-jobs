@@ -737,6 +737,14 @@
     post-run: playbooks/cloud-provider-openstack-acceptance-test-manila-provisioner/post.yaml
     nodeset: ubuntu-xenial
 
+- job:
+    name: cloud-provider-openstack-acceptance-test-csi-manila
+    parent: cloud-provider-openstack-test
+    description: |
+      Run manila csi acceptance tests of cloud-provider-openstack
+    run: playbooks/cloud-provider-openstack-acceptance-test-csi-manila/run.yaml
+    post-run: playbooks/cloud-provider-openstack-acceptance-test-csi-manila/post.yaml
+
 # TODO(wxy): Delete this base job once lb job is moved to citynetwork.
 - job:
     name: cloud-provider-openstack-test-lb
