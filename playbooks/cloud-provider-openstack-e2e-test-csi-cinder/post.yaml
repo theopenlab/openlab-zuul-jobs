@@ -1,0 +1,13 @@
+- hosts: all
+  become: yes
+  tasks:
+    - name: Clean up resources for csi cinder e2e tests
+      shell:
+        cmd: |
+          set -e
+          set -x
+          '{{ kubectl }}' config use-context local
+          '{{ kubectl }}' delete -f manifests/cinder-csi-plugin
+        executable: /bin/bash
+        chdir: '{{ k8s_os_provider_src_dir }}'
+      environment: '{{ global_env }}'

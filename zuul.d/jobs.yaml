@@ -729,6 +729,19 @@
       - citynetwork_credentials
 
 - job:
+    name: cloud-provider-openstack-e2e-test-csi-cinder
+    parent: cloud-provider-openstack-test
+    description: |
+      Run cinder csi e2e tests of cloud-provider-openstack
+    run: playbooks/cloud-provider-openstack-e2e-test-csi-cinder/run.yaml
+    post-run: playbooks/cloud-provider-openstack-e2e-test-csi-cinder/post.yaml
+    nodeset: ubuntu-xenial-citynetwork
+    vars:
+      go_version: '1.12.10'
+    secrets:
+      - citynetwork_credentials
+
+- job:
     name: cloud-provider-openstack-acceptance-test-manila-provisioner
     parent: cloud-provider-openstack-test
     description: |
