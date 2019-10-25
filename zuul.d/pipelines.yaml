@@ -894,6 +894,43 @@
       mysql:
 
 - pipeline:
+    name: cloud-provider-openstack-e2e-test-csi-cinder
+    description: |
+      Commenting "/test cloud-provider-openstack-e2e-test-csi-cinder" enter this pipeline to run
+      the tests job of Kubernetes+OpenStack Cinder CSI e2e scenarios and receive an initial
+      +/-1 Verified vote.
+    manager: independent
+    trigger:
+      github:
+        - event: pull_request
+          action:
+            - opened
+            - changed
+            - reopened
+        - event: pull_request
+          action: comment
+          comment: (?i)^\s*\/test cloud-provider-openstack-e2e-test-csi-cinder\s*$
+        - event: pull_request
+          action: comment
+          comment: (?i)^\s*\/retest\s*$
+        - event: pull_request
+          action: comment
+          comment: (?i)^\s*\/test all\s*$
+    start:
+      github:
+        status: pending
+        comment: false
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
+    success:
+      github:
+        status: 'success'
+      mysql:
+    failure:
+      github:
+        status: 'failure'
+      mysql:
+
+- pipeline:
     name: cloud-provider-openstack-acceptance-test-flexvolume-cinder
     description: |
       Commenting "/test cloud-provider-openstack-acceptance-test-flexvolume-cinder" enter this pipeline to run
@@ -947,6 +984,43 @@
         - event: pull_request
           action: comment
           comment: (?i)^\s*\/test cloud-provider-openstack-acceptance-test-manila-provisioner\s*$
+        - event: pull_request
+          action: comment
+          comment: (?i)^\s*\/retest\s*$
+        - event: pull_request
+          action: comment
+          comment: (?i)^\s*\/test all\s*$
+    start:
+      github:
+        status: pending
+        comment: false
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
+    success:
+      github:
+        status: 'success'
+      mysql:
+    failure:
+      github:
+        status: 'failure'
+      mysql:
+
+- pipeline:
+    name: cloud-provider-openstack-acceptance-test-csi-manila
+    description: |
+      Commenting "/test cloud-provider-openstack-acceptance-test-csi-manila" enter this pipeline to run
+      the tests job of Kubernetes+OpenStack Manila CSI scenarios and receive an initial
+      +/-1 Verified vote.
+    manager: independent
+    trigger:
+      github:
+        - event: pull_request
+          action:
+            - opened
+            - changed
+            - reopened
+        - event: pull_request
+          action: comment
+          comment: (?i)^\s*\/test cloud-provider-openstack-acceptance-test-csi-manila\s*$
         - event: pull_request
           action: comment
           comment: (?i)^\s*\/retest\s*$
