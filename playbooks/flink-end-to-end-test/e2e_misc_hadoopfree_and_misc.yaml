@@ -1,17 +1,6 @@
-- hosts: all
-  become: yes
-  roles:
-    - role: install-openjdk
-      java_version: '8'
-      with_scala: true
-      scala_version: '2.11.0'
-    - role: install-maven
-      maven_version: '3.2.5'
-  tasks:
-    - name: clean up iptable rules
-      shell: iptables -F
+- import_playbook: common.yaml
 
-
+# NOTE: elasticsearch can't be ran under root.
 - hosts: all
   become: no
   tasks:
@@ -21,8 +10,8 @@
           git clone https://github.com/dataArtisans/frocksdb.git
           cd frocksdb
           git checkout origin/FRocksDB-5.17.2
-          apt update
-          apt install -y gcc g++ make
+          sudo apt update
+          sudo apt install -y gcc g++ make
           export DEBUG_LEVEL=0
           make -j8 rocksdbjava
 

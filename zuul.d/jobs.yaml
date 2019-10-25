@@ -2032,10 +2032,10 @@
     name: spark-integration-test-minikube-k8s-v1.13.3
     parent: init-test
     description: |
-      Run integration tests of spark of v2.4.0 against v1.13.3 k8s cluster deployed by v0.34.1 minikube
+      Run integration tests of spark of v2.4.4 against v1.13.3 k8s cluster deployed by v0.34.1 minikube
     run: playbooks/spark-integration-test-minikube-k8s/run.yaml
     post-run: playbooks/spark-integration-test-minikube-k8s/post.yaml
-    override-checkout: v2.4.0
+    override-checkout: v2.4.4
     vars:
       k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
       minikube_version: v0.34.1
@@ -2043,7 +2043,7 @@
     tags:
       - Category:BigData
       - Project:apache/spark
-      - Application:Spark@v2.4.0
+      - Application:Spark@v2.4.4
       - Application:Docker@19.03
       - Application:Kubernetes@v1.13.3
       - OS:ubuntu-xenial
@@ -2320,11 +2320,11 @@
     timeout: 54000
 
 - job:
-    name: flink-end-to-end-test-part1
+    name: flink-end-to-end-test-checkpoints-and-sticky
     parent: init-test
     description: |
       The flink e2e test which contains split_checkpoints.sh, split_sticky.sh
-    run: playbooks/flink-end-to-end-test/run_part1.yaml
+    run: playbooks/flink-end-to-end-test/e2e_checkpoints_and_sticky.yaml
     post-run: playbooks/flink-end-to-end-test/post.yaml
     nodeset: ubuntu-xenial-arm64
     tags:
@@ -2337,11 +2337,11 @@
     timeout: 54000
 
 - job:
-    name: flink-end-to-end-test-part2
+    name: flink-end-to-end-test-heavy-and-ha
     parent: init-test
     description: |
       The flink e2e test which contains split_heavy.sh, split_ha.sh
-    run: playbooks/flink-end-to-end-test/run_part2.yaml
+    run: playbooks/flink-end-to-end-test/e2e_heavy_and_ha.yaml
     post-run: playbooks/flink-end-to-end-test/post.yaml
     nodeset: ubuntu-xenial-arm64
     tags:
@@ -2354,11 +2354,11 @@
     timeout: 54000
 
 - job:
-    name: flink-end-to-end-test-part3
+    name: flink-end-to-end-test-misc-hadoopfree-and-misc
     parent: init-test
     description: |
       The flink e2e test which contains split_misc.sh, split_misc_hadoopfree.sh
-    run: playbooks/flink-end-to-end-test/run_part3.yaml
+    run: playbooks/flink-end-to-end-test/e2e_misc_hadoopfree_and_misc.yaml
     post-run: playbooks/flink-end-to-end-test/post.yaml
     nodeset: ubuntu-xenial-arm64
     tags:
@@ -2368,4 +2368,36 @@
       - OS:ubuntu-xenial
       - Arch:arm64
       - BuildType:Integration test
+    timeout: 54000
+
+- job:
+    name: flink-build-and-test-arm64-core
+    parent: init-test
+    description: |
+      The flink-core build and test on ARM.
+    run: playbooks/flink-end-to-end-test/build_and_test_core.yaml
+    nodeset: ubuntu-xenial-arm64
+    tags:
+      - Category:BigData
+      - Project:apache/flink
+      - Application:Flink@master
+      - OS:ubuntu-xenial
+      - Arch:arm64
+      - BuildType:Unit test
+    timeout: 54000
+
+- job:
+    name: flink-build-and-test-arm64-tests
+    parent: init-test
+    description: |
+      The flink-tests build and test on ARM.
+    run: playbooks/flink-end-to-end-test/build_and_test_tests.yaml
+    nodeset: ubuntu-xenial-arm64
+    tags:
+      - Category:BigData
+      - Project:apache/flink
+      - Application:Flink@master
+      - OS:ubuntu-xenial
+      - Arch:arm64
+      - BuildType:Unit test
     timeout: 54000
