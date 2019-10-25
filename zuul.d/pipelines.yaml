@@ -1005,6 +1005,43 @@
       mysql:
 
 - pipeline:
+    name: cloud-provider-openstack-acceptance-test-csi-manila
+    description: |
+      Commenting "/test cloud-provider-openstack-acceptance-test-csi-manila" enter this pipeline to run
+      the tests job of Kubernetes+OpenStack Manila CSI scenarios and receive an initial
+      +/-1 Verified vote.
+    manager: independent
+    trigger:
+      github:
+        - event: pull_request
+          action:
+            - opened
+            - changed
+            - reopened
+        - event: pull_request
+          action: comment
+          comment: (?i)^\s*\/test cloud-provider-openstack-acceptance-test-csi-manila\s*$
+        - event: pull_request
+          action: comment
+          comment: (?i)^\s*\/retest\s*$
+        - event: pull_request
+          action: comment
+          comment: (?i)^\s*\/test all\s*$
+    start:
+      github:
+        status: pending
+        comment: false
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
+    success:
+      github:
+        status: 'success'
+      mysql:
+    failure:
+      github:
+        status: 'failure'
+      mysql:
+
+- pipeline:
     name: cloud-provider-openstack-acceptance-test-e2e-conformance
     description: |
       Commenting "/test cloud-provider-openstack-acceptance-test-e2e-conformance" enter this pipeline to run
