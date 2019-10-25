@@ -6,7 +6,7 @@
   tasks:
     - name: workarounds and requirements
       shell: |
-        set -ex
+        set -exo pipefail
         apt-get update -y
         echo $PATH
 
@@ -39,7 +39,7 @@
     - name: Install hadoop and run tests
       become: no
       shell: |
-        set -ex
+        set -exo pipefail
 
         # NOTE: the tests of TestAuxServices need to create some file and directories which must not have group
         # and other permissions, and the files' parents direcotries(must not writable by group or other).
