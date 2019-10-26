@@ -4,25 +4,6 @@
 - hosts: all
   become: no
   tasks:
-    - name: Build and install frocksdb
-      shell:
-        cmd: |
-          git clone https://github.com/dataArtisans/frocksdb.git
-          cd frocksdb
-          git checkout origin/FRocksDB-5.17.2
-          sudo apt update
-          sudo apt install -y gcc g++ make
-          export DEBUG_LEVEL=0
-          make -j8 rocksdbjava
-
-          mvn install:install-file -DgroupId=com.data-artisans \
-          -DartifactId=frocksdbjni -Dversion=5.17.2-artisans-1.0 \
-          -Dpackaging=jar -Dfile=java/target/rocksdbjni-5.17.2-linux64.jar
-      args:
-        executable: /bin/bash
-        chdir: '{{ zuul.project.src_dir }}'
-      environment: '{{ global_env }}'
-
     - name: Comment out docker installation
       lineinfile:
         path: "/home/zuul/src/github.com/apache/flink/tools/travis/nightly.sh"
