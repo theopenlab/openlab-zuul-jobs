@@ -40,8 +40,12 @@
     cat /etc/resolv.conf
 
     sysctl net.bridge.bridge-nf-call-iptables=1
-    kubeadm init --pod-network-cidr=10.244.0.0/16 --kubernetes-version="{{ kubernetes_version }}" \
-        --node-name "{{ inventory_hostname }}"
+    if [[ -f /etc/kubernetes/kubeadm.yaml ]]; then
+      kubeadm init --config=/etc/kubernetes/kubeadm.yaml
+    else
+      kubeadm init --pod-network-cidr=10.244.0.0/16 --kubernetes-version="{{ kubernetes_version }}" \
+          --node-name "{{ inventory_hostname }}"
+    fi
     mkdir -p $HOME/.kube
     sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 
