@@ -50,7 +50,6 @@
           # location of where the kubernetes processes log their output
           mkdir -p '{{ k8s_log_dir }}'
           export LOG_DIR='{{ k8s_log_dir }}'
-          # We need this for one of the conformance tests
           export ALLOW_PRIVILEGED=true
           # Just kick off all the processes and drop down to the command line
           export ENABLE_DAEMON=true
@@ -121,7 +120,9 @@
               exit 1
           fi
 
-          ./csi-cinder-e2e --ginkgo.v --ginkgo.progress -ginkgo.skip="\[Disruptive\]" -ginkgo.focus="\[cinder-csi-e2e\]" --kubeconfig=/var/run/kubernetes/admin.kubeconfig
+          # Set kubectl in path , required for e2e tests
+          cp -p '{{ kubectl }}' /usr/local/bin/kubectl
+          go test -v ./cmd/tests/cinder_csi_e2e_suite_test.go -ginkgo.v -ginkgo.progress -ginkgo.skip="\[Disruptive\]" -ginkgo.focus="\[cinder-csi-e2e\]" --kubeconfig=/var/run/kubernetes/admin.kubeconfig -timeout=0 -report-dir='{{ k8s_log_dir }}'
 
         executable: /bin/bash
         chdir: '{{ k8s_os_provider_src_dir }}'
