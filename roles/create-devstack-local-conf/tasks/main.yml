@@ -123,9 +123,6 @@
       # Enabling manila
       enable_plugin manila https://opendev.org/openstack/manila
 
-      # Override enabled services
-      ENABLED_SERVICES=key,mysql,rabbit,manila,m-api,m-sch,m-shr,m-dat
-
       # LVM Backend config options
       MANILA_SERVICE_IMAGE_ENABLED=False
       SHARE_DRIVER=manila.share.drivers.lvm.LVMShareDriver
