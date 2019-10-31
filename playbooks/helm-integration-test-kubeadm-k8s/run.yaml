@@ -57,9 +57,10 @@
           docker exec --interactive ctd "$@" git fetch k8s
 
           # run cmd "ct lint-and-install" to test several charts
-          docker exec --interactive ctd "$@" ct lint-and-install --charts stable/mysql,stable/postgresql,stable/etcd-operator,stable/coredns --namespace kube-system
-          # some charts won't delete the pvc, delete them manually to make sure pv is available
+          # run stable/postgresql first, and to delete the pv manually, to make sure install other charts success
+          docker exec --interactive ctd "$@" ct lint-and-install --charts stable/postgresql --namespace kube-system
           kubectl delete pvc --all --namespace kube-system
+          docker exec --interactive ctd "$@" ct lint-and-install --charts stable/mysql,stable/etcd-operator,stable/coredns --namespace kube-system
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ global_env }}'
