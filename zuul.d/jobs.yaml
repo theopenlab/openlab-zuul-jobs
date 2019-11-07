@@ -561,7 +561,7 @@
     post-run: playbooks/cloud-provider-openstack-acceptance-test-k8s-cinder/post.yaml
     nodeset: ubuntu-xenial-citynetwork
     vars:
-      go_version: '1.12.10'
+      go_version: '1.13.4'
     secrets:
       - citynetwork_credentials
 
@@ -724,7 +724,7 @@
     post-run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/post.yaml
     nodeset: ubuntu-xenial-citynetwork
     vars:
-      go_version: '1.12.10'
+      go_version: '1.13.4'
     secrets:
       - citynetwork_credentials
 
@@ -737,7 +737,7 @@
     post-run: playbooks/cloud-provider-openstack-e2e-test-csi-cinder/post.yaml
     nodeset: ubuntu-xenial-citynetwork
     vars:
-      go_version: '1.12.10'
+      go_version: '1.13.4'
     secrets:
       - citynetwork_credentials
 
@@ -796,7 +796,7 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-keystone-authentication-authorization/run.yaml
     nodeset: ubuntu-xenial
     vars:
-      go_version: '1.12.10'
+      go_version: '1.13.4'
 
 - job:
     name: cloud-provider-openstack-acceptance-test-flexvolume-cinder
@@ -806,7 +806,7 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-flexvolume-cinder/run.yaml
     nodeset: ubuntu-xenial
     vars:
-      go_version: '1.12.10'
+      go_version: '1.13.4'
 
 - job:
     name: cluster-api-provider-openstack-image-build
