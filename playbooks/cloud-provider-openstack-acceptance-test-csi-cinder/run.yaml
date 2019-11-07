@@ -120,16 +120,16 @@
           if timeout 300 bash -c '
               while :
               do
-                  {{ kubectl }} get pod | sed "1d" | awk '\''$2 != "2/2" || $3 != "Running" {err = 1} END {exit err}'\'' && break
+                  {{ kubectl }} get pod --all-namespaces | sed "1d" | awk '\''$4 != "Running" {err = 1} END {exit err}'\'' && break
                   sleep 1
               done
               '
           then
               echo 'Run services successful'
-              '{{ kubectl }}' get pod
+              '{{ kubectl }}' get pod --all-namespaces
           else
               echo 'Run services failed'
-              '{{ kubectl }}' get pod
+              '{{ kubectl }}' get pod --all-namespaces
               exit 1
           fi
 
