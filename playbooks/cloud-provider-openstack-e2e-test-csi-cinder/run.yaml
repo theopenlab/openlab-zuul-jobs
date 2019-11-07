@@ -107,21 +107,22 @@
           if timeout 300 bash -c '
               while :
               do
-                  {{ kubectl }} get pod | sed "1d" | awk '\''$2 != "2/2" || $3 != "Running" {err = 1} END {exit err}'\'' && break
+                  {{ kubectl }} get pod --all-namespaces | sed "1d" | awk '\''$4 != "Running" {err = 1} END {exit err}'\'' && break
                   sleep 1
               done
               '
           then
               echo 'Run services successful'
-              '{{ kubectl }}' get pod
+              '{{ kubectl }}' get pod --all-namespaces
           else
               echo 'Run services failed'
-              '{{ kubectl }}' get pod
+              '{{ kubectl }}' get pod --all-namespaces
               exit 1
           fi
 
-          # Set kubectl in path , required for e2e tests
-          cp -p '{{ kubectl }}' /usr/local/bin/kubectl
+          export GO111MODULE=on
+          # Download kubectl binary
+          curl -Lo /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x /usr/local/bin/kubectl
           go test -v ./cmd/tests/cinder_csi_e2e_suite_test.go -ginkgo.v -ginkgo.progress -ginkgo.skip="\[Disruptive\]" -ginkgo.focus="\[cinder-csi-e2e\]" --kubeconfig=/var/run/kubernetes/admin.kubeconfig -timeout=0 -report-dir='{{ k8s_log_dir }}'
 
         executable: /bin/bash
