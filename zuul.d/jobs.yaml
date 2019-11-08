@@ -571,7 +571,7 @@
     description: |
       Run Kubernetes E2E Conformance tests against Kubernetes master
     vars:
-      go_version: '1.12.4'
+      go_version: '1.13.4'
     run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/post.yaml
     nodeset: ubuntu-xenial-citynetwork
@@ -714,6 +714,8 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-standalone-cinder/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-standalone-cinder/post.yaml
     nodeset: ubuntu-xenial
+    vars:
+      go_version: '1.13.4'
 
 - job:
     name: cloud-provider-openstack-acceptance-test-csi-cinder
@@ -749,6 +751,8 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-manila-provisioner/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-manila-provisioner/post.yaml
     nodeset: ubuntu-xenial
+    vars:
+      go_version: '1.13.4'
 
 - job:
     name: cloud-provider-openstack-acceptance-test-csi-manila
@@ -757,6 +761,8 @@
       Run manila csi acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-csi-manila/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-csi-manila/post.yaml
+    vars:
+      go_version: '1.13.4'
 
 # TODO(wxy): Delete this base job once lb job is moved to citynetwork.
 - job:
