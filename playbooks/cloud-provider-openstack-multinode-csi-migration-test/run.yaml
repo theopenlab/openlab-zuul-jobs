@@ -1,0 +1,25 @@
+- hosts: k8s-master
+  name: Run Kubernetes e2e.test for sig-storage and the cinder driver
+  become: yes
+  tasks:
+    - name: Run test
+      environment: "{{ global_env }}"
+      shell:
+        cmd: |
+          set -o pipefail
+          set -e
+          excludes=(
+            "\[Disruptive\]"
+            "\[sig-storage\]\sIn-tree\sVolumes\s\[Driver:\scinder\]\s\[Testpattern:\sPre-provisioned\sPV\s\(block\svolmode\)\]\svolumeMode\sshould\sfail\sto\screate\spod\sby\sfailing\sto\smount\svolume\s\[Slow\]"
+            "\[sig-storage\]\sIn-tree\sVolumes\s\[Driver:\scinder\]\s\[Testpattern:\sDynamic\sPV\s\(block\svolmode\)\]\svolumeMode\sshould\sfail\sin\sbinding\sdynamic\sprovisioned\sPV\sto\sPVC\s\[Slow\]"
+            )
+          exclude_regex=$( printf "|%s" "${excludes[@]}" )
+          exclude_regex=${exclude_regex:1}
+          /root/kubernetes/test/bin/e2e.test \
+            -kubeconfig=/etc/kubernetes/admin.conf \
+            -provider=openstack \
+            -ginkgo.noColor \
+            -ginkgo.focus="[V|v]olume\sexpand|\[sig-storage\]\sIn-tree\sVolumes\s\[Driver:\scinder\]|allowedTopologies|Pod\sDisks|PersistentVolumes\sDefault" \
+            -ginkgo.skip="$exclude_regex" | tee /root/csi-migration.log
+      args:
+        executable: /bin/bash
