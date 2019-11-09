@@ -221,7 +221,8 @@
       command: "kubelet --version"
       register: kubelet_version
 
-    - set_fact:
+    - name: set kube_test_version to version of kubelet
+      set_fact:
         kube_test_version: "{{ kubelet_version.stdout_lines[0].split(' ')[1] }}"
 
     - name: download kubernetes-test-linux-amd64.tar.gz
