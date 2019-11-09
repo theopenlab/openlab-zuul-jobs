@@ -742,6 +742,22 @@
       - citynetwork_credentials
 
 - job:
+    name: cloud-provider-openstack-multinode-csi-migration-test
+    parent: cloud-provider-openstack-test
+    description: |
+      Run Kubernetes sig-storage (driver cinder) e2e test suite against a
+      multinode Kubernetes Cluster with feature-gates CSIMigration,
+      CSIMigrationOpenStack and ExpandCSIVolume enabled.
+    pre-run: playbooks/cloud-provider-openstack-multinode-csi-migration-test/pre.yaml
+    run: playbooks/cloud-provider-openstack-multinode-csi-migration-test/run.yaml
+    post-run: playbooks/cloud-provider-openstack-multinode-csi-migration-test/post.yaml
+    nodeset: ubuntu-xenial-k8s-cluster-cpo
+    vars:
+      go_version: '1.13.4'
+    secrets:
+      - citynetwork_credentials
+
+- job:
     name: cloud-provider-openstack-acceptance-test-manila-provisioner
     parent: cloud-provider-openstack-test
     description: |
