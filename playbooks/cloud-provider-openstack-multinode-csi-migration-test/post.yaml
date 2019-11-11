@@ -1,0 +1,9 @@
+- hosts: k8s-master
+  name: teardown test
+  become: yes
+  tasks:
+    - name: remove cinder-csi-plugin
+      command: kubectl delete -k manifests/cinder-csi-plugin
+      ignore_errors: true
+      args:
+        chdir: '{{ k8s_os_provider_src_dir }}'
