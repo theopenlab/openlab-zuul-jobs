@@ -207,13 +207,6 @@
 
 ####################### periodic jobs on 10:00/22:00 ##########################
 - project:
-    name: kubernetes-sigs/cluster-api-provider-openstack
-    periodic-10/22:
-      jobs:
-        - cluster-api-provider-openstack-image-build:
-            branches: master
-
-- project:
     name: manageiq/manageiq-providers-openstack
     periodic-10/22:
       jobs:
