@@ -814,18 +814,6 @@
     vars:
       go_version: '1.13.4'
 
-- job:
-    name: cluster-api-provider-openstack-image-build
-    parent: cloud-provider-openstack-test
-    description: |
-      Run the image build and publish jobs
-    run: playbooks/cluster-api-provider-openstack-image-build/run.yaml
-    vars:
-      k8s_cluster_api_provider_os_src_dir: '{{ ansible_user_dir }}/src/sigs.k8s.io/cluster-api-provider-openstack'
-    nodeset: ubuntu-xenial
-    secrets:
-      - dockerhub
-
 # ansible jobs
 - job: # Deprecated
     name: openstacksdk-ansible-devel-functional-devstack
