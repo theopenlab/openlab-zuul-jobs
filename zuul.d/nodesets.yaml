@@ -84,3 +84,21 @@
         label: ubuntu-xenial-citynetwork
       - name: k8s-node-2
         label: ubuntu-xenial-citynetwork
+
+- nodeset:
+    name: flink-static-unit-test
+    nodes:
+      - name: flink-static-unit-test
+        label: flink-static-unit-test
+
+- nodeset:
+    name: flink-static-e2e-test
+    nodes:
+      - name: flink-static-e2e-test
+        label: flink-static-e2e-test
+
+- nodeset:
+    name: aws-static-node
+    nodes:
+      - name: aws-static-node
+        label: aws-static-node
