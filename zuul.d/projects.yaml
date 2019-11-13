@@ -109,8 +109,6 @@
             branches: release-1.15
         - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.14:
             branches: release-1.14
-        - cloud-provider-openstack-multinode-csi-migration-test:
-            branches: master
 
 - project:
     name: envoyproxy/envoy
