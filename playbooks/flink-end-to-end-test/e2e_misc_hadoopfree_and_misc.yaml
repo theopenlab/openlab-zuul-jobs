@@ -46,14 +46,14 @@
           --- a/flink-end-to-end-tests/flink-metrics-reporter-prometheus-test/src/test/java/org/apache/flink/metrics/prometheus/tests/PrometheusReporterEndToEndITCase.java
           +++ b/flink-end-to-end-tests/flink-metrics-reporter-prometheus-test/src/test/java/org/apache/flink/metrics/prometheus/tests/PrometheusReporterEndToEndITCase.java
           @@ -73,7 +73,7 @@ public class PrometheusReporterEndToEndITCase extends TestLogger {
-                          PROMETHEUS_FILE_NAME = base + "windows-amd64";
-                          break;
-                      default:
+           				PROMETHEUS_FILE_NAME = base + "windows-amd64";
+           				break;
+           			default:
           -				PROMETHEUS_FILE_NAME = base + "linux-amd64";
           +				PROMETHEUS_FILE_NAME = base + "linux-arm64";
-                          break;
-                  }
-              }
+           				break;
+           		}
+           	}
           diff --git a/flink-end-to-end-tests/test-scripts/elasticsearch-common.sh b/flink-end-to-end-tests/test-scripts/elasticsearch-common.sh
           index 6959052..9c9c367 100644
           --- a/flink-end-to-end-tests/test-scripts/elasticsearch-common.sh
