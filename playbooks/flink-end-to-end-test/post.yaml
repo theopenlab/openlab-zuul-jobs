@@ -20,6 +20,7 @@
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
+      ignore_errors: yes
 
     - name: Remove temp branch
       shell:
