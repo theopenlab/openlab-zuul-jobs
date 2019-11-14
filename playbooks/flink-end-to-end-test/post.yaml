@@ -20,3 +20,13 @@
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
+
+    - name: Remove temp branch
+      shell:
+         cmd: |
+           git checkout master
+           git branch -D e2e-test-arm
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      ignore_errors: yes
