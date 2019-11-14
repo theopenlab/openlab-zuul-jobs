@@ -1,4 +1,8 @@
-- import_playbook: common.yaml
+- hosts: all
+  become: yes
+  roles:
+    - role: install-maven
+      maven_version: '3.2.5'
 
 # NOTE: elasticsearch can't be ran under root.
 - hosts: all
