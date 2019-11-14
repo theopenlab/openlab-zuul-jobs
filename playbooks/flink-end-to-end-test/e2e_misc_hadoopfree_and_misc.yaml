@@ -18,6 +18,7 @@
           sudo apt update
           sudo apt install -y gcc g++ make
           export DEBUG_LEVEL=0
+          export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-arm64/
           make -j8 rocksdbjava
 
           mvn install:install-file -DgroupId=com.data-artisans \
