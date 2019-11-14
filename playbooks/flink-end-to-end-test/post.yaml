@@ -31,3 +31,13 @@
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       ignore_errors: yes
+
+    - name: Get local hostname
+      shell: hostname
+      register: result
+
+    - name: roll back host
+      lineinfile:
+        path: "/etc/hosts"
+        regexp: "^127.0.0.1"
+        line: "127.0.0.1 {{ result.stdout }} localhost"
