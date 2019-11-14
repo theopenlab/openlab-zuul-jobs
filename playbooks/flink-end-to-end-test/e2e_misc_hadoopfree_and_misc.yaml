@@ -1,45 +1,15 @@
-- hosts: all
-  become: yes
-  roles:
-    - role: install-maven
-      maven_version: '3.2.5'
-
 # NOTE: elasticsearch can't be ran under root.
 - hosts: all
   become: no
   tasks:
-    # Todo(wxy): Frocksdb doesn't have ARM release. Build and install it locally currently.
-    - name: Build and install frocksdb
+    - name: Create temp branch
       shell:
         cmd: |
-          git clone https://github.com/dataArtisans/frocksdb.git
-          cd frocksdb
-          git checkout origin/FRocksDB-5.17.2
-          sudo apt update
-          sudo apt install -y gcc g++ make
-          export DEBUG_LEVEL=0
-          export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-arm64/
-          make -j8 rocksdbjava
-
-          mvn install:install-file -DgroupId=com.data-artisans \
-          -DartifactId=frocksdbjni -Dversion=5.17.2-artisans-1.0 \
-          -Dpackaging=jar -Dfile=java/target/rocksdbjni-5.17.2-linux64.jar
+          git checkout -b e2e-test-arm
       args:
         executable: /bin/bash
-        chdir: '/home/zuul'
+        chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ global_env }}'
-
-    - name: Comment out docker installation
-      lineinfile:
-        path: "/home/zuul/src/github.com/apache/flink/tools/travis/nightly.sh"
-        regexp: "^.*setup_docker.sh"
-        line: "# source ${HERE}/setup_docker.sh"
-
-    - name: Comment out k8s installation
-      lineinfile:
-        path: "/home/zuul/src/github.com/apache/flink/tools/travis/nightly.sh"
-        regexp: "^.*setup_kubernetes.sh"
-        line: "# source ${HERE}/setup_kubernetes.sh"
 
     - name: Add git author info
       shell:
@@ -52,28 +22,43 @@
       environment: '{{ global_env }}'
 
     # TODO(wxy): Should fix in apache/flink
-    - name: Disable xpack.ml for elasticsearch 6.0+
+    - name: ARM hack changes
       shell:
         cmd: |
           set -xo pipefail
 
-          cat << EOF >> Disable_xpack_ml.patch
-          From 833d65d0455ca67cd04b3ce2be6b8e48100073ca Mon Sep 17 00:00:00 2001
+          cat << EOF >> arm_hack.patch
+          From af7a1487dbfed257dcea0c89b528051e917afda3 Mon Sep 17 00:00:00 2001
           From: wangxiyuan <wangxiyuan@huawei.com>
           Date: Thu, 19 Sep 2019 15:20:51 +0800
-          Subject: [PATCH] Update elasticsearch
+          Subject: [PATCH] ARM Related Hack
 
           ---
-           flink-end-to-end-tests/test-scripts/elasticsearch-common.sh | 6 ++++--
-           flink-end-to-end-tests/test-scripts/test_sql_client.sh      | 2 +-
-           .../test-scripts/test_streaming_elasticsearch.sh            | 2 +-
-           3 files changed, 6 insertions(+), 4 deletions(-)
+           .../prometheus/tests/PrometheusReporterEndToEndITCase.java        | 2 +-
+           flink-end-to-end-tests/test-scripts/elasticsearch-common.sh       | 8 +++++---
+           flink-end-to-end-tests/test-scripts/test_sql_client.sh            | 2 +-
+           .../test-scripts/test_streaming_elasticsearch.sh                  | 2 +-
+           tools/travis/nightly.sh                                           | 4 ++--
+           5 files changed, 10 insertions(+), 8 deletions(-)
 
+          diff --git a/flink-end-to-end-tests/flink-metrics-reporter-prometheus-test/src/test/java/org/apache/flink/metrics/prometheus/tests/PrometheusReporterEndToEndITCase.java b/flink-end-to-end-tests/flink-metrics-reporter-prometheus-test/src/test/java/org/apache/flink/metrics/prometheus/tests/PrometheusReporterEndToEndITCase.java
+          index 258d293..eb3d635 100644
+          --- a/flink-end-to-end-tests/flink-metrics-reporter-prometheus-test/src/test/java/org/apache/flink/metrics/prometheus/tests/PrometheusReporterEndToEndITCase.java
+          +++ b/flink-end-to-end-tests/flink-metrics-reporter-prometheus-test/src/test/java/org/apache/flink/metrics/prometheus/tests/PrometheusReporterEndToEndITCase.java
+          @@ -73,7 +73,7 @@ public class PrometheusReporterEndToEndITCase extends TestLogger {
+                          PROMETHEUS_FILE_NAME = base + "windows-amd64";
+                          break;
+                      default:
+          -				PROMETHEUS_FILE_NAME = base + "linux-amd64";
+          +				PROMETHEUS_FILE_NAME = base + "linux-arm64";
+                          break;
+                  }
+              }
           diff --git a/flink-end-to-end-tests/test-scripts/elasticsearch-common.sh b/flink-end-to-end-tests/test-scripts/elasticsearch-common.sh
-          index 695905222f..9fae78efae 100644
+          index 6959052..9c9c367 100644
           --- a/flink-end-to-end-tests/test-scripts/elasticsearch-common.sh
           +++ b/flink-end-to-end-tests/test-scripts/elasticsearch-common.sh
-          @@ -26,7 +26,7 @@ function setup_elasticsearch {
+          @@ -26,15 +26,17 @@ function setup_elasticsearch {
                mkdir -p \$TEST_DATA_DIR
 
                local downloadUrl=\$1
@@ -81,8 +66,9 @@
           +    local elasticsearch_version=\${2-0}
                # start downloading Elasticsearch
                echo "Downloading Elasticsearch from \$downloadUrl ..."
-               curl "\$downloadUrl" > \$TEST_DATA_DIR/elasticsearch.tar.gz
-          @@ -34,7 +34,9 @@ function setup_elasticsearch {
+          -    curl "\$downloadUrl" > \$TEST_DATA_DIR/elasticsearch.tar.gz
+          +    curl --insecure "\$downloadUrl" > \$TEST_DATA_DIR/elasticsearch.tar.gz
+
                local elasticsearchDir=\$TEST_DATA_DIR/elasticsearch
                mkdir -p \$elasticsearchDir
                tar xzf \$TEST_DATA_DIR/elasticsearch.tar.gz -C \$elasticsearchDir --strip-components=1
@@ -94,7 +80,7 @@
                \$elasticsearchDir/bin/elasticsearch &
            }
           diff --git a/flink-end-to-end-tests/test-scripts/test_sql_client.sh b/flink-end-to-end-tests/test-scripts/test_sql_client.sh
-          index 5798545279..262817ee6e 100755
+          index 5798545..262817e 100755
           --- a/flink-end-to-end-tests/test-scripts/test_sql_client.sh
           +++ b/flink-end-to-end-tests/test-scripts/test_sql_client.sh
           @@ -101,7 +101,7 @@ echo "Preparing Elasticsearch..."
@@ -107,7 +93,7 @@
 
            ################################################################################
           diff --git a/flink-end-to-end-tests/test-scripts/test_streaming_elasticsearch.sh b/flink-end-to-end-tests/test-scripts/test_streaming_elasticsearch.sh
-          index f37ee73d22..e2ee273d43 100755
+          index f37ee73..e2ee273 100755
           --- a/flink-end-to-end-tests/test-scripts/test_streaming_elasticsearch.sh
           +++ b/flink-end-to-end-tests/test-scripts/test_streaming_elasticsearch.sh
           @@ -25,7 +25,7 @@ DOWNLOAD_URL=\$2
@@ -119,60 +105,30 @@
            wait_elasticsearch_working
 
            start_cluster
+          diff --git a/tools/travis/nightly.sh b/tools/travis/nightly.sh
+          index 0fb918e..5e75e8c 100755
+          --- a/tools/travis/nightly.sh
+          +++ b/tools/travis/nightly.sh
+          @@ -27,8 +27,8 @@ fi
+
+           SCRIPT=\$1
+
+          -source \${HERE}/setup_docker.sh
+          -source \${HERE}/setup_kubernetes.sh
+          +# source \${HERE}/setup_docker.sh
+          +# source \${HERE}/setup_kubernetes.sh
+
+           ARTIFACTS_DIR="\${HERE}/artifacts"
+
           --
-          2.21.0.windows.1
+          2.7.4
           EOF
 
-          git am Disable_xpack_ml.patch
+          git am arm_hack.patch
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ global_env }}'
-
-    # TODO(wxy): Should fix in apache/flink
-    - name: Increase akka timeout
-      shell:
-        cmd: |
-          set -xo pipefail
-
-          cat << EOF >> Increase_akka_timeout.patch
-          From 7bd2baa7d3497072bc79b110d7c30c346198bcfe Mon Sep 17 00:00:00 2001
-          From: wangxiyuan <wangxiyuan@huawei.com>
-          Date: Tue, 8 Oct 2019 14:12:29 +0800
-          Subject: [PATCH] increase akka timeout
-
-          ---
-           flink-end-to-end-tests/test-scripts/test_cli.sh | 1 +
-           1 file changed, 1 insertion(+)
-
-          diff --git a/flink-end-to-end-tests/test-scripts/test_cli.sh b/flink-end-to-end-tests/test-scripts/test_cli.sh
-          index 4b04890a40..1386a82374 100755
-          --- a/flink-end-to-end-tests/test-scripts/test_cli.sh
-          +++ b/flink-end-to-end-tests/test-scripts/test_cli.sh
-          @@ -23,6 +23,7 @@ source "\$(dirname "\$0")"/common.sh
-
-           TEST_PROGRAM_JAR=\$END_TO_END_DIR/flink-cli-test/target/PeriodicStreamingJob.jar
-
-          +set_config_key "akka.ask.timeout" "60 s"
-           start_cluster
-           \$FLINK_DIR/bin/taskmanager.sh start
-           \$FLINK_DIR/bin/taskmanager.sh start
-          --
-          2.21.0.windows.1
-          EOF
-
-          git am Increase_akka_timeout.patch
-      args:
-        executable: /bin/bash
-        chdir: '{{ zuul.project.src_dir }}'
-      environment: '{{ global_env }}'
-
-    # TODO(wxy): Should fix in apache/flink
-    - name: Hacking add prometheus arm package
-      lineinfile:
-        path: "/home/zuul/src/github.com/apache/flink/flink-end-to-end-tests/flink-metrics-reporter-prometheus-test/src/test/java/org/apache/flink/metrics/prometheus/tests/PrometheusReporterEndToEndITCase.java"
-        regexp: "^.*linux-amd64.*"
-        line: "\t\t\t\tPROMETHEUS_FILE_NAME = base + \"linux-arm64\";"
 
     - name: Run split_misc.sh e2e test
       shell:
