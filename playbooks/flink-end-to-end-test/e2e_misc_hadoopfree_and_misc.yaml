@@ -37,10 +37,11 @@
            .../main/java/org/apache/flink/tests/util/CommandLineWrapper.java | 1 +
            .../prometheus/tests/PrometheusReporterEndToEndITCase.java        | 2 +-
            flink-end-to-end-tests/test-scripts/elasticsearch-common.sh       | 8 +++++---
+           flink-end-to-end-tests/test-scripts/kafka-common.sh               | 2 +-
            flink-end-to-end-tests/test-scripts/test_sql_client.sh            | 2 +-
            .../test-scripts/test_streaming_elasticsearch.sh                  | 2 +-
            tools/travis/nightly.sh                                           | 4 ++--
-           6 files changed, 11 insertions(+), 8 deletions(-)
+           7 files changed, 12 insertions(+), 9 deletions(-)
 
           diff --git a/flink-end-to-end-tests/flink-end-to-end-tests-common/src/main/java/org/apache/flink/tests/util/CommandLineWrapper.java b/flink-end-to-end-tests/flink-end-to-end-tests-common/src/main/java/org/apache/flink/tests/util/CommandLineWrapper.java
           index e9ee2e8..d668285 100644
@@ -92,6 +93,19 @@
                # start Elasticsearch cluster
                \$elasticsearchDir/bin/elasticsearch &
            }
+          diff --git a/flink-end-to-end-tests/test-scripts/kafka-common.sh b/flink-end-to-end-tests/test-scripts/kafka-common.sh
+          index 96ac49b..cdb955b 100644
+          --- a/flink-end-to-end-tests/test-scripts/kafka-common.sh
+          +++ b/flink-end-to-end-tests/test-scripts/kafka-common.sh
+          @@ -36,7 +36,7 @@ function setup_kafka_dist {
+             mkdir -p \$TEST_DATA_DIR
+             KAFKA_URL="https://archive.apache.org/dist/kafka/\$KAFKA_VERSION/kafka_2.11-\$KAFKA_VERSION.tgz"
+             echo "Downloading Kafka from \$KAFKA_URL"
+          -  curl "\$KAFKA_URL" --retry 10 --retry-max-time 120 > \$TEST_DATA_DIR/kafka.tgz
+          +  curl --insecure "\$KAFKA_URL" --retry 10 --retry-max-time 120 > \$TEST_DATA_DIR/kafka.tgz
+
+             tar xzf \$TEST_DATA_DIR/kafka.tgz -C \$TEST_DATA_DIR/
+
           diff --git a/flink-end-to-end-tests/test-scripts/test_sql_client.sh b/flink-end-to-end-tests/test-scripts/test_sql_client.sh
           index 5798545..262817e 100755
           --- a/flink-end-to-end-tests/test-scripts/test_sql_client.sh
@@ -154,7 +168,7 @@
       lineinfile:
         path: "/etc/hosts"
         regexp: "^127.0.0.1"
-        line: "127.0.0.1 {{ result.stdout }} localhost github.com download.elastic.co artifacts.elastic.co"
+        line: "127.0.0.1 {{ result.stdout }} localhost github.com download.elastic.co artifacts.elastic.co archive.apache.org"
 
 - hosts: all
   become: no
