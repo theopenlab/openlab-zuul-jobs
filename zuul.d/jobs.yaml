@@ -745,6 +745,22 @@
       - citynetwork_credentials
 
 - job:
+    name: cloud-provider-openstack-multinode-csi-migration-test
+    parent: cloud-provider-openstack-test
+    description: |
+      Run Kubernetes sig-storage (driver cinder) e2e test suite against a
+      multinode Kubernetes Cluster with feature-gates CSIMigration,
+      CSIMigrationOpenStack and ExpandCSIVolume enabled.
+    pre-run: playbooks/cloud-provider-openstack-multinode-csi-migration-test/pre.yaml
+    run: playbooks/cloud-provider-openstack-multinode-csi-migration-test/run.yaml
+    post-run: playbooks/cloud-provider-openstack-multinode-csi-migration-test/post.yaml
+    nodeset: ubuntu-xenial-k8s-cluster-cpo
+    vars:
+      go_version: '1.13.4'
+    secrets:
+      - citynetwork_credentials
+
+- job:
     name: cloud-provider-openstack-acceptance-test-manila-provisioner
     parent: cloud-provider-openstack-test
     description: |
@@ -2384,7 +2400,7 @@
       The flink e2e test which contains split_misc.sh, split_misc_hadoopfree.sh
     run: playbooks/flink-end-to-end-test/e2e_misc_hadoopfree_and_misc.yaml
     post-run: playbooks/flink-end-to-end-test/post.yaml
-    nodeset: ubuntu-xenial-arm64
+    nodeset: aws-static-node
     tags:
       - Category:BigData
       - Project:apache/flink
@@ -2395,28 +2411,12 @@
     timeout: 54000
 
 - job:
-    name: flink-build-and-test-arm64-core
+    name: flink-build-and-test-arm64-core-and-tests
     parent: init-test
     description: |
-      The flink-core build and test on ARM.
-    run: playbooks/flink-end-to-end-test/build_and_test_core.yaml
-    nodeset: ubuntu-xenial-arm64
-    tags:
-      - Category:BigData
-      - Project:apache/flink
-      - Application:Flink@master
-      - OS:ubuntu-xenial
-      - Arch:arm64
-      - BuildType:Unit test
-    timeout: 54000
-
-- job:
-    name: flink-build-and-test-arm64-tests
-    parent: init-test
-    description: |
-      The flink-tests build and test on ARM.
-    run: playbooks/flink-end-to-end-test/build_and_test_tests.yaml
-    nodeset: ubuntu-xenial-arm64
+      The flink-core build and test on ARM for core and tests component.
+    run: playbooks/flink-end-to-end-test/build_and_test_core_and_tests.yaml
+    nodeset: flink-static-unit-test
     tags:
       - Category:BigData
       - Project:apache/flink

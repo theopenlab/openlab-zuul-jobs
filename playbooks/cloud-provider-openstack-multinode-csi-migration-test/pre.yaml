@@ -1,0 +1,232 @@
+- hosts: k8s-master
+  name: prepare configuration of kubeadm and set CSIMigration feature-gates
+  become: yes
+  tasks:
+    - name: create /etc/kubernetes
+      file:
+        path: /etc/kubernetes
+        state: directory
+    - name: ship kubeadm.yaml
+      copy:
+        dest: /etc/kubernetes/kubeadm.yaml
+        content: |
+          apiVersion: kubeadm.k8s.io/v1beta2
+          kind: ClusterConfiguration
+          networking:
+            podSubnet: 10.244.0.0/16
+          kubernetesVersion: {{ kubernetes_version | default('latest') }}
+          apiServer:
+            extraArgs:
+              "feature-gates": "CSIMigration=true,CSIMigrationOpenStack=true,ExpandCSIVolumes=true"
+          controllerManager:
+            extraArgs:
+              "feature-gates": "CSIMigration=true,CSIMigrationOpenStack=true,ExpandCSIVolumes=true"
+          ---
+          apiVersion: kubeadm.k8s.io/v1beta2
+          kind: InitConfiguration
+          nodeRegistration:
+              name: {{ inventory_hostname }}
+          ---
+          apiVersion: kubelet.config.k8s.io/v1beta1
+          kind: KubeletConfiguration
+          featureGates:
+            CSIMigration: true
+            CSIMigrationOpenStack: true
+            ExpandCSIVolumes: true
+
+- hosts: k8s-master
+  name: bootstrap kubernetes master
+  become: yes
+  roles:
+    - role: create-multinodes-k8s-cluster-with-kubeadm
+      k8s_role_to_deploy:
+        - master
+  tasks:
+    - name: get kubeadm join command
+      shell: kubeadm token create --print-join-command
+      register: kubeadm_join_cmd
+
+- hosts: k8s-node-1,k8s-node-2
+  name: join kubernetes nodes
+  become: yes
+  roles:
+    - role: create-multinodes-k8s-cluster-with-kubeadm
+      k8s_role_to_deploy:
+        - node
+      kubeadm_join_cmd: "{{ hostvars['k8s-master']['kubeadm_join_cmd']['stdout'] }}"
+
+- hosts: k8s-master
+  name: prepare testcases, install necessary components
+  become: yes
+  tasks:
+    - name: install python-cinderclient
+      apt:
+        name: python-cinderclient
+    - name: ship StorageClass
+      copy:
+        dest: /etc/kubernetes/default-storageclass.yaml
+        content: |
+          apiVersion: storage.k8s.io/v1
+          kind: StorageClass
+          metadata:
+            name: in-tree
+            annotations:
+              "storageclass.kubernetes.io/is-default-class": "true"
+          provisioner: kubernetes.io/cinder
+    - name: ship in-cluster registry, to enable cluster-local-build to run on all nodes
+      copy:
+        dest: /etc/kubernetes/in-cluster-registry.yaml
+        content: |
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: internal-docker-registry
+            namespace: default
+            labels:
+              app: registry
+          spec:
+            replicas: 1
+            selector:
+              matchLabels:
+                app: registry
+            template:
+              metadata:
+                labels:
+                  app: registry
+              spec:
+                containers:
+                - resources:
+                  name: registry
+                  image: registry:2
+                  ports:
+                  - name: registry-port
+                    containerPort: 5000
+          ---
+          apiVersion: v1
+          kind: Service
+          metadata:
+            labels:
+              app: registry
+            name: internal-docker-registry
+            namespace: default
+          spec:
+            externalTrafficPolicy: Cluster
+            ports:
+            - nodePort: 32000
+              port: 5000
+              protocol: TCP
+              targetPort: 5000
+            selector:
+              app: registry
+            sessionAffinity: None
+            type: NodePort
+
+    - name: build cinder-csi from master
+      environment: '{{ global_env }}'
+      args:
+        executable: /bin/bash
+        chdir: '{{ k8s_os_provider_src_dir }}'
+      shell:
+        cmd: |
+          set -o pipefail
+          set -ex
+
+          if ! timeout 300 bash -c '
+            while :
+            do
+              kubectl apply -f /etc/kubernetes/in-cluster-registry.yaml && break
+              sleep 1
+            done
+          '; then
+            echo "Failed to install container registry"
+            exit 1
+          fi
+          ./hack/make.sh cinder-csi-plugin
+          cp cinder-csi-plugin cluster/images/cinder-csi-plugin
+          docker build -t localhost:32000/k8scloudprovider/cinder-csi-plugin:latest cluster/images/cinder-csi-plugin
+
+    - name: push cluster-local-build of cinder-csi-plugin to local registry
+      command: docker push localhost:32000/k8scloudprovider/cinder-csi-plugin:latest
+      retries: 5
+      delay: 5
+
+    - name: ship kustomization.yaml to use cinder-csi-plugin image from in-cluster registry
+      copy:
+        dest: "{{ k8s_os_provider_src_dir }}/manifests/cinder-csi-plugin/kustomization.yaml"
+        content: |
+          resources:
+          - cinder-csi-controllerplugin-rbac.yaml
+          - cinder-csi-controllerplugin.yaml
+          - cinder-csi-nodeplugin-rbac.yaml
+          - cinder-csi-nodeplugin.yaml
+          - csi-cinder-driver.yaml
+          - csi-secret-cinderplugin.yaml
+
+          images:
+          - name: docker.io/k8scloudprovider/cinder-csi-plugin
+            newName: localhost:32000/k8scloudprovider/cinder-csi-plugin
+            newTag: latest
+
+    - name: config and deploy cinder-csi-plugin
+      environment: '{{ global_env }}'
+      args:
+        executable: /bin/bash
+        chdir: '{{ k8s_os_provider_src_dir }}'
+      shell:
+        cmd: |
+          set -o pipefail
+          set -ex
+
+          kubectl apply -f /etc/kubernetes/default-storageclass.yaml
+
+          cat > /etc/kubernetes/cloud-config <<EOF
+          [Global]
+          domain-name = $OS_USER_DOMAIN_NAME
+          tenant-id = $OS_PROJECT_ID
+          auth-url = $OS_AUTH_URL
+          password = $OS_PASSWORD
+          username = $OS_USERNAME
+          region = $OS_REGION_NAME
+          [BlockStorage]
+          bs-version = v3
+          ignore-volume-az = yes
+          EOF
+
+          # Replace custom cloud config
+          kubectl -n kube-system create secret generic cloud-config --from-file=cloud.conf=/etc/kubernetes/cloud-config --dry-run -oyaml > manifests/cinder-csi-plugin/csi-secret-cinderplugin.yaml
+
+          # Enable services
+          kubectl create -k manifests/cinder-csi-plugin
+          sleep 5
+          # If services up
+          if timeout 300 bash -c '
+              while :
+              do
+                 controller=$(kubectl -n kube-system get pods -l app=csi-cinder-controllerplugin --field-selector=status.phase=Running | wc -l)
+                 nodes=$(kubectl -n kube-system get pods -l app=csi-cinder-nodeplugin --field-selector=status.phase=Running | wc -l)
+                 ((controller > 0 && nodes > 0)) && break
+                 sleep 1
+              done
+              '
+          then
+             echo 'Run services successful'
+              kubectl get pod --all-namespaces
+          else
+              echo 'Run services failed'
+              kubectl get pod --all-namespaces
+              exit 1
+          fi
+
+    - name: get kubelet_version
+      command: "kubelet --version"
+      register: kubelet_version
+
+    - name: set kube_test_version to version of kubelet
+      set_fact:
+        kube_test_version: "{{ kubelet_version.stdout_lines[0].split(' ')[1] }}"
+
+    - name: download kubernetes-test-linux-amd64.tar.gz
+      unarchive:
+        remote_src: yes
+        src: "https://storage.googleapis.com/kubernetes-release/release/{{ kube_test_version }}/kubernetes-test-linux-amd64.tar.gz"
+        dest: /root

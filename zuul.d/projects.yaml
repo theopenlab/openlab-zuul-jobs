@@ -109,6 +109,8 @@
             branches: release-1.15
         - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.14:
             branches: release-1.14
+        - cloud-provider-openstack-multinode-csi-migration-test:
+            branches: master
 
 - project:
     name: envoyproxy/envoy
@@ -248,9 +250,7 @@
     name: apache/flink
     periodic-20:
       jobs:
-        - flink-build-and-test-arm64-core:
-            branches: master
-        - flink-build-and-test-arm64-tests:
+        - flink-build-and-test-arm64-core-and-tests:
             branches: master
         - flink-end-to-end-test-checkpoints-and-sticky:
             branches: master
