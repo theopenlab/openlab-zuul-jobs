@@ -138,6 +138,7 @@
           EOF
 
           git am arm_hack.patch
+          rm arm_hack.patch
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
