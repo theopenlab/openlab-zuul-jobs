@@ -248,7 +248,7 @@
 
 - project:
     name: apache/flink
-    periodic-20:
+    periodic-20-flink-mail:
       jobs:
         - flink-build-and-test-arm64-core-and-tests:
             branches: master

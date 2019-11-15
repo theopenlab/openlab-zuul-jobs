@@ -2400,7 +2400,7 @@
       The flink e2e test which contains split_misc.sh, split_misc_hadoopfree.sh
     run: playbooks/flink-end-to-end-test/e2e_misc_hadoopfree_and_misc.yaml
     post-run: playbooks/flink-end-to-end-test/post.yaml
-    nodeset: aws-static-node
+    nodeset: flink-static-e2e-test
     tags:
       - Category:BigData
       - Project:apache/flink

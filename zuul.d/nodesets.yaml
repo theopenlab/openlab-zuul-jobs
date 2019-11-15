@@ -96,9 +96,3 @@
     nodes:
       - name: flink-static-e2e-test
         label: flink-static-e2e-test
-
-- nodeset:
-    name: aws-static-node
-    nodes:
-      - name: aws-static-node
-        label: aws-static-node
