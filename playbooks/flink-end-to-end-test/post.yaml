@@ -22,11 +22,15 @@
         chdir: '{{ zuul.project.src_dir }}'
       ignore_errors: yes
 
-    - name: Remove temp branch
+    - name: Remove temp branch and clean up temp file
       shell:
          cmd: |
            git checkout master
            git branch -D e2e-test-arm
+           rm -rf flink-end-to-end-tests/test-scripts/temp-test-directory-*
+           rm -rf /tmp
+           mkdir /tmp
+           chmod 777 /tmp
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'

@@ -5,6 +5,7 @@
     - name: Create temp branch
       shell:
         cmd: |
+          git pull
           git checkout -b e2e-test-arm
       args:
         executable: /bin/bash
