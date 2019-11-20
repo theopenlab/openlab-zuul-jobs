@@ -781,7 +781,6 @@
     vars:
       go_version: '1.13.4'
 
-# TODO(wxy): Delete this base job once lb job is moved to citynetwork.
 - job:
     name: cloud-provider-openstack-test-lb
     parent: golang-test
@@ -789,17 +788,12 @@
       Base job for all types of cloud-provider-openstack-acceptance-test-lb-octavia test jobs
     pre-run: playbooks/cloud-provider-openstack-test/pre.yaml
     post-run: playbooks/cloud-provider-openstack-test/post.yaml
-    secrets:
-      - vexxhost_credentials
     vars:
       k8s_os_provider_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack'
       k8s_src_dir: '{{ ansible_user_dir }}/src/k8s.io/kubernetes'
       k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
       kubectl: '{{ ansible_user_dir }}/src/k8s.io/kubernetes/cluster/kubectl.sh'
-      cloud_name: vexxhost
 
-# TODO(wxy): Move lb test to citynetwork once octavia is available on
-# citynetwork.
 - job:
     name: cloud-provider-openstack-acceptance-test-lb-octavia
     parent: cloud-provider-openstack-test-lb
@@ -807,9 +801,10 @@
       Run lb acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-lb-octavia/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-lb-octavia/post.yaml
-    nodeset: ubuntu-xenial-vexxhost-lb
+    nodeset: ubuntu-xenial-citynetwork
     secrets:
-      - vexxhost_credentials
+      - dockerhub
+      - cpo_k8s
 
 - job:
     name: cloud-provider-openstack-acceptance-test-keystone-authentication-authorization

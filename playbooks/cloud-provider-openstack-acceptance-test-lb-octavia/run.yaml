@@ -2,15 +2,31 @@
   become: yes
   roles:
     - config-golang
-    - export-cloud-openrc
-    - install-k8s
   tasks:
-    - name: Run lbass octavia acceptance tests with cloud-provider-openstack
+    - name: Login dockerhub
+      shell: docker login -u {{ dockerhub.username }} -p {{ dockerhub.password }}
+      no_log: yes
+
+    - name: Config K8s
+      shell:
+        cmd: |
+          curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+          chmod +x ./kubectl
+          mv ./kubectl /usr/local/bin/kubectl
+          mkdir ~/.kube
+          cat << EOF >> ~/.kube/config
+          {{config_content}}
+          EOF
+      no_log: yes
+
+    - name: Compile CPO and build image
       shell:
         cmd: |
           set -x
           set -e
           set -o pipefail
+
+          # Update the command below
 
           # Build cloud-provider-openstack binaries
           make build
@@ -122,3 +138,16 @@
         executable: /bin/bash
         chdir: '{{ k8s_os_provider_src_dir }}'
       environment: '{{ global_env }}'
+
+    - name: Upload docker image
+      shell:
+        cmd: |
+          docker push
+        executable: /bin/bash
+        chdir: '{{ k8s_os_provider_src_dir }}'
+      environment: '{{ global_env }}'
+
+    - name: Run test through K8S
+      shell:
+        cmd: |
+          kubectl xxxx

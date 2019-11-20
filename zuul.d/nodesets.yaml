@@ -25,12 +25,6 @@
         label: ubuntu-xenial-vexxhost
 
 - nodeset:
-    name: ubuntu-xenial-vexxhost-lb
-    nodes:
-      - name: ubuntu-xenial-vexxhost-lb
-        label: ubuntu-xenial-vexxhost-lb
-
-- nodeset:
     name: ubuntu-xenial-citynetwork
     nodes:
       - name: ubuntu-xenial-citynetwork
