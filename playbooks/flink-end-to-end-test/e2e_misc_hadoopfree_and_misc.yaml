@@ -37,12 +37,10 @@
           ---
            .../main/java/org/apache/flink/tests/util/CommandLineWrapper.java | 1 +
            .../prometheus/tests/PrometheusReporterEndToEndITCase.java        | 2 +-
-           flink-end-to-end-tests/test-scripts/elasticsearch-common.sh       | 8 +++++---
+           flink-end-to-end-tests/test-scripts/elasticsearch-common.sh       | 2 +-
            flink-end-to-end-tests/test-scripts/kafka-common.sh               | 2 +-
-           flink-end-to-end-tests/test-scripts/test_sql_client.sh            | 2 +-
-           .../test-scripts/test_streaming_elasticsearch.sh                  | 2 +-
            tools/travis/nightly.sh                                           | 4 ++--
-           7 files changed, 12 insertions(+), 9 deletions(-)
+           5 files changed, 6 insertions(+), 5 deletions(-)
 
           diff --git a/flink-end-to-end-tests/flink-end-to-end-tests-common/src/main/java/org/apache/flink/tests/util/CommandLineWrapper.java b/flink-end-to-end-tests/flink-end-to-end-tests-common/src/main/java/org/apache/flink/tests/util/CommandLineWrapper.java
           index e9ee2e8..d668285 100644
@@ -73,12 +71,8 @@
           index 6959052..9c9c367 100644
           --- a/flink-end-to-end-tests/test-scripts/elasticsearch-common.sh
           +++ b/flink-end-to-end-tests/test-scripts/elasticsearch-common.sh
-          @@ -26,15 +26,17 @@ function setup_elasticsearch {
-               mkdir -p \$TEST_DATA_DIR
+          @@ -30,7 +30,7 @@ function setup_elasticsearch {
 
-               local downloadUrl=\$1
-          -
-          +    local elasticsearch_version=\${2-0}
                # start downloading Elasticsearch
                echo "Downloading Elasticsearch from \$downloadUrl ..."
           -    curl "\$downloadUrl" > \$TEST_DATA_DIR/elasticsearch.tar.gz
@@ -86,14 +80,6 @@
 
                local elasticsearchDir=\$TEST_DATA_DIR/elasticsearch
                mkdir -p \$elasticsearchDir
-               tar xzf \$TEST_DATA_DIR/elasticsearch.tar.gz -C \$elasticsearchDir --strip-components=1
-          -
-          +    if [ \$elasticsearch_version -ge 6 ]; then
-          +      echo xpack.ml.enabled: false >> \$elasticsearchDir/config/elasticsearch.yml
-          +    fi
-               # start Elasticsearch cluster
-               \$elasticsearchDir/bin/elasticsearch &
-           }
           diff --git a/flink-end-to-end-tests/test-scripts/kafka-common.sh b/flink-end-to-end-tests/test-scripts/kafka-common.sh
           index 96ac49b..cdb955b 100644
           --- a/flink-end-to-end-tests/test-scripts/kafka-common.sh
@@ -107,32 +93,6 @@
 
              tar xzf \$TEST_DATA_DIR/kafka.tgz -C \$TEST_DATA_DIR/
 
-          diff --git a/flink-end-to-end-tests/test-scripts/test_sql_client.sh b/flink-end-to-end-tests/test-scripts/test_sql_client.sh
-          index 5798545..262817e 100755
-          --- a/flink-end-to-end-tests/test-scripts/test_sql_client.sh
-          +++ b/flink-end-to-end-tests/test-scripts/test_sql_client.sh
-          @@ -101,7 +101,7 @@ echo "Preparing Elasticsearch..."
-           ELASTICSEARCH_VERSION=6
-           DOWNLOAD_URL='https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.3.1.tar.gz'
-
-          -setup_elasticsearch \$DOWNLOAD_URL
-          +setup_elasticsearch \$DOWNLOAD_URL \$ELASTICSEARCH_VERSION
-           wait_elasticsearch_working
-
-           ################################################################################
-          diff --git a/flink-end-to-end-tests/test-scripts/test_streaming_elasticsearch.sh b/flink-end-to-end-tests/test-scripts/test_streaming_elasticsearch.sh
-          index f37ee73..e2ee273 100755
-          --- a/flink-end-to-end-tests/test-scripts/test_streaming_elasticsearch.sh
-          +++ b/flink-end-to-end-tests/test-scripts/test_streaming_elasticsearch.sh
-          @@ -25,7 +25,7 @@ DOWNLOAD_URL=\$2
-
-           mkdir -p \$TEST_DATA_DIR
-
-          -setup_elasticsearch \$DOWNLOAD_URL
-          +setup_elasticsearch \$DOWNLOAD_URL \$ELASTICSEARCH_VERSION
-           wait_elasticsearch_working
-
-           start_cluster
           diff --git a/tools/travis/nightly.sh b/tools/travis/nightly.sh
           index 0fb918e..5e75e8c 100755
           --- a/tools/travis/nightly.sh
