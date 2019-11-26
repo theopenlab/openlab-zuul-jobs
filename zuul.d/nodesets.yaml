@@ -43,6 +43,12 @@
         label: ubuntu-xenial-arm64
 
 - nodeset:
+    name: ubuntu-xenial-arm64-huaweicloud
+    nodes:
+      - name: ubuntu-xenial-arm64-huaweicloud
+        label: ubuntu-xenial-arm64-huaweicloud
+
+- nodeset:
     name: ubuntu-xenial-huaweicloud
     nodes:
       - name: ubuntu-xenial-huaweicloud
