@@ -259,6 +259,19 @@
         - flink-end-to-end-test-misc-hadoopfree-and-misc:
             branches: master
 
+- project:
+    name: apache/flink
+    periodic-20:
+      jobs:
+        - flink-build-and-test-arm64-core-and-tests-huaweicloud:
+            branches: master
+        - flink-end-to-end-test-checkpoints-and-sticky-huaweicloud:
+            branches: master
+        - flink-end-to-end-test-heavy-and-ha-huaweicloud:
+            branches: master
+        - flink-end-to-end-test-misc-hadoopfree-and-misc-huaweicloud:
+            branches: master
+
 # - project:
 #     name: apache/spark
 #     periodic-10:
