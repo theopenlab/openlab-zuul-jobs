@@ -2411,6 +2411,23 @@
     timeout: 54000
 
 - job:
+    name: flink-end-to-end-test-container
+    parent: init-test
+    description: |
+      The flink e2e test which contains split_container.sh
+    run: playbooks/flink-end-to-end-test/e2e_container.yaml
+    post-run: playbooks/flink-end-to-end-test/post.yaml
+    nodeset: ubuntu-xenial-arm64-huaweicloud
+    tags:
+      - Category:BigData
+      - Project:apache/flink
+      - Application:Flink@master
+      - OS:ubuntu-xenial
+      - Arch:arm64
+      - BuildType:Integration test
+    timeout: 54000
+
+- job:
     name: flink-build-and-test-arm64-core-and-tests
     parent: init-test
     description: |
