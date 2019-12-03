@@ -258,6 +258,10 @@
             branches: master
         - flink-end-to-end-test-misc-hadoopfree-and-misc:
             branches: master
+    periodic-20:
+      jobs:
+        - flink-end-to-end-test-container:
+            branches: master
 
 # - project:
 #     name: apache/spark
