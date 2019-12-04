@@ -42,6 +42,7 @@
         cmd: |
           set -xo pipefail
           export PROFILE="-Dinclude-hadoop -Dhadoop.version=2.8.3"
+          export DOCKER_COMPOSE_VERSION=1.22.0
 
           ./tools/travis/nightly.sh split_container.sh
       args:
