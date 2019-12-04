@@ -28,7 +28,8 @@
         cmd: |
           git config --global user.email "info@openlabtesting.org"
           git config --global user.name "OpenLab"
-          git fetch origin pull/9782/head:pr_9782
+          git remote add upstream http://github.com/apache/flink
+          git fetch upstream refs/pull/9782/head:pr_9782
           git checkout pr_9782
           git rebase master
       args:
