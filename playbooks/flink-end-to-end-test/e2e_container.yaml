@@ -37,6 +37,9 @@
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ global_env }}'
 
+    - name: Update resolv.conf
+      shell: sed -i 's/nameserver 127.0.0.1/nameserver 8.8.8.8/' /etc/resolv.conf
+
     - name: Run split_container.sh e2e test
       shell:
         cmd: |
