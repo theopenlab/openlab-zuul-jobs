@@ -2360,7 +2360,7 @@
     timeout: 54000
 
 - job:
-    name: flink-end-to-end-test-checkpoints-and-sticky
+    name: flink-end-to-end-test-arm64-checkpoints-and-sticky
     parent: init-test
     description: |
       The flink e2e test which contains split_checkpoints.sh, split_sticky.sh
@@ -2377,7 +2377,7 @@
     timeout: 54000
 
 - job:
-    name: flink-end-to-end-test-heavy-and-ha
+    name: flink-end-to-end-test-arm64-heavy-and-ha
     parent: init-test
     description: |
       The flink e2e test which contains split_heavy.sh, split_ha.sh
@@ -2394,7 +2394,7 @@
     timeout: 54000
 
 - job:
-    name: flink-end-to-end-test-misc-hadoopfree-and-misc
+    name: flink-end-to-end-test-arm64-misc-hadoopfree-and-misc
     parent: init-test
     description: |
       The flink e2e test which contains split_misc.sh, split_misc_hadoopfree.sh
@@ -2411,7 +2411,7 @@
     timeout: 54000
 
 - job:
-    name: flink-end-to-end-test-container
+    name: flink-end-to-end-test-arm64-container
     parent: init-test
     description: |
       The flink e2e test which contains split_container.sh
@@ -2428,7 +2428,7 @@
     timeout: 54000
 
 - job:
-    name: flink-end-to-end-test-tpcds
+    name: flink-end-to-end-test-arm64-tpcds
     parent: init-test
     description: |
       The flink e2e test which contains split_tpcds.sh
@@ -2450,6 +2450,38 @@
     description: |
       The flink-core build and test on ARM for core and tests component.
     run: playbooks/flink-end-to-end-test/build_and_test_core_and_tests.yaml
+    nodeset: ubuntu-xenial-arm64-huaweicloud
+    tags:
+      - Category:BigData
+      - Project:apache/flink
+      - Application:Flink@master
+      - OS:ubuntu-xenial
+      - Arch:arm64
+      - BuildType:Unit test
+    timeout: 54000
+
+- job:
+    name: flink-build-and-test-arm64-libraies-and-blink_planner
+    parent: init-test
+    description: |
+      The flink-core build and test on ARM for libraies and blink_planner component.
+    run: playbooks/flink-end-to-end-test/build_and_test_libraies_and_blink_planner.yaml
+    nodeset: ubuntu-xenial-arm64-huaweicloud
+    tags:
+      - Category:BigData
+      - Project:apache/flink
+      - Application:Flink@master
+      - OS:ubuntu-xenial
+      - Arch:arm64
+      - BuildType:Unit test
+    timeout: 54000
+
+- job:
+    name: flink-build-and-test-arm64-misc
+    parent: init-test
+    description: |
+      The flink-core build and test on ARM for misc component.
+    run: playbooks/flink-end-to-end-test/build_and_test_misc.yaml
     nodeset: ubuntu-xenial-arm64-huaweicloud
     tags:
       - Category:BigData

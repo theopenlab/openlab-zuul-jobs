@@ -252,17 +252,21 @@
       jobs:
         - flink-build-and-test-arm64-core-and-tests:
             branches: master
-        - flink-end-to-end-test-checkpoints-and-sticky:
+        - flink-end-to-end-test-arm64-checkpoints-and-sticky:
             branches: master
-        - flink-end-to-end-test-heavy-and-ha:
+        - flink-end-to-end-test-arm64-heavy-and-ha:
             branches: master
-        - flink-end-to-end-test-misc-hadoopfree-and-misc:
+        - flink-end-to-end-test-arm64-misc-hadoopfree-and-misc:
             branches: master
-        - flink-end-to-end-test-container:
+        - flink-end-to-end-test-arm64-container:
+            branches: master
+        - flink-end-to-end-test-arm64-tpcds:
             branches: master
     periodic-20:
       jobs:
-        - flink-end-to-end-test-tpcds:
+        - flink-build-and-test-arm64-libraies-and-blink_planner:
+            branches: master
+        - flink-build-and-test-arm64-misc:
             branches: master
 
 # - project:
