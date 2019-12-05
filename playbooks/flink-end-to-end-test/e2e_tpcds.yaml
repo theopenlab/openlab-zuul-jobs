@@ -23,20 +23,6 @@
         chdir: '/opt'
       environment: '{{ global_env }}'
 
-    - name: Get the fix PR
-      shell:
-        cmd: |
-          git config --global user.email "info@openlabtesting.org"
-          git config --global user.name "OpenLab"
-          git remote add upstream http://github.com/apache/flink
-          git fetch upstream refs/pull/10424/head:pr_10424
-          git checkout pr_10424
-          git rebase master
-      args:
-        executable: /bin/bash
-        chdir: '{{ zuul.project.src_dir }}'
-      environment: '{{ global_env }}'
-
     - name: Comment out docker installation
       lineinfile:
         path: "/home/zuul/src/github.com/apache/flink/tools/travis/nightly.sh"
