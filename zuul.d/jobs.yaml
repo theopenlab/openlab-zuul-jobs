@@ -2477,6 +2477,22 @@
     timeout: 54000
 
 - job:
+    name: flink-build-and-test-arm64-kafka_gelly-and-connectors
+    parent: init-test
+    description: |
+      The flink-core build and test on ARM for kafka_gelly and connectors component.
+    run: playbooks/flink-end-to-end-test/build_and_test_kafka_gelly_and_connectors.yaml
+    nodeset: ubuntu-xenial-arm64-huaweicloud
+    tags:
+      - Category:BigData
+      - Project:apache/flink
+      - Application:Flink@master
+      - OS:ubuntu-xenial
+      - Arch:arm64
+      - BuildType:Unit test
+    timeout: 54000
+
+- job:
     name: flink-build-and-test-arm64-misc
     parent: init-test
     description: |
