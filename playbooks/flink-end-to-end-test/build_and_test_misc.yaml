@@ -31,7 +31,7 @@
 
           mvn clean install -nsu -Dflink.convergence.phase=install -Pcheck-convergence -Dflink.forkCount=2 \
           -Dflink.forkCountTestPackage=2 -Dmaven.javadoc.skip=true -B -DskipTests -Dhadoop.version=2.8.3 \
-          -Dinclude_hadoop_aws -Dscala-2.11 install
+          -Dinclude_hadoop_aws -Dscala-2.11
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
