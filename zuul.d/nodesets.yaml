@@ -13,6 +13,12 @@
         label: ubuntu-xenial
 
 - nodeset:
+    name: ubuntu-bionic
+    nodes:
+      - name: ubuntu-bionic
+        label: ubuntu-bionic
+
+- nodeset:
     name: ubuntu-xenial-ut
     nodes:
       - name: ubuntu-xenial-ut
