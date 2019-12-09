@@ -5,7 +5,7 @@
     - install-k8s
   become: yes
   tasks:
-    - name: Run csi cinder acceptance tests with cloud-provider-openstack
+    - name: Run csi cinder e2e tests with cloud-provider-openstack
       shell:
         cmd: |
           set -x
@@ -50,7 +50,6 @@
           # location of where the kubernetes processes log their output
           mkdir -p '{{ k8s_log_dir }}'
           export LOG_DIR='{{ k8s_log_dir }}'
-          # We need this for one of the conformance tests
           export ALLOW_PRIVILEGED=true
           # Just kick off all the processes and drop down to the command line
           export ENABLE_DAEMON=true
@@ -84,7 +83,6 @@
           '{{ kubectl }}' create clusterrolebinding --user system:kube-controller-manager  kube-system-cluster-admin-6 --clusterrole cluster-admin
 
           # Where csi provisioner reads instance id from
-          # Where csi provisioner reads instance id from
           if [ -d /mnt/config/openstack ]; then
               INSTANCE_UUID=$(python -c "import json;print json.load(open('/mnt/config/openstack/latest/meta_data.json', 'r'))['uuid']")
           else
@@ -93,19 +91,8 @@
           echo "$INSTANCE_UUID" > /var/lib/cloud/data/instance-id
 
           # Build latest images from source
-          cat << EOF > Dockerfile
-          # Based on centos
-          FROM centos:7.4.1708
-          LABEL maintainers="Kubernetes Authors"
-          LABEL description="Cinder CSI Plugin"
-          # Copy cinderplugin from build directory
-          COPY cinder-csi-plugin /cinderplugin
-          # Install e4fsprogs for format
-          RUN yum -y install e4fsprogs
-          # Define default command
-          ENTRYPOINT ["/cinderplugin"]
-          EOF
-          docker build -t docker.io/k8scloudprovider/cinder-csi-plugin:latest .
+          cp cinder-csi-plugin cluster/images/cinder-csi-plugin
+          docker build -t docker.io/k8scloudprovider/cinder-csi-plugin:latest cluster/images/cinder-csi-plugin
 
           # Replace custom cloud config
           {
@@ -133,26 +120,12 @@
               exit 1
           fi
 
-          # Make test
-          '{{ kubectl }}' create -f examples/cinder-csi-plugin/nginx.yaml
-          # If test passed
-          if timeout 300 bash -c '
-              while :
-              do
-                  [[ $({{ kubectl }} describe pod nginx | awk "/^Status:/ {print \$2}") == Running ]] && break
-                  sleep 1
-              done
-              '
-          then
-              echo 'Run test successful'
-              '{{ kubectl }}' get pod
-          else
-              echo 'Run test failed'
-              '{{ kubectl }}' get pod
-              '{{ kubectl }}' describe pod nginx
-              '{{ kubectl }}' describe pvc csi-pvc-cinderplugin
-              exit 1
-          fi
+          export GO111MODULE=on
+          export KUBECONFIG=/var/run/kubernetes/admin.kubeconfig
+          # Download kubectl binary
+          curl -Lo /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x /usr/local/bin/kubectl
+              go test -v ./cmd/tests/cinder_csi_e2e_suite_test.go -ginkgo.v -ginkgo.progress -ginkgo.skip="\[Disruptive\]" -ginkgo.focus="\[cinder-csi-e2e\]" -timeout=0 -report-dir='{{ k8s_log_dir }}'
+
         executable: /bin/bash
         chdir: '{{ k8s_os_provider_src_dir }}'
       environment: '{{ global_env }}'

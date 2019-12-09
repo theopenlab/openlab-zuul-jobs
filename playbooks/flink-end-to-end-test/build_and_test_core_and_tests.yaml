@@ -15,12 +15,13 @@
           sudo apt install -y gcc g++ make
           export DEBUG_LEVEL=0
           make -j8 rocksdbjava
+
           mvn install:install-file -DgroupId=com.data-artisans \
-          -DartifactId=frocksdbjni -Dversion=5.17.2-artisans-1.0 \
+          -DartifactId=frocksdbjni -Dversion=5.17.2-artisans-2.0 \
           -Dpackaging=jar -Dfile=java/target/rocksdbjni-5.17.2-linux64.jar
       args:
         executable: /bin/bash
-        chdir: '/opt/'
+        chdir: '/home/zuul'
       environment: '{{ global_env }}'
 
     - name: Build Flink core
@@ -46,8 +47,30 @@
           -Dhadoop.version=2.8.3 -Dinclude_hadoop_aws -Dscala-2.11 -fn -pl \
           flink-annotations,flink-test-utils-parent/flink-test-utils,flink-state-backends/flink-statebackend-rocksdb,\
           flink-clients,flink-core,flink-java,flink-optimizer,flink-runtime,flink-runtime-web,flink-scala,\
-          flink-streaming-java,flink-streaming-scala,flink-metrics,flink-metrics/flink-metrics-core,flink-scala-shell \
-          verify
+          flink-streaming-java,flink-streaming-scala,flink-metrics,flink-metrics/flink-metrics-core,flink-scala-shell verify
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
+
+    - name: Build Flink tests
+      shell:
+        cmd: |
+          set -xe
+          mvn clean install -nsu -Dflink.convergence.phase=install -Pcheck-convergence -Dflink.forkCount=2 \
+          -Dflink.forkCountTestPackage=2 -Dmaven.javadoc.skip=true -B -DskipTests -Dhadoop.version=2.8.3 \
+          -Dinclude_hadoop_aws -Dscala-2.11 -am -pl flink-tests
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
+
+    - name: Test Flink tests
+      shell:
+        cmd: |
+          set -xe
+          mvn -nsu -Dflink.forkCount=2 -Dflink.forkCountTestPackage=2 -Dfast -B -Pskip-webui-build -Dflink.tests.force-openssl \
+          -Dhadoop.version=2.8.3 -Dinclude_hadoop_aws -Dscala-2.11 -fn -pl flink-tests verify
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'

@@ -17,6 +17,8 @@
       shell:
         cmd: |
           cp -r "flink-dist/target/flink-{{ flink_version.matches[0]['{http://maven.apache.org/POM/4.0.0}version'] }}-bin/flink-{{ flink_version.matches[0]['{http://maven.apache.org/POM/4.0.0}version'] }}/log/" "{{ ansible_user_dir }}/workspace/test_results/"
+          rm "flink-dist/target/flink-{{ flink_version.matches[0]['{http://maven.apache.org/POM/4.0.0}version'] }}-bin/flink-{{ flink_version.matches[0]['{http://maven.apache.org/POM/4.0.0}version'] }}/log/*"
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
+      ignore_errors: yes

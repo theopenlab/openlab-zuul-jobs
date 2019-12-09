@@ -269,6 +269,7 @@
     description: |
       Run terraform-provider-openstack lbaas acceptance test on master branch
     run: playbooks/terraform-provider-openstack-acceptance-test-lbaas/run.yaml
+    timeout: 14400 # 4h
 
 - job:
     name: terraform-provider-openstack-acceptance-test-fwaas
@@ -561,7 +562,7 @@
     post-run: playbooks/cloud-provider-openstack-acceptance-test-k8s-cinder/post.yaml
     nodeset: ubuntu-xenial-citynetwork
     vars:
-      go_version: '1.12.10'
+      go_version: '1.13.4'
     secrets:
       - citynetwork_credentials
 
@@ -571,7 +572,7 @@
     description: |
       Run Kubernetes E2E Conformance tests against Kubernetes master
     vars:
-      go_version: '1.12.4'
+      go_version: '1.13.4'
     run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/post.yaml
     nodeset: ubuntu-xenial-citynetwork
@@ -714,6 +715,8 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-standalone-cinder/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-standalone-cinder/post.yaml
     nodeset: ubuntu-xenial
+    vars:
+      go_version: '1.13.4'
 
 - job:
     name: cloud-provider-openstack-acceptance-test-csi-cinder
@@ -724,7 +727,36 @@
     post-run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/post.yaml
     nodeset: ubuntu-xenial-citynetwork
     vars:
-      go_version: '1.12.10'
+      go_version: '1.13.4'
+    secrets:
+      - citynetwork_credentials
+
+- job:
+    name: cloud-provider-openstack-e2e-test-csi-cinder
+    parent: cloud-provider-openstack-test
+    description: |
+      Run cinder csi e2e tests of cloud-provider-openstack
+    run: playbooks/cloud-provider-openstack-e2e-test-csi-cinder/run.yaml
+    post-run: playbooks/cloud-provider-openstack-e2e-test-csi-cinder/post.yaml
+    nodeset: ubuntu-xenial-citynetwork
+    vars:
+      go_version: '1.13.4'
+    secrets:
+      - citynetwork_credentials
+
+- job:
+    name: cloud-provider-openstack-multinode-csi-migration-test
+    parent: cloud-provider-openstack-test
+    description: |
+      Run Kubernetes sig-storage (driver cinder) e2e test suite against a
+      multinode Kubernetes Cluster with feature-gates CSIMigration,
+      CSIMigrationOpenStack and ExpandCSIVolume enabled.
+    pre-run: playbooks/cloud-provider-openstack-multinode-csi-migration-test/pre.yaml
+    run: playbooks/cloud-provider-openstack-multinode-csi-migration-test/run.yaml
+    post-run: playbooks/cloud-provider-openstack-multinode-csi-migration-test/post.yaml
+    nodeset: ubuntu-xenial-k8s-cluster-cpo
+    vars:
+      go_version: '1.13.4'
     secrets:
       - citynetwork_credentials
 
@@ -736,6 +768,18 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-manila-provisioner/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-manila-provisioner/post.yaml
     nodeset: ubuntu-xenial
+    vars:
+      go_version: '1.13.4'
+
+- job:
+    name: cloud-provider-openstack-acceptance-test-csi-manila
+    parent: cloud-provider-openstack-test
+    description: |
+      Run manila csi acceptance tests of cloud-provider-openstack
+    run: playbooks/cloud-provider-openstack-acceptance-test-csi-manila/run.yaml
+    post-run: playbooks/cloud-provider-openstack-acceptance-test-csi-manila/post.yaml
+    vars:
+      go_version: '1.13.4'
 
 # TODO(wxy): Delete this base job once lb job is moved to citynetwork.
 - job:
@@ -775,7 +819,7 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-keystone-authentication-authorization/run.yaml
     nodeset: ubuntu-xenial
     vars:
-      go_version: '1.12.10'
+      go_version: '1.13.4'
 
 - job:
     name: cloud-provider-openstack-acceptance-test-flexvolume-cinder
@@ -785,19 +829,7 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-flexvolume-cinder/run.yaml
     nodeset: ubuntu-xenial
     vars:
-      go_version: '1.12.10'
-
-- job:
-    name: cluster-api-provider-openstack-image-build
-    parent: cloud-provider-openstack-test
-    description: |
-      Run the image build and publish jobs
-    run: playbooks/cluster-api-provider-openstack-image-build/run.yaml
-    vars:
-      k8s_cluster_api_provider_os_src_dir: '{{ ansible_user_dir }}/src/sigs.k8s.io/cluster-api-provider-openstack'
-    nodeset: ubuntu-xenial
-    secrets:
-      - dockerhub
+      go_version: '1.13.4'
 
 # ansible jobs
 - job: # Deprecated
@@ -2243,10 +2275,26 @@
     tags:
       - Category:BigData
       - Project:apache/hadoop
-      - Application:hadoop@master
+      - Application:hadoop@trunk
       - OS:ubuntu-xenial
       - Arch:arm64
       - BuildType:Compile
+
+# Hadoop YARN build and run unit tests
+- job:
+    name: hadoop-yarn-unit-test-arm64
+    parent: init-test
+    description: |
+      Apache Hadoop YARN build and run unit tests on arm64 server
+    run: playbooks/hadoop-yarn-unit-test-arm64/run.yaml
+    nodeset: ubuntu-xenial-arm64
+    tags:
+      - Category:BigData
+      - Project:apache/hadoop
+      - Application:hadoop@trunk
+      - OS:ubuntu-xenial
+      - Arch:arm64
+      - BuildType:Unit test
 
 # Spark arm64 build and run unit tests periodic jobs
 - job:
@@ -2312,13 +2360,13 @@
     timeout: 54000
 
 - job:
-    name: flink-end-to-end-test-checkpoints-and-sticky
+    name: flink-end-to-end-test-arm64-checkpoints-and-sticky
     parent: init-test
     description: |
       The flink e2e test which contains split_checkpoints.sh, split_sticky.sh
     run: playbooks/flink-end-to-end-test/e2e_checkpoints_and_sticky.yaml
     post-run: playbooks/flink-end-to-end-test/post.yaml
-    nodeset: ubuntu-xenial-arm64
+    nodeset: ubuntu-xenial-arm64-huaweicloud
     tags:
       - Category:BigData
       - Project:apache/flink
@@ -2329,13 +2377,13 @@
     timeout: 54000
 
 - job:
-    name: flink-end-to-end-test-heavy-and-ha
+    name: flink-end-to-end-test-arm64-heavy-and-ha
     parent: init-test
     description: |
       The flink e2e test which contains split_heavy.sh, split_ha.sh
     run: playbooks/flink-end-to-end-test/e2e_heavy_and_ha.yaml
     post-run: playbooks/flink-end-to-end-test/post.yaml
-    nodeset: ubuntu-xenial-arm64
+    nodeset: ubuntu-xenial-arm64-huaweicloud
     tags:
       - Category:BigData
       - Project:apache/flink
@@ -2346,13 +2394,13 @@
     timeout: 54000
 
 - job:
-    name: flink-end-to-end-test-misc-hadoopfree-and-misc
+    name: flink-end-to-end-test-arm64-misc-hadoopfree-and-misc
     parent: init-test
     description: |
       The flink e2e test which contains split_misc.sh, split_misc_hadoopfree.sh
     run: playbooks/flink-end-to-end-test/e2e_misc_hadoopfree_and_misc.yaml
     post-run: playbooks/flink-end-to-end-test/post.yaml
-    nodeset: ubuntu-xenial-arm64
+    nodeset: ubuntu-xenial-arm64-huaweicloud
     tags:
       - Category:BigData
       - Project:apache/flink
@@ -2363,12 +2411,46 @@
     timeout: 54000
 
 - job:
-    name: flink-build-and-test-arm64-core
+    name: flink-end-to-end-test-arm64-container
     parent: init-test
     description: |
-      The flink-core build and test on ARM.
-    run: playbooks/flink-end-to-end-test/build_and_test_core.yaml
-    nodeset: ubuntu-xenial-arm64
+      The flink e2e test which contains split_container.sh
+    run: playbooks/flink-end-to-end-test/e2e_container.yaml
+    post-run: playbooks/flink-end-to-end-test/post.yaml
+    nodeset: ubuntu-xenial-arm64-huaweicloud
+    tags:
+      - Category:BigData
+      - Project:apache/flink
+      - Application:Flink@master
+      - OS:ubuntu-xenial
+      - Arch:arm64
+      - BuildType:Integration test
+    timeout: 54000
+
+- job:
+    name: flink-end-to-end-test-arm64-tpcds
+    parent: init-test
+    description: |
+      The flink e2e test which contains split_tpcds.sh
+    run: playbooks/flink-end-to-end-test/e2e_tpcds.yaml
+    post-run: playbooks/flink-end-to-end-test/post.yaml
+    nodeset: ubuntu-xenial-arm64-huaweicloud
+    tags:
+      - Category:BigData
+      - Project:apache/flink
+      - Application:Flink@master
+      - OS:ubuntu-xenial
+      - Arch:arm64
+      - BuildType:Integration test
+    timeout: 54000
+
+- job:
+    name: flink-build-and-test-arm64-core-and-tests
+    parent: init-test
+    description: |
+      The flink-core build and test on ARM for core and tests component.
+    run: playbooks/flink-end-to-end-test/build_and_test_core_and_tests.yaml
+    nodeset: ubuntu-xenial-arm64-huaweicloud
     tags:
       - Category:BigData
       - Project:apache/flink
@@ -2379,12 +2461,44 @@
     timeout: 54000
 
 - job:
-    name: flink-build-and-test-arm64-tests
+    name: flink-build-and-test-arm64-libraies-and-blink_planner
     parent: init-test
     description: |
-      The flink-tests build and test on ARM.
-    run: playbooks/flink-end-to-end-test/build_and_test_tests.yaml
-    nodeset: ubuntu-xenial-arm64
+      The flink-core build and test on ARM for libraies and blink_planner component.
+    run: playbooks/flink-end-to-end-test/build_and_test_libraies_and_blink_planner.yaml
+    nodeset: ubuntu-xenial-arm64-huaweicloud
+    tags:
+      - Category:BigData
+      - Project:apache/flink
+      - Application:Flink@master
+      - OS:ubuntu-xenial
+      - Arch:arm64
+      - BuildType:Unit test
+    timeout: 54000
+
+- job:
+    name: flink-build-and-test-arm64-kafka_gelly-and-connectors
+    parent: init-test
+    description: |
+      The flink-core build and test on ARM for kafka_gelly and connectors component.
+    run: playbooks/flink-end-to-end-test/build_and_test_kafka_gelly_and_connectors.yaml
+    nodeset: ubuntu-xenial-arm64-huaweicloud
+    tags:
+      - Category:BigData
+      - Project:apache/flink
+      - Application:Flink@master
+      - OS:ubuntu-xenial
+      - Arch:arm64
+      - BuildType:Unit test
+    timeout: 54000
+
+- job:
+    name: flink-build-and-test-arm64-misc
+    parent: init-test
+    description: |
+      The flink-core build and test on ARM for misc component.
+    run: playbooks/flink-end-to-end-test/build_and_test_misc.yaml
+    nodeset: ubuntu-xenial-arm64-huaweicloud
     tags:
       - Category:BigData
       - Project:apache/flink

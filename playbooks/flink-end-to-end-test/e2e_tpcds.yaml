@@ -35,25 +35,12 @@
         regexp: "^.*setup_kubernetes.sh"
         line: "# source ${HERE}/setup_kubernetes.sh"
 
-    - name: Run split_checkpoints.sh e2e test
+    - name: Run split_tpcds.sh e2e test
       shell:
         cmd: |
           set -xo pipefail
           export PROFILE="-Dinclude-hadoop -Dhadoop.version=2.8.3"
-
-          ./tools/travis/nightly.sh split_checkpoints.sh
-      args:
-        executable: /bin/bash
-        chdir: '{{ zuul.project.src_dir }}'
-      environment: '{{ global_env }}'
-
-    - name: Run split_sticky.sh e2e test
-      shell:
-        cmd: |
-          set -xo pipefail
-          export PROFILE="-Dinclude-hadoop -Dhadoop.version=2.8.3"
-
-          ./tools/travis/nightly.sh split_sticky.sh
+          ./tools/travis/nightly.sh split_tpcds.sh
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'

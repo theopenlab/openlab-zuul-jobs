@@ -109,6 +109,8 @@
             branches: release-1.15
         - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.14:
             branches: release-1.14
+        - cloud-provider-openstack-multinode-csi-migration-test:
+            branches: master
 
 - project:
     name: envoyproxy/envoy
@@ -191,21 +193,21 @@
         - gophercloud-v0.4.0-acceptance-test-mitaka:
             branches: master
 
+# - project:
+#     name: apache/hadoop
+#     periodic-8:
+#       jobs:
+#         - hadoop-build-arm64:
+#             branches: trunk
+
 - project:
     name: apache/hadoop
     periodic-8:
       jobs:
-        - hadoop-build-arm64:
+        - hadoop-yarn-unit-test-arm64:
             branches: trunk
 
 ####################### periodic jobs on 10:00/22:00 ##########################
-- project:
-    name: kubernetes-sigs/cluster-api-provider-openstack
-    periodic-10/22:
-      jobs:
-        - cluster-api-provider-openstack-image-build:
-            branches: master
-
 - project:
     name: manageiq/manageiq-providers-openstack
     periodic-10/22:
@@ -246,25 +248,35 @@
 
 - project:
     name: apache/flink
+    periodic-20-flink-mail:
+      jobs:
+        - flink-build-and-test-arm64-core-and-tests:
+            branches: master
+        - flink-build-and-test-arm64-libraies-and-blink_planner:
+            branches: master
+        - flink-build-and-test-arm64-misc:
+            branches: master
+        - flink-end-to-end-test-arm64-checkpoints-and-sticky:
+            branches: master
+        - flink-end-to-end-test-arm64-heavy-and-ha:
+            branches: master
+        - flink-end-to-end-test-arm64-misc-hadoopfree-and-misc:
+            branches: master
+        - flink-end-to-end-test-arm64-container:
+            branches: master
+        - flink-end-to-end-test-arm64-tpcds:
+            branches: master
     periodic-20:
       jobs:
-        - flink-build-and-test-arm64-core:
-            branches: master
-        - flink-build-and-test-arm64-tests:
-            branches: master
-        - flink-end-to-end-test-checkpoints-and-sticky:
-            branches: master
-        - flink-end-to-end-test-heavy-and-ha:
-            branches: master
-        - flink-end-to-end-test-misc-hadoopfree-and-misc:
+        - flink-build-and-test-arm64-kafka_gelly-and-connectors:
             branches: master
 
-- project:
-    name: apache/spark
-    periodic-10:
-      jobs:
-        # Disable job, this job is running in community already
-        #- spark-master-unit-test-hadoop-2.7-arm64:
-         #   branches: master
-        - spark-master-unit-test-hadoop-3.2-arm64:
-            branches: master
+# - project:
+#     name: apache/spark
+#     periodic-10:
+#       jobs:
+#         # Disable job, this job is running in community already
+#         #- spark-master-unit-test-hadoop-2.7-arm64:
+#          #   branches: master
+#         - spark-master-unit-test-hadoop-3.2-arm64:
+#             branches: master

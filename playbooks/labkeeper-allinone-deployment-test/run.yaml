@@ -6,7 +6,7 @@
         apt update -y
         apt install python python-pip python3 python3-pip kpartx qemu-utils curl python-yaml \
             debootstrap libffi-dev libssl-dev -y
-        pip install ansible
+        pip install ansible==2.8.6
       args:
         executable: /bin/bash
 
