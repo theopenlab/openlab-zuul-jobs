@@ -90,3 +90,9 @@
         label: ubuntu-xenial-citynetwork
       - name: k8s-node-2
         label: ubuntu-xenial-citynetwork
+
+- nodeset:
+    name: ubuntu-bionic
+    nodes:
+      - name: ubuntu-bionic
+        label: ubuntu-bionic
