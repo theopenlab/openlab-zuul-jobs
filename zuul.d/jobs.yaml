@@ -2509,3 +2509,19 @@
       - Arch:arm64
       - BuildType:Unit test
     timeout: 54000
+
+- job:
+    name: flink-build-and-test-arm64-scheduler-ng-core-and-ng-tests
+    parent: init-test
+    description: |
+      The flink-core build and test on ARM for scheduler_ng_core and scheduler_ng_tests case.
+    run: playbooks/flink-end-to-end-test/build_and_test_scheduler_ng_core_and_ng_tests.yaml
+    nodeset: ubuntu-xenial-arm64-huaweicloud
+    tags:
+      - Category:BigData
+      - Project:apache/flink
+      - Application:Flink@master
+      - OS:ubuntu-xenial
+      - Arch:arm64
+      - BuildType:Unit test
+    timeout: 54000

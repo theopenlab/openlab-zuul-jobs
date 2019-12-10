@@ -254,6 +254,8 @@
             branches: master
         - flink-build-and-test-arm64-libraies-and-blink_planner:
             branches: master
+        - flink-build-and-test-arm64-kafka_gelly-and-connectors:
+            branches: master
         - flink-build-and-test-arm64-misc:
             branches: master
         - flink-end-to-end-test-arm64-checkpoints-and-sticky:
@@ -268,7 +270,7 @@
             branches: master
     periodic-20:
       jobs:
-        - flink-build-and-test-arm64-kafka_gelly-and-connectors:
+        - flink-build-and-test-arm64-scheduler-ng-core-and-ng-tests:
             branches: master
 
 # - project:
