@@ -28,12 +28,13 @@
       shell:
         cmd: |
           set -xe
-          mvn clean install -nsu -Dflink.convergence.phase=install -Pcheck-convergence -Dflink.forkCount=2 \
-          -Dflink.forkCountTestPackage=2 -Dmaven.javadoc.skip=true -B -DskipTests -Dhadoop.version=2.8.3 \
-          -Dinclude_hadoop_aws -Dscala-2.11 -am -pl flink-libraries/flink-cep,flink-libraries/flink-cep-scala,\
-          flink-libraries/flink-state-processing-api,flink-table/flink-table-common,flink-table/flink-table-api-java,\
-          flink-table/flink-table-api-scala,flink-table/flink-table-api-java-bridge,flink-table/flink-table-api-scala-bridge,\
-          flink-table/flink-table-planner,flink-table/flink-sql-client
+          mvn clean install -nsu \
+          -Dflink.forkCount=2 -Dflink.forkCountTestPackage=2 -Dfast -B -Pskip-webui-build -Dhadoop.version=2.8.3 \
+          -Dinclude_hadoop_aws -Dscala-2.11 -am -pl \
+          flink-libraries/flink-cep,flink-libraries/flink-cep-scala,flink-libraries/flink-state-processing-api,\
+          flink-table/flink-table-common,flink-table/flink-table-api-java,flink-table/flink-table-api-scala,\
+          flink-table/flink-table-api-java-bridge,flink-table/flink-table-api-scala-bridge,flink-table/flink-table-planner,\
+          flink-table/flink-sql-client
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
@@ -43,9 +44,10 @@
       shell:
         cmd: |
           set -xe
-          mvn verify -nsu -Dflink.forkCount=2 -Dflink.forkCountTestPackage=2 -Dfast -B -Pskip-webui-build \
-          -Dflink.tests.force-openssl -Dhadoop.version=2.8.3 -Dinclude_hadoop_aws -Dscala-2.11 -fn \
-          -pl flink-libraries/flink-cep,flink-libraries/flink-cep-scala,flink-libraries/flink-state-processing-api,\
+          mvn verify -nsu \
+          -Dflink.forkCount=2 -Dflink.forkCountTestPackage=2 -Dfast -B -Pskip-webui-build -Dflink.tests.with-openssl \
+          -Dhadoop.version=2.8.3 -Dinclude_hadoop_aws -Dscala-2.11 -fn -pl \
+          flink-libraries/flink-cep,flink-libraries/flink-cep-scala,flink-libraries/flink-state-processing-api,\
           flink-table/flink-table-common,flink-table/flink-table-api-java,flink-table/flink-table-api-scala,\
           flink-table/flink-table-api-java-bridge,flink-table/flink-table-api-scala-bridge,flink-table/flink-table-planner,\
           flink-table/flink-sql-client
@@ -58,9 +60,10 @@
       shell:
         cmd: |
           set -xe
-          mvn clean install -nsu -Dflink.convergence.phase=install -Pcheck-convergence -Dflink.forkCount=2 \
-          -Dflink.forkCountTestPackage=2 -Dmaven.javadoc.skip=true -B -DskipTests -Dhadoop.version=2.8.3 \
-          -Dinclude_hadoop_aws -Dscala-2.11 -am -pl flink-table/flink-table-planner-blink,flink-table/flink-table-runtime-blink
+          mvn clean install -nsu \
+          -Dflink.forkCount=2 -Dflink.forkCountTestPackage=2 -Dfast -B -Pskip-webui-build -Dhadoop.version=2.8.3 \
+          -Dinclude_hadoop_aws -Dscala-2.11 -am -pl \
+          flink-table/flink-table-planner-blink,flink-table/flink-table-runtime-blink
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
@@ -70,9 +73,10 @@
       shell:
         cmd: |
           set -xe
-          mvn verify -nsu -Dflink.forkCount=2 -Dflink.forkCountTestPackage=2 -Dfast -B -Pskip-webui-build \
-          -Dflink.tests.force-openssl -Dhadoop.version=2.8.3 -Dinclude_hadoop_aws -Dscala-2.11 -fn \
-          -pl flink-table/flink-table-planner-blink,flink-table/flink-table-runtime-blink
+          mvn verify -nsu \
+          -Dflink.forkCount=2 -Dflink.forkCountTestPackage=2 -Dfast -B -Pskip-webui-build -Dflink.tests.with-openssl \
+          -Dhadoop.version=2.8.3 -Dinclude_hadoop_aws -Dscala-2.11 -fn -pl \
+          flink-table/flink-table-planner-blink,flink-table/flink-table-runtime-blink
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
