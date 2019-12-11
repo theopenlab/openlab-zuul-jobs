@@ -30,7 +30,7 @@
           set -xe
 
           mvn clean install -nsu \
-          -Dflink.forkCount=2 -Dflink.forkCountTestPackage=2 -Dfast -B -Pskip-webui-build -Dhadoop.version=2.8.3 \
+          -Dflink.forkCount=2 -Dflink.forkCountTestPackage=2 -Dfast -B -Pskip-webui-build -DskipTests -Dhadoop.version=2.8.3 \
           -Dinclude_hadoop_aws -Dscala-2.11
       args:
         executable: /bin/bash
