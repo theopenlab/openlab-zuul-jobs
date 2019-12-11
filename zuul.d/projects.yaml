@@ -103,12 +103,12 @@
       jobs:
         - cloud-provider-openstack-acceptance-test-e2e-conformance:
             branches: master
+        - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.17:
+            branches: release-1.17
         - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.16:
             branches: release-1.16
         - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.15:
             branches: release-1.15
-        - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.14:
-            branches: release-1.14
         - cloud-provider-openstack-multinode-csi-migration-test:
             branches: master
 
