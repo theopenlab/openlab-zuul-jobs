@@ -7,7 +7,7 @@
       shell:
         cmd: |
           set -ex
-          add-apt-repository -y ppa:jonathonf/python-3.7
+          add-apt-repository -y ppa:deadsnakes/ppa
           apt update
           apt install -y python3.7
         executable: /bin/bash
