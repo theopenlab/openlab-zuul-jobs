@@ -1,6 +1,5 @@
 - import_playbook: common.yaml
 
-# NOTE: Some tests should not be ran under root.
 - hosts: all
   become: yes
   tasks:
