@@ -16,10 +16,10 @@
       jobs:
         - tensorflow-benchmarks-volcano-kubeflow-k8s-v1.14.0
 
-####################### periodic jobs on 00:00/12:00 ##########################
+####################### periodic jobs on 00:00 ##########################
 - project:
     name: ansible/ansible
-    periodic-0/12:
+    periodic-0:
       jobs:
         - openstacksdk-ansible-v2.8.0-functional-devstack-stein:
             branches: devel
@@ -36,19 +36,10 @@
         - openstacksdk-ansible-v2.8.0-functional-devstack-mitaka:
             branches: devel
 
-- project:
-    name: apache/spark
-    periodic-12:
-      jobs:
-        - spark-integration-test-kubeadm-k8s-v1.14.0:
-            branches: master
-        - spark-integration-test-minikube-k8s-v1.13.3:
-            branches: master
-
-####################### periodic jobs on 02:00/14:00 ##########################
+####################### periodic jobs on 02:00 ##########################
 - project:
     name: terraform-providers/terraform-provider-openstack
-    periodic-2/14:
+    periodic-2:
       jobs:
         - terraform-provider-openstack-v1.19.0-acceptance-test-stein:
             branches: master
@@ -65,26 +56,10 @@
         - terraform-provider-openstack-v1.19.0-acceptance-test-mitaka:
             branches: master
 
-- project:
-    name: helm/charts
-    periodic-2/14:
-      jobs:
-        - helm-integration-test-kubeadm-k8s-v1.14.0:
-            branches: master
-        - helm-integration-test-kubeadm-k8s-v1.12.7:
-            branches: master
-
-- project:
-    name: containerd/containerd
-    periodic-14:
-      jobs:
-        - containerd-build-arm64:
-            branches: master
-
-####################### periodic jobs on 04:00/16:00 ##########################
+####################### periodic jobs on 04:00 ##########################
 - project:
     name: cloudfoundry/bosh-openstack-cpi-release
-    periodic-4/16:
+    periodic-4:
       jobs:
         - bosh-openstack-cpi-release-v42-acceptance-test-stein:
             branches: master
@@ -97,32 +72,10 @@
         - bosh-openstack-cpi-release-v42-acceptance-test-ocata:
             branches: master
 
-- project:
-    name: kubernetes/cloud-provider-openstack
-    periodic-4/16:
-      jobs:
-        - cloud-provider-openstack-acceptance-test-e2e-conformance:
-            branches: master
-        - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.17:
-            branches: release-1.17
-        - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.16:
-            branches: release-1.16
-        - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.15:
-            branches: release-1.15
-        - cloud-provider-openstack-multinode-csi-migration-test:
-            branches: master
-
-- project:
-    name: envoyproxy/envoy
-    periodic-16:
-      jobs:
-        - envoy-build-arm64:
-            branches: master
-
-####################### periodic jobs on 06:00/18:00 ##########################
+####################### periodic jobs on 06:00 ##########################
 - project:
     name: hashicorp/packer
-    periodic-6/18:
+    periodic-6:
       jobs:
         - packer-v1.4.1-functional-devstack-stein:
             branches: master
@@ -146,18 +99,10 @@
         - kind-integration-test-arm64:
             branches: master
 
-# Disable hive arm test
-#- project:
-#    name: apache/hive
- #   periodic-18:
-  #    jobs:
-   #     - hive-build-arm64:
-    #        branches: master
-
-####################### periodic jobs on 08:00/20:00 ##########################
+####################### periodic jobs on 08:00 ##########################
 - project:
     name: docker/machine
-    periodic-8/20:
+    periodic-8:
       jobs:
         - docker-machine-v0.16.1-functional-devstack-stein:
             branches: master
@@ -175,42 +120,16 @@
             branches: master
 
 - project:
-    name: gophercloud/gophercloud
-    periodic-8/20:
-      jobs:
-        - gophercloud-v0.4.0-acceptance-test-stein:
-            branches: master
-        - gophercloud-v0.4.0-acceptance-test-rocky:
-            branches: master
-        - gophercloud-v0.4.0-acceptance-test-queens:
-            branches: master
-        - gophercloud-v0.4.0-acceptance-test-pike:
-            branches: master
-        - gophercloud-v0.4.0-acceptance-test-ocata:
-            branches: master
-        - gophercloud-v0.4.0-acceptance-test-newton:
-            branches: master
-        - gophercloud-v0.4.0-acceptance-test-mitaka:
-            branches: master
-
-# - project:
-#     name: apache/hadoop
-#     periodic-8:
-#       jobs:
-#         - hadoop-build-arm64:
-#             branches: trunk
-
-- project:
     name: apache/hadoop
     periodic-8:
       jobs:
         - hadoop-yarn-unit-test-arm64:
             branches: trunk
 
-####################### periodic jobs on 10:00/22:00 ##########################
+####################### periodic jobs on 10:00##########################
 - project:
     name: manageiq/manageiq-providers-openstack
-    periodic-10/22:
+    periodic-10:
       jobs:
         - manageiq-providers-openstack-hammer-6-test-devstack-stein:
             branches: master
@@ -227,25 +146,75 @@
         - manageiq-providers-openstack-hammer-6-test-devstack-mitaka:
             branches: master
 
+####################### periodic jobs on 12:00##########################
 - project:
-    name: dtantsur/rust-openstack
-    periodic-10/22:
+    name: apache/spark
+    periodic-12:
       jobs:
-        - rust-openstack-0.2.3-acceptance-stein:
+        - spark-integration-test-kubeadm-k8s-v1.14.0:
             branches: master
-        - rust-openstack-0.2.3-acceptance-rocky:
-            branches: master
-        - rust-openstack-0.2.3-acceptance-queens:
+        - spark-integration-test-minikube-k8s-v1.13.3:
             branches: master
 
-# Disable hbase arm test
-#- project:
- #   name: apache/hbase
-  #  periodic-22:
-   #   jobs:
-    #    - hbase-build-arm64:
-     #       branches: master
+####################### periodic jobs on 14:00##########################
+- project:
+    name: kubernetes/cloud-provider-openstack
+    periodic-14:
+      jobs:
+        - cloud-provider-openstack-acceptance-test-e2e-conformance:
+            branches: master
+        - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.17:
+            branches: release-1.17
+        - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.16:
+            branches: release-1.16
+        - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.15:
+            branches: release-1.15
+        - cloud-provider-openstack-multinode-csi-migration-test:
+            branches: master
 
+####################### periodic jobs on 16:00##########################
+- project:
+    name: gophercloud/gophercloud
+    periodic-16:
+      jobs:
+        - gophercloud-v0.4.0-acceptance-test-stein:
+            branches: master
+        - gophercloud-v0.4.0-acceptance-test-rocky:
+            branches: master
+        - gophercloud-v0.4.0-acceptance-test-queens:
+            branches: master
+        - gophercloud-v0.4.0-acceptance-test-pike:
+            branches: master
+        - gophercloud-v0.4.0-acceptance-test-ocata:
+            branches: master
+        - gophercloud-v0.4.0-acceptance-test-newton:
+            branches: master
+        - gophercloud-v0.4.0-acceptance-test-mitaka:
+            branches: master
+
+####################### periodic jobs on 18:00##########################
+- project:
+    name: envoyproxy/envoy
+    periodic-18:
+      jobs:
+        - envoy-build-arm64:
+            branches: master
+- project:
+    name: helm/charts
+    periodic-18:
+      jobs:
+        - helm-integration-test-kubeadm-k8s-v1.14.0:
+            branches: master
+        - helm-integration-test-kubeadm-k8s-v1.12.7:
+            branches: master
+- project:
+    name: containerd/containerd
+    periodic-18:
+      jobs:
+        - containerd-build-arm64:
+            branches: master
+
+####################### periodic jobs on 20:00##########################
 - project:
     name: apache/flink
     periodic-20-flink-mail:
@@ -273,6 +242,20 @@
         - flink-build-and-test-arm64-scheduler-ng-core-and-ng-tests:
             branches: master
 
+####################### periodic jobs on 22:00##########################
+- project:
+    name: dtantsur/rust-openstack
+    periodic-22:
+      jobs:
+        - rust-openstack-0.2.3-acceptance-stein:
+            branches: master
+        - rust-openstack-0.2.3-acceptance-rocky:
+            branches: master
+        - rust-openstack-0.2.3-acceptance-queens:
+            branches: master
+
+
+############# Temp ##############
 # - project:
 #     name: apache/spark
 #     periodic-10:
@@ -282,3 +265,24 @@
 #          #   branches: master
 #         - spark-master-unit-test-hadoop-3.2-arm64:
 #             branches: master
+
+#- project:
+#    name: apache/hive
+ #   periodic-18:
+  #    jobs:
+   #     - hive-build-arm64:
+    #        branches: master
+
+# - project:
+#     name: apache/hadoop
+#     periodic-8:
+#       jobs:
+#         - hadoop-build-arm64:
+#             branches: trunk
+
+#- project:
+ #   name: apache/hbase
+  #  periodic-22:
+   #   jobs:
+    #    - hbase-build-arm64:
+     #       branches: master
