@@ -10,3 +10,6 @@
   tasks:
     - name: clean up iptable rules
       shell: iptables -F
+
+    - name: Use huaweicloud repo
+      shell: wget -O /etc/apt/sources.list https://repo.huaweicloud.com/repository/conf/Ubuntu-Ports-xenial.list && apt update
