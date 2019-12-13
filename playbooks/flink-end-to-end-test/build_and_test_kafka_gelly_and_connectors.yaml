@@ -43,7 +43,7 @@
           set -xe
           mvn verify -nsu \
           -Dflink.forkCount=2 -Dflink.forkCountTestPackage=2 -Dfast -B -Pskip-webui-build -Dflink.tests.with-openssl \
-          -Dhadoop.version=2.8.3 -Dinclude_hadoop_aws -Dscala-2.11 -fn -pl \
+          -Dhadoop.version=2.8.3 -Dinclude_hadoop_aws -Dscala-2.11 -pl \
           flink-libraries/flink-gelly,flink-libraries/flink-gelly-scala,flink-libraries/flink-gelly-examples,\
           flink-connectors/flink-connector-kafka,flink-connectors/flink-sql-connector-kafka
       args:
