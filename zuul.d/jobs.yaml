@@ -256,6 +256,7 @@
     description: |
       Run terraform-provider-openstack designate acceptance test on master branch
     run: playbooks/terraform-provider-openstack-acceptance-test-designate/run.yaml
+    nodeset: ubuntu-bionic
 
 - job:
     name: terraform-provider-openstack-acceptance-test-trove
@@ -263,6 +264,7 @@
     description: |
       Run terraform-provider-openstack trove acceptance test on master branch
     run: playbooks/terraform-provider-openstack-acceptance-test-trove/run.yaml
+    nodeset: ubuntu-bionic
 
 - job:
     name: terraform-provider-openstack-acceptance-test-lbaas
@@ -271,6 +273,7 @@
       Run terraform-provider-openstack lbaas acceptance test on master branch
     run: playbooks/terraform-provider-openstack-acceptance-test-lbaas/run.yaml
     timeout: 14400 # 4h
+    nodeset: ubuntu-bionic
 
 - job:
     name: terraform-provider-openstack-acceptance-test-fwaas
@@ -278,6 +281,7 @@
     description: |
       Run terraform-provider-openstack fwaas acceptance test on master branch
     run: playbooks/terraform-provider-openstack-acceptance-test-fwaas/run.yaml
+    nodeset: ubuntu-bionic
 
 # terraform-provider-openstack acceptance tests with Telefonica cloud
 - job:
