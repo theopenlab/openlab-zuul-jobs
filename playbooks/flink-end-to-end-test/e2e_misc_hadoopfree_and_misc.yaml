@@ -34,71 +34,31 @@
         chdir: '/home/zuul'
       environment: '{{ global_env }}'
 
-    - name: Add git author info
+    - name: Get the fix PR
       shell:
         cmd: |
           git config --global user.email "info@openlabtesting.org"
           git config --global user.name "OpenLab"
+          git remote add upstream http://github.com/apache/flink
+          git fetch upstream refs/pull/9768/head:pr_9768
+          git checkout pr_9768
+          git rebase master
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ global_env }}'
 
-    # TODO(wxy): Should fix in apache/flink
-    - name: ARM hack changes
-      shell:
-        cmd: |
-          set -xo pipefail
+    - name: Comment out docker installation
+      lineinfile:
+        path: "/home/zuul/src/github.com/apache/flink/tools/travis/nightly.sh"
+        regexp: "^.*setup_docker.sh"
+        line: "# source ${HERE}/setup_docker.sh"
 
-          cat << EOF >> arm_hack.patch
-          From af7a1487dbfed257dcea0c89b528051e917afda3 Mon Sep 17 00:00:00 2001
-          From: wangxiyuan <wangxiyuan@huawei.com>
-          Date: Thu, 19 Sep 2019 15:20:51 +0800
-          Subject: [PATCH] ARM Related Hack
-
-          ---
-           .../prometheus/tests/PrometheusReporterEndToEndITCase.java        | 2 +-
-           tools/travis/nightly.sh                                           | 4 ++--
-           2 files changed, 3 insertions(+), 3 deletions(-)
-
-          diff --git a/flink-end-to-end-tests/flink-metrics-reporter-prometheus-test/src/test/java/org/apache/flink/metrics/prometheus/tests/PrometheusReporterEndToEndITCase.java b/flink-end-to-end-tests/flink-metrics-reporter-prometheus-test/src/test/java/org/apache/flink/metrics/prometheus/tests/PrometheusReporterEndToEndITCase.java
-          index 258d293..eb3d635 100644
-          --- a/flink-end-to-end-tests/flink-metrics-reporter-prometheus-test/src/test/java/org/apache/flink/metrics/prometheus/tests/PrometheusReporterEndToEndITCase.java
-          +++ b/flink-end-to-end-tests/flink-metrics-reporter-prometheus-test/src/test/java/org/apache/flink/metrics/prometheus/tests/PrometheusReporterEndToEndITCase.java
-          @@ -73,7 +73,7 @@ public class PrometheusReporterEndToEndITCase extends TestLogger {
-           				PROMETHEUS_FILE_NAME = base + "windows-amd64";
-           				break;
-           			default:
-          -				PROMETHEUS_FILE_NAME = base + "linux-amd64";
-          +				PROMETHEUS_FILE_NAME = base + "linux-arm64";
-           				break;
-           		}
-           	}
-          diff --git a/tools/travis/nightly.sh b/tools/travis/nightly.sh
-          index 0fb918e..5e75e8c 100755
-          --- a/tools/travis/nightly.sh
-          +++ b/tools/travis/nightly.sh
-          @@ -27,8 +27,8 @@ fi
-
-           SCRIPT=\$1
-
-          -source \${HERE}/setup_docker.sh
-          -source \${HERE}/setup_kubernetes.sh
-          +# source \${HERE}/setup_docker.sh
-          +# source \${HERE}/setup_kubernetes.sh
-
-           ARTIFACTS_DIR="\${HERE}/artifacts"
-
-          --
-          2.7.4
-          EOF
-
-          git am arm_hack.patch
-          rm arm_hack.patch
-      args:
-        executable: /bin/bash
-        chdir: '{{ zuul.project.src_dir }}'
-      environment: '{{ global_env }}'
+    - name: Comment out k8s installation
+      lineinfile:
+        path: "/home/zuul/src/github.com/apache/flink/tools/travis/nightly.sh"
+        regexp: "^.*setup_kubernetes.sh"
+        line: "# source ${HERE}/setup_kubernetes.sh"
 
     - name: Run split_misc.sh e2e test
       shell:
