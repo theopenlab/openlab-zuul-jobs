@@ -1,5 +1,15 @@
 - import_playbook: common.yaml
 
+- hosts: all
+  become: yes
+  tasks:
+    - name: Install requirements
+      shell:
+        cmd: |
+          apt install bsdmainutils
+      args:
+        executable: /bin/bash
+
 # NOTE: elasticsearch can't be ran under root.
 - hosts: all
   become: no
