@@ -70,7 +70,7 @@
           # Deploy CSI NFS node plugin
           # We don't actually need to register csi-nfs with k8s CSI machinery,
           # just simply having the nodeplugin running is enough in this case.
-          cat << YAML | /root/src/k8s.io/kubernetes/cluster/kubectl.sh create -f -
+          cat << YAML | '{{ kubectl }}' create -f -
           kind: DaemonSet
           apiVersion: apps/v1
           metadata:
@@ -93,7 +93,7 @@
                       allowPrivilegeEscalation: true
                     image: quay.io/k8scsi/nfsplugin:canary
                     args:
-                      - "--nodeid=$(NODE_ID)"
+                      - "--nodeid=\$(NODE_ID)"
                       - "--endpoint=unix://plugin/csi.sock"
                     env:
                       - name: NODE_ID
