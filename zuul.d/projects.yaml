@@ -16,6 +16,17 @@
       jobs:
         - tensorflow-benchmarks-volcano-kubeflow-k8s-v1.14.0
 
+- project:
+    name: moo-ai/moo-ai.github.io
+    check:
+      jobs:
+        - ai-on-openlab-test-vm:
+            files:
+              - ^user_data/.*
+        - ai-on-openlab-test-vm-with-gpu:
+            files:
+              - ^user_data_gpu/.*
+
 ####################### periodic jobs on 00:00 ##########################
 #- project:
 #    name: ansible/ansible
