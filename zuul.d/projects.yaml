@@ -17,80 +17,80 @@
         - tensorflow-benchmarks-volcano-kubeflow-k8s-v1.14.0
 
 ####################### periodic jobs on 00:00 ##########################
-- project:
-    name: ansible/ansible
-    periodic-0:
-      jobs:
-        - openstacksdk-ansible-v2.8.0-functional-devstack-stein:
-            branches: devel
-        - openstacksdk-ansible-v2.8.0-functional-devstack-rocky:
-            branches: devel
-        - openstacksdk-ansible-v2.8.0-functional-devstack-queens:
-            branches: devel
-        - openstacksdk-ansible-v2.8.0-functional-devstack-pike:
-            branches: devel
-        - openstacksdk-ansible-v2.8.0-functional-devstack-ocata:
-            branches: devel
-        - openstacksdk-ansible-v2.8.0-functional-devstack-newton:
-            branches: devel
-        - openstacksdk-ansible-v2.8.0-functional-devstack-mitaka:
-            branches: devel
+#- project:
+#    name: ansible/ansible
+#    periodic-0:
+#      jobs:
+#        - openstacksdk-ansible-v2.8.0-functional-devstack-stein:
+#            branches: devel
+#        - openstacksdk-ansible-v2.8.0-functional-devstack-rocky:
+#            branches: devel
+#        - openstacksdk-ansible-v2.8.0-functional-devstack-queens:
+#            branches: devel
+#        - openstacksdk-ansible-v2.8.0-functional-devstack-pike:
+#            branches: devel
+#        - openstacksdk-ansible-v2.8.0-functional-devstack-ocata:
+#            branches: devel
+#        - openstacksdk-ansible-v2.8.0-functional-devstack-newton:
+#            branches: devel
+#        - openstacksdk-ansible-v2.8.0-functional-devstack-mitaka:
+#            branches: devel
 
 ####################### periodic jobs on 02:00 ##########################
-- project:
-    name: terraform-providers/terraform-provider-openstack
-    periodic-2:
-      jobs:
-        - terraform-provider-openstack-v1.19.0-acceptance-test-stein:
-            branches: master
-        - terraform-provider-openstack-v1.19.0-acceptance-test-rocky:
-            branches: master
-        - terraform-provider-openstack-v1.19.0-acceptance-test-queens:
-            branches: master
-        - terraform-provider-openstack-v1.19.0-acceptance-test-pike:
-            branches: master
-        - terraform-provider-openstack-v1.19.0-acceptance-test-ocata:
-            branches: master
-        - terraform-provider-openstack-v1.19.0-acceptance-test-newton:
-            branches: master
-        - terraform-provider-openstack-v1.19.0-acceptance-test-mitaka:
-            branches: master
+#- project:
+#    name: terraform-providers/terraform-provider-openstack
+#    periodic-2:
+#      jobs:
+#        - terraform-provider-openstack-v1.19.0-acceptance-test-stein:
+#            branches: master
+#        - terraform-provider-openstack-v1.19.0-acceptance-test-rocky:
+#            branches: master
+#        - terraform-provider-openstack-v1.19.0-acceptance-test-queens:
+#            branches: master
+#        - terraform-provider-openstack-v1.19.0-acceptance-test-pike:
+#            branches: master
+#        - terraform-provider-openstack-v1.19.0-acceptance-test-ocata:
+#            branches: master
+#        - terraform-provider-openstack-v1.19.0-acceptance-test-newton:
+#            branches: master
+#        - terraform-provider-openstack-v1.19.0-acceptance-test-mitaka:
+#            branches: master
 
 ####################### periodic jobs on 04:00 ##########################
-- project:
-    name: cloudfoundry/bosh-openstack-cpi-release
-    periodic-4:
-      jobs:
-        - bosh-openstack-cpi-release-v42-acceptance-test-stein:
-            branches: master
-        - bosh-openstack-cpi-release-v42-acceptance-test-rocky:
-            branches: master
-        - bosh-openstack-cpi-release-v42-acceptance-test-queens:
-            branches: master
-        - bosh-openstack-cpi-release-v42-acceptance-test-pike:
-            branches: master
-        - bosh-openstack-cpi-release-v42-acceptance-test-ocata:
-            branches: master
+#- project:
+#    name: cloudfoundry/bosh-openstack-cpi-release
+#    periodic-4:
+#      jobs:
+#        - bosh-openstack-cpi-release-v42-acceptance-test-stein:
+#            branches: master
+#        - bosh-openstack-cpi-release-v42-acceptance-test-rocky:
+#            branches: master
+#        - bosh-openstack-cpi-release-v42-acceptance-test-queens:
+#            branches: master
+#        - bosh-openstack-cpi-release-v42-acceptance-test-pike:
+#            branches: master
+#        - bosh-openstack-cpi-release-v42-acceptance-test-ocata:
+#            branches: master
 
 ####################### periodic jobs on 06:00 ##########################
-- project:
-    name: hashicorp/packer
-    periodic-6:
-      jobs:
-        - packer-v1.4.1-functional-devstack-stein:
-            branches: master
-        - packer-v1.4.1-functional-devstack-rocky:
-            branches: master
-        - packer-v1.4.1-functional-devstack-queens:
-            branches: master
-        - packer-v1.4.1-functional-devstack-pike:
-            branches: master
-        - packer-v1.4.1-functional-devstack-ocata:
-            branches: master
-        - packer-v1.4.1-functional-devstack-newton:
-            branches: master
-        - packer-v1.4.1-functional-devstack-mitaka:
-            branches: master
+#- project:
+#    name: hashicorp/packer
+#    periodic-6:
+#      jobs:
+#        - packer-v1.4.1-functional-devstack-stein:
+#            branches: master
+#        - packer-v1.4.1-functional-devstack-rocky:
+#            branches: master
+#        - packer-v1.4.1-functional-devstack-queens:
+#            branches: master
+#        - packer-v1.4.1-functional-devstack-pike:
+#            branches: master
+#        - packer-v1.4.1-functional-devstack-ocata:
+#            branches: master
+#        - packer-v1.4.1-functional-devstack-newton:
+#            branches: master
+#        - packer-v1.4.1-functional-devstack-mitaka:
+#            branches: master
 
 - project:
     name: kubernetes-sigs/kind
@@ -100,61 +100,61 @@
             branches: master
 
 ####################### periodic jobs on 08:00 ##########################
-- project:
-    name: docker/machine
-    periodic-8:
-      jobs:
-        - docker-machine-v0.16.1-functional-devstack-stein:
-            branches: master
-        - docker-machine-v0.16.1-functional-devstack-rocky:
-            branches: master
-        - docker-machine-v0.16.1-functional-devstack-queens:
-            branches: master
-        - docker-machine-v0.16.1-functional-devstack-pike:
-            branches: master
-        - docker-machine-v0.16.1-functional-devstack-ocata:
-            branches: master
-        - docker-machine-v0.16.1-functional-devstack-newton:
-            branches: master
-        - docker-machine-v0.16.1-functional-devstack-mitaka:
-            branches: master
+#- project:
+#    name: docker/machine
+#    periodic-8:
+#      jobs:
+#        - docker-machine-v0.16.1-functional-devstack-stein:
+#            branches: master
+#        - docker-machine-v0.16.1-functional-devstack-rocky:
+#            branches: master
+#        - docker-machine-v0.16.1-functional-devstack-queens:
+#            branches: master
+#        - docker-machine-v0.16.1-functional-devstack-pike:
+#            branches: master
+#        - docker-machine-v0.16.1-functional-devstack-ocata:
+#            branches: master
+#        - docker-machine-v0.16.1-functional-devstack-newton:
+#            branches: master
+#        - docker-machine-v0.16.1-functional-devstack-mitaka:
+#            branches: master
 
-- project:
-    name: apache/hadoop
-    periodic-8:
-      jobs:
-        - hadoop-yarn-unit-test-arm64:
-            branches: trunk
+#- project:
+#    name: apache/hadoop
+#    periodic-8:
+#      jobs:
+#        - hadoop-yarn-unit-test-arm64:
+#            branches: trunk
 
 ####################### periodic jobs on 10:00##########################
-- project:
-    name: manageiq/manageiq-providers-openstack
-    periodic-10:
-      jobs:
-        - manageiq-providers-openstack-hammer-6-test-devstack-stein:
-            branches: master
-        - manageiq-providers-openstack-hammer-6-test-devstack-rocky:
-            branches: master
-        - manageiq-providers-openstack-hammer-6-test-devstack-queens:
-            branches: master
-        - manageiq-providers-openstack-hammer-6-test-devstack-pike:
-            branches: master
-        - manageiq-providers-openstack-hammer-6-test-devstack-ocata:
-            branches: master
-        - manageiq-providers-openstack-hammer-6-test-devstack-newton:
-            branches: master
-        - manageiq-providers-openstack-hammer-6-test-devstack-mitaka:
-            branches: master
+#- project:
+#    name: manageiq/manageiq-providers-openstack
+#    periodic-10:
+#      jobs:
+#        - manageiq-providers-openstack-hammer-6-test-devstack-stein:
+#            branches: master
+#        - manageiq-providers-openstack-hammer-6-test-devstack-rocky:
+#            branches: master
+#        - manageiq-providers-openstack-hammer-6-test-devstack-queens:
+#            branches: master
+#        - manageiq-providers-openstack-hammer-6-test-devstack-pike:
+#            branches: master
+#        - manageiq-providers-openstack-hammer-6-test-devstack-ocata:
+#            branches: master
+#        - manageiq-providers-openstack-hammer-6-test-devstack-newton:
+#            branches: master
+#        - manageiq-providers-openstack-hammer-6-test-devstack-mitaka:
+#            branches: master
 
 ####################### periodic jobs on 12:00##########################
-- project:
-    name: apache/spark
-    periodic-12:
-      jobs:
-        - spark-integration-test-kubeadm-k8s-v1.14.0:
-            branches: master
-        - spark-integration-test-minikube-k8s-v1.13.3:
-            branches: master
+#- project:
+#    name: apache/spark
+#    periodic-12:
+#      jobs:
+#        - spark-integration-test-kubeadm-k8s-v1.14.0:
+#            branches: master
+#        - spark-integration-test-minikube-k8s-v1.13.3:
+#            branches: master
 
 ####################### periodic jobs on 14:00##########################
 - project:
@@ -199,14 +199,14 @@
       jobs:
         - envoy-build-arm64:
             branches: master
-- project:
-    name: helm/charts
-    periodic-18:
-      jobs:
-        - helm-integration-test-kubeadm-k8s-v1.14.0:
-            branches: master
-        - helm-integration-test-kubeadm-k8s-v1.12.7:
-            branches: master
+#- project:
+#    name: helm/charts
+#    periodic-18:
+#      jobs:
+#        - helm-integration-test-kubeadm-k8s-v1.14.0:
+#            branches: master
+#        - helm-integration-test-kubeadm-k8s-v1.12.7:
+#            branches: master
 - project:
     name: containerd/containerd
     periodic-18:
@@ -241,16 +241,16 @@
             branches: master
 
 ####################### periodic jobs on 22:00##########################
-- project:
-    name: dtantsur/rust-openstack
-    periodic-22:
-      jobs:
-        - rust-openstack-0.2.3-acceptance-stein:
-            branches: master
-        - rust-openstack-0.2.3-acceptance-rocky:
-            branches: master
-        - rust-openstack-0.2.3-acceptance-queens:
-            branches: master
+#- project:
+#    name: dtantsur/rust-openstack
+#    periodic-22:
+#      jobs:
+#        - rust-openstack-0.2.3-acceptance-stein:
+#            branches: master
+#        - rust-openstack-0.2.3-acceptance-rocky:
+#            branches: master
+#        - rust-openstack-0.2.3-acceptance-queens:
+#            branches: master
 
 
 ############# Temp ##############
