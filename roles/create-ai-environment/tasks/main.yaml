@@ -81,6 +81,9 @@
       unzip $zip_file
     executable: /bin/bash
 
+- name: Generate result folder
+  shell: mkdir '{{ user_data_folder }}/{{ training_output_folder_name }}'
+
 - name: Split User Metadata
   shell: 'cat {{ user_data_folder }}/metadata.yaml'
   register: user_meta
