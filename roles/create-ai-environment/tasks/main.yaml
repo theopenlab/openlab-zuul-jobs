@@ -89,22 +89,13 @@
   set_fact:
     user_meta: "{{ user_meta.stdout | from_yaml }}"
 
-- name: Define Parameters - runtime_name
-  shell: echo "{{ user_meta.framework.runtime | regex_findall('[java|go|python|c|c++]') | join("") }}"
-  register: runtime_name
-
-- name: Define Parameters - runtime_version
-  shell: echo "{{ user_meta.framework.runtime | regex_replace('[java|go|python|c|c++]') }}"
-  register: runtime_version
-
-- name: Install {{ user_meta.framework.runtime }} Runtime
-  when: runtime_name
+- name: Install {{ user_meta.framework.runtime.name }} Runtime
   shell:
     cmd: |
       set -x
       set -e
-      runtime_name={{ runtime_name.stdout }}
-      runtime_version={{ runtime_version.stdout }}
+      runtime_name={{ user_meta.framework.runtime.name }}
+      runtime_version={{ user_meta.framework.runtime.version }}
       add-apt-repository -y ppa:deadsnakes/ppa
       apt-key adv --keyserver keyserver.ubuntu.com --recv-keys F60F4B3D7FA2AF80
       apt update
@@ -112,7 +103,6 @@
       # TODO(wxy): Add and test all the runtime. Now only python is tested.
 
       if [ $runtime_name == 'python' ];then
-        apt install -y $runtime_name$runtime_version
         apt install -y python2.7 python3.5 python3.6 python3.7
       fi
 
@@ -134,15 +124,15 @@
 
 - name: Install {{ user_meta.framework.name }}-{{ user_meta.framework.version }}
   when:
-    ( user_meta.framework.name == "tensorflow" and runtime_name.stdout in ["python", "c", "java", "go"] ) or
-    ( user_meta.framework.name == "pytorch" and runtime_name.stdout in ["python", "c"] )
+    ( user_meta.framework.name == "tensorflow" and user_meta.framework.runtime.name in ["python", "c", "java", "go"] ) or
+    ( user_meta.framework.name == "pytorch" and user_meta.framework.runtime.name in ["python", "c"] )
   shell:
     cmd: |
       set -x
       set -e
       framework={{ user_meta.framework.name }}
       framework_version={{ user_meta.framework.version }}
-      runtime_name={{ runtime_name.stdout }}
+      runtime_name={{ user_meta.framework.runtime.name }}
 
       # TODO(wxy): Add and test all the runtime. Now only tensorflow is tested.
 
@@ -203,11 +193,11 @@
 
       py_file={{ user_meta.entry_point }}
 
-      '{{ user_meta.framework.runtime }}' $py_file | tee "{{ result_folder }}/process_log.txt"
+      '{{ user_meta.framework.runtime.name }}{{ user_meta.framework.runtime.version }}' $py_file | tee "{{ result_folder }}/process_log.txt"
     executable: /bin/bash
 
 - name: Run PyTorch Python Job
-  when: user_meta.framework.name == "pytorch" and runtime_name.stdout in ["python", "c"]
+  when: user_meta.framework.name == "pytorch" and user_meta.framework.runtime.name in ["python", "c"]
   shell:
     cmd: |
       set -xe
