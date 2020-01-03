@@ -139,9 +139,11 @@
       if [ $framework == "tensorflow" ];then
         if [ $runtime_name == "python" ];then
           if {{ is_gpu_enabled | lower }} ;then
-            pip install tensorflow-gpu==$framework_version
+            pip install tensorflow-gpu==$framework_version sklearn keras
+            pip3 install tensorflow-gpu==$framework_version sklearn keras
           else
-            pip install tensorflow==$framework_version
+            pip install tensorflow==$framework_version sklearn keras
+            pip3 install tensorflow==$framework_version sklearn keras
           fi
         fi
         if [ $runtime_name == "java" ];then
@@ -179,10 +181,6 @@
 
     executable: /bin/bash
 
-- name: ENV keeping-debug
-  pause:
-    minutes: 600
-
 - name: Run Tensorflow Job
   when: user_meta.framework.name == "tensorflow" and runtime_name.stdout in ["python", "java", "go", "c"]
   shell:
@@ -190,6 +188,12 @@
       set -xe
 
       cd '{{ user_data_folder }}/'
+
+      if [[ '{{ user_meta.model.name }}' == 'QuickDraw' ]]; then
+        mkdir data
+        wget https://github.com/moo-ai/moo-ai.github.io/releases/download/1.0/QuickDraw_Data.zip
+        unzip QuickDraw_Data.zip -d data/
+      fi
 
       py_file={{ user_meta.entry_point }}
 
@@ -228,11 +232,10 @@
     cmd: |
       set -xe
       pip install tensorflowjs
+      pip3 install tensorflowjs
 
       # Use tensorflow.js to show inference result via MOO web page
-      tensorflowjs_converter --input_format keras \
-        '{{ user_data_folder }}/{{ training_output_folder_name }}/my_model.h5' \
-        '{{ user_data_folder }}/tfjs'
+      tensorflowjs_converter --input_format keras '{{ user_data_folder }}/QuickDraw.h5' '{{ user_data_folder }}/tfjs'
     executable: /bin/bash
 
 #TODO(bzhao) This task needs to be deleted after hands on show.
