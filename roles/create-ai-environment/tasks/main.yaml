@@ -139,11 +139,11 @@
       if [ $framework == "tensorflow" ];then
         if [ $runtime_name == "python" ];then
           if {{ is_gpu_enabled | lower }} ;then
-            pip install tensorflow-gpu==$framework_version sklearn keras
-            pip3 install tensorflow-gpu==$framework_version sklearn keras
+            pip install tensorflow-gpu==$framework_version sklearn keras numpy
+            pip3 install tensorflow-gpu==$framework_version sklearn keras numpy
           else
-            pip install tensorflow==$framework_version sklearn keras
-            pip3 install tensorflow==$framework_version sklearn keras
+            pip install tensorflow==$framework_version sklearn keras numpy
+            pip3 install tensorflow==$framework_version sklearn keras numpy
           fi
         fi
         if [ $runtime_name == "java" ];then
