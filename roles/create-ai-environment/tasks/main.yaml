@@ -238,7 +238,9 @@
       pip3 install tensorflowjs
 
       # Use tensorflow.js to show inference result via MOO web page
-      tensorflowjs_converter --input_format keras '{{ user_data_folder }}/QuickDraw.h5' '{{ user_data_folder }}/tfjs'
+      tensorflowjs_converter --input_format keras \
+        '{{ user_data_folder }}/{{ training_output_folder_name }}/QuickDraw.h5' \
+        '{{ user_data_folder }}/tfjs'
     executable: /bin/bash
 
 #TODO(bzhao) This task needs to be deleted after hands on show.
