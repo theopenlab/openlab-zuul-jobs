@@ -182,7 +182,7 @@
     executable: /bin/bash
 
 - name: Run Tensorflow Job
-  when: user_meta.framework.name == "tensorflow" and runtime_name.stdout in ["python", "java", "go", "c"]
+  when: user_meta.framework.name == "tensorflow" and user_meta.framework.runtime.name in ["python", "java", "go", "c"]
   shell:
     cmd: |
       set -xe
