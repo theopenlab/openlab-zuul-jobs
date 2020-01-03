@@ -204,12 +204,6 @@
             branches: master
 
 ####################### periodic jobs on 18:00##########################
-- project:
-    name: envoyproxy/envoy
-    periodic-18:
-      jobs:
-        - envoy-build-arm64:
-            branches: master
 #- project:
 #    name: helm/charts
 #    periodic-18:
@@ -218,12 +212,6 @@
 #            branches: master
 #        - helm-integration-test-kubeadm-k8s-v1.12.7:
 #            branches: master
-- project:
-    name: containerd/containerd
-    periodic-18:
-      jobs:
-        - containerd-build-arm64:
-            branches: master
 
 ####################### periodic jobs on 20:00##########################
 - project:
