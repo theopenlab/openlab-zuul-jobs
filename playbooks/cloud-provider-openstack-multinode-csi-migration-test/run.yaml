@@ -8,6 +8,8 @@
         cmd: |
           set -o pipefail
           set -e
+          log_dir={{ k8s_log_dir }}
+          mkdir -p "$log_dir"
           excludes=(
             "\[Disruptive\]"
             "\[sig-storage\]\sIn-tree\sVolumes\s\[Driver:\scinder\]\s\[Testpattern:\sPre-provisioned\sPV\s\(block\svolmode\)\]\svolumeMode\sshould\sfail\sto\screate\spod\sby\sfailing\sto\smount\svolume\s\[Slow\]"
@@ -18,8 +20,10 @@
           /root/kubernetes/test/bin/e2e.test \
             -kubeconfig=/etc/kubernetes/admin.conf \
             -provider=openstack \
+            -storage.migratedPlugins=cinder \
+            -report-dir="$log_dir" \
             -ginkgo.noColor \
             -ginkgo.focus="[V|v]olume\sexpand|\[sig-storage\]\sIn-tree\sVolumes\s\[Driver:\scinder\]|allowedTopologies|Pod\sDisks|PersistentVolumes\sDefault" \
-            -ginkgo.skip="$exclude_regex" | tee /root/csi-migration.log
+            -ginkgo.skip="$exclude_regex" | tee "$log_dir/e2e.log"
       args:
         executable: /bin/bash
