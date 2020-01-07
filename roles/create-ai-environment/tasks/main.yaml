@@ -82,7 +82,9 @@
     executable: /bin/bash
 
 - name: Generate result folder
-  shell: mkdir '{{ user_data_folder }}/{{ training_output_folder_name }}'
+  file:
+    path: '{{ user_data_folder }}/{{ training_output_folder_name }}'
+    state: directory
 
 - name: Split User Metadata
   shell: 'cat {{ user_data_folder }}/metadata.yaml'
