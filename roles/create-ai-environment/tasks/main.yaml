@@ -82,7 +82,9 @@
     executable: /bin/bash
 
 - name: Generate result folder
-  shell: mkdir '{{ user_data_folder }}/{{ training_output_folder_name }}'
+  file:
+    path: '{{ user_data_folder }}/{{ training_output_folder_name }}'
+    state: directory
 
 - name: Split User Metadata
   shell: 'cat {{ user_data_folder }}/metadata.yaml'
@@ -142,12 +144,16 @@
       if [ $framework == "tensorflow" ];then
         if [ $runtime_name == "python" ];then
           if {{ is_gpu_enabled | lower }} ;then
-            pip install tensorflow-gpu==$framework_version sklearn keras numpy
-            pip3 install tensorflow-gpu==$framework_version sklearn keras numpy
+            pip install tensorflow-gpu==$framework_version sklearn keras numpy scipy scikit-image matplotlib
+            pip3 install tensorflow-gpu==$framework_version sklearn keras numpy scipy scikit-image matplotlib
           else
-            pip install tensorflow==$framework_version sklearn keras numpy
-            pip3 install tensorflow==$framework_version sklearn keras numpy
+            pip install tensorflow==$framework_version sklearn keras numpy scipy scikit-image matplotlib
+            pip3 install tensorflow==$framework_version sklearn keras numpy scipy scikit-image matplotlib
           fi
+          git clone https://github.com/adrianc-a/tf-slim
+          cd tf-slim/
+          git checkout origin/remove_contrib
+          python3 setup.py install
         fi
         if [ $runtime_name == "java" ];then
           wget https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow_jni-cpu-linux-x86_64-$framework_version.tar.gz
@@ -183,6 +189,10 @@
       fi
 
     executable: /bin/bash
+
+- name: Specify numpy version
+  shell: pip3 uninstall numpy && pip3 install numpy==1.16.1 -y
+  when: user_meta.model.name == 'SBIR'
 
 - name: Run Tensorflow Job
   when: user_meta.framework.name == "tensorflow" and user_meta.framework.runtime.name in ["python", "java", "go", "c"]
@@ -243,25 +253,17 @@
         '{{ user_data_folder }}/tfjs'
     executable: /bin/bash
 
-#TODO(bzhao) This task needs to be deleted after hands on show.
-- name: Get web template
-  delegate_to: localhost
-  become_user: zuul
-  become: yes
-  get_url:
-    url: https://raw.githubusercontent.com/moo-ai/moo-ai.github.io/master/tf_js.html
-    dest: /tmp/tf_js.html
-    mode: 0644
-
-- name: Create web dir
-  file:
-    path: '{{ result_folder }}/web_page/'
-    state: directory
+- name: Copy backend inference page by Jinja
+  template:
+    src: '{{ zuul.project.src_dir }}/tf_js.html'
+    dest: '{{ result_folder }}/web_page/index.html'
+  when: user_meta.model.name == 'MNIST'
 
 - name: Copy backend inference page by Jinja
   template:
-    src: /tmp/tf_js.html
+    src: '{{ zuul.project.src_dir }}/tf_js-quickdraw.html'
     dest: '{{ result_folder }}/web_page/index.html'
+  when: user_meta.model.name == 'QuickDraw'
 
 - name: Collect Traning or Inference Result
   shell:
