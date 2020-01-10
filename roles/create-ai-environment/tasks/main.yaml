@@ -253,15 +253,40 @@
         '{{ user_data_folder }}/tfjs'
     executable: /bin/bash
 
-- name: Copy backend inference page by Jinja
+- name: Get web template - MNIST
+  delegate_to: localhost
+  become_user: zuul
+  become: yes
+  get_url:
+    url: https://raw.githubusercontent.com/moo-ai/moo-ai.github.io/master/tf_js.html
+    dest: /tmp/tf_js.html
+    mode: 0644
+  when: user_meta.model.name == 'MNIST'
+
+- name: Get web template - QuickDraw
+  delegate_to: localhost
+  become_user: zuul
+  become: yes
+  get_url:
+    url: https://raw.githubusercontent.com/moo-ai/moo-ai.github.io/master/tf_js-quickdraw.html
+    dest: /tmp/tf_js-quickdraw.html
+    mode: 0644
+  when: user_meta.model.name == 'QuickDraw'
+
+- name: Create web dir
+  file:
+    path: '{{ result_folder }}/web_page/'
+    state: directory
+
+- name: Copy backend inference page by Jinja - MNIST
   template:
-    src: '{{ zuul.project.src_dir }}/tf_js.html'
+    src: /tmp/tf_js.html
     dest: '{{ result_folder }}/web_page/index.html'
   when: user_meta.model.name == 'MNIST'
 
-- name: Copy backend inference page by Jinja
+- name: Copy backend inference page by Jinja - QuickDraw
   template:
-    src: '{{ zuul.project.src_dir }}/tf_js-quickdraw.html'
+    src: /tmp/tf_js-quickdraw.html
     dest: '{{ result_folder }}/web_page/index.html'
   when: user_meta.model.name == 'QuickDraw'
 
