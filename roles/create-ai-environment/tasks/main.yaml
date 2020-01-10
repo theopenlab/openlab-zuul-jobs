@@ -35,6 +35,12 @@
       service sshd restart
     executable: /bin/bash
 
+- name: Give sudo right
+  lineinfile: dest=/etc/sudoers state=present  line='{{item}}' validate='visudo -cf %s'
+  with_items:
+    - "demo ALL=(ALL) NOPASSWD: ALL"
+    - "Defaults: demo  !requiretty"
+
 - name: Upload Environment Info to Web
   shell:
     cmd: |
@@ -82,7 +88,9 @@
     executable: /bin/bash
 
 - name: Generate result folder
-  shell: mkdir '{{ user_data_folder }}/{{ training_output_folder_name }}'
+  file:
+    path: '{{ user_data_folder }}/{{ training_output_folder_name }}'
+    state: directory
 
 - name: Split User Metadata
   shell: 'cat {{ user_data_folder }}/metadata.yaml'
@@ -142,12 +150,16 @@
       if [ $framework == "tensorflow" ];then
         if [ $runtime_name == "python" ];then
           if {{ is_gpu_enabled | lower }} ;then
-            pip install tensorflow-gpu==$framework_version sklearn keras numpy
-            pip3 install tensorflow-gpu==$framework_version sklearn keras numpy
+            pip install tensorflow-gpu==$framework_version sklearn keras numpy scipy scikit-image matplotlib
+            pip3 install tensorflow-gpu==$framework_version sklearn keras numpy scipy scikit-image matplotlib
           else
-            pip install tensorflow==$framework_version sklearn keras numpy
-            pip3 install tensorflow==$framework_version sklearn keras numpy
+            pip install tensorflow==$framework_version sklearn keras numpy scipy scikit-image matplotlib
+            pip3 install tensorflow==$framework_version sklearn keras numpy scipy scikit-image matplotlib
           fi
+          git clone https://github.com/adrianc-a/tf-slim
+          cd tf-slim/
+          git checkout origin/remove_contrib
+          python3 setup.py install
         fi
         if [ $runtime_name == "java" ];then
           wget https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow_jni-cpu-linux-x86_64-$framework_version.tar.gz
@@ -184,6 +196,10 @@
 
     executable: /bin/bash
 
+- name: Specify numpy version
+  shell: pip3 uninstall -y numpy && pip3 install numpy==1.16.1
+  when: user_meta.model.name == 'SBIR'
+
 - name: Run Tensorflow Job
   when: user_meta.framework.name == "tensorflow" and user_meta.framework.runtime.name in ["python", "java", "go", "c"]
   shell:
@@ -196,6 +212,11 @@
         mkdir data
         wget https://github.com/moo-ai/moo-ai.github.io/releases/download/1.0/QuickDraw_Data.zip
         unzip QuickDraw_Data.zip -d data/
+      fi
+
+      if [[ '{{ user_meta.model.name }}' == 'SBIR' ]]; then
+        wget https://github.com/moo-ai/moo-ai.github.io/releases/download/1.1/SBIRData.zip
+        unzip SBIRData.zip
       fi
 
       py_file={{ user_meta.entry_point }}
@@ -243,8 +264,7 @@
         '{{ user_data_folder }}/tfjs'
     executable: /bin/bash
 
-#TODO(bzhao) This task needs to be deleted after hands on show.
-- name: Get web template
+- name: Get web template - MNIST
   delegate_to: localhost
   become_user: zuul
   become: yes
@@ -252,16 +272,34 @@
     url: https://raw.githubusercontent.com/moo-ai/moo-ai.github.io/master/tf_js.html
     dest: /tmp/tf_js.html
     mode: 0644
+  when: user_meta.model.name == 'MNIST'
+
+- name: Get web template - QuickDraw
+  delegate_to: localhost
+  become_user: zuul
+  become: yes
+  get_url:
+    url: https://raw.githubusercontent.com/moo-ai/moo-ai.github.io/master/tf_js-quickdraw.html
+    dest: /tmp/tf_js-quickdraw.html
+    mode: 0644
+  when: user_meta.model.name == 'QuickDraw'
 
 - name: Create web dir
   file:
     path: '{{ result_folder }}/web_page/'
     state: directory
 
-- name: Copy backend inference page by Jinja
+- name: Copy backend inference page by Jinja - MNIST
   template:
     src: /tmp/tf_js.html
     dest: '{{ result_folder }}/web_page/index.html'
+  when: user_meta.model.name == 'MNIST'
+
+- name: Copy backend inference page by Jinja - QuickDraw
+  template:
+    src: /tmp/tf_js-quickdraw.html
+    dest: '{{ result_folder }}/web_page/index.html'
+  when: user_meta.model.name == 'QuickDraw'
 
 - name: Collect Traning or Inference Result
   shell:
@@ -270,16 +308,15 @@
 
       # Serve inference function via openlab log server for each job. Users can
       # visit log page to test inference directly.
-
       mv '{{ user_data_folder }}/{{ training_output_folder_name }}' '{{ result_folder }}'
-      if [ -d "{{ user_data_folder }}/tfjs" ]; then
-          mv '{{ user_data_folder }}/tfjs/' '{{ result_folder }}/web_page/'
-      fi
-      mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/css' '{{ result_folder }}/web_page/'
-      mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/js' '{{ result_folder }}/web_page/'
 
-      model_path="https:\/\/logs.openlabtesting.org\/logs\/{{ zuul.change[-2:] }}\/{{ zuul.change }}\/{{ zuul.patchset }}\/check\/{{ zuul.job }}\/{{ zuul.build[:7] }}\/test_results\/web_page\/tfjs\/model.json"
-      sed -i "s/replace.me/$model_path/" '{{ result_folder }}/web_page/index.html'
+      if [ -d "{{ user_data_folder }}/tfjs" ]; then
+        mv '{{ user_data_folder }}/tfjs/' '{{ result_folder }}/web_page/'
+        mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/css' '{{ result_folder }}/web_page/'
+        mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/js' '{{ result_folder }}/web_page/'
+        model_path="https:\/\/logs.openlabtesting.org\/logs\/{{ zuul.change[-2:] }}\/{{ zuul.change }}\/{{ zuul.patchset }}\/check\/{{ zuul.job }}\/{{ zuul.build[:7] }}\/test_results\/web_page\/tfjs\/model.json"
+        sed -i "s/replace.me/$model_path/" '{{ result_folder }}/web_page/index.html'
+      fi
     executable: /bin/bash
 
 - name: ENV keeping
