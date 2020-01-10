@@ -197,7 +197,7 @@
     executable: /bin/bash
 
 - name: Specify numpy version
-  shell: pip3 uninstall numpy -y && pip3 install numpy==1.16.1 -y
+  shell: pip3 uninstall -y numpy && pip3 install numpy==1.16.1
   when: user_meta.model.name == 'SBIR'
 
 - name: Run Tensorflow Job
