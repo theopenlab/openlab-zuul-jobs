@@ -35,6 +35,12 @@
       service sshd restart
     executable: /bin/bash
 
+- name: Give sudo right
+  lineinfile: dest=/etc/sudoers state=present  line='{{item}}' validate='visudo -cf %s'
+  with_items:
+    - "demo ALL=(ALL) NOPASSWD: ALL"
+    - "Defaults: demo  !requiretty"
+
 - name: Upload Environment Info to Web
   shell:
     cmd: |
@@ -191,7 +197,7 @@
     executable: /bin/bash
 
 - name: Specify numpy version
-  shell: pip3 uninstall numpy && pip3 install numpy==1.16.1 -y
+  shell: pip3 uninstall numpy -y && pip3 install numpy==1.16.1 -y
   when: user_meta.model.name == 'SBIR'
 
 - name: Run Tensorflow Job
@@ -206,6 +212,11 @@
         mkdir data
         wget https://github.com/moo-ai/moo-ai.github.io/releases/download/1.0/QuickDraw_Data.zip
         unzip QuickDraw_Data.zip -d data/
+      fi
+
+      if [[ '{{ user_meta.model.name }}' == 'SBIR' ]]; then
+        wget https://github.com/moo-ai/moo-ai.github.io/releases/download/1.1/SBIRData.zip
+        unzip SBIRData.zip
       fi
 
       py_file={{ user_meta.entry_point }}
@@ -297,16 +308,15 @@
 
       # Serve inference function via openlab log server for each job. Users can
       # visit log page to test inference directly.
-
       mv '{{ user_data_folder }}/{{ training_output_folder_name }}' '{{ result_folder }}'
-      if [ -d "{{ user_data_folder }}/tfjs" ]; then
-          mv '{{ user_data_folder }}/tfjs/' '{{ result_folder }}/web_page/'
-      fi
-      mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/css' '{{ result_folder }}/web_page/'
-      mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/js' '{{ result_folder }}/web_page/'
 
-      model_path="https:\/\/logs.openlabtesting.org\/logs\/{{ zuul.change[-2:] }}\/{{ zuul.change }}\/{{ zuul.patchset }}\/check\/{{ zuul.job }}\/{{ zuul.build[:7] }}\/test_results\/web_page\/tfjs\/model.json"
-      sed -i "s/replace.me/$model_path/" '{{ result_folder }}/web_page/index.html'
+      if [ -d "{{ user_data_folder }}/tfjs" ]; then
+        mv '{{ user_data_folder }}/tfjs/' '{{ result_folder }}/web_page/'
+        mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/css' '{{ result_folder }}/web_page/'
+        mv '{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/js' '{{ result_folder }}/web_page/'
+        model_path="https:\/\/logs.openlabtesting.org\/logs\/{{ zuul.change[-2:] }}\/{{ zuul.change }}\/{{ zuul.patchset }}\/check\/{{ zuul.job }}\/{{ zuul.build[:7] }}\/test_results\/web_page\/tfjs\/model.json"
+        sed -i "s/replace.me/$model_path/" '{{ result_folder }}/web_page/index.html'
+      fi
     executable: /bin/bash
 
 - name: ENV keeping
