@@ -57,6 +57,8 @@
 
 - hosts: k8s-master
   name: prepare testcases, install necessary components
+  roles:
+    - config-golang
   become: yes
   tasks:
     - name: install python-cinderclient
@@ -141,7 +143,7 @@
             echo "Failed to install container registry"
             exit 1
           fi
-          ./hack/make.sh cinder-csi-plugin
+          make cinder-csi-plugin
           cp cinder-csi-plugin cluster/images/cinder-csi-plugin
           docker build -t localhost:32000/k8scloudprovider/cinder-csi-plugin:latest cluster/images/cinder-csi-plugin
 
