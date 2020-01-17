@@ -157,7 +157,7 @@
     - name: Run image build and publish for cloud-provider-openstack
       shell:
         cmd: |
-          if [ '{{ zuul.pipeline }}' == 'periodic-4/16' ] && [ '{{ zuul.branch }}' == 'master' ]; then
+          if [ '{{ zuul.pipeline }}' == 'periodic-14' ] && [ '{{ zuul.branch }}' == 'master' ]; then
             set -ex
             set -o pipefail
 
