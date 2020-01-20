@@ -17,3 +17,5 @@ Web page about OpenLab:
 Development Guide:
 
 > https://docs.openlabtesting.org/contributors/development-guide
+
+Test OpenLab CI
