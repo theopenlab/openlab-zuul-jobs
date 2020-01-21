@@ -96,3 +96,9 @@
     nodes:
       - name: ubuntu-bionic
         label: ubuntu-bionic
+
+- nodeset:
+    name: ubuntu-bionic-citynetwork
+    nodes:
+      - name: ubuntu-bionic-citynetwork
+        label: ubuntu-bionic-citynetwork
