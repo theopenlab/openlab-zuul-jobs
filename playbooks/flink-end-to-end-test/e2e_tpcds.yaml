@@ -29,12 +29,6 @@
         regexp: "^.*setup_docker.sh"
         line: "# source ${HERE}/setup_docker.sh"
 
-    - name: Comment out k8s installation
-      lineinfile:
-        path: "/home/zuul/src/github.com/apache/flink/tools/travis/nightly.sh"
-        regexp: "^.*setup_kubernetes.sh"
-        line: "# source ${HERE}/setup_kubernetes.sh"
-
     - name: Run split_tpcds.sh e2e test
       shell:
         cmd: |
