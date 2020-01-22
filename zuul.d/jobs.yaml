@@ -448,23 +448,6 @@
       - OS:ubuntu-xenial
       - BuildType:Integration test
 
-## grandson job for mitaka
-- job:
-    name: gophercloud-v0.4.0-acceptance-test-mitaka
-    parent: gophercloud-acceptance-test-mitaka
-    description: |
-      Run gophercloud v0.4.0 acceptance test on mitaka branch of OpenStack
-    override-checkout: v0.4.0
-    tags:
-      - Category:Cloud
-      - Project:gophercloud/gophercloud
-      - Application:gophercloud@v0.4.0
-      - Application:OpenStack@mitaka
-      - Application:Go@1.12.1
-      - Arch:x86_64
-      - OS:ubuntu-xenial
-      - BuildType:Integration test
-
 # terraform-provider-telefonicaopencloud acceptance tests with Telefonica cloud
 # the job is disabled now
 - job:
