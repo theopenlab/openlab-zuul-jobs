@@ -132,6 +132,8 @@
         cmd: |
           set -o pipefail
           set -ex
+          mkdir -p '{{ k8s_log_dir }}'
+          export LOG_DIR='{{ k8s_log_dir }}'
 
           if ! timeout 300 bash -c '
             while :
@@ -143,12 +145,26 @@
             echo "Failed to install container registry"
             exit 1
           fi
+          kubectl describe pods -l app=registry > "$LOG_DIR/registry-pods.txt"
+          # Get the node IP
+          node_ip = $(kubectl get pods -l app=registry -o custom-columns=:.status.hostIP --no-headers)
+          echo $node_ip
           make cinder-csi-plugin
           cp cinder-csi-plugin cluster/images/cinder-csi-plugin
-          docker build -t localhost:32000/k8scloudprovider/cinder-csi-plugin:latest cluster/images/cinder-csi-plugin
+          docker build -t $node_ip:32000/k8scloudprovider/cinder-csi-plugin:latest cluster/images/cinder-csi-plugin
+
+    - name: clean up iptable rules
+      shell:
+        cmd: |
+          iptables -F
+          iptables -P FORWARD ACCEPT
 
     - name: push cluster-local-build of cinder-csi-plugin to local registry
-      command: docker push localhost:32000/k8scloudprovider/cinder-csi-plugin:latest
+      shell:
+        cmd: |
+          node_ip = $(kubectl get pods -l app=registry -o custom-columns=:.status.hostIP --no-headers)
+          echo $node_ip
+          docker push $node_ip:32000/k8scloudprovider/cinder-csi-plugin:latest
       retries: 5
       delay: 5
 
