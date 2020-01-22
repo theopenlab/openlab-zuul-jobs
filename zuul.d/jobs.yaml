@@ -234,21 +234,21 @@
 #        OS_BRANCH: stable/mitaka
 #    nodeset: ubuntu-trusty
 ### grandson job pinned v1.19.0 against mitaka branch of OpenStack
-- job:
-    name: terraform-provider-openstack-v1.19.0-acceptance-test-mitaka
-    parent: terraform-provider-openstack-acceptance-test-mitaka
-    description: |
-      Run terraform-provider-openstack of v1.19.0 acceptance test against mitaka branch of OpenStack
-    override-checkout: v1.19.0
-    tags:
-      - Category:Cloud
-      - Project:terraform-providers/terraform-provider-openstack
-      - Application:terraform-provider-openstack@v1.19.0
-      - Application:OpenStack@mitaka
-      - Application:Go@1.12.1
-      - Arch:x86_64
-      - OS:ubuntu-xenial
-      - BuildType:Integration test
+#- job:
+#    name: terraform-provider-openstack-v1.19.0-acceptance-test-mitaka
+#    parent: terraform-provider-openstack-acceptance-test-mitaka
+#    description: |
+#      Run terraform-provider-openstack of v1.19.0 acceptance test against mitaka branch of OpenStack
+#    override-checkout: v1.19.0
+#    tags:
+#      - Category:Cloud
+#      - Project:terraform-providers/terraform-provider-openstack
+#      - Application:terraform-provider-openstack@v1.19.0
+#      - Application:OpenStack@mitaka
+#      - Application:Go@1.12.1
+#      - Arch:x86_64
+#      - OS:ubuntu-xenial
+#      - BuildType:Integration test
 
 - job:
     name: terraform-provider-openstack-acceptance-test-designate

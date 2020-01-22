@@ -200,8 +200,6 @@
             branches: master
         - gophercloud-v0.4.0-acceptance-test-newton:
             branches: master
-        - gophercloud-v0.4.0-acceptance-test-mitaka:
-            branches: master
 
 ####################### periodic jobs on 18:00##########################
 #- project:
