@@ -140,16 +140,25 @@
           mkdir -p '{{ k8s_log_dir }}'
           export LOG_DIR='{{ k8s_log_dir }}'
 
-          if ! timeout 300 bash -c '
-            while :
-            do
-              kubectl apply -f /etc/kubernetes/in-cluster-registry.yaml && break
-              sleep 1
-            done
-          '; then
-            echo "Failed to install container registry"
-            exit 1
+          kubectl apply -f /etc/kubernetes/in-cluster-registry.yaml && break
+          # If services up
+          if timeout 300 bash -c '
+              while :
+              do
+                 registrypod=$(kubectl get pods -l app=registry --field-selector=status.phase=Running --no-headers| wc -l)
+                 (registrypod > 0) && break
+                 sleep 1
+              done
+              '
+          then
+             echo 'registry services successful'
+              kubectl get pods -l app=registry
+          else
+              echo 'registry services failed'
+              kubectl get pods -l app=registry
+              exit 1
           fi
+
           kubectl describe pods -l app=registry > "$LOG_DIR/registry-pods.txt"
 
     - name: Get node ip of the registry
@@ -261,6 +270,9 @@
               kubectl get pod --all-namespaces
               exit 1
           fi
+
+          kubectl describe pods -l app=csi-cinder-controllerplugin > "{{ k8s_log_dir }}/csi-cinder-controllerplugin.txt"
+          kubectl describe pods -l app=csi-cinder-nodeplugin  > "{{ k8s_log_dir }}/csi-cinder-nodeplugin .txt"
 
     - name: get kubelet_version
       command: "kubelet --version"
