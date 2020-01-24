@@ -123,11 +123,16 @@
             sessionAffinity: None
             type: NodePort
 
-    - name: build cinder-csi from master
+    - name: Flush ip tables
+      shell:
+        cmd: |
+          iptables -F
+          iptables -P FORWARD ACCEPT
+
+    - name: start in-cluster-registry
       environment: '{{ global_env }}'
       args:
         executable: /bin/bash
-        chdir: '{{ k8s_os_provider_src_dir }}'
       shell:
         cmd: |
           set -o pipefail
@@ -146,25 +151,47 @@
             exit 1
           fi
           kubectl describe pods -l app=registry > "$LOG_DIR/registry-pods.txt"
-          # Get the node IP
-          node_ip = $(kubectl get pods -l app=registry -o custom-columns=:.status.hostIP --no-headers)
-          echo $node_ip
-          make cinder-csi-plugin
-          cp cinder-csi-plugin cluster/images/cinder-csi-plugin
-          docker build -t $node_ip:32000/k8scloudprovider/cinder-csi-plugin:latest cluster/images/cinder-csi-plugin
 
-    - name: clean up iptable rules
+    - name: Get node ip of the registry
+      command: "kubectl get pods -l app=registry -o custom-columns=:.status.hostIP --no-headers"
+      register: registry_node_ip
+
+    - name: set registry_ip to node ip of the registry service
+      set_fact:
+        registry_ip: '{{ registry_node_ip.stdout }}'
+
+    - name: Add insecure registry to docker configuration
+      copy:
+        dest: /etc/docker/daemon.json
+        content: |
+          {
+            "insecure-registries" : ["{{ registry_ip }}:32000"]
+          }
+
+    - name: restart docker
+      command: service docker restart
+
+    - name: build cinder-csi from master
+      environment: '{{ global_env }}'
+      args:
+        executable: /bin/bash
+        chdir: '{{ k8s_os_provider_src_dir }}'
       shell:
         cmd: |
-          iptables -F
-          iptables -P FORWARD ACCEPT
+          set -o pipefail
+          set -ex
+          mkdir -p '{{ k8s_log_dir }}'
+          export LOG_DIR='{{ k8s_log_dir }}'
+
+          make cinder-csi-plugin
+          cp cinder-csi-plugin cluster/images/cinder-csi-plugin
+          echo "{{ registry_ip }}"
+          docker build -t {{ registry_ip }}:32000/k8scloudprovider/cinder-csi-plugin:latest cluster/images/cinder-csi-plugin
 
     - name: push cluster-local-build of cinder-csi-plugin to local registry
       shell:
         cmd: |
-          node_ip = $(kubectl get pods -l app=registry -o custom-columns=:.status.hostIP --no-headers)
-          echo $node_ip
-          docker push $node_ip:32000/k8scloudprovider/cinder-csi-plugin:latest
+          docker push {{ registry_ip }}:32000/k8scloudprovider/cinder-csi-plugin:latest
       retries: 5
       delay: 5
 
@@ -182,7 +209,7 @@
 
           images:
           - name: docker.io/k8scloudprovider/cinder-csi-plugin
-            newName: localhost:32000/k8scloudprovider/cinder-csi-plugin
+            newName: {{ registry_ip }}:32000/k8scloudprovider/cinder-csi-plugin
             newTag: latest
 
     - name: config and deploy cinder-csi-plugin
