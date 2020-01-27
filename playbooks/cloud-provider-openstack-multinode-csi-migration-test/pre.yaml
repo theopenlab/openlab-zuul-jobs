@@ -145,13 +145,12 @@
           if timeout 300 bash -c '
               while :
               do
-                 registrypod=$(kubectl get pods -l app=registry --field-selector=status.phase=Running --no-headers| wc -l)
-                 (registrypod > 0) && break
-                 sleep 1
+                 [ -z "$(kubectl get pods -l app=registry --field-selector=status.phase!=Running)" ] && break
+                 sleep 5
               done
               '
           then
-             echo 'registry services successful'
+              echo 'registry services successful'
               kubectl get pods -l app=registry
           else
               echo 'registry services failed'
@@ -189,12 +188,8 @@
         cmd: |
           set -o pipefail
           set -ex
-          mkdir -p '{{ k8s_log_dir }}'
-          export LOG_DIR='{{ k8s_log_dir }}'
-
           make cinder-csi-plugin
           cp cinder-csi-plugin cluster/images/cinder-csi-plugin
-          echo "{{ registry_ip }}"
           docker build -t {{ registry_ip }}:32000/k8scloudprovider/cinder-csi-plugin:latest cluster/images/cinder-csi-plugin
 
     - name: push cluster-local-build of cinder-csi-plugin to local registry
@@ -218,7 +213,7 @@
 
           images:
           - name: docker.io/k8scloudprovider/cinder-csi-plugin
-            newName: {{ registry_ip }}:32000/k8scloudprovider/cinder-csi-plugin
+            newName: localhost:32000/k8scloudprovider/cinder-csi-plugin
             newTag: latest
 
     - name: config and deploy cinder-csi-plugin
@@ -263,7 +258,7 @@
               done
               '
           then
-             echo 'Run services successful'
+              echo 'Run services successful'
               kubectl get pod --all-namespaces
           else
               echo 'Run services failed'
@@ -271,8 +266,8 @@
               exit 1
           fi
 
-          kubectl describe pods -l app=csi-cinder-controllerplugin > "{{ k8s_log_dir }}/csi-cinder-controllerplugin.txt"
-          kubectl describe pods -l app=csi-cinder-nodeplugin  > "{{ k8s_log_dir }}/csi-cinder-nodeplugin .txt"
+          kubectl describe pods -l app=csi-cinder-controllerplugin -n kube-system > "{{ k8s_log_dir }}/csi-cinder-controllerplugin.txt"
+          kubectl describe pods -l app=csi-cinder-nodeplugin -n kube-system > "{{ k8s_log_dir }}/csi-cinder-nodeplugin .txt"
 
     - name: get kubelet_version
       command: "kubelet --version"
