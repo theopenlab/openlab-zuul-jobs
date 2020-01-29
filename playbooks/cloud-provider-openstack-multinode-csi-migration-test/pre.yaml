@@ -149,6 +149,7 @@
                  sleep 5
               done
               '
+              kubectl describe pods -l app=registry > "$LOG_DIR/registry-pods.txt"
           then
               echo 'registry services successful'
               kubectl get pods -l app=registry
@@ -157,8 +158,6 @@
               kubectl get pods -l app=registry
               exit 1
           fi
-
-          kubectl describe pods -l app=registry > "$LOG_DIR/registry-pods.txt"
 
     - name: Get node ip of the registry
       command: "kubectl get pods -l app=registry -o custom-columns=:.status.hostIP --no-headers"
@@ -179,6 +178,25 @@
     - name: restart docker
       command: service docker restart
 
+- hosts: k8s-node-1,k8s-node-2
+  name: Allow use of insecure registries on worker nodes
+  become: yes
+  tasks:
+    - name: Add insecure registry to docker configuration
+      copy:
+        dest: /etc/docker/daemon.json
+        content: |
+          {
+            "insecure-registries" : ["{{ hostvars['k8s-master']['registry_ip'] }}:32000"]
+          }
+
+    - name: restart docker
+      command: service docker restart
+
+- hosts: k8s-master
+  name: Build and Deploy Cinder CSI Plugin
+  become: yes
+  tasks:
     - name: build cinder-csi from master
       environment: '{{ global_env }}'
       args:
@@ -213,7 +231,7 @@
 
           images:
           - name: docker.io/k8scloudprovider/cinder-csi-plugin
-            newName: localhost:32000/k8scloudprovider/cinder-csi-plugin
+            newName: {{ registry_ip }}:32000/k8scloudprovider/cinder-csi-plugin
             newTag: latest
 
     - name: config and deploy cinder-csi-plugin
@@ -257,6 +275,8 @@
                  sleep 1
               done
               '
+              kubectl describe pods -l app=csi-cinder-controllerplugin -n kube-system > "{{ k8s_log_dir }}/csi-cinder-controllerplugin.txt"
+              kubectl describe pods -l app=csi-cinder-nodeplugin -n kube-system > "{{ k8s_log_dir }}/csi-cinder-nodeplugin .txt"
           then
               echo 'Run services successful'
               kubectl get pod --all-namespaces
@@ -265,9 +285,6 @@
               kubectl get pod --all-namespaces
               exit 1
           fi
-
-          kubectl describe pods -l app=csi-cinder-controllerplugin -n kube-system > "{{ k8s_log_dir }}/csi-cinder-controllerplugin.txt"
-          kubectl describe pods -l app=csi-cinder-nodeplugin -n kube-system > "{{ k8s_log_dir }}/csi-cinder-nodeplugin .txt"
 
     - name: get kubelet_version
       command: "kubelet --version"
