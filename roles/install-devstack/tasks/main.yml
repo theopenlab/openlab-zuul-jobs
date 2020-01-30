@@ -81,7 +81,7 @@
       iptables -F openstack-INPUT || true
 
       # Remove distutils packages that conflict with pip packages that devstack needs to bigip_software_install
-      apt remove python3-httplib2
+      apt remove -y python3-httplib2
     executable: /bin/bash
     chdir: '{{ ansible_user_dir }}/workspace'
   environment: '{{ zuul | zuul_legacy_vars }}'
