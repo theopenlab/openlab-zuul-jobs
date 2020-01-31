@@ -79,12 +79,14 @@
 
       # Delete all rules in chain openstack-INPUT to allow unlimited access from nested vm
       iptables -F openstack-INPUT || true
-
-      # Remove distutils packages that conflict with pip packages that devstack needs to bigip_software_install
-      apt remove python3-httplib2
     executable: /bin/bash
     chdir: '{{ ansible_user_dir }}/workspace'
   environment: '{{ zuul | zuul_legacy_vars }}'
+
+- name: Remove distutils packages that conflict with pip packages that devstack needs to install
+  apt:
+    name: python3-httplib2
+    state: absent
 
 # Convert multiple key=value pairs to json format
 #   's/^/"/' - add " at the beginning of each line
