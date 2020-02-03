@@ -123,6 +123,80 @@
             sessionAffinity: None
             type: NodePort
 
+    - name: Flush ip tables
+      shell:
+        cmd: |
+          iptables -F
+          iptables -P FORWARD ACCEPT
+
+    - name: start in-cluster-registry
+      environment: '{{ global_env }}'
+      args:
+        executable: /bin/bash
+      shell:
+        cmd: |
+          set -o pipefail
+          set -ex
+          mkdir -p '{{ k8s_log_dir }}'
+          export LOG_DIR='{{ k8s_log_dir }}'
+
+          kubectl apply -f /etc/kubernetes/in-cluster-registry.yaml && break
+          # If services up
+          if timeout 300 bash -c '
+              while :
+              do
+                 [ -z "$(kubectl get pods -l app=registry --field-selector=status.phase!=Running)" ] && break
+                 sleep 5
+              done
+              '
+              kubectl describe pods -l app=registry > "$LOG_DIR/registry-pods.txt"
+          then
+              echo 'registry services successful'
+              kubectl get pods -l app=registry
+          else
+              echo 'registry services failed'
+              kubectl get pods -l app=registry
+              exit 1
+          fi
+
+    - name: Get node ip of the registry
+      command: "kubectl get pods -l app=registry -o custom-columns=:.status.hostIP --no-headers"
+      register: registry_node_ip
+
+    - name: set registry_ip to node ip of the registry service
+      set_fact:
+        registry_ip: '{{ registry_node_ip.stdout }}'
+
+    - name: Add insecure registry to docker configuration
+      copy:
+        dest: /etc/docker/daemon.json
+        content: |
+          {
+            "insecure-registries" : ["{{ registry_ip }}:32000"]
+          }
+
+    - name: restart docker
+      command: service docker restart
+
+- hosts: k8s-node-1,k8s-node-2
+  name: Allow use of insecure registries on worker nodes
+  become: yes
+  tasks:
+    - name: Add insecure registry to docker configuration
+      copy:
+        dest: /etc/docker/daemon.json
+        content: |
+          {
+            "insecure-registries" : ["{{ hostvars['k8s-master']['registry_ip'] }}:32000"]
+          }
+
+    - name: restart docker
+      command: service docker restart
+
+- hosts: k8s-master
+  name: Build and Deploy Cinder CSI Plugin
+  become: yes
+  tasks:
     - name: build cinder-csi from master
       environment: '{{ global_env }}'
       args:
@@ -132,23 +206,14 @@
         cmd: |
           set -o pipefail
           set -ex
-
-          if ! timeout 300 bash -c '
-            while :
-            do
-              kubectl apply -f /etc/kubernetes/in-cluster-registry.yaml && break
-              sleep 1
-            done
-          '; then
-            echo "Failed to install container registry"
-            exit 1
-          fi
           make cinder-csi-plugin
           cp cinder-csi-plugin cluster/images/cinder-csi-plugin
-          docker build -t localhost:32000/k8scloudprovider/cinder-csi-plugin:latest cluster/images/cinder-csi-plugin
+          docker build -t {{ registry_ip }}:32000/k8scloudprovider/cinder-csi-plugin:latest cluster/images/cinder-csi-plugin
 
     - name: push cluster-local-build of cinder-csi-plugin to local registry
-      command: docker push localhost:32000/k8scloudprovider/cinder-csi-plugin:latest
+      shell:
+        cmd: |
+          docker push {{ registry_ip }}:32000/k8scloudprovider/cinder-csi-plugin:latest
       retries: 5
       delay: 5
 
@@ -166,7 +231,7 @@
 
           images:
           - name: docker.io/k8scloudprovider/cinder-csi-plugin
-            newName: localhost:32000/k8scloudprovider/cinder-csi-plugin
+            newName: {{ registry_ip }}:32000/k8scloudprovider/cinder-csi-plugin
             newTag: latest
 
     - name: config and deploy cinder-csi-plugin
@@ -210,8 +275,10 @@
                  sleep 1
               done
               '
+              kubectl describe pods -l app=csi-cinder-controllerplugin -n kube-system > "{{ k8s_log_dir }}/csi-cinder-controllerplugin.txt"
+              kubectl describe pods -l app=csi-cinder-nodeplugin -n kube-system > "{{ k8s_log_dir }}/csi-cinder-nodeplugin .txt"
           then
-             echo 'Run services successful'
+              echo 'Run services successful'
               kubectl get pod --all-namespaces
           else
               echo 'Run services failed'

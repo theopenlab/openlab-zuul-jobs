@@ -83,6 +83,11 @@
     chdir: '{{ ansible_user_dir }}/workspace'
   environment: '{{ zuul | zuul_legacy_vars }}'
 
+- name: Remove distutils packages that conflict with pip packages that devstack needs to install
+  apt:
+    name: python3-httplib2
+    state: absent
+
 # Convert multiple key=value pairs to json format
 #   's/^/"/' - add " at the beginning of each line
 #   's/=/": "/' - change = to ": " in each line
