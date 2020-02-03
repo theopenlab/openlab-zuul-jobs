@@ -275,8 +275,21 @@
                  sleep 1
               done
               '
-              kubectl describe pods -l app=csi-cinder-controllerplugin -n kube-system > "{{ k8s_log_dir }}/csi-cinder-controllerplugin.txt"
-              kubectl describe pods -l app=csi-cinder-nodeplugin -n kube-system > "{{ k8s_log_dir }}/csi-cinder-nodeplugin .txt"
+              kubectl describe pods -l app=csi-cinder-controllerplugin -n kube-system > "{{ k8s_log_dir }}/controllerplugin-pods.txt"
+              kubectl describe pods -l app=csi-cinder-nodeplugin -n kube-system > "{{ k8s_log_dir }}/nodeplugin-pods.txt"
+
+              # Get the container logs
+              controller_pod=$(kubectl -n kube-system get pods -l app=csi-cinder-controllerplugin -o name  | head -n 1)
+              nodeplugin_pod=$(kubectl -n kube-system get pods -l app=csi-cinder-nodeplugin -o name  | head -n 1)
+
+              if [[ ! -z "$controller_pod" ]]; then
+                kubectl -n kube-system logs "$controller_pod" -c cinder-csi-plugin > "{{ k8s_log_dir }}/csi-cinder-controllerplugin.txt"
+              fi
+
+              if [[ ! -z "$nodeplugin_pod" ]]; then
+                kubectl -n kube-system logs "$nodeplugin_pod" -c cinder-csi-plugin > "{{ k8s_log_dir }}/csi-cinder-nodeplugin.txt"
+              fi
+
           then
               echo 'Run services successful'
               kubectl get pod --all-namespaces
