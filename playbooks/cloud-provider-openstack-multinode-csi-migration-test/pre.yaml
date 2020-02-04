@@ -196,6 +196,8 @@
 - hosts: k8s-master
   name: Build and Deploy Cinder CSI Plugin
   become: yes
+  roles:
+    - export-cloud-openrc
   tasks:
     - name: build cinder-csi from master
       environment: '{{ global_env }}'
