@@ -1,6 +1,8 @@
 - hosts: k8s-master
   name: Run Kubernetes e2e.test for sig-storage and the cinder driver
   become: yes
+  roles:
+    - export-cloud-openrc
   tasks:
     - name: Run test
       environment: "{{ global_env }}"
