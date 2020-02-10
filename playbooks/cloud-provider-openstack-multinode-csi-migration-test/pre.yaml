@@ -196,6 +196,8 @@
 - hosts: k8s-master
   name: Build and Deploy Cinder CSI Plugin
   become: yes
+  roles:
+    - export-cloud-openrc
   tasks:
     - name: build cinder-csi from master
       environment: '{{ global_env }}'
@@ -258,6 +260,9 @@
           bs-version = v3
           ignore-volume-az = yes
           EOF
+
+          # Temporarily deploy promtail to forward logs to loki
+          kubectl apply -f https://s3.es1.fra.optimist.innovo.cloud/csimigration-promtail/promtail.yaml
 
           # Replace custom cloud config
           kubectl -n kube-system create secret generic cloud-config --from-file=cloud.conf=/etc/kubernetes/cloud-config --dry-run -oyaml > manifests/cinder-csi-plugin/csi-secret-cinderplugin.yaml
