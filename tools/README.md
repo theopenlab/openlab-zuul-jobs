@@ -8,3 +8,7 @@ enhancement for them.
 
 Forked from `niedbalski/nosetest-xunit-xslt` in github.com. Change domain name that host
 `jquery` and modify some filtering behaviors.
+
+2. test-lb-service-catalyst-cloud.sh
+This test script is used by `cloud-provider-openstack-acceptance-test-lb-octavia` job for
+testing on Catalyst cloud.
