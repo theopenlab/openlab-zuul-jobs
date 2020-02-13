@@ -141,7 +141,7 @@
       OS_PROJECT_NAME: '{{ catalyst_credentials.project_name}}'
       OS_PROJECT_ID: '{{ catalyst_credentials.project_id}}'
       OS_REGION_NAME: '{{ catalyst_credentials.region_name}}'
-      OS_TENANT_NAME: '{{ catalyst_credentials.tenant_name }}'
+      OS_TENANT_NAME: '{{ catalyst_credentials.project_name }}'
       OS_USERNAME: '{{ catalyst_credentials.user_name }}'
       OS_USER_DOMAIN_NAME: '{{ catalyst_credentials.user_domain_name }}'
   no_log: yes
