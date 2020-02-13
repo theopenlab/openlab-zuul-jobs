@@ -130,11 +130,6 @@
       register: floating_ip
       environment: '{{ global_env }}'
 
-    - name: Make sure we have test-lb-service-catalyst-cloud.sh
-      copy:
-        src:
-        dest:
-
     - name: Run acceptance tests for LoadBalancer Service
       shell:
         executable: /bin/bash
