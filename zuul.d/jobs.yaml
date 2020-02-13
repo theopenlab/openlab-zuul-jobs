@@ -821,6 +821,7 @@
     nodeset: ubuntu-xenial-vexxhost-lb
     secrets:
       - vexxhost_credentials
+      - kubeconfig
 
 - job:
     name: cloud-provider-openstack-acceptance-test-keystone-authentication-authorization
