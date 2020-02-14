@@ -822,8 +822,6 @@
     secrets:
       - catalyst_credentials
       - kubeconfig
-    vars:
-      go_version: '1.13.4'
 
 - job:
     name: cloud-provider-openstack-acceptance-test-keystone-authentication-authorization
