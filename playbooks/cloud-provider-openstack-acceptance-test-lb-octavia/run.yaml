@@ -31,6 +31,9 @@
     - name: Upload openstack-cloud-controller-manager image
       shell: docker push {{ dockerhub.username }}/openstack-cloud-controller-manager:{{ zuul.change }}
 
+    - name: THIS TASK IS ONLY FOR DEBUGGING PURPOSE, SHOULD BE REMOVED REFORE MERGE.
+      pause:
+
     - name: Wait until openstack-cloud-controller-manager is avaialble for patching
       shell:
         executable: /bin/bash
