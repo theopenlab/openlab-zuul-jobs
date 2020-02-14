@@ -1,16 +1,17 @@
 - hosts: all
   become: yes
+
   roles:
-    - config-docker-machine
+    - role: config-golang
+      vars:
+        go_version: '1.13.4'
+    - install-docker
     - role: export-cloud-openrc
       vars:
         cloud_name: "catalyst"
-  tasks:
-    - name: Login dockerhub
-      shell: docker login -u {{ dockerhub.username }} -p {{ dockerhub.password }}
-      no_log: yes
 
-    - name: Install kubectl and jq
+  tasks:
+    - name: Install kubectl
       shell:
         cmd: |
           curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
@@ -20,19 +21,56 @@
           cat << EOF >> ~/.kube/config
           {{ kubeconfig.content }}
           EOF
-          apt install -y jq
       no_log: yes
+
+    - name: Install packages
+      apt:
+        name: "{{ packages }}"
+        state: present
+        update_cache: yes
+      vars:
+        packages:
+          - build-essential
+          - python3-pip
+          - python3-dev
+          - python3-setuptools
+          - libffi-dev
+          - libxslt1-dev
+          - libxml2-dev
+          - libyaml-dev
+          - libssl-dev
+          - zlib1g-dev
+          - jq
+
+    - name: Pin pip to 9.0.3
+      shell: pip3 install pip==9.0.3
+
+    - name: Install pypi libraries
+      pip:
+        name: "{{ libraries }}"
+      ignore_errors: True
+      vars:
+        libraries:
+          - python-openstackclient
+          - python-octaviaclient
+          - httpie
 
     - name: Build openstack-cloud-controller-manager image
       shell:
         cmd: make image-controller-manager REGISTRY={{ dockerhub.username }} VERSION={{ zuul.change }}
         chdir: '{{ k8s_os_provider_src_dir }}'
 
+    - name: Login dockerhub
+      shell: docker login -u {{ dockerhub.username }} -p {{ dockerhub.password }}
+      no_log: yes
+
     - name: Upload openstack-cloud-controller-manager image
       shell: docker push {{ dockerhub.username }}/openstack-cloud-controller-manager:{{ zuul.change }}
 
     - name: THIS TASK IS ONLY FOR DEBUGGING PURPOSE, SHOULD BE REMOVED REFORE MERGE.
-      pause:
+      wait_for:
+        timeout: 28800
+      delegate_to: localhost
 
     - name: Wait until openstack-cloud-controller-manager is avaialble for patching
       shell:
