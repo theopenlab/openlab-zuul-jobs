@@ -818,10 +818,12 @@
       Run lb acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-lb-octavia/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-lb-octavia/post.yaml
-    nodeset: ubuntu-xenial-vexxhost-lb
+    nodeset: ubuntu-bionic
     secrets:
-      - vexxhost_credentials
+      - catalyst_credentials
       - kubeconfig
+    vars:
+      go_version: '1.13.4'
 
 - job:
     name: cloud-provider-openstack-acceptance-test-keystone-authentication-authorization
