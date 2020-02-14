@@ -650,7 +650,7 @@
       - OS:ubuntu-xenial
       - Arch:x86_64
       - BuildType:Integration test
-      
+
 - job:
     name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.15
     parent: cloud-provider-openstack-acceptance-test-e2e-conformance
@@ -821,6 +821,7 @@
     nodeset: ubuntu-xenial-vexxhost-lb
     secrets:
       - vexxhost_credentials
+      - kubeconfig
 
 - job:
     name: cloud-provider-openstack-acceptance-test-keystone-authentication-authorization
@@ -2194,7 +2195,7 @@
       run_kubeflow_tfbenchmarks: true
       run_volcano_tfbenchmarks: true
     nodeset: ubuntu-xenial-k8s-tf
-    
+
 # grandson job for stein
 - job:
     name: rust-openstack-0.2.3-acceptance-stein
@@ -2210,7 +2211,7 @@
       - OS:ubuntu-xenial
       - Arch:x86_64
       - BuildType:Integration test
-    
+
 # grandson job for rocky
 - job:
     name: rust-openstack-0.2.3-acceptance-rocky
