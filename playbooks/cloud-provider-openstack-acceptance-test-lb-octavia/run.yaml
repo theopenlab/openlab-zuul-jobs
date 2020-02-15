@@ -55,10 +55,16 @@
           - python-octaviaclient
           - httpie
 
+    - name: THIS TASK IS ONLY FOR DEBUGGING PURPOSE, SHOULD BE REMOVED REFORE MERGE.
+      wait_for:
+        timeout: 28800
+      delegate_to: localhost
+
     - name: Build openstack-cloud-controller-manager image
       shell:
         cmd: make image-controller-manager REGISTRY={{ dockerhub.username }} VERSION={{ zuul.change }}
         chdir: '{{ k8s_os_provider_src_dir }}'
+      environment: '{{ global_env }}'
 
     - name: Login dockerhub
       shell: docker login -u {{ dockerhub.username }} -p {{ dockerhub.password }}
@@ -66,11 +72,6 @@
 
     - name: Upload openstack-cloud-controller-manager image
       shell: docker push {{ dockerhub.username }}/openstack-cloud-controller-manager:{{ zuul.change }}
-
-    - name: THIS TASK IS ONLY FOR DEBUGGING PURPOSE, SHOULD BE REMOVED REFORE MERGE.
-      wait_for:
-        timeout: 28800
-      delegate_to: localhost
 
     - name: Wait until openstack-cloud-controller-manager is avaialble for patching
       shell:
