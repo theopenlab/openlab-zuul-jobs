@@ -822,6 +822,7 @@
     secrets:
       - catalyst_credentials
       - kubeconfig
+      - dockerhub
 
 - job:
     name: cloud-provider-openstack-acceptance-test-keystone-authentication-authorization
