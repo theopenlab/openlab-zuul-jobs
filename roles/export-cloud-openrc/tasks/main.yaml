@@ -131,22 +131,6 @@
   no_log: yes
   when: cloud_name == 'fusioncloud'
 
-- name: Set fact for catalyst openrc
-  set_fact:
-    openrc:
-      OS_PASSWORD: '{{ catalyst_credentials.password }}'
-      OS_AUTH_URL: '{{ catalyst_credentials.auth_url }}'
-      OS_IDENTITY_API_VERSION: '{{ catalyst_credentials.identity_api_version }}'
-      OS_PROJECT_DOMAIN_NAME: '{{ catalyst_credentials.project_domain_name }}'
-      OS_PROJECT_NAME: '{{ catalyst_credentials.project_name}}'
-      OS_PROJECT_ID: '{{ catalyst_credentials.project_id}}'
-      OS_REGION_NAME: '{{ catalyst_credentials.region_name}}'
-      OS_TENANT_NAME: '{{ catalyst_credentials.project_name }}'
-      OS_USERNAME: '{{ catalyst_credentials.user_name }}'
-      OS_USER_DOMAIN_NAME: '{{ catalyst_credentials.user_domain_name }}'
-  no_log: yes
-  when: cloud_name == 'catalyst'
-
 - name: Merge openrc into golang env
   set_fact:
     global_env: '{{ global_env | combine(openrc) }}'
