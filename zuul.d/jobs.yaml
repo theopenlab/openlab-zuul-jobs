@@ -820,7 +820,6 @@
     post-run: playbooks/cloud-provider-openstack-acceptance-test-lb-octavia/post.yaml
     nodeset: ubuntu-bionic
     secrets:
-      - catalyst_credentials
       - kubeconfig
       - dockerhub
 
