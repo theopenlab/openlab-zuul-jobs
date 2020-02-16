@@ -1,6 +1,9 @@
 - hosts: all
   become: yes
 
+  environment:
+    KUBECONFIG: "{{ ansible_user_dir }}/.kube/config"
+
   tasks:
     - name: Clean up k8s services
       shell:
