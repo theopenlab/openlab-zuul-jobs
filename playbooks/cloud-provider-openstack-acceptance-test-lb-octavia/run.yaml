@@ -69,6 +69,7 @@
         executable: /bin/bash
         cmd: |
           set -o pipefail
+          export KUBECONFIG={{ ansible_user_dir }}/.kube/config
           kubectl -n kube-system get ds openstack-cloud-controller-manager -o json | jq -r '.metadata.labels | keys | .[]'
       register: result
       until: '"PR" not in result.stdout_lines'
@@ -79,6 +80,7 @@
       shell:
         executable: /bin/bash
         cmd: |
+          export KUBECONFIG={{ ansible_user_dir }}/.kube/config
           kubectl -n kube-system set image daemonset/openstack-cloud-controller-manager openstack-cloud-controller-manager={{ dockerhub.username }}/openstack-cloud-controller-manager:{{ zuul.change }}
           kubectl -n kube-system label daemonset openstack-cloud-controller-manager PR={{ zuul.change }}
 
@@ -88,6 +90,7 @@
         cmd: |
           set -o pipefail
           sleep 5
+          export KUBECONFIG={{ ansible_user_dir }}/.kube/config
           kubectl -n kube-system get po | grep openstack-cloud-controller-manager | grep Running
       register: check_pod
       until: check_pod.rc == 0
@@ -98,4 +101,4 @@
       shell:
         executable: /bin/bash
         chdir: '{{ k8s_os_provider_src_dir }}'
-        cmd: FLOATING_IP=103.254.157.207 bash tools/test-lb-service.sh
+        cmd: KUBECONFIG={{ ansible_user_dir }}/.kube/config FLOATING_IP=103.254.157.207 bash tools/test-lb-service.sh
