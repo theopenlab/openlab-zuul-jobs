@@ -101,4 +101,4 @@
       shell:
         executable: /bin/bash
         chdir: '{{ k8s_os_provider_src_dir }}'
-        cmd: KUBECONFIG={{ ansible_user_dir }}/.kube/config FLOATING_IP=103.254.157.207 bash tools/test-lb-service.sh
+        cmd: KUBECONFIG={{ ansible_user_dir }}/.kube/config FLOATING_IP=103.254.157.207 bash tests/e2e/cloudprovider/test-lb-service.sh
