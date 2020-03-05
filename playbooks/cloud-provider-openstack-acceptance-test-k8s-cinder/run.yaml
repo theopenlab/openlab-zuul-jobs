@@ -93,7 +93,7 @@
           if timeout 300 bash -c '
               while :
               do
-                  [[ $({{ kubectl }} describe pods web | awk "/^Status:/ {print \$2}") == Running ]] && break
+                  [[ $({{ kubectl }} get pod web | grep web | awk "{print \$3}") == Running ]] && break
                   sleep 1
               done
               '
