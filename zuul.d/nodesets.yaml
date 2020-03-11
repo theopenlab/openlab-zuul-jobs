@@ -98,6 +98,12 @@
         label: ubuntu-bionic
 
 - nodeset:
+    name: ubuntu-bionic-large
+    nodes:
+      - name: ubuntu-bionic-large
+        label: ubuntu-bionic-large
+
+- nodeset:
     name: ubuntu-bionic-citynetwork
     nodes:
       - name: ubuntu-bionic-citynetwork
