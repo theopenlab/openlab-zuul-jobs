@@ -12,6 +12,8 @@
           set -e
           set -o pipefail
 
+          # Specify target architecture to build binaries and images
+          export ARCH=${ARCH:-amd64}
           # Build cloud-provider-openstack binaries
           make build
 
@@ -45,7 +47,7 @@
           # DO NOT change the location of the cloud-config file. It is important for the old cinder provider to work
           export CLOUD_CONFIG=/etc/kubernetes/cloud-config
           # Specify the OCCM binary
-          export EXTERNAL_CLOUD_PROVIDER_BINARY="$PWD/openstack-cloud-controller-manager"
+          export EXTERNAL_CLOUD_PROVIDER_BINARY="$PWD/openstack-cloud-controller-manager-$ARCH"
 
           # location of where the kubernetes processes log their output
           mkdir -p '{{ k8s_log_dir }}'
@@ -91,8 +93,7 @@
           echo "$INSTANCE_UUID" > /var/lib/cloud/data/instance-id
 
           # Build latest images from source
-          cp cinder-csi-plugin cluster/images/cinder-csi-plugin
-          docker build -t docker.io/k8scloudprovider/cinder-csi-plugin:latest cluster/images/cinder-csi-plugin
+          VERSION=latest make image-cinder-csi-plugin
 
           # Replace custom cloud config
           {
