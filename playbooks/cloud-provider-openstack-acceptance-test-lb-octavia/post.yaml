@@ -1,9 +1,9 @@
 - hosts: all
   become: yes
-  roles:
-    - role: export-cloud-openrc
-      vars:
-        cloud_name: "catalyst"
+
+  environment:
+    KUBECONFIG: "{{ ansible_user_dir }}/.kube/config"
+
   tasks:
     - name: Clean up k8s services
       shell:
@@ -14,13 +14,6 @@
           for i in $services; do kubectl -n octavia-lb-test delete svc $i; done
           # Sleep 10s to make sure occm finishes deleting all the cloud resources.
           sleep 10
-
-    - name: Clean up load balancers
-      shell: |
-        # Delete all the existing load balancers
-        lbs=$(openstack loadbalancer list -c id -f value)
-        for i in $lbs; do openstack loadbalancer delete --cascade $i; done
-      environment: '{{ global_env }}'
 
     - name: Remove PR label for openstack-cloud-controller-manager
       shell: kubectl -n kube-system label ds openstack-cloud-controller-manager PR-

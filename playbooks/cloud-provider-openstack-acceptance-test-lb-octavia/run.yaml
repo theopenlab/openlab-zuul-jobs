@@ -1,144 +1,104 @@
 - hosts: all
   become: yes
-  roles:
-    - config-docker-machine
-    - role: export-cloud-openrc
-      vars:
-        cloud_name: "catalyst"
-  tasks:
-    - name: Login dockerhub
-      shell: docker login -u {{ dockerhub.username }} -p {{ dockerhub.password }}
-      no_log: yes
 
-    - name: Install kubectl and jq
+  roles:
+    - role: config-golang
+      go_version: '1.13.4'
+    - install-docker
+
+  tasks:
+    - name: Install kubectl
       shell:
         cmd: |
           curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
           chmod +x ./kubectl
           mv ./kubectl /usr/local/bin/kubectl
-          mkdir ~/.kube
-          cat << EOF >> ~/.kube/config
+          mkdir {{ ansible_user_dir }}/.kube
+          cat << EOF > {{ ansible_user_dir }}/.kube/config
           {{ kubeconfig.content }}
           EOF
-          apt install -y jq
+      no_log: yes
+
+    - name: Install packages
+      apt:
+        name: "{{ packages }}"
+        state: present
+        update_cache: yes
+      vars:
+        packages:
+          - build-essential
+          - python3-pip
+          - python3-dev
+          - python3-setuptools
+          - libffi-dev
+          - libxslt1-dev
+          - libxml2-dev
+          - libyaml-dev
+          - libssl-dev
+          - zlib1g-dev
+          - jq
+
+    - name: Pin pip to 9.0.3
+      shell: pip3 install pip==9.0.3
+
+    - name: Install pypi libraries
+      pip:
+        name: "{{ libraries }}"
+      ignore_errors: True
+      vars:
+        libraries:
+          - python-openstackclient
+          - python-octaviaclient
+          - httpie
+
+    - name: Login dockerhub
+      shell: docker login -u {{ dockerhub.username }} -p {{ dockerhub.password }}
       no_log: yes
 
     - name: Build openstack-cloud-controller-manager image
       shell:
         cmd: make image-controller-manager REGISTRY={{ dockerhub.username }} VERSION={{ zuul.change }}
         chdir: '{{ k8s_os_provider_src_dir }}'
+      environment: '{{ global_env }}'
 
     - name: Upload openstack-cloud-controller-manager image
       shell: docker push {{ dockerhub.username }}/openstack-cloud-controller-manager:{{ zuul.change }}
-
-    - name: THIS TASK IS ONLY FOR DEBUGGING PURPOSE, SHOULD BE REMOVED REFORE MERGE.
-      pause:
 
     - name: Wait until openstack-cloud-controller-manager is avaialble for patching
       shell:
         executable: /bin/bash
         cmd: |
           set -o pipefail
+          export KUBECONFIG={{ ansible_user_dir }}/.kube/config
           kubectl -n kube-system get ds openstack-cloud-controller-manager -o json | jq -r '.metadata.labels | keys | .[]'
       register: result
       until: '"PR" not in result.stdout_lines'
       retries: 30
       delay: 10
 
-    - name: Update openstack-cloud-controller-manager with the new docker image
+    - name: Update openstack-cloud-controller-manager with the new docker image and add testing label
       shell:
         executable: /bin/bash
         cmd: |
-          set -o pipefail
-          cat <<EOF | kubectl apply -f -
-          apiVersion: extensions/v1beta1
-          kind: DaemonSet
-          metadata:
-            labels:
-              k8s-app: openstack-cloud-controller-manager
-              PR: {{ zuul.change }}
-            name: openstack-cloud-controller-manager
-            namespace: kube-system
-          spec:
-            selector:
-              matchLabels:
-                k8s-app: openstack-cloud-controller-manager
-            template:
-              metadata:
-                labels:
-                  k8s-app: openstack-cloud-controller-manager
-              spec:
-                containers:
-                - command:
-                  - /bin/openstack-cloud-controller-manager
-                  - --v=2
-                  - --cloud-config=/etc/kubernetes/cloud-config
-                  - --cluster-name=ccacfedb-c04e-44f4-9420-262f64628d6f
-                  - --use-service-account-credentials=true
-                  - --bind-address=127.0.0.1
-                  image: {{ dockerhub.username }}/openstack-cloud-controller-manager:{{ zuul.change }}
-                  imagePullPolicy: Always
-                  name: openstack-cloud-controller-manager
-                  volumeMounts:
-                  - mountPath: /etc/kubernetes
-                    name: cloudconfig
-                    readOnly: true
-                hostNetwork: true
-                nodeSelector:
-                  node-role.kubernetes.io/master: ""
-                restartPolicy: Always
-                serviceAccount: cloud-controller-manager
-                serviceAccountName: cloud-controller-manager
-                tolerations:
-                - effect: NoSchedule
-                  key: node.cloudprovider.kubernetes.io/uninitialized
-                  value: "true"
-                - effect: NoSchedule
-                  key: dedicated
-                  value: master
-                - effect: NoSchedule
-                  key: CriticalAddonsOnly
-                  value: "True"
-                volumes:
-                - hostPath:
-                    path: /etc/kubernetes
-                    type: ""
-                  name: cloudconfig
-          EOF
+          export KUBECONFIG={{ ansible_user_dir }}/.kube/config
+          kubectl -n kube-system set image daemonset/openstack-cloud-controller-manager openstack-cloud-controller-manager={{ dockerhub.username }}/openstack-cloud-controller-manager:{{ zuul.change }}
+          kubectl -n kube-system label daemonset openstack-cloud-controller-manager PR={{ zuul.change }}
 
     - name: Wait for openstack-cloud-controller-manager up and running
       shell:
         executable: /bin/bash
         cmd: |
           set -o pipefail
+          sleep 5
+          export KUBECONFIG={{ ansible_user_dir }}/.kube/config
           kubectl -n kube-system get po | grep openstack-cloud-controller-manager | grep Running
       register: check_pod
       until: check_pod.rc == 0
       retries: 24
       delay: 5
 
-    # This is specially designed for Catalyst Cloud as creating floating IP with description is not supported yet.
-    - name: Find an available floating IP
-      shell:
-        executable: /bin/bash
-        cmd: |
-          set -e
-          set -o pipefail
-          ret=$(openstack floating ip list -f value -c "Fixed IP Address" -c "Floating IP Address" | grep None | awk 'NR==1 {print}')
-          if [[ -z $ret ]]; then
-              public_net=$(openstack network list --external -f value -c Name)
-              fip=$(openstack floating ip create ${public_net} -c floating_ip_address -f value)
-          else
-              fip=${ret% *}
-          fi
-          echo $fip
-      register: floating_ip
-      environment: '{{ global_env }}'
-
     - name: Run acceptance tests for LoadBalancer Service
       shell:
         executable: /bin/bash
         chdir: '{{ k8s_os_provider_src_dir }}'
-        cmd: |
-          FLOATING_IP={{ floating_ip.stdout }} CLUSTERNAME=c886a618-c92a-4d4d-9f8f-bd2201f4dafd bash tools/test-lb-service.sh
-      environment: '{{ global_env }}'
+        cmd: KUBECONFIG={{ ansible_user_dir }}/.kube/config FLOATING_IP=103.254.157.207 bash tests/e2e/cloudprovider/test-lb-service.sh

@@ -140,12 +140,16 @@
           metadata:
             name: csi-manila-secrets
             namespace: default
+          # Use the devstack ``demo`` user in the ``demo`` project rather than ``admin``
+          # since regular users should be able to use the cloud-provider-openstack
+          # APIs without OpenStack administrative privileges.  Devstack sets up
+          # up the same password for both users.
           stringData:
             os-authURL: "$OS_AUTH_URL"
             os-region: "$OS_REGION_NAME"
-            os-userName: "$OS_USERNAME"
+            os-userName: "demo"
             os-password: "$OS_PASSWORD"
-            os-projectName: "$OS_PROJECT_NAME"
+            os-projectName: "demo"
             os-domainID: "$OS_USER_DOMAIN_ID"
           YAML
 
