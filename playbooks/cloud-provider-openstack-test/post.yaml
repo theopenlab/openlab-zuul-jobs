@@ -16,11 +16,20 @@
           fi
           pv_name=$('{{ kubectl }}' get pv | sed '1d' | awk '{print $1}')
           if [[ -n "$pv_name" ]]; then
-            volume_id=$(openstack volume list | awk "/$pv_name/ {print \$2}")
+            for i in $pv_name
+            do
+            volume_id=$(openstack volume list | awk "/$i/ {print \$2}")
             if [[ -n "$volume_id" ]]; then
                 openstack server remove volume "$server_id" "$volume_id"
-                openstack volume delete "$volume_id"
+                volume_id=$volume_id timeout 10 bash -c '
+                while :
+                do
+                  [[ $(openstack volume show $volume_id -f value -c status) == available ]] && openstack volume delete "$volume_id" && break
+                  sleep 1
+                done
+                '
             fi
+            done
           fi
         executable: /bin/bash
         chdir: '{{ k8s_os_provider_src_dir }}'
