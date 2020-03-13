@@ -123,6 +123,22 @@
 
           export GO111MODULE=on
           export KUBECONFIG=/var/run/kubernetes/admin.kubeconfig
+
+          function dump_container_logs {
+            controller_pod=$({{ kubectl }} -n kube-system get pods -l app=csi-cinder-controllerplugin -o name  | head -n 1)
+            nodeplugin_pod=$({{ kubectl }} -n kube-system get pods -l app=csi-cinder-nodeplugin -o name  | head -n 1)
+
+            if [[ ! -z "$controller_pod" ]]; then
+              {{ kubectl }} -n kube-system logs "$controller_pod" -c cinder-csi-plugin > "$LOG_DIR/csi-cinder-controllerplugin.txt"
+            fi
+
+            if [[ ! -z "$nodeplugin_pod" ]]; then
+                {{ kubectl }} -n kube-system logs "$nodeplugin_pod" -c cinder-csi-plugin > "$LOG_DIR/csi-cinder-nodeplugin.txt"
+            fi
+          }
+
+          trap dump_container_logs EXIT
+
           # Download kubectl binary
           curl -Lo /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x /usr/local/bin/kubectl
               go test -v ./cmd/tests/cinder_csi_e2e_suite_test.go -ginkgo.v -ginkgo.progress -ginkgo.skip="\[Disruptive\]" -ginkgo.focus="\[cinder-csi-e2e\]" -timeout=0 -report-dir='{{ k8s_log_dir }}'
