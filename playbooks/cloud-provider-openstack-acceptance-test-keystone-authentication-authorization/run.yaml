@@ -108,11 +108,13 @@
           chmod +x ./kubectl
           mv ./kubectl /usr/local/bin/kubectl
           mkdir -p {{ ansible_user_dir }}/.kube
-          kubefile={{ ansible_user_dir }}/.kube/.kube/config
+          kubefile={{ ansible_user_dir }}/.kube/config
+          touch $kubefile
           kubectl config set-cluster local --server=https://localhost:6443 --certificate-authority=/var/run/kubernetes/server-ca.crt --kubeconfig=$kubefile
           kubectl config set-credentials myself --client-key=/var/run/kubernetes/client-admin.key --client-certificate=/var/run/kubernetes/client-admin.crt --kubeconfig=$kubefile
           kubectl config set-context local --cluster=local --user=myself --kubeconfig=$kubefile
           kubectl config use-context local --kubeconfig=$kubefile
+          export KUBECONFIG={{ ansible_user_dir }}/.kube/config
 
           # Create the initial configmaps for k8s-keystone-auth webhook
           cat <<EOF | kubectl apply -f -
@@ -173,7 +175,7 @@
 
     - name: Add openstack user context
       blockinfile:
-        path: "{{ ansible_user_dir }}/.kube/.kube/config"
+        path: "{{ ansible_user_dir }}/.kube/config"
         insertafter: "users:"
         block: |
           - name: openstactokenkuser
@@ -201,6 +203,7 @@
           # The default Keystone token expiration time in devstack is 3 hours.
           token=$(openstack token issue -f yaml -c id | awk '{print $2}')
           export OS_TOKEN=$token
-          kubectl config set-context openstack --cluster local --user openstactokenkuser --kubeconfig {{ ansible_user_dir }}/.kube/.kube/config
+          export KUBECONFIG={{ ansible_user_dir }}/.kube/config
+          kubectl config set-context openstack --cluster local --user openstactokenkuser
 
           OS_TOKEN=$token OS_CONTEXT_NAME=openstack AUTH_POLICY_CONFIGMAP=keystone-auth-policy ROLE_MAPPING_CONFIGMAP=keystone-sync-policy tests/e2e/k8s-keystone-auth/test-authz.sh
