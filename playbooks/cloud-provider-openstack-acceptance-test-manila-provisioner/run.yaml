@@ -20,8 +20,11 @@
           set -e
           set -o pipefail
 
+          export ARCH=${ARCH:-amd64}
+          export BUILD_CMDS=manila-provisioner
+
           # Build manila-provisioner binary
-          make manila-provisioner
+          make build
 
           export API_HOST_IP=$(ip route get 1.1.1.1 | awk '{print $7}')
           export KUBELET_HOST="0.0.0.0"

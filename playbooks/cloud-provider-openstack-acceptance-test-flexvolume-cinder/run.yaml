@@ -25,6 +25,8 @@
           set -e
           set -o pipefail
 
+          export ARCH=${ARCH:-amd64}
+
           # Build cloud-provider-openstack binaries
           make build
 
