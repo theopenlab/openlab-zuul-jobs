@@ -28,6 +28,7 @@
                   sleep 1
                 done
                 '
+                openstack volume show "$volume_id"
                 openstack volume delete "$volume_id"
             fi
             done
