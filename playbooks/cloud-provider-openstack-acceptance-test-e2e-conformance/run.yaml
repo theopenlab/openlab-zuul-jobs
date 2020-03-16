@@ -12,6 +12,9 @@
           set -e
           set -o pipefail
 
+          # Specify target architecture to build binaries and images
+          export ARCH=${ARCH:-amd64}
+
           # Build cloud-provider-openstack binaries
           make build
 
@@ -49,7 +52,7 @@
           # DO NOT change the location of the cloud-config file. It is important for the old cinder provider to work
           export CLOUD_CONFIG=/etc/kubernetes/cloud-config
           # Specify the OCCM binary
-          export EXTERNAL_CLOUD_PROVIDER_BINARY="$PWD/openstack-cloud-controller-manager"
+          export EXTERNAL_CLOUD_PROVIDER_BINARY="$PWD/openstack-cloud-controller-manager-$ARCH"
 
           # location of where the kubernetes processes log their output
           mkdir -p '{{ k8s_log_dir }}'
@@ -164,18 +167,19 @@
             export LOG_DIR='{{ k8s_log_dir }}'
             export REGISTRY=docker.io/k8scloudprovider
             export VERSION=latest
+            # Specify target architecture to build binaries and images
+            export ARCH=${ARCH:-amd64}
+
 
             make images 2>&1 | tee $LOG_DIR/image-build-upload.log
 
-            docker push ${REGISTRY}/openstack-cloud-controller-manager:${VERSION} | tee $LOG_DIR/image-build-upload.log
-            docker push ${REGISTRY}/cinder-flex-volume-driver:${VERSION} | tee $LOG_DIR/image-build-upload.log
-            docker push ${REGISTRY}/cinder-provisioner:${VERSION} | tee $LOG_DIR/image-build-upload.log
-            docker push ${REGISTRY}/cinder-csi-plugin:${VERSION} | tee $LOG_DIR/image-build-upload.log
-            docker push ${REGISTRY}/k8s-keystone-auth:${VERSION} | tee $LOG_DIR/image-build-upload.log
-            docker push ${REGISTRY}/octavia-ingress-controller:${VERSION} | tee $LOG_DIR/image-build-upload.log
-            docker push ${REGISTRY}/manila-csi-plugin:${VERSION} | tee $LOG_DIR/image-build-upload.log
-            docker push ${REGISTRY}/manila-provisioner:${VERSION} | tee $LOG_DIR/image-build-upload.log
-            docker push ${REGISTRY}/magnum-auto-healer:${VERSION} | tee $LOG_DIR/image-build-upload.log
+            docker push ${REGISTRY}/openstack-cloud-controller-manager-${ARCH}:${VERSION} | tee $LOG_DIR/image-build-upload.log
+            docker push ${REGISTRY}/cinder-csi-plugin-${ARCH}:${VERSION} | tee $LOG_DIR/image-build-upload.log
+            docker push ${REGISTRY}/k8s-keystone-auth-${ARCH}:${VERSION} | tee $LOG_DIR/image-build-upload.log
+            docker push ${REGISTRY}/octavia-ingress-controller-${ARCH}:${VERSION} | tee $LOG_DIR/image-build-upload.log
+            docker push ${REGISTRY}/manila-csi-plugin-${ARCH}:${VERSION} | tee $LOG_DIR/image-build-upload.log
+            docker push ${REGISTRY}/manila-provisioner-${ARCH}:${VERSION} | tee $LOG_DIR/image-build-upload.log
+            docker push ${REGISTRY}/magnum-auto-healer-${ARCH}:${VERSION} | tee $LOG_DIR/image-build-upload.log
           else
             exit 0;
           fi
