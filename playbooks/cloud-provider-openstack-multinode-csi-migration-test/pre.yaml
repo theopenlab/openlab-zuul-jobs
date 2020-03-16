@@ -208,9 +208,10 @@
         cmd: |
           set -o pipefail
           set -ex
-          make cinder-csi-plugin
-          cp cinder-csi-plugin cluster/images/cinder-csi-plugin
-          docker build -t {{ registry_ip }}:32000/k8scloudprovider/cinder-csi-plugin:latest cluster/images/cinder-csi-plugin
+          # Specify target architecture to build binaries and images
+          export ARCH=${ARCH:-amd64}
+          make build-cmd-cinder-csi-plugin
+          docker build -t {{ registry_ip }}:32000/k8scloudprovider/cinder-csi-plugin:latest -f cluster/images/cinder-csi-plugin/Dockerfile.build .
 
     - name: push cluster-local-build of cinder-csi-plugin to local registry
       shell:
