@@ -2386,7 +2386,7 @@
       - OS:ubuntu-xenial
       - Arch:arm64
       - BuildType:Integration test
-    timeout: 54000
+    timeout: 18000
 
 - job:
     name: flink-end-to-end-test-arm64-heavy-and-ha
@@ -2403,7 +2403,7 @@
       - OS:ubuntu-xenial
       - Arch:arm64
       - BuildType:Integration test
-    timeout: 54000
+    timeout: 18000
 
 - job:
     name: flink-end-to-end-test-arm64-misc-hadoopfree-and-misc
@@ -2420,7 +2420,7 @@
       - OS:ubuntu-xenial
       - Arch:arm64
       - BuildType:Integration test
-    timeout: 54000
+    timeout: 18000
 
 - job:
     name: flink-end-to-end-test-arm64-container
@@ -2437,7 +2437,7 @@
       - OS:ubuntu-xenial
       - Arch:arm64
       - BuildType:Integration test
-    timeout: 54000
+    timeout: 18000
 
 - job:
     name: flink-end-to-end-test-arm64-tpcds
@@ -2454,7 +2454,7 @@
       - OS:ubuntu-xenial
       - Arch:arm64
       - BuildType:Integration test
-    timeout: 54000
+    timeout: 18000
 
 - job:
     name: flink-build-and-test-arm64-core-and-tests
@@ -2470,7 +2470,7 @@
       - OS:ubuntu-xenial
       - Arch:arm64
       - BuildType:Unit test
-    timeout: 54000
+    timeout: 18000
 
 - job:
     name: flink-build-and-test-arm64-libraies-and-blink_planner
@@ -2486,7 +2486,7 @@
       - OS:ubuntu-xenial
       - Arch:arm64
       - BuildType:Unit test
-    timeout: 54000
+    timeout: 18000
 
 - job:
     name: flink-build-and-test-arm64-kafka_gelly-and-connectors
@@ -2502,7 +2502,7 @@
       - OS:ubuntu-xenial
       - Arch:arm64
       - BuildType:Unit test
-    timeout: 54000
+    timeout: 18000
 
 - job:
     name: flink-build-and-test-arm64-misc
@@ -2518,7 +2518,7 @@
       - OS:ubuntu-xenial
       - Arch:arm64
       - BuildType:Unit test
-    timeout: 54000
+    timeout: 18000
 
 - job:
     name: flink-build-and-test-arm64-scheduler-ng-core-and-ng-tests
@@ -2534,4 +2534,4 @@
       - OS:ubuntu-xenial
       - Arch:arm64
       - BuildType:Unit test
-    timeout: 54000
+    timeout: 18000
