@@ -24,10 +24,12 @@
                 volume_id=$volume_id timeout 10 bash -c '
                 while :
                 do
-                  [[ $(openstack volume show $volume_id -f value -c status) == available ]] && openstack volume delete "$volume_id" && break
+                  [[ $(openstack volume show $volume_id -f value -c status) == available ]] && break
                   sleep 1
                 done
                 '
+                openstack volume show "$volume_id"
+                openstack volume delete "$volume_id"
             fi
             done
           fi
