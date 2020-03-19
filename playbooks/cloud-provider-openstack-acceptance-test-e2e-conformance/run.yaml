@@ -11,10 +11,8 @@
           set -x
           set -e
           set -o pipefail
-
           # Specify target architecture to build binaries and images
           export ARCH=${ARCH:-amd64}
-
           # Build cloud-provider-openstack binaries
           make build
 
@@ -52,7 +50,7 @@
           # DO NOT change the location of the cloud-config file. It is important for the old cinder provider to work
           export CLOUD_CONFIG=/etc/kubernetes/cloud-config
           # Specify the OCCM binary
-          export EXTERNAL_CLOUD_PROVIDER_BINARY="$PWD/openstack-cloud-controller-manager-$ARCH"
+          export EXTERNAL_CLOUD_PROVIDER_BINARY="$PWD/openstack-cloud-controller-manager"
 
           # location of where the kubernetes processes log their output
           mkdir -p '{{ k8s_log_dir }}'
@@ -165,24 +163,20 @@
             set -o pipefail
 
             export LOG_DIR='{{ k8s_log_dir }}'
-            export REGISTRY=docker.io/k8scloudprovider
-            export VERSION=latest
-            # Specify target architecture to build binaries and images
-            export ARCH=${ARCH:-amd64}
+            export REGISTRY=${REGISTRY:-docker.io/k8scloudprovider}
+            export ARCHS=${ARCHS:-amd64}
+            export VERSION=${VERSION:-latest}
+            # Docker login information here and no_log tag below will be removed once
+            # https://github.com/kubernetes/cloud-provider-openstack/pull/967 landed
+            export DOCKER_PASSWORD='{{ dockerhub.password }}'
+            export DOCKER_USERNAME='{{ dockerhub.username }}'
 
+            make upload-images 2>&1 | tee $LOG_DIR/image-build-upload.log
 
-            make images 2>&1 | tee $LOG_DIR/image-build-upload.log
-
-            docker push ${REGISTRY}/openstack-cloud-controller-manager-${ARCH}:${VERSION} | tee $LOG_DIR/image-build-upload.log
-            docker push ${REGISTRY}/cinder-csi-plugin-${ARCH}:${VERSION} | tee $LOG_DIR/image-build-upload.log
-            docker push ${REGISTRY}/k8s-keystone-auth-${ARCH}:${VERSION} | tee $LOG_DIR/image-build-upload.log
-            docker push ${REGISTRY}/octavia-ingress-controller-${ARCH}:${VERSION} | tee $LOG_DIR/image-build-upload.log
-            docker push ${REGISTRY}/manila-csi-plugin-${ARCH}:${VERSION} | tee $LOG_DIR/image-build-upload.log
-            docker push ${REGISTRY}/manila-provisioner-${ARCH}:${VERSION} | tee $LOG_DIR/image-build-upload.log
-            docker push ${REGISTRY}/magnum-auto-healer-${ARCH}:${VERSION} | tee $LOG_DIR/image-build-upload.log
           else
             exit 0;
           fi
         executable: /bin/bash
         chdir: '{{ k8s_os_provider_src_dir }}'
       environment: '{{ global_env }}'
+      no_log: yes

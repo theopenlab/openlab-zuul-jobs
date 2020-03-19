@@ -55,14 +55,21 @@
       shell: docker login -u {{ dockerhub.username }} -p {{ dockerhub.password }}
       no_log: yes
 
-    - name: Build openstack-cloud-controller-manager image
+    - name: Build and upload openstack-cloud-controller-manager image
       shell:
-        cmd: make image-controller-manager REGISTRY={{ dockerhub.username }} VERSION={{ zuul.change }}
+        cmd: |
+          export BUILD_CMDS=openstack-cloud-controller-manager
+          export IMAGE_NAMES=openstack-cloud-controller-manager
+          export ARCHS=${ARCHS:-amd64}
+          # Docker login information here and no_log tag below will be removed once
+          # https://github.com/kubernetes/cloud-provider-openstack/pull/967 landed
+          export DOCKER_PASSWORD='{{ dockerhub.password }}'
+          export DOCKER_USERNAME='{{ dockerhub.username }}'
+
+          REGISTRY={{ dockerhub.username }} VERSION={{ zuul.change }} make upload-images
         chdir: '{{ k8s_os_provider_src_dir }}'
       environment: '{{ global_env }}'
-
-    - name: Upload openstack-cloud-controller-manager image
-      shell: docker push {{ dockerhub.username }}/openstack-cloud-controller-manager:{{ zuul.change }}
+      no_log: yes
 
     - name: Wait until openstack-cloud-controller-manager is avaialble for patching
       shell:

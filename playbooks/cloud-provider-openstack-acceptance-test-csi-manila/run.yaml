@@ -33,6 +33,8 @@
           export ALLOW_PRIVILEGED=true
           # Just kick off all the processes and drop down to the command line
           export ENABLE_DAEMON=true
+          export ARCH=${ARCH:-amd64}
+          export VERSION=${VERSION:-latest}
 
           # We need this for snapshots support, at least for now
           export FEATURE_GATES="VolumeSnapshotDataSource=true"
@@ -58,10 +60,8 @@
           curl -L https://git.io/get_helm.sh | bash
           helm init --client-only
 
-          # Build CSI Manila plugin
-          make manila-csi-plugin
-          # Build a Docker image
-          mv manila-csi-plugin cluster/images/manila-csi-plugin/ && docker build -t manila-csi-plugin cluster/images/manila-csi-plugin
+          # Build CSI Manila plugin binary and Docker image
+          make image-manila-csi-plugin
 
           #
           # Deployment

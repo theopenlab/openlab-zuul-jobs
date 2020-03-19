@@ -15,8 +15,10 @@
           set -e
           set -o pipefail
 
+          export ARCH=${ARCH:-amd64}
+          export BUILD_CMDS='k8s-keystone-auth openstack-cloud-controller-manager'
           # Build cloud-provider-openstack binaries
-          BUILD_CMDS=k8s-keystone-auth make build
+          make build
 
           apt-get install python-pip -y
           pip install -U python-openstackclient
@@ -153,7 +155,7 @@
 
           # Start k8s-keystone-auth webhook service
           [[ "$OS_AUTH_URL" =~ "v3" ]] && keystone_url=${OS_AUTH_URL} || keystone_url=${OS_AUTH_URL}/v3
-          nohup ./k8s-keystone-auth-amd64 \
+          nohup ./k8s-keystone-auth \
                 --tls-cert-file /var/run/kubernetes/serving-kube-apiserver.crt \
                 --tls-private-key-file /var/run/kubernetes/serving-kube-apiserver.key \
                 --policy-configmap-name keystone-auth-policy \
