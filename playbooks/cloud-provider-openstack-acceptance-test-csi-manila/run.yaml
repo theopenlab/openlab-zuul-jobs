@@ -62,6 +62,11 @@
 
           # Build CSI Manila plugin binary and Docker image
           make image-manila-csi-plugin
+          if [[ -z "$(docker images -q k8scloudprovider/manila-csi-plugin:$VERSION 2> /dev/null)" ]]; then
+              # add tag without architecture so we don't need to push manifests
+              docker image tag k8scloudprovider/manila-csi-plugin-$ARCH:$VERSION k8scloudprovider/manila-csi-plugin:$VERSION
+          fi
+
 
           #
           # Deployment
