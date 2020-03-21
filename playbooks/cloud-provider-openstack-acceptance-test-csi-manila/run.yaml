@@ -121,6 +121,10 @@
           # Deploy CSI Manila
           cat << YAML >> override-helm-values.yaml
           nameOverride: manila-csi
+          csimanila:
+            image:
+              repository: k8scloudprovider/manila-csi-plugin
+              tag: latest
           shareProtocols:
             - protocolSelector: NFS
               fwdNodePluginEndpoint:
