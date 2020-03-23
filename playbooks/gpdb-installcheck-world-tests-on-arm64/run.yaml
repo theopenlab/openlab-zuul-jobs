@@ -82,11 +82,11 @@
         executable: /bin/bash
 
     - name: Git clone the repo with shorter directory
-	  shell:
-	    git clone https://github.com/greenplum-db/gpdb.git
-	  args:
+      shell:
+        git clone https://github.com/greenplum-db/gpdb.git
+      args:
         executable: /bin/bash
-		chdir: /home/zuul
+        chdir: /home/zuul
 
     - name: Fix in PRs(will remove this step after fix in upstream)
       shell: |
