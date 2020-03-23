@@ -1,0 +1,7 @@
+- hosts: all
+  roles:
+    - export-capo-account
+  become: yes
+  tasks:
+    - name: Hello world
+      shell: echo 'hello world'

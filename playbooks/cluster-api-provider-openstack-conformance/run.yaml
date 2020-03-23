@@ -1,0 +1,5 @@
+- hosts: all
+  become: yes
+  tasks:
+    - name: Specify numpy version
+      shell: echo 'hello world'
