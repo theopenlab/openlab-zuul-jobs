@@ -22,7 +22,7 @@
           /root/kubernetes/test/bin/e2e.test \
             -kubeconfig=/etc/kubernetes/admin.conf \
             -provider=openstack \
-            -storage.migratedPlugins=cinder \
+            -storage.migratedPlugins=kubernetes.io/cinder \
             -report-dir="$log_dir" \
             -ginkgo.noColor \
             -ginkgo.focus="[V|v]olume\sexpand|\[sig-storage\]\sIn-tree\sVolumes\s\[Driver:\scinder\]|allowedTopologies|Pod\sDisks|PersistentVolumes\sDefault" \
