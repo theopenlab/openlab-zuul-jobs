@@ -110,7 +110,7 @@
         label: ubuntu-bionic-citynetwork
 
 - nodeset:
-    name: ubuntu-bionic-huaweicloud
+    name: ubuntu-bionic-arm64-huaweicloud
     nodes:
-      - name: ubuntu-bionic-huaweicloud
-        label: ubuntu-bionic-huaweicloud
+      - name: ubuntu-bionic-arm64-huaweicloud
+        label: ubuntu-bionic-arm64-huaweicloud
