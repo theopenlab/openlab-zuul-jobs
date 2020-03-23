@@ -95,6 +95,11 @@
           # Build latest images from source
           VERSION=latest make image-cinder-csi-plugin
 
+          if [[ -z "$(docker images -q k8scloudprovider/cinder-csi-plugin:$VERSION 2> /dev/null)" ]]; then
+              # add tag without architecture so we don't need to push manifests
+              docker image tag k8scloudprovider/cinder-csi-plugin-$ARCH:$VERSION k8scloudprovider/cinder-csi-plugin:$VERSION
+          fi
+
           # Replace custom cloud config
           {
               cloud_cfg=$(base64 -w 0 ${CLOUD_CONFIG})
