@@ -59,8 +59,7 @@
         ## Fix resolv.conf via /etc/hosts
         # add 'local_ip ubuntu' to /etc/hosts in a new line
         local_ip=`ifconfig -a|grep inet|grep -v 127.0.0.1|grep -v inet6|awk '{print $2}'|tr -d "addr:"`
-        cat /etc/hosts | grep -v ubuntu > /etc/hosts
-        echo "${local_ip} ubuntu" >> /etc/hosts
+        echo "${local_ip} ubuntu" > /etc/hosts
         echo "127.0.0.1 localhost" >> /etc/hosts
         cat /etc/hosts
         ## Flush any iptables as much as possible
