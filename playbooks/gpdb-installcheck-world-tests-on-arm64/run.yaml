@@ -156,6 +156,7 @@
 
     - name: Setup demo cluster and run installcheck-world tests
       shell: |
+        set -xeo pipefail
         source gpsql/greenplum_path.sh
         export USER='zuul'
         export PGUSER=zuul
