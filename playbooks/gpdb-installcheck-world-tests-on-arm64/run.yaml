@@ -81,13 +81,22 @@
       args:
         executable: /bin/bash
 
+    - name: Git clone the repo with shorter directory
+	  shell:
+	    git clone https://github.com/greenplum-db/gpdb.git
+	  args:
+        executable: /bin/bash
+		chdir: /home/zuul
+
     - name: Fix in PRs(will remove this step after fix in upstream)
       shell: |
         wget https://patch-diff.githubusercontent.com/raw/bzhaoopenstack/gpdb/pull/4.patch
+        git config --global user.email "you@example.com"
+        git config --global user.name "Your Name"
         git am ./4.patch
       args:
         executable: /bin/bash
-        chdir: '{{ zuul.project.src_dir }}'
+        chdir: /home/zuul/gpdb
 
     - name: Install GSSAPI deps
       shell: |
@@ -99,12 +108,12 @@
 
     - name: Compile and install gpdb
       shell: |
-        ./configure --with-openssl --with-ldap --with-libcurl --prefix="{{ ansible_user_dir }}/{{ zuul.project.src_dir }}/gpsql" --disable-orca --disable-gpcloud --disable-pxf --without-readline --with-python --with-gssapi
+        ./configure --with-openssl --with-ldap --with-libcurl --prefix="/home/zuul/gpdb/gpsql" --disable-orca --disable-gpcloud --disable-pxf --without-readline --with-python --with-gssapi
         make
         make install
       args:
         executable: /bin/bash
-        chdir: '{{ zuul.project.src_dir }}'
+        chdir: /home/zuul/gpdb
 
     - name: Compile and install the external functions of gpdb
       shell: |
@@ -118,7 +127,7 @@
         make install
       args:
         executable: /bin/bash
-        chdir: '{{ zuul.project.src_dir }}'
+        chdir: /home/zuul/gpdb
 
     - name: Check the installed apps
       shell: |
@@ -132,7 +141,7 @@
         gpfdist --version
       args:
         executable: /bin/bash
-        chdir: '{{ zuul.project.src_dir }}'
+        chdir: /home/zuul/gpdb
 
     - name: First run the unittest-check will fail
       shell: |
@@ -140,18 +149,19 @@
         make -s unittest-check || exit 0
       args:
         executable: /bin/bash
-        chdir: '{{ zuul.project.src_dir }}'
+        chdir: /home/zuul/gpdb
 
     - name: Try the best to run the unittest-check with fixes
       shell: |
         set -xeo pipefail
         cat src/test/unit/mock/backend/libpq/pqexpbuffer_mock.c | grep -v 'check_expected(args);' > src/test/unit/mock/backend/libpq/pqexpbuffer_mock.c_new
         mv src/test/unit/mock/backend/libpq/pqexpbuffer_mock.c_new src/test/unit/mock/backend/libpq/pqexpbuffer_mock.c
-        cat src/test/isolation2/isolation2_schedule | grep -v dtm_recovery_on_standby > src/test/isolation2/isolation2_schedule
+        cat src/test/isolation2/isolation2_schedule | grep -v dtm_recovery_on_standby > src/test/isolation2/isolation2_schedule_new
+        mv src/test/isolation2/isolation2_schedule_new src/test/isolation2/isolation2_schedule
         make -s unittest-check
       args:
         executable: /bin/bash
-        chdir: '{{ zuul.project.src_dir }}'
+        chdir: /home/zuul/gpdb
 
     - name: Setup demo cluster and run installcheck-world tests
       shell: |
@@ -166,7 +176,7 @@
         make installcheck-world | tee ~/installcheck-world.log
       args:
         executable: /bin/bash
-        chdir: '{{ zuul.project.src_dir }}'
+        chdir: /home/zuul/gpdb
 
     - name: Create results directory
       file:
