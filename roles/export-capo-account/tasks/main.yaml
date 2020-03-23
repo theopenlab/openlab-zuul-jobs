@@ -1,0 +1,11 @@
+- name: Set capo account key file path
+  set_fact:
+    capo_key_file: '/tmp/capo_key.json'
+  no_log: yes
+
+- name: Save capo account key file
+  shell:
+    cmd: |
+      echo '{{ capo_account.key_json }}' > '{{ hostvars[inventory_hostname]["capo_key_file"] }}'
+    executable: /bin/bash
+  no_log: yes

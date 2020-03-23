@@ -843,6 +843,33 @@
     vars:
       go_version: '1.13.4'
 
+- job:
+    name: cluster-api-provider-openstack-conformance
+    parent: init-test
+    timeout: 36000
+    description: |
+      Test CAPO & Kubernetes
+    run: playbooks/cluster-api-provider-openstack-conformance/run.yaml
+    post-run: playbooks/cluster-api-provider-openstack-conformance/post.yaml
+    nodeset: ubuntu-bionic-large
+    secrets:
+      - capo_account
+    vars:
+      go_version: '1.13.8'
+      k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/_artifacts'
+      k8s_os_capi_provider_src_dir: '{{ ansible_user_dir }}/src/sigs.k8s.io/cluster-api-provider-openstack'
+      extra_args: ''
+
+- job:
+    name: cluster-api-provider-openstack-stable-acceptance-test-master
+    parent: cluster-api-provider-openstack-conformance
+    description: |
+      Test CAPO release-0.3 against Kubernetes master
+    vars:
+      k8s_version: 'v0.0.0'
+      k8s_version_series: '0.0'
+      extra_args: '--use-ci-artifacts'
+
 # ansible jobs
 - job: # Deprecated
     name: openstacksdk-ansible-devel-functional-devstack

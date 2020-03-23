@@ -157,6 +157,13 @@
 #        - manageiq-providers-openstack-hammer-6-test-devstack-mitaka:
 #            branches: master
 
+- project:
+    name: kubernetes-sigs/cluster-api-provider-openstack
+    periodic-10/22:
+      jobs:
+        - cluster-api-provider-openstack-stable-acceptance-test-master:
+            branches: master
+
 ####################### periodic jobs on 12:00##########################
 #- project:
 #    name: apache/spark
