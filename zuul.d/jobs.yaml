@@ -2535,3 +2535,19 @@
       - Arch:arm64
       - BuildType:Unit test
     timeout: 18000
+
+- job:
+    name: gpdb-installcheck-world-tests-on-arm64
+    parent: init-test
+    description: |
+      The GreenPlum build and tests all the regression tests with demo cluster.
+    run: playbooks/gpdb-installcheck-world-tests-on-arm64/run.yaml
+    nodeset: ubuntu-bionic-arm64-huaweicloud
+    tags:
+      - Category:Database
+      - Project:greenplum-db/gpdb
+      - Application:gpdb@master
+      - OS:ubuntu-bionic
+      - Arch:arm64
+      - BuildType:Unit test
+    timeout: 18000
