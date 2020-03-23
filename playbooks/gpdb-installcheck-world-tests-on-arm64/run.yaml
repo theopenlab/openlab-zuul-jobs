@@ -41,35 +41,34 @@
       args:
         executable: /bin/bash
 
-        
     - name: Localdef change
       become: true
       shell: |
         localedef -i en_US -f UTF-8 en_US.UTF-8
       args:
         executable: /bin/bash
- 
+
     - name: Fix local env to make sure the demo cluster can setup
       become: true
       shell: |
+        set -xeo pipefail
         ## Fix the issue during startup the demo cluster like
         # psql: FATAL:  semctl(17530881, 14, SETVAL, 0) failed: Invalid argument (pg_sema.c:151)
         echo "RemoveIPC=no" >> /etc/systemd/logind.conf
         service systemd-logind restart
-        
         ## Fix resolv.conf via /etc/hosts
         # add 'local_ip ubuntu' to /etc/hosts in a new line
         local_ip=`ifconfig -a|grep inet|grep -v 127.0.0.1|grep -v inet6|awk '{print $2}'|tr -d "addr:"`
         cat /etc/hosts | grep -v ubuntu > /etc/hosts
         echo "${local_ip} ubuntu" >> /etc/hosts
         echo "127.0.0.1 localhost" >> /etc/hosts
-        cat /etc/hosts        
+        cat /etc/hosts
         ## Flush any iptables as much as possible
         iptables -F
         iptables -F -t nat
       args:
         executable: /bin/bash
-    
+
     - name: Install pip deps
       shell: |
         export SODIUM_INSTALL=system
@@ -90,11 +89,11 @@
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
- 
+
     - name: Install GSSAPI deps
       shell: |
         export DEBIAN_FRONTEND noninteractive
-        sudo DEBIAN_FRONTEND=noninteractive apt update 
+        sudo DEBIAN_FRONTEND=noninteractive apt update
         sudo DEBIAN_FRONTEND=noninteractive apt install krb5-kdc krb5-admin-server libkrb5-dev -y
       args:
         executable: /bin/bash
@@ -146,6 +145,7 @@
 
     - name: Try the best to run the unittest-check with fixes
       shell: |
+        set -xeo pipefail
         cat src/test/unit/mock/backend/libpq/pqexpbuffer_mock.c | grep -v 'check_expected(args);' > src/test/unit/mock/backend/libpq/pqexpbuffer_mock.c_new
         mv src/test/unit/mock/backend/libpq/pqexpbuffer_mock.c_new src/test/unit/mock/backend/libpq/pqexpbuffer_mock.c
         cat src/test/isolation2/isolation2_schedule | grep -v dtm_recovery_on_standby > src/test/isolation2/isolation2_schedule
@@ -162,16 +162,19 @@
         sudo service ssh start
         ulimit -n 65535
         make -C gpAux/gpdemo cluster | tee ~/cluster-launch.log
-        
         source gpAux/gpdemo/gpdemo-env.sh
         make installcheck-world | tee ~/installcheck-world.log
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
 
+    - name: Create results directory
+      file:
+        path: "{{ ansible_user_dir }}/workspace/test_results"
+        state: directory
+
     - name: Copy result into result dir
       shell: |
-        mkdir -p "{{ ansible_user_dir }}/workspace/test_results"
         cp ~/cluster-launch.log "{{ ansible_user_dir }}/workspace/test_results/"
         cp ~/installcheck-world.log "{{ ansible_user_dir }}/workspace/test_results/"
         cp -rf ~/gpAdminLogs "{{ ansible_user_dir }}/workspace/test_results/"
