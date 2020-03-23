@@ -85,14 +85,8 @@
 
     - name: Fix in PRs(will remove this step after fix in upstream)
       shell: |
-        git remote add origin https://github.com/greenplum-db/gpdb.git || true
-        git remote add fix https://github.com/bzhaoopenstack/gpdb
-        git config --global user.email "you@example.com"
-        git config --global user.name "Your Name"
-        git fetch fix pull/4/head:test-branch
-        git checkout test-branch 
-        git rebase master
-        git log -3
+        wget https://patch-diff.githubusercontent.com/raw/bzhaoopenstack/gpdb/pull/4.patch
+        git am ./4.patch
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
