@@ -91,9 +91,9 @@
               INSTANCE_UUID=$(curl http://169.254.169.254/openstack/latest/meta_data.json | python -c "import sys, json; print json.load(sys.stdin)['uuid']")
           fi
           echo "$INSTANCE_UUID" > /var/lib/cloud/data/instance-id
-
+          export VERSION=latest
           # Build latest images from source
-          VERSION=latest make image-cinder-csi-plugin
+          make image-cinder-csi-plugin
 
           if [[ -z "$(docker images -q k8scloudprovider/cinder-csi-plugin:$VERSION 2> /dev/null)" ]]; then
               # add tag without architecture so we don't need to push manifests
