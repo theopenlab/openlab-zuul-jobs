@@ -166,6 +166,12 @@
 #            branches: master
 #        - spark-integration-test-minikube-k8s-v1.13.3:
 #            branches: master
+- project:
+    name: greenplum-db/gpdb
+    periodic-12:
+      jobs:
+        - gpdb-installcheck-world-tests-on-arm64:
+            branches: master
 
 ####################### periodic jobs on 14:00##########################
 - project:
