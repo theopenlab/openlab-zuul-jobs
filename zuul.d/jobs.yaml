@@ -865,10 +865,9 @@
     name: cluster-api-provider-openstack-stable-acceptance-test-master
     parent: cluster-api-provider-openstack-conformance
     description: |
-      Test CAPO release-0.3 against Kubernetes master
+      Test CAPO master against Kubernetes master
     vars:
-      k8s_version: 'v0.0.0'
-      k8s_version_series: '0.0'
+      k8s_version_series: 'master'
       extra_args: '--use-ci-artifacts'
 
 # ansible jobs
