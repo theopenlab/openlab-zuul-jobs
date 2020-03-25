@@ -60,7 +60,6 @@
         cmd: |
           export BUILD_CMDS=openstack-cloud-controller-manager
           export IMAGE_NAMES=openstack-cloud-controller-manager
-          export ARCHS=${ARCHS:-amd64}
 
           REGISTRY={{ dockerhub.username }} VERSION={{ zuul.change }} make upload-images
         chdir: '{{ k8s_os_provider_src_dir }}'

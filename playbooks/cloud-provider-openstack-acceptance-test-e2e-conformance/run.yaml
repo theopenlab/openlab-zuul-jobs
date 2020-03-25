@@ -164,7 +164,6 @@
 
             export LOG_DIR='{{ k8s_log_dir }}'
             export REGISTRY=${REGISTRY:-docker.io/k8scloudprovider}
-            export ARCHS=${ARCHS:-amd64}
             export VERSION=${VERSION:-latest}
 
             make upload-images 2>&1 | tee $LOG_DIR/image-build-upload.log
