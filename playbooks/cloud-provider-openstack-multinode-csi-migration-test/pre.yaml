@@ -215,14 +215,9 @@
           export BUILD_CMDS=cinder-csi-plugin
           export IMAGE_NAMES=cinder-csi-plugin
 
-          # Docker login information here and no_log tag below will be removed once
-          # https://github.com/kubernetes/cloud-provider-openstack/pull/967 landed
-          export DOCKER_PASSWORD='{{ dockerhub.password }}'
-          export DOCKER_USERNAME='{{ dockerhub.username }}'
           make upload-images
       retries: 5
       delay: 5
-      no_log: yes
 
     - name: ship kustomization.yaml to use cinder-csi-plugin image from in-cluster registry
       copy:

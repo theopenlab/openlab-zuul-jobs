@@ -166,10 +166,6 @@
             export REGISTRY=${REGISTRY:-docker.io/k8scloudprovider}
             export ARCHS=${ARCHS:-amd64}
             export VERSION=${VERSION:-latest}
-            # Docker login information here and no_log tag below will be removed once
-            # https://github.com/kubernetes/cloud-provider-openstack/pull/967 landed
-            export DOCKER_PASSWORD='{{ dockerhub.password }}'
-            export DOCKER_USERNAME='{{ dockerhub.username }}'
 
             make upload-images 2>&1 | tee $LOG_DIR/image-build-upload.log
 
@@ -179,4 +175,3 @@
         executable: /bin/bash
         chdir: '{{ k8s_os_provider_src_dir }}'
       environment: '{{ global_env }}'
-      no_log: yes
