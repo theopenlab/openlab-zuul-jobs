@@ -208,14 +208,17 @@
         cmd: |
           set -o pipefail
           set -ex
-          # Specify target architecture to build binaries and images
-          export ARCHS=${ARCHS:-amd64}
+          export ARCH=${ARCH:-amd64}
           export VERSION=${VERSION:-latest}
           export REGISTRY=${REGISTRY:-{{ registry_ip }}:32000/k8scloudprovider}
-          export BUILD_CMDS=cinder-csi-plugin
-          export IMAGE_NAMES=cinder-csi-plugin
 
-          make upload-images
+          make image-cinder-csi-plugin
+          docker image tag {{ registry_ip }}:32000/k8scloudprovider/cinder-csi-plugin-amd64:latest {{ registry_ip }}:32000/k8scloudprovider/cinder-csi-plugin:latest
+
+    - name: push cluster-local-build of cinder-csi-plugin to local registry
+      shell:
+        cmd: |
+          docker push {{ registry_ip }}:32000/k8scloudprovider/cinder-csi-plugin:latest
       retries: 5
       delay: 5
 
