@@ -17,7 +17,7 @@
           set -o pipefail
           set -x
           # debug image import
-          if [-d "{{ zuul.project.src_dir }}/vendor/github.com/gophercloud/gophercloud/openstack/imageservice/v2/imageimport/doc.go"]; then
+          if [ -e "{{ zuul.project.src_dir }}/vendor/github.com/gophercloud/gophercloud/openstack/imageservice/v2/imageimport/doc.go" ]; then
             sleep 3600
           fi
           # Prep the testing environment by creating the required testing resources and environment variables
