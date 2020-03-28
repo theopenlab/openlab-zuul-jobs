@@ -38,7 +38,9 @@
         locales \
         locales-all \
         wget \
-        rsync
+        rsync \
+        perl \
+        libperl-dev
       args:
         executable: /bin/bash
 
@@ -69,6 +71,11 @@
       args:
         executable: /bin/bash
 
+    - name: Create results directory
+      file:
+        path: "{{ ansible_user_dir }}/workspace/test_results"
+        state: directory
+
     - name: Install pip deps
       shell: |
         export SODIUM_INSTALL=system
@@ -89,19 +96,9 @@
         executable: /bin/bash
         chdir: /home/zuul
 
-    - name: Fix in PRs(will remove this step after fix in upstream)
-      shell: |
-        wget https://patch-diff.githubusercontent.com/raw/bzhaoopenstack/gpdb/pull/4.patch
-        git config --global user.email "you@example.com"
-        git config --global user.name "Your Name"
-        git am ./4.patch
-      args:
-        executable: /bin/bash
-        chdir: /home/zuul/gpdb
-
     - name: Install GSSAPI deps
       shell: |
-        export DEBIAN_FRONTEND noninteractive
+        export DEBIAN_FRONTEND=noninteractive
         sudo DEBIAN_FRONTEND=noninteractive apt update
         sudo DEBIAN_FRONTEND=noninteractive apt install krb5-kdc krb5-admin-server libkrb5-dev -y
       args:
@@ -109,7 +106,7 @@
 
     - name: Compile and install gpdb
       shell: |
-        ./configure --with-openssl --with-ldap --with-libcurl --prefix="/home/zuul/gpdb/gpsql" --disable-orca --disable-gpcloud --disable-pxf --without-readline --with-python --with-gssapi
+        ./configure --with-openssl --with-ldap --with-libcurl --prefix="/home/zuul/gpdb/gpsql" --disable-orca --disable-gpcloud --disable-pxf --without-readline --with-python --with-gssapi  --enable-orafce --enable-mapreduce --with-perl
         make
         make install
       args:
@@ -118,14 +115,12 @@
 
     - name: Compile and install the external functions of gpdb
       shell: |
-        source gpsql/greenplum_path.sh
-        cd gpcontrib/orafce
-        make install USE_PGXS=1
-        cd ../..
-        cd gpcontrib/gpmapreduce
-        # specify -lyaml via changing the Makefine
-        sed -i 's/$(CC) $(CFLAGS) $(MAPREDOBJS) $(libpq_pgport) $(LDFLAGS) $(LIBS) -o $@$(X)/$(CC) $(CFLAGS) $(MAPREDOBJS) $(libpq_pgport) $(LDFLAGS) $(LIBS) -lyaml -o $@$(X)/g' ./Makefile
-        make install
+        git config --global user.email "you@example.com"
+        git config --global user.name "Your Name"
+        wget https://patch-diff.githubusercontent.com/raw/greenplum-db/gpdb/pull/9834.patch
+        git am ./9834.patch
+        make -C contrib/ install
+        make -C gpcontrib/ install
       args:
         executable: /bin/bash
         chdir: /home/zuul/gpdb
@@ -170,22 +165,15 @@
         export PGUSER=zuul
         sudo service ssh start
         ulimit -n 65535
-        make -C gpAux/gpdemo cluster | tee ~/cluster-launch.log
+        make -C gpAux/gpdemo cluster | tee "{{ ansible_user_dir }}/workspace/test_results/cluster-launch.log"
         source gpAux/gpdemo/gpdemo-env.sh
-        make installcheck-world | tee ~/installcheck-world.log
+        make installcheck-world | tee "{{ ansible_user_dir }}/workspace/test_results/installcheck-world.log"
       args:
         executable: /bin/bash
         chdir: /home/zuul/gpdb
 
-    - name: Create results directory
-      file:
-        path: "{{ ansible_user_dir }}/workspace/test_results"
-        state: directory
-
     - name: Copy result into result dir
       shell: |
-        cp ~/cluster-launch.log "{{ ansible_user_dir }}/workspace/test_results/"
-        cp ~/installcheck-world.log "{{ ansible_user_dir }}/workspace/test_results/"
         cp -rf ~/gpAdminLogs "{{ ansible_user_dir }}/workspace/test_results/"
       args:
         executable: /bin/bash
