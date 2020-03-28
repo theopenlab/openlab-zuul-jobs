@@ -98,7 +98,7 @@
 
     - name: Install GSSAPI deps
       shell: |
-        export DEBIAN_FRONTEND noninteractive
+        export DEBIAN_FRONTEND=noninteractive
         sudo DEBIAN_FRONTEND=noninteractive apt update
         sudo DEBIAN_FRONTEND=noninteractive apt install krb5-kdc krb5-admin-server libkrb5-dev -y
       args:
