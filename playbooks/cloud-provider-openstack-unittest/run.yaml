@@ -1,7 +1,8 @@
 - hosts: all
   become: yes
   roles:
-    - config-golang
+    - role: config-golang
+      go_version: '1.13.4'
     - export-cloud-openrc
   tasks:
     - name: Run unit tests with cloud-provider-openstack
@@ -11,7 +12,6 @@
           set -e
           set -o pipefail
 
-          go get -u github.com/Masterminds/glide
           TESTARGS='-v' make test 2>&1 | tee $TEST_RESULTS_TXT
         executable: /bin/bash
         chdir: '{{ k8s_os_provider_src_dir }}'

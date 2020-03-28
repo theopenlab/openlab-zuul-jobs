@@ -3,5 +3,33 @@
     - export-capo-account
   become: yes
   tasks:
-    - name: Hello world
-      shell: echo 'hello world'
+    - name: Upload E2E conformance test result to Kubernetes CAPI OpenStack bucket
+      shell:
+        cmd: |
+          set -e
+          set -x
+          # install python
+          add-apt-repository ppa:deadsnakes/ppa -y
+          apt-get update
+          apt-get install python3.6 -y
+          # install gsutil, upload_e2e.py depends on it
+          export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)"
+          echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+          curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add
+          apt-get update && sudo apt-get install google-cloud-sdk --yes
+          apt-get install google-cloud-sdk-app-engine-java --yes
+          export LOG_DIR='{{ k8s_log_dir }}'
+          # get upload_e2e.py
+          wget https://raw.githubusercontent.com/kubernetes/test-infra/master/testgrid/conformance/upload_e2e.py
+          # TODO(RuiChen): Add timestamp for e2e.log in order to workaround upload_e2e.py bug
+          date  +"%b %e %H:%M:%S.999: DONE" >> $LOG_DIR/e2e.log
+          PIPELINE_LOGS_DIR='pr-logs'
+          if [[ "{{ zuul.pipeline }}" == "periodic"* ]]; then
+              PIPELINE_LOGS_DIR='periodic-logs'
+          fi
+          # upload e2e log to google storage
+          python3.6 upload_e2e.py --junit=$LOG_DIR/junit*.xml --log=$LOG_DIR/e2e.log \
+              --bucket=gs://k8s-conform-capi-openstack/$PIPELINE_LOGS_DIR/ci-'{{ zuul.job }}' \
+              --key-file='{{ hostvars[inventory_hostname]["gcp_key_file"] }}'
+        executable: /bin/bash
+      environment: '{{ global_env }}'
