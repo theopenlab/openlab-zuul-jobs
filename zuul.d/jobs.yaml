@@ -65,7 +65,6 @@
     description: |
       Run terraform-provider-openstack acceptance test against master OpenStack
     run: playbooks/terraform-provider-openstack-acceptance-test/run.yaml
-    post-run: playbooks/terraform-provider-openstack-acceptance-test/post.yaml
     nodeset: ubuntu-bionic
 
 ### son job against stein branch of OpenStack
