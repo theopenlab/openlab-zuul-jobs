@@ -12,7 +12,6 @@
           set -e
           set -o pipefail
 
-          go get -u github.com/Masterminds/glide
           TESTARGS='-v' make test 2>&1 | tee $TEST_RESULTS_TXT
         executable: /bin/bash
         chdir: '{{ k8s_os_provider_src_dir }}'
