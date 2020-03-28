@@ -175,6 +175,5 @@
     - name: Copy result into result dir
       shell: |
         cp -rf ~/gpAdminLogs "{{ ansible_user_dir }}/workspace/test_results/"
-        cp -rf /home/zuul/gpdb/gpAux/gpdemo/datadirs "{{ ansible_user_dir }}/workspace/test_results/"
       args:
         executable: /bin/bash
