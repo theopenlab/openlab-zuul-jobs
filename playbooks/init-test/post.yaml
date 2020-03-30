@@ -4,7 +4,7 @@
     - name: Fetch devstack log
       shell:
         cmd: |
-          journalctl -u devstack@g-api -S today --no-tail > "{{ ansible_user_dir }}/workspace/g-api-debug.log"
+          journalctl -u devstack@g-api -S today --no-tail > "{{ ansible_user_dir }}/workspace/logs/g-api-debug.log"
       args:
         executable: /bin/bash
       ignore_errors: yes
