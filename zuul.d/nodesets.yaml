@@ -114,3 +114,9 @@
     nodes:
       - name: ubuntu-bionic-arm64-huaweicloud
         label: ubuntu-bionic-arm64-huaweicloud
+
+- nodeset:
+    name: ubuntu-bionic-arm64-huaweicloud-official
+    nodes:
+      - name: ubuntu-bionic-arm64-huaweicloud-official
+        label: ubuntu-bionic-arm64-huaweicloud-official

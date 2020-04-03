@@ -2590,7 +2590,8 @@
     description: |
       The GreenPlum build and tests all the regression tests with demo cluster.
     run: playbooks/gpdb-installcheck-world-tests-on-arm64/run.yaml
-    nodeset: ubuntu-bionic-arm64-huaweicloud
+    post-run: playbooks/gpdb-installcheck-world-tests-on-arm64/post.yaml
+    nodeset: ubuntu-bionic-arm64-huaweicloud-official
     tags:
       - Category:Database
       - Project:greenplum-db/gpdb
