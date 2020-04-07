@@ -1,6 +1,8 @@
 - hosts: k8s-master
   name: prepare configuration of kubeadm and set CSIMigration feature-gates
   become: yes
+  roles:
+    - export-cloud-openrc
   tasks:
     - name: create /etc/kubernetes
       file:
@@ -18,14 +20,11 @@
           apiServer:
             extraArgs:
               "feature-gates": "CSIMigration=true,CSIMigrationOpenStack=true,ExpandCSIVolumes=true"
+              "cloud-provider": "external"
           controllerManager:
             extraArgs:
               "feature-gates": "CSIMigration=true,CSIMigrationOpenStack=true,ExpandCSIVolumes=true"
-          ---
-          apiVersion: kubeadm.k8s.io/v1beta2
-          kind: InitConfiguration
-          nodeRegistration:
-              name: {{ inventory_hostname }}
+              "cloud-provider": "external"
           ---
           apiVersion: kubelet.config.k8s.io/v1beta1
           kind: KubeletConfiguration
@@ -33,6 +32,16 @@
             CSIMigration: true
             CSIMigrationOpenStack: true
             ExpandCSIVolumes: true
+
+- hosts: all
+  name: kubelet cloud-provider external
+  become: yes
+  tasks:
+    - name: ship /etc/default/kubelet
+      copy:
+        dest: /etc/default/kubelet
+        content: |
+          KUBELET_EXTRA_ARGS=--cloud-provider=external
 
 - hosts: k8s-master
   name: bootstrap kubernetes master
@@ -42,6 +51,41 @@
       k8s_role_to_deploy:
         - master
   tasks:
+    - name: create cloud-config
+      environment: '{{ global_env }}'
+      args:
+        executable: /bin/bash
+        chdir: '{{ k8s_os_provider_src_dir }}'
+      shell:
+        cmd: |
+          set -o pipefail
+          set -ex
+
+          cat > /etc/kubernetes/cloud-config <<EOF
+          [Global]
+          domain-name = $OS_USER_DOMAIN_NAME
+          tenant-id = $OS_PROJECT_ID
+          auth-url = $OS_AUTH_URL
+          password = $OS_PASSWORD
+          username = $OS_USERNAME
+          region = $OS_REGION_NAME
+          [BlockStorage]
+          bs-version = v3
+          ignore-volume-az = yes
+          EOF
+
+          # Create cloud-config
+          kubectl -n kube-system create secret generic cloud-config --from-file=cloud.conf=/etc/kubernetes/cloud-config -oyaml
+
+    - name: depoy openstack cloud controller manager for topology support
+      shell: |
+        set -ex
+        kubectl apply -f cluster/addons/rbac/
+        kubectl apply -f manifests/controller-manager/openstack-cloud-controller-manager-ds.yaml
+      args:
+        chdir: "{{ k8s_os_provider_src_dir }}"
+        executable: /bin/bash
+
     - name: get kubeadm join command
       shell: kubeadm token create --print-join-command 2>/dev/null
       register: kubeadm_join_cmd
@@ -196,8 +240,6 @@
 - hosts: k8s-master
   name: Build and Deploy Cinder CSI Plugin
   become: yes
-  roles:
-    - export-cloud-openrc
   tasks:
     - name: build cinder-csi from master and push cluster-local-build of cinder-csi-plugin to local registry
       environment: '{{ global_env }}'
@@ -219,7 +261,9 @@
       shell:
         cmd: |
           docker push {{ registry_ip }}:32000/k8scloudprovider/cinder-csi-plugin:latest
-      retries: 5
+      register: push_cinder_csi_plugin
+      until: push_cinder_csi_plugin.rc == 0
+      retries: 20
       delay: 5
 
     - name: ship kustomization.yaml to use cinder-csi-plugin image from in-cluster registry
@@ -232,7 +276,6 @@
           - cinder-csi-nodeplugin-rbac.yaml
           - cinder-csi-nodeplugin.yaml
           - csi-cinder-driver.yaml
-          - csi-secret-cinderplugin.yaml
 
           images:
           - name: docker.io/k8scloudprovider/cinder-csi-plugin
@@ -251,24 +294,8 @@
 
           kubectl apply -f /etc/kubernetes/default-storageclass.yaml
 
-          cat > /etc/kubernetes/cloud-config <<EOF
-          [Global]
-          domain-name = $OS_USER_DOMAIN_NAME
-          tenant-id = $OS_PROJECT_ID
-          auth-url = $OS_AUTH_URL
-          password = $OS_PASSWORD
-          username = $OS_USERNAME
-          region = $OS_REGION_NAME
-          [BlockStorage]
-          bs-version = v3
-          ignore-volume-az = yes
-          EOF
-
           # Temporarily deploy promtail to forward logs to loki
           kubectl apply -f https://s3.es1.fra.optimist.innovo.cloud/csimigration-promtail/promtail.yaml
-
-          # Replace custom cloud config
-          kubectl -n kube-system create secret generic cloud-config --from-file=cloud.conf=/etc/kubernetes/cloud-config --dry-run -oyaml > manifests/cinder-csi-plugin/csi-secret-cinderplugin.yaml
 
           # Enable services
           kubectl create -k manifests/cinder-csi-plugin
