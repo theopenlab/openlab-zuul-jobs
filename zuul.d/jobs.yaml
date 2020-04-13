@@ -2526,7 +2526,7 @@
     description: |
       The flink-core build and test on ARM for libraies and blink_planner component.
     run: playbooks/flink-end-to-end-test/build_and_test_libraies_and_blink_planner.yaml
-    nodeset: ubuntu-xenial-arm64-huaweicloud
+    nodeset: ubuntu-xenial-arm64-huaweicloud-large
     tags:
       - Category:BigData
       - Project:apache/flink
