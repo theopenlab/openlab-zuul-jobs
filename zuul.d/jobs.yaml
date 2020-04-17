@@ -2477,7 +2477,7 @@
       The flink e2e test which contains split_container.sh
     run: playbooks/flink-end-to-end-test/e2e_container.yaml
     post-run: playbooks/flink-end-to-end-test/post.yaml
-    nodeset: ubuntu-xenial-arm64-huaweicloud
+    nodeset: ubuntu-xenial-arm64-huaweicloud-large
     tags:
       - Category:BigData
       - Project:apache/flink
