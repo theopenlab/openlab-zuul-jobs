@@ -1,6 +1,6 @@
 ---
 k8s_version: 'master'
-etcd_version: 'v3.4.4'
+etcd_version: 'v3.4.7'
 k8s_with_hyperkube:
   - release-1.10
   - release-1.11
