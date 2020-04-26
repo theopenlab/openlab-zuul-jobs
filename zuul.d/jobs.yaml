@@ -530,6 +530,8 @@
       Run unit test of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-unittest/run.yaml
     nodeset: ubuntu-xenial-citynetwork
+    vars:
+      go_version: '1.13.4'
     secrets:
       - citynetwork_credentials
 
@@ -540,6 +542,18 @@
       Run gofmt and typo checking of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-format/run.yaml
     nodeset: ubuntu-xenial-ut
+
+- job:
+    name: cloud-provider-openstack-sanity-test-csi-cinder
+    parent: cloud-provider-openstack-test
+    description: |
+      Run csi sanity tests cloud-provider-openstack cinder-csi-plugin
+    run: playbooks/cloud-provider-openstack-sanity-test-csi-cinder/run.yaml
+    nodeset: ubuntu-xenial-citynetwork
+    vars:
+      go_version: '1.13.4'
+    secrets:
+      - citynetwork_credentials
 
 - job:
     name: cloud-provider-openstack-acceptance-test-k8s-cinder

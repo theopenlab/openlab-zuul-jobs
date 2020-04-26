@@ -3,14 +3,14 @@
   roles:
     - role: config-golang
   tasks:
-    - name: Run unit tests with cloud-provider-openstack
+    - name: Run cloud-provider-openstack csi sanity tests for cinder-csi-plugin
       shell:
         cmd: |
           set -x
           set -e
           set -o pipefail
 
-          TESTARGS='-v' make test 2>&1 | tee $TEST_RESULTS_TXT
+          TESTARGS='-v' make test-cinder-csi-sanity 2>&1 | tee $TEST_RESULTS_TXT
         executable: /bin/bash
         chdir: '{{ k8s_os_provider_src_dir }}'
       environment: '{{ global_env }}'
