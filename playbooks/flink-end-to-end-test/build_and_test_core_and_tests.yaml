@@ -28,7 +28,7 @@
       shell:
         cmd: |
           set -xe
-          mvn clean install -nsu \
+          mvn clean install --no-snapshot-updates \
           -Dflink.forkCount=2 -Dflink.forkCountTestPackage=2 -Dfast -B -Pskip-webui-build -DskipTests -Dhadoop.version=2.8.3 \
           -Dinclude_hadoop_aws -Dscala-2.11 -am -pl \
           flink-annotations,flink-test-utils-parent/flink-test-utils,flink-state-backends/flink-statebackend-rocksdb,flink-clients,\
@@ -43,7 +43,7 @@
       shell:
         cmd: |
           set -xe
-          mvn verify -nsu \
+          mvn verify --no-snapshot-updates \
           -Dflink.forkCount=2 -Dflink.forkCountTestPackage=2 -Dfast -B -Pskip-webui-build -Dflink.tests.with-openssl \
           -Dhadoop.version=2.8.3 -Dinclude_hadoop_aws -Dscala-2.11 -fn -pl \
           flink-annotations,flink-test-utils-parent/flink-test-utils,flink-state-backends/flink-statebackend-rocksdb,\
