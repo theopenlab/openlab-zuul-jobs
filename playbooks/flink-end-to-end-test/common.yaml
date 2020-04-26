@@ -7,6 +7,9 @@
     - name: Use huaweicloud repo
       shell: wget -O /etc/apt/sources.list https://repo.huaweicloud.com/repository/conf/Ubuntu-Ports-xenial.list && apt update
 
+    - name: Install Pre requirements
+      shell: apt install -y openssl libssl-dev
+
 - hosts: all
   become: yes
   roles:
