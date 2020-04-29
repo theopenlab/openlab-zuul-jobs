@@ -13,7 +13,9 @@
           set -o pipefail
 
           export ARCH=${ARCH:-amd64}
-          # Build cloud-provider-openstack binaries
+
+          # Build openstack-cloud-controller-manager binary
+          export BUILD_CMDS=openstack-cloud-controller-manager
           make build
 
           # Create cloud-config
@@ -85,7 +87,6 @@
           '{{ kubectl }}' create clusterrolebinding --user system:kube-controller-manager  kube-system-cluster-admin-6 --clusterrole cluster-admin
 
           # Where csi provisioner reads instance id from
-          # Where csi provisioner reads instance id from
           if [ -d /mnt/config/openstack ]; then
               INSTANCE_UUID=$(python -c "import json;print json.load(open('/mnt/config/openstack/latest/meta_data.json', 'r'))['uuid']")
           else
@@ -93,20 +94,19 @@
           fi
           echo "$INSTANCE_UUID" > /var/lib/cloud/data/instance-id
 
-          # Build latest images from source
-          cat << EOF > Dockerfile
-          # Based on centos
-          FROM centos:7.4.1708
-          LABEL maintainers="Kubernetes Authors"
-          LABEL description="Cinder CSI Plugin"
-          # Copy cinderplugin from build directory
-          COPY cinder-csi-plugin /cinderplugin
-          # Install e4fsprogs for format
-          RUN yum -y install e4fsprogs
-          # Define default command
-          ENTRYPOINT ["/cinderplugin"]
-          EOF
-          docker build -t docker.io/k8scloudprovider/cinder-csi-plugin:latest .
+          # Get current branch name, convert to image tag, e.g. release-1.18 to v1.18.0
+          branch="{{ zuul.branch }}"
+          if [[ $branch == "master" ]]; then
+              version=latest
+          else
+              version="v${branch##release-}.0"
+          fi
+          export VERSION=$version
+          make image-csi-plugin
+          if [[ -z "$(docker images -q k8scloudprovider/cinder-csi-plugin:$VERSION 2> /dev/null)" ]]; then
+              # add tag without architecture so we don't need to push manifests
+              docker image tag k8scloudprovider/cinder-csi-plugin-$ARCH:$VERSION k8scloudprovider/cinder-csi-plugin:$VERSION
+          fi
 
           # Replace custom cloud config
           {
