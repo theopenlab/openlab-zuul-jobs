@@ -10,6 +10,9 @@
     - name: Install Pre requirements
       shell: apt install -y openssl libssl-dev
 
+    - name: Update resolv.conf
+      shell: sed -i 's/nameserver 127.0.0.1/nameserver 8.8.8.8/' /etc/resolv.conf
+
 - hosts: all
   become: yes
   roles:
@@ -21,4 +24,4 @@
       maven_version: '3.2.5'
   tasks:
     - name: Install docker
-      shell: apt install -y docker.io
+      shell: apt install -y docker-ce docker-ce-cli containerd.io

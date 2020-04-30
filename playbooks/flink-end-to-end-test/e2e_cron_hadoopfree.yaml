@@ -23,18 +23,23 @@
         chdir: '/opt'
       environment: '{{ global_env }}'
 
-    - name: Comment out docker installation
-      lineinfile:
-        path: "/home/zuul/src/github.com/apache/flink/tools/travis/nightly.sh"
-        regexp: "^.*setup_docker.sh"
-        line: "# source ${HERE}/setup_docker.sh"
 
-    - name: Run split_tpcds.sh e2e test
+
+    - name: Build Flink
+      shell:
+        cmd: |
+          mvn clean install -DskipTests
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
+
+    - name: Run e2e test - hadoopfree
       shell:
         cmd: |
           set -xo pipefail
-          export PROFILE="-Dinclude-hadoop -Dhadoop.version=2.8.3"
-          ./tools/travis/nightly.sh split_tpcds.sh
+
+          PROFILE="" FLINK_DIR=`pwd`/build-target flink-end-to-end-tests/run-nightly-tests.sh
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
