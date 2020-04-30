@@ -241,15 +241,7 @@
             branches: master
         - flink-build-and-test-arm64-scheduler-ng-core-and-ng-tests:
             branches: master
-        - flink-end-to-end-test-arm64-checkpoints-and-sticky:
-            branches: master
-        - flink-end-to-end-test-arm64-heavy-and-ha:
-            branches: master
-        - flink-end-to-end-test-arm64-misc-hadoopfree-and-misc:
-            branches: master
-        - flink-end-to-end-test-arm64-container:
-            branches: master
-        - flink-end-to-end-test-arm64-tpcds:
+        - flink-end-to-end-test-cron-hadoopfree:
             branches: master
 
 ####################### periodic jobs on 22:00##########################
