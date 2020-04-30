@@ -2434,81 +2434,13 @@
     timeout: 54000
 
 - job:
-    name: flink-end-to-end-test-arm64-checkpoints-and-sticky
+    name: flink-end-to-end-test-cron-hadoopfree
     parent: init-test
     description: |
-      The flink e2e test which contains split_checkpoints.sh, split_sticky.sh
-    run: playbooks/flink-end-to-end-test/e2e_checkpoints_and_sticky.yaml
-    post-run: playbooks/flink-end-to-end-test/post.yaml
-    nodeset: ubuntu-xenial-arm64-huaweicloud
-    tags:
-      - Category:BigData
-      - Project:apache/flink
-      - Application:Flink@master
-      - OS:ubuntu-xenial
-      - Arch:arm64
-      - BuildType:Integration test
-    timeout: 18000
-
-- job:
-    name: flink-end-to-end-test-arm64-heavy-and-ha
-    parent: init-test
-    description: |
-      The flink e2e test which contains split_heavy.sh, split_ha.sh
-    run: playbooks/flink-end-to-end-test/e2e_heavy_and_ha.yaml
-    post-run: playbooks/flink-end-to-end-test/post.yaml
-    nodeset: ubuntu-xenial-arm64-huaweicloud
-    tags:
-      - Category:BigData
-      - Project:apache/flink
-      - Application:Flink@master
-      - OS:ubuntu-xenial
-      - Arch:arm64
-      - BuildType:Integration test
-    timeout: 18000
-
-- job:
-    name: flink-end-to-end-test-arm64-misc-hadoopfree-and-misc
-    parent: init-test
-    description: |
-      The flink e2e test which contains split_misc.sh, split_misc_hadoopfree.sh
-    run: playbooks/flink-end-to-end-test/e2e_misc_hadoopfree_and_misc.yaml
-    post-run: playbooks/flink-end-to-end-test/post.yaml
-    nodeset: ubuntu-xenial-arm64-huaweicloud
-    tags:
-      - Category:BigData
-      - Project:apache/flink
-      - Application:Flink@master
-      - OS:ubuntu-xenial
-      - Arch:arm64
-      - BuildType:Integration test
-    timeout: 18000
-
-- job:
-    name: flink-end-to-end-test-arm64-container
-    parent: init-test
-    description: |
-      The flink e2e test which contains split_container.sh
-    run: playbooks/flink-end-to-end-test/e2e_container.yaml
+      The flink e2e test - hadoopfree
+    run: playbooks/flink-end-to-end-test/e2e_cron_hadoopfree.yaml
     post-run: playbooks/flink-end-to-end-test/post.yaml
     nodeset: ubuntu-xenial-arm64-huaweicloud-large
-    tags:
-      - Category:BigData
-      - Project:apache/flink
-      - Application:Flink@master
-      - OS:ubuntu-xenial
-      - Arch:arm64
-      - BuildType:Integration test
-    timeout: 18000
-
-- job:
-    name: flink-end-to-end-test-arm64-tpcds
-    parent: init-test
-    description: |
-      The flink e2e test which contains split_tpcds.sh
-    run: playbooks/flink-end-to-end-test/e2e_tpcds.yaml
-    post-run: playbooks/flink-end-to-end-test/post.yaml
-    nodeset: ubuntu-xenial-arm64-huaweicloud
     tags:
       - Category:BigData
       - Project:apache/flink

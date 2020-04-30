@@ -40,14 +40,22 @@
     - name: Update resolv.conf
       shell: sed -i 's/nameserver 127.0.0.1/nameserver 8.8.8.8/' /etc/resolv.conf
 
-    - name: Run split_container.sh e2e test
+    - name: Build Flink
+      shell:
+        cmd: |
+          mvn clean install -DskipTests
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
+
+    - name: Run e2e test - hadoopfree
       shell:
         cmd: |
           set -xo pipefail
-          export PROFILE="-Dinclude-hadoop -Dhadoop.version=2.8.3"
           export DOCKER_COMPOSE_VERSION=1.22.0
 
-          ./tools/travis/nightly.sh split_container.sh
+          PROFILE="" FLINK_DIR=`pwd`/build-target flink-end-to-end-tests/run-nightly-tests.sh
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
