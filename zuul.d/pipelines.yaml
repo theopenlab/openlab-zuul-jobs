@@ -709,6 +709,43 @@
       mysql:
 
 - pipeline:
+    name: cloud-provider-openstack-sanity-test-csi-cinder
+    description: |
+      Commenting "/test cloud-provider-openstack-sanity-test-csi-cinder" enter this pipeline to run
+      the sanity tests of cloud-provider-openstack cinder-csi-plugin repo and receive an initial
+      +/-1 Verified vote.
+    manager: independent
+    trigger:
+      github:
+        - event: pull_request
+          action:
+            - opened
+            - changed
+            - reopened
+        - event: pull_request
+          action: comment
+          comment: (?i)^\s*\/test cloud-provider-openstack-sanity-test-csi-cinder\s*$
+        - event: pull_request
+          action: comment
+          comment: (?i)^\s*\/retest\s*$
+        - event: pull_request
+          action: comment
+          comment: (?i)^\s*\/test all\s*$
+    start:
+      github:
+        status: pending
+        comment: false
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
+    success:
+      github:
+        status: 'success'
+      mysql:
+    failure:
+      github:
+        status: 'failure'
+      mysql:
+
+- pipeline:
     name: cloud-provider-openstack-acceptance-test-lb-octavia
     description: |
       Commenting "/test cloud-provider-openstack-acceptance-test-lb-octavia" enter this pipeline to run

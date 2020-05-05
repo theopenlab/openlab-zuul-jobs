@@ -38,7 +38,9 @@
         locales \
         locales-all \
         wget \
-        rsync
+        rsync \
+        perl \
+        libperl-dev
       args:
         executable: /bin/bash
 
@@ -60,7 +62,8 @@
         ## Fix resolv.conf via /etc/hosts
         # add 'local_ip ubuntu' to /etc/hosts in a new line
         local_ip=`ifconfig -a|grep inet|grep -v 127.0.0.1|grep -v inet6|awk '{print $2}'|tr -d "addr:"`
-        echo "${local_ip} ubuntu" > /etc/hosts
+        name=`hostname`
+        echo "${local_ip} ${name}" > /etc/hosts
         echo "127.0.0.1 localhost" >> /etc/hosts
         cat /etc/hosts
         ## Flush any iptables as much as possible
@@ -69,16 +72,21 @@
       args:
         executable: /bin/bash
 
+    - name: Create results directory
+      file:
+        path: "{{ ansible_user_dir }}/workspace/test_results"
+        state: directory
+
     - name: Install pip deps
       shell: |
         export SODIUM_INSTALL=system
         pip install setuptools
         pip install wheel
-        pip install --user "pyopenssl>=19.0.0"
-        pip install --user --pre psutil
-        pip install --user lockfile
-        pip install --no-binary :all: pynacl
-        pip install --user paramiko || true
+        pip install --no-use-pep517 --user "pyopenssl>=19.0.0"
+        pip install --no-use-pep517 --user --pre psutil
+        pip install --no-use-pep517 --user lockfile
+        pip install --no-use-pep517 --no-binary :all: pynacl
+        pip install --no-use-pep517 --user paramiko || true
       args:
         executable: /bin/bash
 
@@ -89,19 +97,9 @@
         executable: /bin/bash
         chdir: /home/zuul
 
-    - name: Fix in PRs(will remove this step after fix in upstream)
-      shell: |
-        wget https://patch-diff.githubusercontent.com/raw/bzhaoopenstack/gpdb/pull/4.patch
-        git config --global user.email "you@example.com"
-        git config --global user.name "Your Name"
-        git am ./4.patch
-      args:
-        executable: /bin/bash
-        chdir: /home/zuul/gpdb
-
     - name: Install GSSAPI deps
       shell: |
-        export DEBIAN_FRONTEND noninteractive
+        export DEBIAN_FRONTEND=noninteractive
         sudo DEBIAN_FRONTEND=noninteractive apt update
         sudo DEBIAN_FRONTEND=noninteractive apt install krb5-kdc krb5-admin-server libkrb5-dev -y
       args:
@@ -109,8 +107,8 @@
 
     - name: Compile and install gpdb
       shell: |
-        ./configure --with-openssl --with-ldap --with-libcurl --prefix="/home/zuul/gpdb/gpsql" --disable-orca --disable-gpcloud --disable-pxf --without-readline --with-python --with-gssapi
-        make
+        ./configure --with-openssl --with-ldap --with-libcurl --prefix="/home/zuul/gpdb/gpsql" --disable-orca --disable-gpcloud --disable-pxf --without-readline --with-python --with-gssapi  --enable-orafce --enable-mapreduce --with-perl
+        make -j8
         make install
       args:
         executable: /bin/bash
@@ -118,14 +116,14 @@
 
     - name: Compile and install the external functions of gpdb
       shell: |
-        source gpsql/greenplum_path.sh
-        cd gpcontrib/orafce
-        make install USE_PGXS=1
+        cd contrib/btree_gin
+        gcc -Wmissing-prototypes -Wpointer-arith -Wendif-labels -Wmissing-format-attribute -Wformat-security -fno-strict-aliasing -fwrapv -fexcess-precision=standard -Wno-unused-but-set-variable -Wno-format-truncation -O3 -std=gnu99 -Werror=implicit-function-declaration -fPIC -I. -I. -I../../src/include -D_GNU_SOURCE -c -o btree_gin.o btree_gin.c
         cd ../..
-        cd gpcontrib/gpmapreduce
-        # specify -lyaml via changing the Makefine
-        sed -i 's/$(CC) $(CFLAGS) $(MAPREDOBJS) $(libpq_pgport) $(LDFLAGS) $(LIBS) -o $@$(X)/$(CC) $(CFLAGS) $(MAPREDOBJS) $(libpq_pgport) $(LDFLAGS) $(LIBS) -lyaml -o $@$(X)/g' ./Makefile
-        make install
+        cd contrib/pgrowlocks
+        gcc -Wmissing-prototypes -Wpointer-arith -Wendif-labels -Wmissing-format-attribute -Wformat-security -fno-strict-aliasing -fwrapv -fexcess-precision=standard -Wno-unused-but-set-variable -Werror=implicit-fallthrough=3 -Wno-format-truncation -O3 -std=gnu99 -Werror=implicit-function-declaration -fPIC -I. -I. -I../../src/include -D_GNU_SOURCE -c -o pgrowlocks.o pgrowlocks.c
+        cd ../..
+        make -C contrib/ install
+        make -C gpcontrib/ install
       args:
         executable: /bin/bash
         chdir: /home/zuul/gpdb
@@ -170,22 +168,9 @@
         export PGUSER=zuul
         sudo service ssh start
         ulimit -n 65535
-        make -C gpAux/gpdemo cluster | tee ~/cluster-launch.log
+        make -C gpAux/gpdemo cluster | tee "{{ ansible_user_dir }}/workspace/test_results/cluster-launch.log"
         source gpAux/gpdemo/gpdemo-env.sh
-        make installcheck-world | tee ~/installcheck-world.log
+        make installcheck-world | tee "{{ ansible_user_dir }}/workspace/test_results/installcheck-world.log"
       args:
         executable: /bin/bash
         chdir: /home/zuul/gpdb
-
-    - name: Create results directory
-      file:
-        path: "{{ ansible_user_dir }}/workspace/test_results"
-        state: directory
-
-    - name: Copy result into result dir
-      shell: |
-        cp ~/cluster-launch.log "{{ ansible_user_dir }}/workspace/test_results/"
-        cp ~/installcheck-world.log "{{ ansible_user_dir }}/workspace/test_results/"
-        cp -rf ~/gpAdminLogs "{{ ansible_user_dir }}/workspace/test_results/"
-      args:
-        executable: /bin/bash

@@ -530,6 +530,8 @@
       Run unit test of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-unittest/run.yaml
     nodeset: ubuntu-xenial-citynetwork
+    vars:
+      go_version: '1.13.4'
     secrets:
       - citynetwork_credentials
 
@@ -540,6 +542,18 @@
       Run gofmt and typo checking of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-format/run.yaml
     nodeset: ubuntu-xenial-ut
+
+- job:
+    name: cloud-provider-openstack-sanity-test-csi-cinder
+    parent: cloud-provider-openstack-test
+    description: |
+      Run csi sanity tests cloud-provider-openstack cinder-csi-plugin
+    run: playbooks/cloud-provider-openstack-sanity-test-csi-cinder/run.yaml
+    nodeset: ubuntu-xenial-citynetwork
+    vars:
+      go_version: '1.13.4'
+    secrets:
+      - citynetwork_credentials
 
 - job:
     name: cloud-provider-openstack-acceptance-test-k8s-cinder
@@ -710,6 +724,28 @@
       - Project:kubernetes/cloud-provider-openstack
       - Application:cloud-provider-openstack@release-1.17
       - Application:Kubernetes@release-1.17
+      - Application:Docker.io@v18.09
+      - Application:Etcd@v3.4.3
+      - Application:Go@1.13.4
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
+
+- job:
+    name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.18
+    parent: cloud-provider-openstack-acceptance-test-e2e-conformance
+    description: |
+      Run Kubernetes E2E Conformance tests against release-1.18 branch of Kubernetes
+    nodeset: ubuntu-xenial-citynetwork
+    vars:
+      go_version: '1.13.4'
+      k8s_version: 'release-1.18'
+      etcd_version: 'v3.4.3'
+    tags:
+      - Category:Cloud
+      - Project:kubernetes/cloud-provider-openstack
+      - Application:cloud-provider-openstack@release-1.18
+      - Application:Kubernetes@release-1.18
       - Application:Docker.io@v18.09
       - Application:Etcd@v3.4.3
       - Application:Go@1.13.4
@@ -2398,81 +2434,13 @@
     timeout: 54000
 
 - job:
-    name: flink-end-to-end-test-arm64-checkpoints-and-sticky
+    name: flink-end-to-end-test-cron-hadoopfree
     parent: init-test
     description: |
-      The flink e2e test which contains split_checkpoints.sh, split_sticky.sh
-    run: playbooks/flink-end-to-end-test/e2e_checkpoints_and_sticky.yaml
+      The flink e2e test - hadoopfree
+    run: playbooks/flink-end-to-end-test/e2e_cron_hadoopfree.yaml
     post-run: playbooks/flink-end-to-end-test/post.yaml
-    nodeset: ubuntu-xenial-arm64-huaweicloud
-    tags:
-      - Category:BigData
-      - Project:apache/flink
-      - Application:Flink@master
-      - OS:ubuntu-xenial
-      - Arch:arm64
-      - BuildType:Integration test
-    timeout: 18000
-
-- job:
-    name: flink-end-to-end-test-arm64-heavy-and-ha
-    parent: init-test
-    description: |
-      The flink e2e test which contains split_heavy.sh, split_ha.sh
-    run: playbooks/flink-end-to-end-test/e2e_heavy_and_ha.yaml
-    post-run: playbooks/flink-end-to-end-test/post.yaml
-    nodeset: ubuntu-xenial-arm64-huaweicloud
-    tags:
-      - Category:BigData
-      - Project:apache/flink
-      - Application:Flink@master
-      - OS:ubuntu-xenial
-      - Arch:arm64
-      - BuildType:Integration test
-    timeout: 18000
-
-- job:
-    name: flink-end-to-end-test-arm64-misc-hadoopfree-and-misc
-    parent: init-test
-    description: |
-      The flink e2e test which contains split_misc.sh, split_misc_hadoopfree.sh
-    run: playbooks/flink-end-to-end-test/e2e_misc_hadoopfree_and_misc.yaml
-    post-run: playbooks/flink-end-to-end-test/post.yaml
-    nodeset: ubuntu-xenial-arm64-huaweicloud
-    tags:
-      - Category:BigData
-      - Project:apache/flink
-      - Application:Flink@master
-      - OS:ubuntu-xenial
-      - Arch:arm64
-      - BuildType:Integration test
-    timeout: 18000
-
-- job:
-    name: flink-end-to-end-test-arm64-container
-    parent: init-test
-    description: |
-      The flink e2e test which contains split_container.sh
-    run: playbooks/flink-end-to-end-test/e2e_container.yaml
-    post-run: playbooks/flink-end-to-end-test/post.yaml
-    nodeset: ubuntu-xenial-arm64-huaweicloud
-    tags:
-      - Category:BigData
-      - Project:apache/flink
-      - Application:Flink@master
-      - OS:ubuntu-xenial
-      - Arch:arm64
-      - BuildType:Integration test
-    timeout: 18000
-
-- job:
-    name: flink-end-to-end-test-arm64-tpcds
-    parent: init-test
-    description: |
-      The flink e2e test which contains split_tpcds.sh
-    run: playbooks/flink-end-to-end-test/e2e_tpcds.yaml
-    post-run: playbooks/flink-end-to-end-test/post.yaml
-    nodeset: ubuntu-xenial-arm64-huaweicloud
+    nodeset: ubuntu-xenial-arm64-huaweicloud-large
     tags:
       - Category:BigData
       - Project:apache/flink
@@ -2504,7 +2472,7 @@
     description: |
       The flink-core build and test on ARM for libraies and blink_planner component.
     run: playbooks/flink-end-to-end-test/build_and_test_libraies_and_blink_planner.yaml
-    nodeset: ubuntu-xenial-arm64-huaweicloud
+    nodeset: ubuntu-xenial-arm64-huaweicloud-large
     tags:
       - Category:BigData
       - Project:apache/flink
@@ -2568,7 +2536,8 @@
     description: |
       The GreenPlum build and tests all the regression tests with demo cluster.
     run: playbooks/gpdb-installcheck-world-tests-on-arm64/run.yaml
-    nodeset: ubuntu-bionic-arm64-huaweicloud
+    post-run: playbooks/gpdb-installcheck-world-tests-on-arm64/post.yaml
+    nodeset: ubuntu-bionic-arm64-huaweicloud-official
     tags:
       - Category:Database
       - Project:greenplum-db/gpdb

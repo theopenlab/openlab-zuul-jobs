@@ -30,6 +30,6 @@
           # upload e2e log to google storage
           python3.6 upload_e2e.py --junit=$LOG_DIR/junit*.xml --log=$LOG_DIR/e2e.log \
               --bucket=gs://k8s-conform-capi-openstack/$PIPELINE_LOGS_DIR/ci-'{{ zuul.job }}' \
-              --key-file='{{ hostvars[inventory_hostname]["gcp_key_file"] }}'
+              --key-file='{{ hostvars[inventory_hostname]["capo_key_file"] }}'
         executable: /bin/bash
       environment: '{{ global_env }}'

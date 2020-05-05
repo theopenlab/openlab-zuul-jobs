@@ -182,12 +182,12 @@
       jobs:
         - cloud-provider-openstack-acceptance-test-e2e-conformance:
             branches: master
+        - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.18:
+            branches: release-1.18
         - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.17:
             branches: release-1.17
         - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.16:
             branches: release-1.16
-        - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.15:
-            branches: release-1.15
         - cloud-provider-openstack-multinode-csi-migration-test:
             branches: master
 
@@ -241,15 +241,7 @@
             branches: master
         - flink-build-and-test-arm64-scheduler-ng-core-and-ng-tests:
             branches: master
-        - flink-end-to-end-test-arm64-checkpoints-and-sticky:
-            branches: master
-        - flink-end-to-end-test-arm64-heavy-and-ha:
-            branches: master
-        - flink-end-to-end-test-arm64-misc-hadoopfree-and-misc:
-            branches: master
-        - flink-end-to-end-test-arm64-container:
-            branches: master
-        - flink-end-to-end-test-arm64-tpcds:
+        - flink-end-to-end-test-cron-hadoopfree:
             branches: master
 
 ####################### periodic jobs on 22:00##########################

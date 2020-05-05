@@ -14,7 +14,9 @@
 
           # Specify target architecture to build binaries and images
           export ARCH=${ARCH:-amd64}
-          # Build cloud-provider-openstack binaries
+
+          # Build openstack-cloud-controller-manager binary
+          export BUILD_CMDS=openstack-cloud-controller-manager
           make build
 
           # Create cloud-config
@@ -91,10 +93,16 @@
               INSTANCE_UUID=$(curl http://169.254.169.254/openstack/latest/meta_data.json | python -c "import sys, json; print json.load(sys.stdin)['uuid']")
           fi
           echo "$INSTANCE_UUID" > /var/lib/cloud/data/instance-id
-          export VERSION=latest
-          # Build latest images from source
-          make image-cinder-csi-plugin
 
+          # Get current branch name, convert to image tag, e.g. release-1.18 to v1.18.0
+          branch="{{ zuul.branch }}"
+          if [[ $branch == "master" ]]; then
+              version=latest
+          else
+              version="v${branch##release-}.0"
+          fi
+          export VERSION=$version
+          make image-csi-plugin
           if [[ -z "$(docker images -q k8scloudprovider/cinder-csi-plugin:$VERSION 2> /dev/null)" ]]; then
               # add tag without architecture so we don't need to push manifests
               docker image tag k8scloudprovider/cinder-csi-plugin-$ARCH:$VERSION k8scloudprovider/cinder-csi-plugin:$VERSION
