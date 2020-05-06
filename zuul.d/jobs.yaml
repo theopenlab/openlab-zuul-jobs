@@ -272,7 +272,7 @@
     description: |
       Run terraform-provider-openstack lbaas acceptance test on master branch
     run: playbooks/terraform-provider-openstack-acceptance-test-lbaas/run.yaml
-    timeout: 14400 # 4h
+    timeout: 25200 # 7h
     nodeset: ubuntu-bionic
 
 - job:
