@@ -24,4 +24,4 @@
       maven_version: '3.2.5'
   tasks:
     - name: Install docker
-      shell: apt install -y docker-ce docker-ce-cli containerd.io
+      shell: apt install -y docker.io docker-compose containerd
