@@ -1,4 +1,33 @@
-- import_playbook: common.yaml
+- hosts: all
+  become: yes
+  tasks:
+    - name: clean up iptable rules
+      shell: iptables -F
+
+    - name: Use huaweicloud repo
+      shell: wget -O /etc/apt/sources.list https://repo.huaweicloud.com/repository/conf/Ubuntu-Ports-xenial.list && apt update
+
+    - name: Install Pre requirements
+      shell: apt install -y openssl libssl-dev
+
+    - name: Update resolv.conf
+      shell: sed -i 's/nameserver 127.0.0.1/nameserver 8.8.8.8/' /etc/resolv.conf
+
+- hosts: all
+  become: yes
+  roles:
+    - role: install-openjdk
+      java_version: '8'
+      with_scala: true
+      scala_version: '2.12.0'
+    - role: install-maven
+      maven_version: '3.2.5'
+  tasks:
+    - name: Install docker
+      shell: apt install -y docker.io containerd
+
+    - name: Install docker compose
+      shell: pip3 install docker-compose
 
 - hosts: all
   become: yes
@@ -32,12 +61,12 @@
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ global_env }}'
 
-    - name: Run e2e test - hadoopfree
+    - name: Run e2e test - scala212
       shell:
         cmd: |
           set -xo pipefail
 
-          PROFILE="" FLINK_DIR=`pwd`/build-target flink-end-to-end-tests/run-nightly-tests.sh
+          PROFILE="-Dinclude-hadoop -Dhadoop.version=2.8.3 -Dinclude_hadoop_aws -Dscala-2.12 -Phive-1.2.1 -Pe2e-hadoop" FLINK_DIR=`pwd`/build-target flink-end-to-end-tests/run-nightly-tests.sh
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'

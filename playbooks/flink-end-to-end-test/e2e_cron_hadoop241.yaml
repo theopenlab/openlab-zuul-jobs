@@ -32,12 +32,12 @@
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ global_env }}'
 
-    - name: Run e2e test - hadoopfree
+    - name: Run e2e test - hadoop241
       shell:
         cmd: |
           set -xo pipefail
 
-          PROFILE="" FLINK_DIR=`pwd`/build-target flink-end-to-end-tests/run-nightly-tests.sh
+          PROFILE="-Dinclude-hadoop -Dhadoop.version=2.4.1 -Pskip-hive-tests -Pe2e-hadoop" FLINK_DIR=`pwd`/build-target flink-end-to-end-tests/run-nightly-tests.sh
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
