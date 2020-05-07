@@ -2451,6 +2451,57 @@
     timeout: 18000
 
 - job:
+    name: flink-end-to-end-test-cron-hadoop241
+    parent: init-test
+    description: |
+      The flink e2e test - hadoop241
+    run: playbooks/flink-end-to-end-test/e2e_cron_hadoop241.yaml
+    post-run: playbooks/flink-end-to-end-test/post.yaml
+    nodeset: ubuntu-xenial-arm64-huaweicloud-large
+    tags:
+      - Category:BigData
+      - Project:apache/flink
+      - Application:Flink@master
+      - OS:ubuntu-xenial
+      - Arch:arm64
+      - BuildType:Integration test
+    timeout: 18000
+
+- job:
+    name: flink-end-to-end-test-cron-jdk11
+    parent: init-test
+    description: |
+      The flink e2e test - jdk11
+    run: playbooks/flink-end-to-end-test/e2e_cron_jdk11.yaml
+    post-run: playbooks/flink-end-to-end-test/post.yaml
+    nodeset: ubuntu-xenial-arm64-huaweicloud-large
+    tags:
+      - Category:BigData
+      - Project:apache/flink
+      - Application:Flink@master
+      - OS:ubuntu-xenial
+      - Arch:arm64
+      - BuildType:Integration test
+    timeout: 18000
+
+- job:
+    name: flink-end-to-end-test-cron-scala212
+    parent: init-test
+    description: |
+      The flink e2e test - scala212
+    run: playbooks/flink-end-to-end-test/e2e_cron_scala212.yaml
+    post-run: playbooks/flink-end-to-end-test/post.yaml
+    nodeset: ubuntu-xenial-arm64-huaweicloud-large
+    tags:
+      - Category:BigData
+      - Project:apache/flink
+      - Application:Flink@master
+      - OS:ubuntu-xenial
+      - Arch:arm64
+      - BuildType:Integration test
+    timeout: 18000
+
+- job:
     name: flink-build-and-test-arm64-core-and-tests
     parent: init-test
     description: |

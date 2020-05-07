@@ -243,6 +243,12 @@
             branches: master
         - flink-end-to-end-test-cron-hadoopfree:
             branches: master
+        - flink-end-to-end-test-cron-hadoop241:
+            branches: master
+        - flink-end-to-end-test-cron-jdk11:
+            branches: master
+        - flink-end-to-end-test-cron-scala212:
+            branches: master
 
 ####################### periodic jobs on 22:00##########################
 #- project:
