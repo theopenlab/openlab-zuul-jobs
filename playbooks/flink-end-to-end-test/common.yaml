@@ -8,7 +8,7 @@
       shell: wget -O /etc/apt/sources.list https://repo.huaweicloud.com/repository/conf/Ubuntu-Ports-xenial.list && apt update
 
     - name: Install Pre requirements
-      shell: apt install -y openssl libssl-dev
+      shell: apt install -y openssl libssl-dev libffi-dev python-dev python3-dev libevent-dev
 
     - name: Update resolv.conf
       shell: sed -i 's/nameserver 127.0.0.1/nameserver 8.8.8.8/' /etc/resolv.conf
