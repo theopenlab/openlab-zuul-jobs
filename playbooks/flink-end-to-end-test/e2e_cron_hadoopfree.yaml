@@ -9,8 +9,6 @@
         cmd: |
           git clone https://github.com/dataArtisans/frocksdb.git
           cd frocksdb
-          git checkout origin/FRocksDB-5.17.2
-          sudo apt update
           sudo apt install -y gcc g++ make
           export DEBUG_LEVEL=0
           make -j8 rocksdbjavastatic
