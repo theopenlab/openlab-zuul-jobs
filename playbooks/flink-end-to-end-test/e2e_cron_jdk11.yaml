@@ -4,8 +4,8 @@
     - name: clean up iptable rules
       shell: iptables -F
 
-    - name: Use huaweicloud repo
-      shell: wget -O /etc/apt/sources.list https://repo.huaweicloud.com/repository/conf/Ubuntu-Ports-xenial.list && apt update
+    - name: Update repo
+      shell: apt update
 
     - name: Install Pre requirements
       shell: apt install -y openssl libssl-dev libffi-dev python-dev python3-dev libevent-dev
