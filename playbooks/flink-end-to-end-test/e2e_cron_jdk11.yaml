@@ -4,8 +4,8 @@
     - name: clean up iptable rules
       shell: iptables -F
 
-    - name: Update repo
-      shell: apt update
+    - name: Use huaweicloud repo
+      shell: wget -O /etc/apt/sources.list https://repo.huaweicloud.com/repository/conf/Ubuntu-Ports-xenial.list && apt update
 
     - name: Install Pre requirements
       shell: apt install -y openssl libssl-dev libffi-dev python-dev python3-dev libevent-dev
@@ -13,16 +13,61 @@
     - name: Update resolv.conf
       shell: sed -i 's/nameserver 127.0.0.1/nameserver 8.8.8.8/' /etc/resolv.conf
 
-- hosts: all
-  become: yes
-  roles:
-    - role: install-openjdk
-      java_version: '11'
-      with_scala: true
-      scala_version: '2.11.0'
-    - role: install-maven
-      maven_version: '3.2.5'
-  tasks:
+    - name: Install java11
+      shell:
+        cmd: |
+          wget https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk11u-2020-05-13-07-53/OpenJDK11U-jdk_aarch64_linux_hotspot_2020-05-13-07-53.tar.gz'
+          tar xvf OpenJDK11U-jdk_aarch64_linux_hotspot_2020-05-13-07-53.tar.gz
+      args:
+        executable: /bin/bash
+        chdir: '/opt'
+      environment: '{{ global_env }}'
+
+    - name: Set java11 env vars
+      set_fact:
+        java11_env:
+          JAVA_HOME: "/opt/jdk-11.0.8+1/"
+          PATH: '/opt/jdk-11.0.8+1/bin:{{ ansible_env.PATH }}'
+      no_log: yes
+
+    - name: Merge java11 env vars into global env
+      set_fact:
+        global_env: '{{ global_env | combine(java11_env) }}'
+      no_log: yes
+
+    - name: Install scala211
+      shell:
+        cmd: |
+          wget https://downloads.lightbend.com/scala/2.11.0/scala-2.11.0.tgz
+          tar -zxvf scala-2.11.0.tgz -C /usr/local
+      args:
+        executable: /bin/bash
+        chdir: '/opt'
+      environment: '{{ global_env }}'
+
+    - name: Set scala211 env vars
+      set_fact:
+        scala211_env:
+          PATH: '/usr/local/scala-2.11.0/bin:{{ ansible_env.PATH }}'
+      no_log: yes
+
+    - name: Merge scala211 env vars into global env
+      set_fact:
+        global_env: '{{ global_env | combine(scala211_env) }}'
+      no_log: yes
+
+    - name: Show installed JAVA & scala info
+      shell: |
+        javac -version
+        java -version
+        scala -version
+
+        # scala 2.11.0 returns error 1 even there is no error. Ignore the error.
+        exit 0
+      args:
+        executable: /bin/bash
+      environment: '{{ global_env }}'
+
     - name: Install docker
       shell: apt install -y docker.io containerd
 
