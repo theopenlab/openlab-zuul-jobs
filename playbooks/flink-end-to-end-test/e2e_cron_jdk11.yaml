@@ -16,7 +16,7 @@
     - name: Install java11
       shell:
         cmd: |
-          wget https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk11u-2020-05-13-07-53/OpenJDK11U-jdk_aarch64_linux_hotspot_2020-05-13-07-53.tar.gz'
+          wget https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk11u-2020-05-13-07-53/OpenJDK11U-jdk_aarch64_linux_hotspot_2020-05-13-07-53.tar.gz
           tar xvf OpenJDK11U-jdk_aarch64_linux_hotspot_2020-05-13-07-53.tar.gz
       args:
         executable: /bin/bash
