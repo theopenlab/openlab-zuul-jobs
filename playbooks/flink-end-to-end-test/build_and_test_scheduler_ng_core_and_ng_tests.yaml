@@ -26,12 +26,11 @@
       shell:
         cmd: |
           set -xe
-          mvn clean install -nsu \
-          -Dflink.forkCount=2 -Dflink.forkCountTestPackage=2 -Dfast -B -Pskip-webui-build -DskipTests -Dhadoop.version=2.8.3 \
-          -Dinclude_hadoop_aws -Dscala-2.11 -am -pl \
-          flink-annotations,flink-test-utils-parent/flink-test-utils,flink-state-backends/flink-statebackend-rocksdb,\
-          flink-clients,flink-core,flink-java,flink-optimizer,flink-runtime,flink-runtime-web,flink-scala,flink-streaming-java,\
-          flink-streaming-scala,flink-metrics,flink-metrics/flink-metrics-core,flink-scala-shell
+
+          export PROFILE="-Dflink.forkCount=2 -Dflink.forkCountTestPackage=2 -Dfast -Pskip-webui-build -DskipTests -Dhadoop.version=2.8.3 -Dinclude_hadoop_aws -Dscala-2.11"
+          source tools/ci/stage.sh
+
+          mvn clean install -nsu -B -am $PROFILE -pl $MODULES_CORE
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
@@ -41,12 +40,11 @@
       shell:
         cmd: |
           set -xe
-          mvn verify -nsu \
-          -Dflink.forkCount=2 -Dflink.forkCountTestPackage=2 -Dfast -B -Pskip-webui-build -Dflink.tests.with-openssl \
-          -Dhadoop.version=2.8.3 -Dinclude_hadoop_aws -Dscala-2.11 -Dscheduler-ng -fn -pl \
-          flink-annotations,flink-test-utils-parent/flink-test-utils,flink-state-backends/flink-statebackend-rocksdb,\
-          flink-clients,flink-core,flink-java,flink-optimizer,flink-runtime,flink-runtime-web,flink-scala,flink-streaming-java,\
-          flink-streaming-scala,flink-metrics,flink-metrics/flink-metrics-core,flink-scala-shell
+
+          export PROFILE="-Dflink.forkCount=2 -Dflink.forkCountTestPackage=2 -Dfast -Pskip-webui-build -Dflink.tests.with-openssl -Dhadoop.version=2.8.3 -Dinclude_hadoop_aws -Dscala-2.11 -Dlegacy-scheduler"
+          source tools/ci/stage.sh
+
+          mvn verify -nsu -B -fn $PROFILE -pl $MODULES_CORE
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
@@ -56,10 +54,11 @@
       shell:
         cmd: |
           set -xe
-          mvn clean install -nsu \
-          -Dflink.forkCount=2 -Dflink.forkCountTestPackage=2 -Dfast -B -Pskip-webui-build -DskipTests -Dhadoop.version=2.8.3 \
-          -Dinclude_hadoop_aws -Dscala-2.11 -am -pl \
-          flink-tests
+
+          export PROFILE="-Dflink.forkCount=2 -Dflink.forkCountTestPackage=2 -Dfast -Pskip-webui-build -DskipTests -Dhadoop.version=2.8.3 -Dinclude_hadoop_aws -Dscala-2.11"
+          source tools/ci/stage.sh
+
+          mvn clean install -nsu -B -am $PROFILE -pl $MODULES_TESTS
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
@@ -69,10 +68,11 @@
       shell:
         cmd: |
           set -xe
-          mvn verify -nsu \
-          -Dflink.forkCount=2 -Dflink.forkCountTestPackage=2 -Dfast -B -Pskip-webui-build -Dflink.tests.with-openssl \
-          -Dhadoop.version=2.8.3 -Dinclude_hadoop_aws -Dscala-2.11 -Dscheduler-ng -fn -pl \
-          flink-tests
+
+          export PROFILE="-Dflink.forkCount=2 -Dflink.forkCountTestPackage=2 -Dfast -Pskip-webui-build -Dflink.tests.with-openssl -Dhadoop.version=2.8.3 -Dinclude_hadoop_aws -Dscala-2.11 -Dlegacy-scheduler"
+          source tools/ci/stage.sh
+
+          mvn verify -nsu -B -fn $PROFILE -pl $MODULES_TESTS
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
