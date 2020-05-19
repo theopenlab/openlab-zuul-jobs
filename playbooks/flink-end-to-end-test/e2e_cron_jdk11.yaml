@@ -1,5 +1,8 @@
 - hosts: all
   become: yes
+  roles:
+    - role: install-maven
+      maven_version: '3.2.5'
   tasks:
     - name: clean up iptable rules
       shell: iptables -F

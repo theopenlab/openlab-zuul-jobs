@@ -26,7 +26,7 @@
         cmd: |
           set -xe
 
-          export PROFILE="-Dflink.forkCount=2 -Dflink.forkCountTestPackage=2 -Dfast -Pskip-webui-build -DskipTests -Dhadoop.version=2.8.3 Dinclude_hadoop_aws -Dscala-2.11"
+          export PROFILE="-Dflink.forkCount=2 -Dflink.forkCountTestPackage=2 -Dfast -Pskip-webui-build -DskipTests -Dhadoop.version=2.8.3 -Dinclude_hadoop_aws -Dscala-2.11"
           source tools/ci/stage.sh
 
           mvn clean install -nsu -B $PROFILE
