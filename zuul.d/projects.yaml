@@ -216,6 +216,12 @@
         - gophercloud-v0.4.0-acceptance-test-newton:
             branches: master
 
+- project:
+    name: apache/kudu
+    periodic-kudu-mail:
+      jobs:
+        - kudu-build-test-arm64-in-docker
+
 ####################### periodic jobs on 18:00##########################
 #- project:
 #    name: helm/charts

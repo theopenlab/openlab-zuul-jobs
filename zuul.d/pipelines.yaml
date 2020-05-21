@@ -1422,3 +1422,27 @@
         to: builds@flink.apache.org
         subject: Daily Flink ARM Cron Job Test Result - FAILED
       mysql:
+
+- pipeline:
+    name: periodic-kudu-mail
+    description: |
+      This pipeline is used for send Kudu periodic job result to spefied
+      maillist for Apache Kudu
+    manager: independent
+    precedence: high
+    trigger:
+      timer:
+        # set utc 8:30 for test else set utc 16:00
+        - time: '30 8 * * *'
+    success:
+      smtp:
+        from: info@openlabtesting.org
+        to: huangtianhua223@gmail.com
+        subject: Daily Kudu ARM64 Cron Job Test Result - SUCCESS
+      mysql:
+    failure:
+      smtp:
+        from: info@openlabtesting.org
+        to: huangtianhua223@gmail.com
+        subject: Daily Kudu ARM64 Cron Job Test Result - FAILED
+      mysql:
