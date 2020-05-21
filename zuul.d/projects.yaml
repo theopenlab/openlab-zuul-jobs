@@ -220,7 +220,8 @@
     name: apache/kudu
     periodic-kudu-mail:
       jobs:
-        - kudu-build-test-arm64-in-docker
+        - kudu-build-test-arm64-in-docker:
+            branches: master
 
 ####################### periodic jobs on 18:00##########################
 #- project:

@@ -41,7 +41,7 @@
         set -o pipefail
         set -e
         job_ret=0
-        echo "============== Kudu bulding and testing summary ==============="
+        echo "============== Kudu building and testing summary ==============="
         for build_type in {{ build_types  | join(' ') }}; do
             ret=`[ $(docker inspect $build_type --format='{{ '{{' }}.State.ExitCode {{ '}}' }}') == 0 ] && echo SUCCESS || echo FAILED`
             echo "$(echo $build_type | tr 'a-z' 'A-Z') testing: $ret"
