@@ -1,0 +1,53 @@
+- hosts: all
+  become: yes
+  tasks:
+    - name: Building and running tests of Kudu
+      shell: |
+        set -o pipefail
+        set -ex
+        result_dir="{{ ansible_user_dir }}/workspace/test_results/"
+        mkdir -p "$result_dir"
+        type docker || curl -sSL https://get.docker.com/ | sh -
+
+        # build docker image to save running time
+        # git clone https://github.com/liusheng/my-dockerfile
+        # cd my-dockerfile/kudu-aarch64
+        # docker build . -f BUILD3RD.Dockerfile -t liusheng2048/kudu-aarch64:build3rd
+
+        docker_cmd="docker run -d --cap-add=SYS_PTRACE --security-opt seccomp=unconfined "
+
+        for build_type in {{ build_types  | join(' ') }}; do
+            $docker_cmd --name $build_type liusheng2048/kudu-aarch64:build3rd $build_type
+        done
+
+        set +x
+        while :
+        do
+            running=`docker ps --format '{{ '{{' }}.Names{{ '}}' }}'`
+            [[ -z "$running" ]] && break
+            echo "Waiting for Kudu testing of: $running complate..."
+            sleep 20
+        done
+        set -x
+        docker_base_dir=/opt
+        for build_type in {{ build_types  | join(' ') }}; do
+            docker cp $build_type:$docker_base_dir/results/$build_type/ $result_dir
+        done
+      args:
+        executable: /bin/bash
+
+    - name: Building and testing result summary
+      shell: |
+        set -o pipefail
+        set -e
+        job_ret=0
+        echo "============== Kudu bulding and testing summary ==============="
+        for build_type in {{ build_types  | join(' ') }}; do
+            ret=`[ $(docker inspect $build_type --format='{{ '{{' }}.State.ExitCode {{ '}}' }}') == 0 ] && echo SUCCESS || echo FAILED`
+            echo "$(echo $build_type | tr 'a-z' 'A-Z') testing: $ret"
+            [[ "$ret" = "FAILED" ]] && job_ret=1
+        done
+        echo "================================================================"
+        exit $job_ret
+      args:
+        executable: /bin/bash
