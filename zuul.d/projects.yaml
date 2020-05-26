@@ -46,6 +46,11 @@
 #            branches: devel
 #        - openstacksdk-ansible-v2.8.0-functional-devstack-mitaka:
 #            branches: devel
+- project:
+    name: pytorch/pytorch
+    periodic-0:
+      jobs:
+        - pytorch-arm64-build-daily
 
 ####################### periodic jobs on 02:00 ##########################
 #- project:

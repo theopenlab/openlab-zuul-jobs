@@ -1,0 +1,36 @@
+- hosts: all
+  become: yes
+  tasks:
+    - name: prepare
+      shell:
+        cmd: |
+          apt update
+          apt install -y python3-pip cmake
+          pip3 install -U pip
+          pip --version
+          pip install numpy ninja pyyaml mkl mkl-include setuptools cffi
+
+      args:
+        executable: /bin/bash
+        chdir: '/opt'
+      environment: '{{ global_env }}'
+
+    - name: Update Repo
+      shell:
+        cmd: |
+          git submodule sync
+          git submodule update --init --recursive
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
+
+    - name: Build Pytorch
+      shell:
+        cmd: |
+          pip install -r requirements.txt
+          python3 setup.py install
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
