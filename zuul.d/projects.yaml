@@ -72,6 +72,12 @@
 #        - terraform-provider-openstack-v1.19.0-acceptance-test-mitaka:
 #            branches: master
 
+- project:
+    name: tensorflow/tensorflow
+    periodic-2:
+      jobs:
+        - tensorflow-arm64-build-daily
+
 ####################### periodic jobs on 04:00 ##########################
 #- project:
 #    name: cloudfoundry/bosh-openstack-cpi-release
