@@ -2635,3 +2635,19 @@
       - Arch:arm64
       - BuildType:Build
     timeout: 18000
+
+- job:
+    name: tensorflow-arm64-build-daily
+    parent: init-test
+    description: |
+      Tensorflow daily build on ARM64
+    run: playbooks/tensorflow-arm-build
+    nodeset: ubuntu-bionic-arm64-huaweicloud-8u16g
+    tags:
+      - Category:AI
+      - Project:Tensorflow/Tensorflow
+      - Application:Tensorflow@master
+      - OS:ubuntu-bionic
+      - Arch:arm64
+      - BuildType:Build
+    timeout: 18000
