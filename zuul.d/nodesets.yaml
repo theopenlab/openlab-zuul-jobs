@@ -128,6 +128,12 @@
         label: ubuntu-bionic-arm64-huaweicloud-official
 
 - nodeset:
+    name: ubuntu-bionic-arm64-huaweicloud-8u16g
+    nodes:
+      - name: ubuntu-bionic-arm64-huaweicloud-8u16g
+        label: ubuntu-bionic-arm64-huaweicloud-8u16g
+
+- nodeset:
     name: ubuntu-bionic-arm64-huaweicloud-16u32g
     nodes:
       - name: ubuntu-bionic-arm64-huaweicloud-16u32g
