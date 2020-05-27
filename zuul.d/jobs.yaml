@@ -2625,13 +2625,13 @@
     parent: init-test
     description: |
       Pytorch daily build on ARM64
-    run: playbooks/pytorch-arm-build
+    run: playbooks/pytorch-arm-build/run.yaml
     nodeset: ubuntu-bionic-arm64-huaweicloud-8u16g
     tags:
       - Category:AI
       - Project:Pytorch/Pytorch
       - Application:Pytorch@master
-      - OS:ubuntu-xenial
+      - OS:ubuntu-bionic
       - Arch:arm64
       - BuildType:Build
     timeout: 18000
@@ -2641,7 +2641,7 @@
     parent: init-test
     description: |
       Tensorflow daily build on ARM64
-    run: playbooks/tensorflow-arm-build
+    run: playbooks/tensorflow-arm-build/run.yaml
     nodeset: ubuntu-bionic-arm64-huaweicloud-8u16g
     tags:
       - Category:AI
