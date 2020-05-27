@@ -59,6 +59,8 @@
         cd bazel
         EXTRA_BAZEL_ARGS='--host_javabase=@local_jdk//:jdk' ./compile.sh
         ln -s `pwd`/output/bazel /usr/bin/bazel
+        export PATH=$PATH:/usr/bin/
+        which bazel
       args:
         executable: /bin/bash
 
@@ -79,6 +81,7 @@
     - name: Build Tensorflow master
       shell: |
         set -xe
+        export PATH=$PATH:/usr/bin/
         virtualenv --python=python3.6 ~/.env/tensorflow/
         source ~/.env/tensorflow/bin/activate
         cat << EOF > input
