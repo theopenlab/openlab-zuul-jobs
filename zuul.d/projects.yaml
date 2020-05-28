@@ -50,7 +50,15 @@
     name: pytorch/pytorch
     periodic-0:
       jobs:
-        - pytorch-arm64-build-daily
+        - pytorch-arm64-build-daily:
+            branches: master
+
+- project:
+    name: tensorflow/tensorflow
+    periodic-0:
+      jobs:
+        - tensorflow-arm64-build-daily:
+            branches: master
 
 ####################### periodic jobs on 02:00 ##########################
 #- project:
@@ -72,11 +80,6 @@
 #        - terraform-provider-openstack-v1.19.0-acceptance-test-mitaka:
 #            branches: master
 
-- project:
-    name: tensorflow/tensorflow
-    periodic-2:
-      jobs:
-        - tensorflow-arm64-build-daily
 
 ####################### periodic jobs on 04:00 ##########################
 #- project:
