@@ -8,12 +8,24 @@
           apt install -y python3-pip cmake
           pip3 install -U pip
           pip --version
-          pip install numpy ninja pyyaml mkl mkl-include setuptools cffi
+          pip install scikit-build
+          pip install numpy ninja pyyaml setuptools cffi
 
       args:
         executable: /bin/bash
         chdir: '/opt'
       environment: '{{ global_env }}'
+
+    - name: Checkout Release
+      shell:
+        cmd: |
+          git checkout {{ global_env.RELEASE }} -b {{ global_env.RELEASE }}
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
+      when:
+        global_env.RELEASE != 'master'
 
     - name: Update Repo
       shell:
@@ -29,7 +41,7 @@
       shell:
         cmd: |
           pip install -r requirements.txt
-          python3 setup.py install
+          USE_CUDA=0 python3 setup.py build
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
