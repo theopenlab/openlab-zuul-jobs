@@ -1,12 +1,27 @@
 - hosts: all
   become: yes
   tasks:
+    - name: Install Zuul
+      shell:
+        cmd: |
+          set -e
+          set -o pipefail
+          set -x
+          pip install -U pip
+          git clone https://opendev.org/zuul/zuul.git
+          cd zuul
+          pip install -e .
+        executable: /bin/bash
+        chdir: /opt
+
     - name: Run ansible zuul job check tests for openlab-zuul-jobs
       shell:
         cmd: |
           set -e
           set -o pipefail
           set -x
+          export ANSIBLE_ACTION_PLUGINS=/opt/zuul/zuul/ansible/base/actiongeneral
+
           pip install ansible-lint
           find playbooks -type f -regex '.*.y[a]?ml' -not -path "{{ excluded_path }}" -print0 | xargs -t -n1 -0 ansible-lint -x203,204,301,206,305,303,405
           find playbooks -type f -regex '.*.y[a]?ml' -not -path "{{ excluded_path }}" -exec ansible-playbook -v --syntax-check -i ./playbooks/openlab-zuul-jobs-check/inventory \{\} + > /dev/null
