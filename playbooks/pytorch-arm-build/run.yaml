@@ -73,5 +73,3 @@
             artifacts:
               - name: "whl file download"
                 url: "{{ whl_file_name }}"
-      tags:
-      - skip_ansible_lint
