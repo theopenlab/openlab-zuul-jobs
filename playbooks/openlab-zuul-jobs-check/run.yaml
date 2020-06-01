@@ -7,7 +7,8 @@
           set -e
           set -o pipefail
           set -x
-          pip install -U pip
+          apt install -y python3-pip
+          pip3 install -U pip
           git clone https://opendev.org/zuul/zuul.git
           cd zuul
           pip install -e .
