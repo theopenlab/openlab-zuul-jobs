@@ -11,7 +11,7 @@
           pip3 install -U pip
           git clone https://opendev.org/zuul/zuul.git
           cd zuul
-          pip install -e .
+          pip3 install -e .
         executable: /bin/bash
         chdir: /opt
 
