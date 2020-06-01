@@ -5,7 +5,7 @@
       shell:
         cmd: |
           apt update
-          apt install -y python3-pip cmake
+          apt install -y python3-pip cmake libffi-dev
           pip3 install -U pip
           pip --version
           pip install scikit-build
@@ -41,8 +41,35 @@
       shell:
         cmd: |
           pip install -r requirements.txt
-          USE_CUDA=0 python3 setup.py build
+          USE_CUDA=0 python3 setup.py bdist_wheel
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ global_env }}'
+
+    - name: Copy the built file
+      shell:
+        cmd: |
+          cp dist/torch-*.whl "{{ ansible_user_dir }}/workspace/"
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
+
+    - name: Get whl file name
+      find:
+        paths: "{{ ansible_user_dir }}/workspace/"
+        patterns: 'torch-*.whl'
+      register: file_name_matched
+
+    - name: Set whl file name
+      set_fact:
+        whl_file_name: "{{ file_name_matched.files[0].path.split('/')[-1] }}"
+
+    - name: Return artifact to Zuul
+      zuul_return:
+        data:
+          zuul:
+            artifacts:
+              - name: "whl file download"
+                url: "{{ whl_file_name }}"
