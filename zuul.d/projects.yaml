@@ -65,7 +65,11 @@
     name: tensorflow/tensorflow
     periodic-0:
       jobs:
-        - tensorflow-arm64-build-daily:
+        - tensorflow-arm64-build-daily-master:
+            branches: master
+        - tensorflow-arm64-build-daily-v2.0.0:
+            branches: master
+        - tensorflow-arm64-build-daily-v2.1.0:
             branches: master
 
 ####################### periodic jobs on 02:00 ##########################
