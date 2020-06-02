@@ -47,6 +47,17 @@
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ global_env }}'
 
+    - name: Simple Test
+      shell:
+        cmd: |
+          apt install zlib1g zlib1g-dev libjpeg-dev build-essential libopenblas-dev
+          pip install dist/torch-*.whl
+          python3 -c "import torch; import torchvision; print(torch.__version__, torchvision.__version__)"
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
+
     - name: Copy the built file
       shell:
         cmd: |

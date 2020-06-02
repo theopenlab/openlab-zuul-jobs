@@ -2655,6 +2655,33 @@
         RELEASE: v1.2.0
 
 - job:
+    name: pytorch-arm64-build-daily-v1.3.0
+    parent: pytorch-arm64-build-daily
+    description: |
+      Pytorch V1.3.0 daily build on ARM64
+    vars:
+      global_env:
+        RELEASE: v1.3.0
+
+- job:
+    name: pytorch-arm64-build-daily-v1.4.0
+    parent: pytorch-arm64-build-daily
+    description: |
+      Pytorch V1.4.0 daily build on ARM64
+    vars:
+      global_env:
+        RELEASE: v1.4.0
+
+- job:
+    name: pytorch-arm64-build-daily-v1.5.0
+    parent: pytorch-arm64-build-daily
+    description: |
+      Pytorch V1.5.0 daily build on ARM64
+    vars:
+      global_env:
+        RELEASE: v1.5.0
+
+- job:
     name: tensorflow-arm64-build-daily
     parent: init-test
     description: |
