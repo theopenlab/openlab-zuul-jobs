@@ -34,7 +34,7 @@
 - name: Install scala
   shell: |
     set -xe
-    wget https://downloads.lightbend.com/scala/{{ scala_version }}/scala-{{ scala_version }}.tgz
+    wget --no-check-certificate https://downloads.lightbend.com/scala/{{ scala_version }}/scala-{{ scala_version }}.tgz
     tar -zxvf scala-{{ scala_version }}.tgz -C /usr/local
   args:
     executable: /bin/bash
