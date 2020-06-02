@@ -1432,8 +1432,7 @@
     precedence: high
     trigger:
       timer:
-              # set utc 14:00 for test else set utc 16:00
-        - time: '0 14 * * *'
+        - time: '0 7 * * *'
     success:
       smtp:
         from: info@openlabtesting.org
