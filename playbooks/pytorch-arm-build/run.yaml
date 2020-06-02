@@ -50,7 +50,7 @@
     - name: Copy the built file
       shell:
         cmd: |
-          cp dist/torch-*.whl "{{ ansible_user_dir }}/workspace/"
+          cp dist/torch-*.whl "{{ ansible_user_dir }}/workspace/test_results/"
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
@@ -58,7 +58,7 @@
 
     - name: Get whl file name
       find:
-        paths: "{{ ansible_user_dir }}/workspace/"
+        paths: "{{ ansible_user_dir }}/workspace/test_results/"
         patterns: 'torch-*.whl'
       register: file_name_matched
 
@@ -72,4 +72,4 @@
           zuul:
             artifacts:
               - name: "whl file download"
-                url: "{{ whl_file_name }}"
+                url: "test_results/{{ whl_file_name }}"
