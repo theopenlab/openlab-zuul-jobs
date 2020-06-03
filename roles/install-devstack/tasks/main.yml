@@ -17,6 +17,9 @@
   when:
     - DISABLE_HTTPD_MOD_WSGI|default(false)|bool
 
+- name: Install requirements
+  shell: apt install bridge-utils -y
+
 - name: Install libpcre3-dev
   shell: |
     apt install libpcre3-dev -y
