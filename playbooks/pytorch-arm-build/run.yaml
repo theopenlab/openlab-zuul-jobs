@@ -55,7 +55,7 @@
 
           # Do not import torch in pytorch source folder
           cd /opt
-          python3 -c "import torch; import torchvision; print(torch.__version__, torchvision.__version__)"
+          python3 -c "import torch; print(torch.__version__)"
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
