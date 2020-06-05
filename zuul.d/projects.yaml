@@ -61,17 +61,6 @@
         - pytorch-arm64-build-daily-v1.2.0:
             branches: master
 
-- project:
-    name: tensorflow/tensorflow
-    periodic-0:
-      jobs:
-        - tensorflow-arm64-build-daily-master:
-            branches: master
-        - tensorflow-arm64-build-daily-v2.0.0:
-            branches: master
-        - tensorflow-arm64-build-daily-v2.1.0:
-            branches: master
-
 ####################### periodic jobs on 02:00 ##########################
 #- project:
 #    name: terraform-providers/terraform-provider-openstack
@@ -258,6 +247,16 @@
 #            branches: master
 #        - helm-integration-test-kubeadm-k8s-v1.12.7:
 #            branches: master
+- project:
+    name: tensorflow/tensorflow
+    periodic-18:
+      jobs:
+        - tensorflow-arm64-build-daily-master:
+            branches: master
+        - tensorflow-arm64-build-daily-v2.0.0:
+            branches: master
+        - tensorflow-arm64-build-daily-v2.1.0:
+            branches: master
 
 ####################### periodic jobs on 20:00##########################
 - project:
