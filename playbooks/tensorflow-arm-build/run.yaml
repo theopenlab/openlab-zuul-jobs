@@ -133,10 +133,14 @@
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ global_env }}'
 
+    - name: Generate package folder
+      file:
+        path: "{{ ansible_user_dir }}/workspace/test_results/"
+        state: directory
+
     - name: Copy the built file
       shell:
         cmd: |
-          mkdir -p "{{ ansible_user_dir }}/workspace/test_results/"
           cp tensorflow-pkg/tensorflow-*.whl "{{ ansible_user_dir }}/workspace/test_results/"
       args:
         executable: /bin/bash
