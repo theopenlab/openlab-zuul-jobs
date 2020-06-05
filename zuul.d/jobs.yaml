@@ -2695,4 +2695,37 @@
       - OS:ubuntu-bionic
       - Arch:arm64
       - BuildType:Build
-    timeout: 18000
+    timeout: 54000
+
+- job:
+    name: tensorflow-arm64-build-daily-master
+    parent: tensorflow-arm64-build-daily
+    description: |
+      Tensorflow Master daily build on ARM64
+    vars:
+      global_env:
+        RELEASE: master
+        BAZEL_VERSION: 3.1.0
+        GCC_VERSION: default
+
+- job:
+    name: tensorflow-arm64-build-daily-v2.0.0
+    parent: tensorflow-arm64-build-daily
+    description: |
+      Tensorflow v2.0.0 daily build on ARM64
+    vars:
+      global_env:
+        RELEASE: v2.0.0
+        BAZEL_VERSION: 0.26.0
+        GCC_VERSION: default
+
+- job:
+    name: tensorflow-arm64-build-daily-v2.1.0
+    parent: tensorflow-arm64-build-daily
+    description: |
+      Tensorflow v2.1.0 daily build on ARM64
+    vars:
+      global_env:
+        RELEASE: v2.1.0
+        BAZEL_VERSION: 0.29.1
+        GCC_VERSION: 7.5.0
