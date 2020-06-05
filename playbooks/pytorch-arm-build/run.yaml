@@ -50,7 +50,7 @@
     - name: Simple Test
       shell:
         cmd: |
-          apt install zlib1g zlib1g-dev libjpeg-dev build-essential libopenblas-dev
+          apt install -y zlib1g zlib1g-dev libjpeg-dev build-essential libopenblas-dev
           pip install dist/torch-*.whl
 
           # Do not import torch in pytorch source folder
