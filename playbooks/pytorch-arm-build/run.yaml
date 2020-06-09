@@ -1,11 +1,48 @@
 - hosts: all
   become: yes
   tasks:
+    - name: Install python3.7
+      shell:
+        cmd: |
+          add-apt-repository ppa:deadsnakes/ppa -y
+          apt update
+          apt install -y python3.7
+
+          rm /usr/bin/python3
+          ln -s /usr/bin/python3.7 /usr/bin/python3
+
+          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+          python3 get-pip.py
+      args:
+        executable: /bin/bash
+        chdir: '/opt'
+      environment: '{{ global_env }}'
+      when:
+        global_env.PYTHON == 'v3.7'
+
+    - name: Install python3.8
+      shell:
+        cmd: |
+          add-apt-repository ppa:deadsnakes/ppa -y
+          apt update
+          apt install -y python3.8
+
+          rm /usr/bin/python3
+          ln -s /usr/bin/python3.8 /usr/bin/python3
+
+          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+          python3 get-pip.py
+      args:
+        executable: /bin/bash
+        chdir: '/opt'
+      environment: '{{ global_env }}'
+      when:
+        global_env.PYTHON == 'v3.8'
+
     - name: prepare
       shell:
         cmd: |
-          apt update
-          apt install -y python3-pip cmake libffi-dev
+          apt install -y cmake libffi-dev
           pip3 install -U pip
           pip --version
           pip install scikit-build

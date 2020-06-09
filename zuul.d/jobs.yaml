@@ -2646,6 +2646,36 @@
         RELEASE: master
 
 - job:
+    name: pytorch-arm64-build-daily-master-py36
+    parent: pytorch-arm64-build-daily
+    description: |
+      Pytorch Master daily build on ARM64
+    vars:
+      global_env:
+        RELEASE: master
+        PYTHON: v3.6
+
+- job:
+    name: pytorch-arm64-build-daily-master-py37
+    parent: pytorch-arm64-build-daily
+    description: |
+      Pytorch Master daily build on ARM64
+    vars:
+      global_env:
+        RELEASE: master
+        PYTHON: v3.7
+
+- job:
+    name: pytorch-arm64-build-daily-master-py38
+    parent: pytorch-arm64-build-daily
+    description: |
+      Pytorch Master daily build on ARM64
+    vars:
+      global_env:
+        RELEASE: master
+        PYTHON: v3.8
+
+- job:
     name: pytorch-arm64-build-daily-v1.2.0
     parent: pytorch-arm64-build-daily
     description: |
