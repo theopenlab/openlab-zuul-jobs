@@ -52,6 +52,12 @@
       jobs:
         - pytorch-arm64-build-daily-master:
             branches: master
+        - pytorch-arm64-build-daily-master-py36:
+            branches: master
+        - pytorch-arm64-build-daily-master-py37:
+            branches: master
+        - pytorch-arm64-build-daily-master-py38:
+            branches: master
         - pytorch-arm64-build-daily-v1.5.0:
             branches: master
         - pytorch-arm64-build-daily-v1.4.0:
