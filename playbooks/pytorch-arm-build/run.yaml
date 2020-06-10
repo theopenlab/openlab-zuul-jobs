@@ -42,7 +42,7 @@
     - name: prepare
       shell:
         cmd: |
-          apt install -y cmake libffi-dev
+          apt install -y cmake libffi-dev clang
           pip3 install -U pip
           pip --version
           pip install scikit-build
@@ -78,7 +78,7 @@
       shell:
         cmd: |
           pip install -r requirements.txt
-          USE_CUDA=0 python3 setup.py bdist_wheel
+          CC=clang CXX=clang++ USE_CUDA=0 python3 setup.py bdist_wheel
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
