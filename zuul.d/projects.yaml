@@ -64,8 +64,6 @@
             branches: master
         - pytorch-arm64-build-daily-v1.3.0:
             branches: master
-        - pytorch-arm64-build-daily-v1.2.0:
-            branches: master
 
 ####################### periodic jobs on 02:00 ##########################
 #- project:

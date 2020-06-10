@@ -2635,54 +2635,40 @@
       - Arch:arm64
       - BuildType:Build
     timeout: 18000
-
-- job:
-    name: pytorch-arm64-build-daily-master
-    parent: pytorch-arm64-build-daily
-    description: |
-      Pytorch Master daily build on ARM64
-    vars:
-      global_env:
-        RELEASE: master
-
-- job:
-    name: pytorch-arm64-build-daily-master-py36
-    parent: pytorch-arm64-build-daily
-    description: |
-      Pytorch Master daily build on ARM64
     vars:
       global_env:
         RELEASE: master
         PYTHON: v3.6
 
 - job:
-    name: pytorch-arm64-build-daily-master-py37
+    name: pytorch-arm64-build-daily-master
     parent: pytorch-arm64-build-daily
     description: |
       Pytorch Master daily build on ARM64
+
+- job:
+    name: pytorch-arm64-build-daily-master-py36
+    parent: pytorch-arm64-build-daily
+    description: |
+      Pytorch Master daily build on ARM64 - py36
+
+- job:
+    name: pytorch-arm64-build-daily-master-py37
+    parent: pytorch-arm64-build-daily
+    description: |
+      Pytorch Master daily build on ARM64 - py37
     vars:
       global_env:
-        RELEASE: master
         PYTHON: v3.7
 
 - job:
     name: pytorch-arm64-build-daily-master-py38
     parent: pytorch-arm64-build-daily
     description: |
-      Pytorch Master daily build on ARM64
+      Pytorch Master daily build on ARM64 - py38
     vars:
       global_env:
-        RELEASE: master
         PYTHON: v3.8
-
-- job:
-    name: pytorch-arm64-build-daily-v1.2.0
-    parent: pytorch-arm64-build-daily
-    description: |
-      Pytorch V1.2.0 daily build on ARM64
-    vars:
-      global_env:
-        RELEASE: v1.2.0
 
 - job:
     name: pytorch-arm64-build-daily-v1.3.0
