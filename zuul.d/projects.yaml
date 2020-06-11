@@ -129,6 +129,13 @@
         - kind-integration-test-arm64:
             branches: master
 
+- project:
+    name: apache/kudu
+    periodic-kudu-mail:
+      jobs:
+        - kudu-build-test-arm64-in-docker:
+            branches: master
+
 ####################### periodic jobs on 08:00 ##########################
 #- project:
 #    name: docker/machine
@@ -233,13 +240,6 @@
         - gophercloud-v0.4.0-acceptance-test-ocata:
             branches: master
         - gophercloud-v0.4.0-acceptance-test-newton:
-            branches: master
-
-- project:
-    name: apache/kudu
-    periodic-kudu-mail:
-      jobs:
-        - kudu-build-test-arm64-in-docker:
             branches: master
 
 ####################### periodic jobs on 18:00##########################
