@@ -1432,16 +1432,10 @@
     precedence: high
     trigger:
       timer:
-        - time: '0 7 * * *'
-    success:
-      smtp:
-        from: info@openlabtesting.org
-        to: huangtianhua223@gmail.com
-        subject: Daily Kudu ARM64 Cron Job Test Result - SUCCESS
-      mysql:
+        - time: '0 6 * * *'
     failure:
       smtp:
         from: info@openlabtesting.org
-        to: huangtianhua223@gmail.com
-        subject: Daily Kudu ARM64 Cron Job Test Result - FAILED
+        to: dev@kudu.apache.org
+        subject: Daily KUDU ARM64 Cron Job Test Result - FAILED
       mysql:
