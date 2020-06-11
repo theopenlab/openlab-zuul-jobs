@@ -6,7 +6,7 @@
         cmd: |
           add-apt-repository ppa:deadsnakes/ppa -y
           apt update
-          apt install -y python3.7
+          apt install -y python3.7 python3.7-dev
 
           rm /usr/bin/python3
           ln -s /usr/bin/python3.7 /usr/bin/python3
@@ -25,7 +25,7 @@
         cmd: |
           add-apt-repository ppa:deadsnakes/ppa -y
           apt update
-          apt install -y python3.8
+          apt install -y python3.8 python3.8-dev
 
           rm /usr/bin/python3
           ln -s /usr/bin/python3.8 /usr/bin/python3
@@ -42,6 +42,7 @@
     - name: prepare
       shell:
         cmd: |
+          apt update
           apt install -y cmake libffi-dev clang
           pip3 install -U pip
           pip --version
