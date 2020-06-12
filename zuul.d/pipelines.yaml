@@ -1433,6 +1433,8 @@
     trigger:
       timer:
         - time: '0 6 * * *'
+    success:
+      mysql:
     failure:
       smtp:
         from: info@openlabtesting.org
