@@ -2641,12 +2641,6 @@
         PYTHON: v3.6
 
 - job:
-    name: pytorch-arm64-build-daily-master
-    parent: pytorch-arm64-build-daily
-    description: |
-      Pytorch Master daily build on ARM64
-
-- job:
     name: pytorch-arm64-build-daily-master-py36
     parent: pytorch-arm64-build-daily
     description: |
@@ -2669,15 +2663,6 @@
     vars:
       global_env:
         PYTHON: v3.8
-
-- job:
-    name: pytorch-arm64-build-daily-v1.3.0
-    parent: pytorch-arm64-build-daily
-    description: |
-      Pytorch V1.3.0 daily build on ARM64
-    vars:
-      global_env:
-        RELEASE: v1.3.0
 
 - job:
     name: pytorch-arm64-build-daily-v1.4.0
