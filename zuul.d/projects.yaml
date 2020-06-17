@@ -50,8 +50,6 @@
     name: pytorch/pytorch
     periodic-0:
       jobs:
-        - pytorch-arm64-build-daily-master:
-            branches: master
         - pytorch-arm64-build-daily-master-py36:
             branches: master
         - pytorch-arm64-build-daily-master-py37:
@@ -61,8 +59,6 @@
         - pytorch-arm64-build-daily-v1.5.0:
             branches: master
         - pytorch-arm64-build-daily-v1.4.0:
-            branches: master
-        - pytorch-arm64-build-daily-v1.3.0:
             branches: master
 
 ####################### periodic jobs on 02:00 ##########################
