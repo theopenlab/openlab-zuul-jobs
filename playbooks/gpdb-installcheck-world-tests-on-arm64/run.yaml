@@ -87,6 +87,7 @@
         pip install --no-use-pep517 --user lockfile
         pip install --no-use-pep517 --no-binary :all: pynacl
         pip install --no-use-pep517 --user paramiko || true
+        pip install pygresql===5.1.2
       args:
         executable: /bin/bash
 
