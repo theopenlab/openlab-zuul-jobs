@@ -142,12 +142,17 @@
           # Otherwise, kubetest will fail due to some unknow conflicts.
           # rm -rf _output/
 
+          # TODO: Temporary skip following 2 conformance tests. We need to remove them from --ginkgo.skip
+          # after enabling 2+ worker nodes at CI system.
+          # - [sig-scheduling] SchedulerPreemption [Serial] validates basic preemption works [Conformance]
+          # - [sig-scheduling] SchedulerPreemption [Serial] validates lower priority pod preemption by critical pod [Conformance]
+
           ./kubetest --dump=$LOG_DIR \
               --test \
               --deployment=local \
               --provider=local \
               --ginkgo-parallel=1 \
-              --test_args="--ginkgo.focus=\\[Conformance\\] --ginkgo.noColor=true --ginkgo.skip=\\[sig\\-apps\\]\\sDaemon\\sset\\s\\[Serial\\]\\sshould\\srollback\\swithout\\sunnecessary\\srestarts\\s\\[Conformance\\]" \
+              --test_args="--ginkgo.focus=\\[Conformance\\] --ginkgo.noColor=true --ginkgo.skip=\\[sig\\-apps\\]\\sDaemon\\sset\\s\\[Serial\\]\\sshould\\srollback\\swithout\\sunnecessary\\srestarts\\s\\[Conformance\\]|\\[sig-scheduling\\]\\sSchedulerPreemption\\s\\[Serial\\]\\svalidates\\sbasic\\spreemption\\sworks\\s\\[Conformance\\]|\\[sig-scheduling\\]\\sSchedulerPreemption\\s\\[Serial\\]\\svalidates\\slower\\spriority\\spod\\spreemption\\sby\\scritical\\spod\\s\\[Conformance\\]" \
               --timeout=150m | tee $LOG_DIR/e2e.log
         executable: /bin/bash
         chdir: '{{ k8s_os_provider_src_dir }}'
