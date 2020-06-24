@@ -1,26 +1,71 @@
-- hosts: all
+- hosts: k8s-master
+  name: Bootstrap kubernetes master
+  become: yes
+
+  pre_tasks:
+    - name: create /etc/kubernetes
+      file:
+        path: /etc/kubernetes
+        state: directory
+
+    - name: ship kubeadm.yaml
+      copy:
+        dest: /etc/kubernetes/kubeadm.yaml
+        content: |
+          apiVersion: kubeadm.k8s.io/v1beta2
+          kind: ClusterConfiguration
+          networking:
+            podSubnet: 192.168.0.0/16
+          kubernetesVersion: {{ kubernetes_version | default('latest') }}
+          apiServer:
+            extraArgs:
+              "cloud-provider": "external"
+          controllerManager:
+            extraArgs:
+              "cloud-provider": "external"
+          ---
+          apiVersion: kubeadm.k8s.io/v1beta2
+          kind: InitConfiguration
+          nodeRegistration:
+            kubeletExtraArgs:
+              cloud-provider: "external"
+
   roles:
     - config-golang
     - export-cloud-openrc
-    - install-k8s
-  become: yes
+    - role: create-multinodes-k8s-cluster-with-kubeadm
+      k8s_role_to_deploy: ["master"]
+      network_addon: calico
+
   tasks:
-    - name: Run kubernetes E2E conformance tests with cloud-provider-openstack
+    - name: Build openstack-cloud-controller-manager image
+      environment: '{{ global_env }}'
       shell:
+        executable: /bin/bash
+        chdir: '{{ k8s_os_provider_src_dir }}'
         cmd: |
-          set -x
-          set -e
           set -o pipefail
-          # Specify target architecture to build binaries and images
-          export ARCH=${ARCH:-amd64}
+          set -ex
 
-          # Build openstack-cloud-controller-manager binary
-          export BUILD_CMDS=openstack-cloud-controller-manager
-          make build
+          apt-get install build-essential jq -y
 
-          # Create cloud-config
-          mkdir -p /etc/kubernetes/
-          cat << EOF >> /etc/kubernetes/cloud-config
+          export ARCH=amd64
+          export IMAGE_NAMES=openstack-cloud-controller-manager
+          export VERSION=latest
+          make build-images
+
+          docker tag k8scloudprovider/${IMAGE_NAMES}-${ARCH}:latest k8scloudprovider/${IMAGE_NAMES}:latest
+
+    - name: create cloud-config
+      environment: '{{ global_env }}'
+      shell:
+        chdir: '{{ k8s_os_provider_src_dir }}'
+        executable: /bin/bash
+        cmd: |
+          set -o pipefail
+          set -ex
+
+          cat > /etc/kubernetes/cloud-config <<EOF
           [Global]
           domain-name = $OS_USER_DOMAIN_NAME
           tenant-id = $OS_PROJECT_ID
@@ -28,130 +73,83 @@
           password = $OS_PASSWORD
           username = $OS_USERNAME
           region = $OS_REGION_NAME
-
           [BlockStorage]
           bs-version = v3
           ignore-volume-az = yes
           EOF
 
-          export API_HOST_IP=$(ip route get 1.1.1.1 | awk '{print $7}')
-          # To fix k8s v1.16 node port service tests, failing due to blocked ports
-          export NODE_PORT_RANGE=30000-30010
-          export KUBELET_HOST="0.0.0.0"
-          export ALLOW_SECURITY_CONTEXT=true
-          export ENABLE_CRI=false
-          export ENABLE_HOSTPATH_PROVISIONER=true
-          export ENABLE_SINGLE_CA_SIGNER=true
-          # Cluster DNS should be enabled in E2E conformance test
-          export KUBE_ENABLE_CLUSTER_DNS=true
-          export LOG_LEVEL=4
-          # We want to use the openstack cloud provider
-          export CLOUD_PROVIDER=openstack
-          # We want to run a separate cloud-controller-manager for openstack
-          export EXTERNAL_CLOUD_PROVIDER=true
-          # DO NOT change the location of the cloud-config file. It is important for the old cinder provider to work
-          export CLOUD_CONFIG=/etc/kubernetes/cloud-config
-          # Specify the OCCM binary
-          export EXTERNAL_CLOUD_PROVIDER_BINARY="$PWD/openstack-cloud-controller-manager"
+          # Create cloud-config
+          kubectl -n kube-system create secret generic cloud-config --from-file=cloud.conf=/etc/kubernetes/cloud-config -oyaml
 
-          # location of where the kubernetes processes log their output
+    - name: depoy openstack cloud controller manager
+      shell:
+        chdir: '{{ k8s_os_provider_src_dir }}'
+        executable: /bin/bash
+        cmd: |
+          set -ex
+
+          kubectl apply -f cluster/addons/rbac/
+          kubectl apply -f manifests/controller-manager/openstack-cloud-controller-manager-ds.yaml
+
+    - name: get kubeadm join command
+      shell: kubeadm token create --print-join-command 2>/dev/null
+      register: kubeadm_join_cmd
+
+- hosts: k8s-node
+  name: join kubernetes nodes
+  become: yes
+  roles:
+    - role: create-multinodes-k8s-cluster-with-kubeadm
+      k8s_role_to_deploy:
+        - node
+      kubeadm_join_cmd: "{{ hostvars['k8s-master']['kubeadm_join_cmd']['stdout'] }}"
+
+- hosts: k8s-master
+  name: Run conformance test
+  become: yes
+
+  tasks:
+    - name: Wait for nodes ready
+      shell:
+        executable: /bin/bash
+        cmd: kubectl get nodes | grep Ready | wc -l
+      register: result
+      until: result.stdout | int == 2
+      retries: 10
+      delay: 3
+
+    - name: Install kubetest
+      environment: '{{ global_env }}'
+      shell:
+        executable: /bin/bash
+        cmd: |
+          set -o pipefail
+          set -ex
+
+          git clone https://github.com/kubernetes/test-infra --depth 1
+          cd test-infra
+          go install ./kubetest
+
+    - name: Run conformance test
+      environment: '{{ global_env }}'
+      shell:
+        executable: /bin/bash
+        cmd: |
+          set -ex
+
+          K8S_VERSION=$(kubectl version -o json | jq -r '.serverVersion.gitVersion')
+          export KUBERNETES_CONFORMANCE_TEST=y
+
           mkdir -p '{{ k8s_log_dir }}'
           export LOG_DIR='{{ k8s_log_dir }}'
-          # We need this for one of the conformance tests
-          export ALLOW_PRIVILEGED=true
-          # Just kick off all the processes and drop down to the command line
-          export ENABLE_DAEMON=true
-          export MAX_TIME_FOR_URL_API_SERVER=5
 
-          # setup all the host name and ip address(es)
-          if [ -d /mnt/config/openstack ]; then
-              export HOSTNAME_OVERRIDE=$(hostname)
-          else
-              export HOSTNAME_OVERRIDE=$(curl http://169.254.169.254/openstack/latest/meta_data.json | python -c "import sys, json; print json.load(sys.stdin)['name']")
-          fi
-          export API_HOST=$HOSTNAME_OVERRIDE
-          export EXTERNAL_HOSTNAME=$HOSTNAME_OVERRIDE
-          export KUBELET_FLAGS="--node-ip $API_HOST_IP"
-
-          # diagnostics - print /etc/hosts and resolv.conf
-          sudo cat /etc/hosts
-          sudo cat /etc/resolv.conf
-
-          # fixup /etc/hosts
-          sudo sed -i -e 's|$HOSTNAME_OVERRIDE||g' /etc/hosts
-          sudo echo "$API_HOST_IP $HOSTNAME_OVERRIDE" | sudo tee -a /etc/hosts
-          sudo cat /etc/hosts
-
-          # -E preserves the current env vars, but we need to special case PATH
-          # Must run local-up-cluster.sh under kubernetes root directory
-          pushd '{{ k8s_src_dir }}'
-          sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
-          popd
-
-          # set up the config we need for kubectl to work
-          '{{ kubectl }}' config set-cluster local --server=https://localhost:6443 --certificate-authority=/var/run/kubernetes/server-ca.crt
-          '{{ kubectl }}' config set-credentials myself --client-key=/var/run/kubernetes/client-admin.key --client-certificate=/var/run/kubernetes/client-admin.crt
-          '{{ kubectl }}' config set-context local --cluster=local --user=myself
-          '{{ kubectl }}' config use-context local
-          # Hack for RBAC for all for the new cloud-controller process, we need to do better than this
-          '{{ kubectl }}' create clusterrolebinding --user system:serviceaccount:kube-system:default kube-system-cluster-admin-1 --clusterrole cluster-admin
-          '{{ kubectl }}' create clusterrolebinding --user system:serviceaccount:kube-system:pvl-controller kube-system-cluster-admin-2 --clusterrole cluster-admin
-          '{{ kubectl }}' create clusterrolebinding --user system:serviceaccount:kube-system:cloud-node-controller kube-system-cluster-admin-3 --clusterrole cluster-admin
-          '{{ kubectl }}' create clusterrolebinding --user system:serviceaccount:kube-system:cloud-controller-manager kube-system-cluster-admin-4 --clusterrole cluster-admin
-          '{{ kubectl }}' create clusterrolebinding --user system:serviceaccount:kube-system:shared-informers kube-system-cluster-admin-5 --clusterrole cluster-admin
-          '{{ kubectl }}' create clusterrolebinding --user system:kube-controller-manager  kube-system-cluster-admin-6 --clusterrole cluster-admin
-
-          # Sleep to wait for creating serviceaccount default/default complete
-          sleep 5
-
-          # Set admin kubeconfig for running e2e tests
-          export KUBECONFIG=/var/run/kubernetes/admin.kubeconfig
-
-          # Build kubetest
-          # go get kubetest is failing from k8s or cpo directory
-          cd ..
-          export GO111MODULE=on
-          # export GOPROXY=https://proxy.golang.org
-          # export GOSUMDB=sum.golang.org
-
-          git clone https://github.com/kubernetes/test-infra
-          cd test-infra
-          GOBIN='{{ k8s_src_dir }}' go install ./kubetest
-
-          # Build all binaries
-          export KUBE_FASTBUILD=true
-          export KUBERNETES_CONFORMANCE_TEST=y
-          # Go modules not supported by kubernetes before v1.15
-          if [ '{{ k8s_version }}' == 'release-1.14' ]; then
-            unset GO111MODULE
-            unset GOSUMDB
-            unset GOPROXY
-          fi
-
-          # TEMP - Dump Memory Every Second
-          free -lmthw -c10000 >> $LOG_DIR/system_memory.log &
-
-          # Run e2e test using local deployment/provider
-          # Must run kubetest under kubernetes root directory
-          cd '{{ k8s_src_dir }}'
-
-          # temproary change to solve memory issue
-          make WHAT="test/e2e/e2e.test vendor/github.com/onsi/ginkgo/ginkgo cmd/kubectl"
-
-          # Clean up the pre-built result folder in `install-k8s` role.
-          # Otherwise, kubetest will fail due to some unknow conflicts.
-          # rm -rf _output/
-
-          ./kubetest --dump=$LOG_DIR \
-              --test \
-              --deployment=local \
-              --provider=local \
-              --ginkgo-parallel=1 \
-              --test_args="--ginkgo.focus=\\[Conformance\\] --ginkgo.noColor=true --ginkgo.skip=\\[sig\\-apps\\]\\sDaemon\\sset\\s\\[Serial\\]\\sshould\\srollback\\swithout\\sunnecessary\\srestarts\\s\\[Conformance\\]" \
-              --timeout=150m | tee $LOG_DIR/e2e.log
-        executable: /bin/bash
-        chdir: '{{ k8s_os_provider_src_dir }}'
-      environment: '{{ global_env }}'
+          kubetest --dump=$LOG_DIR \
+            --test \
+            --provider=skeleton \
+            --ginkgo-parallel=1 \
+            --test_args="--ginkgo.focus=\\[Conformance\\] --ginkgo.noColor=true --ginkgo.skip=\\[sig\\-apps\\]\\sDaemon\\sset\\s\\[Serial\\]\\sshould\\srollback\\swithout\\sunnecessary\\srestarts\\s\\[Conformance\\]" \
+            --extract ${K8S_VERSION} \
+            --timeout=120m | tee $LOG_DIR/e2e.log
 
     - name: Login dockerhub
       shell: docker login -u {{ dockerhub.username }} -p {{ dockerhub.password }}
@@ -163,14 +161,11 @@
           if [ '{{ zuul.pipeline }}' == 'periodic-14' ] && [ '{{ zuul.branch }}' == 'master' ]; then
             set -ex
             set -o pipefail
-
             export LOG_DIR='{{ k8s_log_dir }}'
             export REGISTRY=${REGISTRY:-docker.io/k8scloudprovider}
             export ARCHS=${ARCHS:-amd64}
             export VERSION=${VERSION:-latest}
-
             make upload-images 2>&1 | tee $LOG_DIR/image-build-upload.log
-
           else
             exit 0;
           fi
