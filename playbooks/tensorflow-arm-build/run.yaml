@@ -93,7 +93,8 @@
       shell:
         cmd: |
           pip3 install cython
-          pip3 install numpy future keras_preprocessing mock
+          pip3 install numpy==1.18.0
+          pip3 install future keras_preprocessing mock
       args:
         executable: /bin/bash
 
@@ -128,7 +129,8 @@
           EOF
           sudo chmod +x ./input
           ./input
-          pip3 install numpy keras_preprocessing
+          pip3 install numpy==1.18.0
+          pip3 install keras_preprocessing
           bazel clean --expunge
           bazel build --config=opt ${BUILD_OPTS} //tensorflow/tools/pip_package:build_pip_package \
           --local_ram_resources=10240 --local_cpu_resources=4 --verbose_failures
@@ -176,7 +178,9 @@
         cmd: |
           set -xe
           sudo apt install build-essential gcc libhdf5-serial-dev pkg-config -y
-          pip3 install cython numpy keras_preprocessing
+          pip3 install cython
+          pip3 install numpy==1.18.0
+          pip3 install keras_preprocessing
           sudo apt install libblas-dev liblapack-dev gfortran -y
           pip3 install tensorflow-*.whl
           python3 -c "import tensorflow as tf; print(tf.__version__)"
