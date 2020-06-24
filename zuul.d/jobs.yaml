@@ -522,6 +522,7 @@
       k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
       kubectl: '{{ ansible_user_dir }}/src/k8s.io/kubernetes/cluster/kubectl.sh'
       cloud_name: citynetwork
+      go_version: '1.14.4'
 
 - job:
     name: cloud-provider-openstack-unittest
@@ -531,7 +532,7 @@
     run: playbooks/cloud-provider-openstack-unittest/run.yaml
     nodeset: ubuntu-xenial-citynetwork
     vars:
-      go_version: '1.13.4'
+      go_version: '1.14.4'
     secrets:
       - citynetwork_credentials
 
@@ -550,8 +551,6 @@
       Run csi sanity tests cloud-provider-openstack cinder-csi-plugin
     run: playbooks/cloud-provider-openstack-sanity-test-csi-cinder/run.yaml
     nodeset: ubuntu-xenial-citynetwork
-    vars:
-      go_version: '1.13.4'
     secrets:
       - citynetwork_credentials
 
@@ -563,8 +562,6 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-k8s-cinder/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-k8s-cinder/post.yaml
     nodeset: ubuntu-xenial-citynetwork
-    vars:
-      go_version: '1.13.4'
     secrets:
       - citynetwork_credentials
 
@@ -573,8 +570,6 @@
     parent: cloud-provider-openstack-test
     description: |
       Run Kubernetes E2E Conformance tests against Kubernetes master
-    vars:
-      go_version: '1.13.4'
     run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/post.yaml
     nodeset: ubuntu-xenial-citynetwork
@@ -761,8 +756,6 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-standalone-cinder/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-standalone-cinder/post.yaml
     nodeset: ubuntu-bionic
-    vars:
-      go_version: '1.13.4'
 
 - job:
     name: cloud-provider-openstack-acceptance-test-csi-cinder
@@ -772,8 +765,6 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/post.yaml
     nodeset: ubuntu-xenial-citynetwork
-    vars:
-      go_version: '1.13.4'
     secrets:
       - citynetwork_credentials
 
@@ -785,8 +776,6 @@
     run: playbooks/cloud-provider-openstack-e2e-test-csi-cinder/run.yaml
     post-run: playbooks/cloud-provider-openstack-e2e-test-csi-cinder/post.yaml
     nodeset: ubuntu-xenial-citynetwork
-    vars:
-      go_version: '1.13.4'
     secrets:
       - citynetwork_credentials
 
@@ -801,8 +790,6 @@
     run: playbooks/cloud-provider-openstack-multinode-csi-migration-test/run.yaml
     post-run: playbooks/cloud-provider-openstack-multinode-csi-migration-test/post.yaml
     nodeset: ubuntu-xenial-k8s-cluster-cpo
-    vars:
-      go_version: '1.13.4'
     secrets:
       - citynetwork_credentials
 
@@ -814,8 +801,6 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-manila-provisioner/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-manila-provisioner/post.yaml
     nodeset: ubuntu-bionic
-    vars:
-      go_version: '1.13.4'
 
 - job:
     name: cloud-provider-openstack-acceptance-test-csi-manila
@@ -825,8 +810,6 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-csi-manila/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-csi-manila/post.yaml
     nodeset: ubuntu-bionic
-    vars:
-      go_version: '1.13.4'
 
 # TODO(wxy): Delete this base job once lb job is moved to citynetwork.
 - job:
@@ -866,8 +849,6 @@
       Run keystone auth acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-keystone-authentication-authorization/run.yaml
     nodeset: ubuntu-bionic
-    vars:
-      go_version: '1.13.4'
 
 - job:
     name: cloud-provider-openstack-acceptance-test-flexvolume-cinder
@@ -876,8 +857,6 @@
       Run cinder flexvolume acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-flexvolume-cinder/run.yaml
     nodeset: ubuntu-bionic
-    vars:
-      go_version: '1.13.4'
 
 - job:
     name: cluster-api-provider-openstack-conformance
