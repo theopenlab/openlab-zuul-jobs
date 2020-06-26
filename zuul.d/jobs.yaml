@@ -569,10 +569,10 @@
     name: cloud-provider-openstack-acceptance-test-e2e-conformance
     parent: cloud-provider-openstack-test
     description: |
-      Run Kubernetes E2E Conformance tests against Kubernetes master
+      Run Kubernetes E2E Conformance tests against a multinode Kubernetes cluster
     run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/post.yaml
-    nodeset: ubuntu-xenial-citynetwork
+    nodeset: ubuntu-xenial-k8s-cluster-cpo
     secrets:
       - citynetwork_credentials
       - gcp_account
