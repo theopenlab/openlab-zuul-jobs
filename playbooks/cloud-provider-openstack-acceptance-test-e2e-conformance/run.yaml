@@ -95,7 +95,7 @@
       shell: kubeadm token create --print-join-command 2>/dev/null
       register: kubeadm_join_cmd
 
-- hosts: k8s-node
+- hosts: k8s-node-1,k8s-node-2
   name: join kubernetes nodes
   become: yes
   roles:
@@ -114,9 +114,9 @@
         executable: /bin/bash
         cmd: kubectl get nodes | grep Ready | wc -l
       register: result
-      until: result.stdout | int == 2
-      retries: 10
-      delay: 3
+      until: result.stdout | int == 3
+      retries: 16
+      delay: 5
 
     - name: Install kubetest
       environment: '{{ global_env }}'
