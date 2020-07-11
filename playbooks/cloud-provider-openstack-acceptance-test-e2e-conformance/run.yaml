@@ -109,6 +109,11 @@
   become: yes
 
   tasks:
+    - name: THIS TASK IS ONLY FOR DEBUGGING PURPOSE, SHOULD BE REMOVED
+      shell:
+        executable: /bin/bash
+        cmd: sleep 28800
+
     - name: Wait for nodes ready
       shell:
         executable: /bin/bash
