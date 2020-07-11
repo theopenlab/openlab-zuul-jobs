@@ -23,18 +23,6 @@
         chdir: '/opt'
       environment: '{{ global_env }}'
 
-    - name: Set java11 env vars
-      set_fact:
-        java11_env:
-          JAVA_HOME: "/opt/jdk-11.0.8+1/"
-          PATH: '/opt/jdk-11.0.8+1/bin:{{ ansible_env.PATH }}'
-      no_log: yes
-
-    - name: Merge java11 env vars into global env
-      set_fact:
-        global_env: '{{ global_env | combine(java11_env) }}'
-      no_log: yes
-
     - name: Install scala211
       shell:
         cmd: |
@@ -45,15 +33,16 @@
         chdir: '/opt'
       environment: '{{ global_env }}'
 
-    - name: Set scala211 env vars
+    - name: Set java11 and scala211 env vars
       set_fact:
-        scala211_env:
-          PATH: '/usr/local/scala-2.11.0/bin:{{ ansible_env.PATH }}'
+        scala211_java11_env:
+          JAVA_HOME: "/opt/jdk-11.0.8+1/"
+          PATH: '/opt/jdk-11.0.8+1/bin:/usr/local/scala-2.11.0/bin:{{ ansible_env.PATH }}'
       no_log: yes
 
-    - name: Merge scala211 env vars into global env
+    - name: Merge java11 and scala211 env vars into global env
       set_fact:
-        global_env: '{{ global_env | combine(scala211_env) }}'
+        global_env: '{{ global_env | combine(scala211_java11_env) }}'
       no_log: yes
 
     - name: Show installed JAVA & scala info
@@ -105,6 +94,16 @@
       shell:
         cmd: |
           mvn clean install -DskipTests
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
+
+    - name: Hack - Use arm64 docker image
+      shell:
+         cmd: |
+           # https://github.com/apache/flink-docker/pull/23
+           sed -i 's/\/apache/\/wangxiyuan/' flink-end-to-end-tests/test-scripts/common_docker.sh
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'

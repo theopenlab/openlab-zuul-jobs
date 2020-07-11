@@ -59,6 +59,16 @@
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ global_env }}'
 
+    - name: Hack - Use arm64 docker image
+      shell:
+         cmd: |
+           # https://github.com/apache/flink-docker/pull/23
+           sed -i 's/\/apache/\/wangxiyuan/' flink-end-to-end-tests/test-scripts/common_docker.sh
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
+
     - name: Run e2e test - scala212
       shell:
         cmd: |
