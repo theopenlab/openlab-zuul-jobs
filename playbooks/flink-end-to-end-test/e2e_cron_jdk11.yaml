@@ -18,6 +18,8 @@
         cmd: |
           wget https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk11u-2020-05-13-07-53/OpenJDK11U-jdk_aarch64_linux_hotspot_2020-05-13-07-53.tar.gz
           tar xvf OpenJDK11U-jdk_aarch64_linux_hotspot_2020-05-13-07-53.tar.gz
+          ln -s /opt/jdk-11.0.8+1/bin/java /usr/local/bin/java
+          ln -s /opt/jdk-11.0.8+1/bin/javac /usr/local/bin/javac
       args:
         executable: /bin/bash
         chdir: '/opt'
@@ -70,7 +72,7 @@
       maven_version: '3.2.5'
 
 - hosts: all
-  become: yes
+  become: no
   tasks:
     # Todo(wxy): Frocksdb doesn't have ARM release. Build and install it locally currently.
     - name: Build and install frocksdb

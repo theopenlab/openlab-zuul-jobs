@@ -30,7 +30,7 @@
       shell: pip3 install docker-compose
 
 - hosts: all
-  become: yes
+  become: no
   tasks:
     # Todo(wxy): Frocksdb doesn't have ARM release. Build and install it locally currently.
     - name: Build and install frocksdb
