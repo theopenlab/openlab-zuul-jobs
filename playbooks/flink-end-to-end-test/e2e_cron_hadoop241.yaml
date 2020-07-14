@@ -18,7 +18,7 @@
           -Dpackaging=jar -Dfile=java/target/rocksdbjni-5.17.2-linux64.jar
       args:
         executable: /bin/bash
-        chdir: '/opt'
+        chdir: '/home/zuul'
       environment: '{{ global_env }}'
 
     - name: Build Flink

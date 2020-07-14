@@ -18,11 +18,11 @@
         cmd: |
           wget https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk11u-2020-05-13-07-53/OpenJDK11U-jdk_aarch64_linux_hotspot_2020-05-13-07-53.tar.gz
           tar xvf OpenJDK11U-jdk_aarch64_linux_hotspot_2020-05-13-07-53.tar.gz
-          ln -s /opt/jdk-11.0.8+1/bin/java /usr/local/bin/java
-          ln -s /opt/jdk-11.0.8+1/bin/javac /usr/local/bin/javac
+          ln -s /home/zuul/jdk-11.0.8+1/bin/java /usr/local/bin/java
+          ln -s /home/zuul/jdk-11.0.8+1/bin/javac /usr/local/bin/javac
       args:
         executable: /bin/bash
-        chdir: '/opt'
+        chdir: '/home/zuul'
       environment: '{{ global_env }}'
 
     - name: Install scala211
@@ -32,14 +32,14 @@
           tar -zxvf scala-2.11.0.tgz -C /usr/local
       args:
         executable: /bin/bash
-        chdir: '/opt'
+        chdir: '/home/zuul'
       environment: '{{ global_env }}'
 
     - name: Set java11 and scala211 env vars
       set_fact:
         scala211_java11_env:
-          JAVA_HOME: "/opt/jdk-11.0.8+1/"
-          PATH: '/opt/jdk-11.0.8+1/bin:/usr/local/scala-2.11.0/bin:{{ ansible_env.PATH }}'
+          JAVA_HOME: "/home/zuul/jdk-11.0.8+1/"
+          PATH: '/home/zuul/jdk-11.0.8+1/bin:/usr/local/scala-2.11.0/bin:{{ ansible_env.PATH }}'
       no_log: yes
 
     - name: Merge java11 and scala211 env vars into global env
@@ -89,7 +89,7 @@
           -Dpackaging=jar -Dfile=java/target/rocksdbjni-5.17.2-linux64.jar
       args:
         executable: /bin/bash
-        chdir: '/opt'
+        chdir: '/home/zuul'
       environment: '{{ global_env }}'
 
     - name: Build Flink
