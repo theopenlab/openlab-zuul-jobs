@@ -18,8 +18,12 @@
         cmd: |
           wget https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk11u-2020-05-13-07-53/OpenJDK11U-jdk_aarch64_linux_hotspot_2020-05-13-07-53.tar.gz
           tar xvf OpenJDK11U-jdk_aarch64_linux_hotspot_2020-05-13-07-53.tar.gz
-          ln -s /home/zuul/jdk-11.0.8+1/bin/java /usr/local/bin/java
-          ln -s /home/zuul/jdk-11.0.8+1/bin/javac /usr/local/bin/javac
+
+          for file in /home/zuul/jdk-11.0.8+1/bin/*
+          do
+            file_name=${file##*/}
+            ln -s /home/zuul/jdk-11.0.8+1/bin/$file_name /usr/local/bin/$file_name
+          done
       args:
         executable: /bin/bash
         chdir: '/home/zuul'
