@@ -194,7 +194,7 @@
           set -ex
           export MPLLOCALFREETYPE=1
           sudo apt install -y libpng-dev
-          pip3 install matplotlib tensorflow_datasets
+          pip3 install matplotlib tensorflow_datasets==3.1.0
           wget https://raw.githubusercontent.com/bzhaoopenstack/dockertoy/master/tests/ai/examples/test_mnist.py
           python3 ./test_mnist.py
       args:
