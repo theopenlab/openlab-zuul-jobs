@@ -78,19 +78,15 @@
 - hosts: all
   become: no
   tasks:
-    # Todo(wxy): Frocksdb doesn't have ARM release. Build and install it locally currently.
-    - name: Build and install frocksdb
+    # Todo(wxy): Frocksdb doesn't have ARM release. Install it locally currently.
+    - name: Install frocksdb
       shell:
         cmd: |
-          git clone https://github.com/dataArtisans/frocksdb.git
-          cd frocksdb
-          sudo apt install -y gcc g++ make
-          export DEBUG_LEVEL=0
-          make -j8 rocksdbjavastatic
+          wget https://github.com/wangxiyuan/Toy/releases/download/2.0/rocksdbjni-5.17.2-linux64.jar
 
           mvn install:install-file -DgroupId=com.data-artisans \
           -DartifactId=frocksdbjni -Dversion=5.17.2-artisans-2.0 \
-          -Dpackaging=jar -Dfile=java/target/rocksdbjni-5.17.2-linux64.jar
+          -Dpackaging=jar -Dfile=./rocksdbjni-5.17.2-linux64.jar
       args:
         executable: /bin/bash
         chdir: '/home/zuul'
@@ -120,7 +116,7 @@
         cmd: |
           set -xo pipefail
 
-          PROFILE="-Dinclude-hadoop -Dhadoop.version=2.8.3 -Dinclude_hadoop_aws -Dscala-2.11 -Djdk11 -Pe2e-hadoop" FLINK_DIR=`pwd`/build-target flink-end-to-end-tests/run-nightly-tests.sh
+          sudo PROFILE="-Dinclude-hadoop -Dhadoop.version=2.8.3 -Dinclude_hadoop_aws -Dscala-2.11 -Djdk11 -Pe2e-hadoop" FLINK_DIR=`pwd`/build-target flink-end-to-end-tests/run-nightly-tests.sh
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
