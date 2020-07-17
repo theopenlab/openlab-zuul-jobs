@@ -2686,6 +2686,7 @@
         RELEASE: master
         BAZEL_VERSION: 3.1.0
         GCC_VERSION: default
+        PYTHON: v3.6
 
 - job:
     name: tensorflow-arm64-build-daily-v2.0.0
@@ -2697,6 +2698,7 @@
         RELEASE: v2.0.0
         BAZEL_VERSION: 0.26.0
         GCC_VERSION: default
+        PYTHON: v3.6
 
 - job:
     name: tensorflow-arm64-build-daily-v2.1.0
@@ -2708,3 +2710,98 @@
         RELEASE: v2.1.0
         BAZEL_VERSION: 0.29.1
         GCC_VERSION: 7.5.0
+        PYTHON: v3.6
+
+- job:
+    name: tensorflow-arm64-release-build-v1.15.3
+    parent: tensorflow-arm64-build-daily
+    description: |
+      Tensorflow v1.15.3 release build on ARM64
+    vars:
+      global_env:
+        RELEASE: v1.15.3
+        BAZEL_VERSION: 0.24.1
+        GCC_VERSION: default
+
+- job:
+    name: tensorflow-arm64-release-build-v1.15.3-py35
+    parent: tensorflow-arm64-release-build-v1.15.3
+    description: |
+      Tensorflow v1.15.3 release build on ARM64 with python3.5
+    vars:
+      global_env:
+        PYTHON: v3.5
+
+- job:
+    name: tensorflow-arm64-release-build-v1.15.3-py36
+    parent: tensorflow-arm64-release-build-v1.15.3
+    description: |
+      Tensorflow v1.15.3 release build on ARM64 with python3.6
+    vars:
+      global_env:
+        PYTHON: v3.6
+
+- job:
+    name: tensorflow-arm64-release-build-v1.15.3-py37
+    parent: tensorflow-arm64-release-build-v1.15.3
+    description: |
+      Tensorflow v1.15.3 release build on ARM64 with python3.7
+    vars:
+      global_env:
+        PYTHON: v3.7
+
+- job:
+    name: tensorflow-arm64-release-build-v1.15.3-py38
+    parent: tensorflow-arm64-release-build-v1.15.3
+    description: |
+      Tensorflow v1.15.3 release build on ARM64 with python3.8
+    vars:
+      global_env:
+        PYTHON: v3.8
+
+- job:
+    name: tensorflow-arm64-release-build-v2.1.0
+    parent: tensorflow-arm64-build-daily
+    description: |
+      Tensorflow v2.1.0 release build on ARM64
+    vars:
+      global_env:
+        RELEASE: v2.1.0
+        BAZEL_VERSION: 0.29.1
+        GCC_VERSION: 7.5.0
+
+- job:
+    name: tensorflow-arm64-release-build-v2.1.0-py35
+    parent: tensorflow-arm64-release-build-v2.1.0
+    description: |
+      Tensorflow v2.1.0 release build on ARM64 with python3.5
+    vars:
+      global_env:
+        PYTHON: v3.5
+
+- job:
+    name: tensorflow-arm64-release-build-v2.1.0-py36
+    parent: tensorflow-arm64-release-build-v2.1.0
+    description: |
+      Tensorflow v2.1.0 release build on ARM64 with python3.6
+    vars:
+      global_env:
+        PYTHON: v3.6
+
+- job:
+    name: tensorflow-arm64-release-build-v2.1.0-py37
+    parent: tensorflow-arm64-release-build-v2.1.0
+    description: |
+      Tensorflow v2.1.0 release build on ARM64 with python3.7
+    vars:
+      global_env:
+        PYTHON: v3.7
+
+- job:
+    name: tensorflow-arm64-release-build-v2.1.0-py38
+    parent: tensorflow-arm64-release-build-v2.1.0
+    description: |
+      Tensorflow v2.1.0 release build on ARM64 with python3.8
+    vars:
+      global_env:
+        PYTHON: v3.8

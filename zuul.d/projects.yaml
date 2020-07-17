@@ -294,6 +294,15 @@
 #        - rust-openstack-0.2.3-acceptance-queens:
 #            branches: master
 
+####################### weekly periodic jobs on 22:00##########################
+- project:
+    name: tensorflow/tensorflow
+    periodic-22-weekly-2-4-6:
+      jobs:
+        - tensorflow-arm64-release-build-v1.15.3:
+            branches: master
+        - tensorflow-arm64-release-build-v2.1.0:
+            branches: master
 
 ############# Temp ##############
 # - project:
