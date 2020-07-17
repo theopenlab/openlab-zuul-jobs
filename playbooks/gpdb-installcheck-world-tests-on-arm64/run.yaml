@@ -83,7 +83,7 @@
         pip install setuptools
         pip install wheel
         pip install --no-use-pep517 --user "pyopenssl>=19.0.0"
-        pip install --no-use-pep517 --user --pre psutil
+        pip install --no-use-pep517 --user --pre psutil==5.7.0
         pip install --no-use-pep517 --user lockfile
         pip install --no-use-pep517 --no-binary :all: pynacl
         pip install --no-use-pep517 --user paramiko || true
