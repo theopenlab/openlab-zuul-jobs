@@ -32,6 +32,9 @@
     - name: add zuul to docker group
       shell: gpasswd -a zuul docker && newgrp docker
 
+- hosts: all
+  become: no
+  tasks:
     # Todo(wxy): Frocksdb doesn't have ARM release. Install it locally currently.
     - name: Install frocksdb
       shell:
