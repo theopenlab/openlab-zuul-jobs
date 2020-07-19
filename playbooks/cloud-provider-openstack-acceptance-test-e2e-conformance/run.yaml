@@ -44,7 +44,6 @@
     - export-cloud-openrc
     - role: create-multinodes-k8s-cluster-with-kubeadm
       k8s_role_to_deploy: ["master"]
-      network_addon: calico
 
   tasks:
     - name: Build openstack-cloud-controller-manager image
