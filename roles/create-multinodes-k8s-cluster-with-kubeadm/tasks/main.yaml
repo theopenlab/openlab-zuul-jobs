@@ -27,7 +27,8 @@
     if [[ "{{ kubernetes_version }}" == "latest" ]]; then
         apt-get install -y kubelet kubeadm kubectl
     else
-        install_version=$(apt-cache madison kubelet |grep "{{ kubernetes_version }}" | head -n 1 | awk '{print $3}')
+        kubernetes_version="{{ kubernetes_version }}"
+        install_version=$(apt-cache madison kubelet | grep "${kubernetes_version#v}" | head -n 1 | awk '{print $3}')
         apt-get install -y kubelet=$install_version kubeadm=$install_version kubectl=$install_version
     fi
     kubelet --version
@@ -69,7 +70,8 @@
     if [[ "{{ kubernetes_version }}" == "latest" ]]; then
         apt-get install -y kubelet kubeadm kubectl
     else
-        install_version=$(apt-cache madison kubelet |grep "{{ kubernetes_version }}" | head -n 1 | awk '{print $3}')
+        kubernetes_version="{{ kubernetes_version }}"
+        install_version=$(apt-cache madison kubelet | grep "${kubernetes_version#v}" | head -n 1 | awk '{print $3}')
         apt-get install -y kubelet=$install_version kubeadm=$install_version kubectl=$install_version
     fi
     kubelet --version
