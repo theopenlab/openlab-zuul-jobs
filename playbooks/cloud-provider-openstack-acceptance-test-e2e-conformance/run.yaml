@@ -138,6 +138,11 @@
           cd test-infra
           go install ./kubetest
 
+    - name: THIS TASK IS ONLY FOR DEBUGGING PURPOSE, SHOULD BE REMOVED
+      shell:
+        executable: /bin/bash
+        cmd: sleep 28800
+
     - name: Run conformance test
       environment: '{{ global_env }}'
       shell:
