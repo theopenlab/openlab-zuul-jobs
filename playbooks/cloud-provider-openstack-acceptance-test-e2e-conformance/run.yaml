@@ -1,8 +1,8 @@
 - hosts: k8s-master
-  name: Bootstrap kubernetes master
+  name: prepare configuration of kubeadm
   become: yes
 
-  pre_tasks:
+  tasks:
     - name: create /etc/kubernetes
       file:
         path: /etc/kubernetes
@@ -15,7 +15,7 @@
           apiVersion: kubeadm.k8s.io/v1beta2
           kind: ClusterConfiguration
           networking:
-            podSubnet: 192.168.0.0/16
+            podSubnet: 10.244.0.0/16
           kubernetesVersion: {{ kubernetes_version | default('latest') }}
           apiServer:
             extraArgs:
@@ -23,19 +23,27 @@
           controllerManager:
             extraArgs:
               "cloud-provider": "external"
-          ---
-          apiVersion: kubeadm.k8s.io/v1beta2
-          kind: InitConfiguration
-          nodeRegistration:
-            kubeletExtraArgs:
-              cloud-provider: "external"
+
+- hosts: all
+  name: kubelet cloud-provider external
+  become: yes
+
+  tasks:
+    - name: ship /etc/default/kubelet
+      copy:
+        dest: /etc/default/kubelet
+        content: |
+          KUBELET_EXTRA_ARGS=--cloud-provider=external
+
+- hosts: k8s-master
+  name: bootstrap kubernetes master
+  become: yes
 
   roles:
     - config-golang
     - export-cloud-openrc
     - role: create-multinodes-k8s-cluster-with-kubeadm
       k8s_role_to_deploy: ["master"]
-      network_addon: calico
 
   tasks:
     - name: Build openstack-cloud-controller-manager image
@@ -109,11 +117,6 @@
   become: yes
 
   tasks:
-    - name: THIS TASK IS ONLY FOR DEBUGGING PURPOSE, SHOULD BE REMOVED
-      shell:
-        executable: /bin/bash
-        cmd: sleep 28800
-
     - name: Wait for nodes ready
       shell:
         executable: /bin/bash
