@@ -2709,7 +2709,7 @@
       global_env:
         RELEASE: v2.1.0
         BAZEL_VERSION: 0.29.1
-        GCC_VERSION: 7.5.0
+        GCC_VERSION: default
         PYTHON: v3.6
 
 - job:
@@ -2768,7 +2768,7 @@
       global_env:
         RELEASE: v2.1.0
         BAZEL_VERSION: 0.29.1
-        GCC_VERSION: 7.5.0
+        GCC_VERSION: default
 
 - job:
     name: tensorflow-arm64-release-build-v2.1.0-py35
