@@ -62,7 +62,10 @@
           export VERSION=latest
           make build-images
 
-          docker tag k8scloudprovider/${IMAGE_NAMES}-${ARCH}:latest k8scloudprovider/${IMAGE_NAMES}:latest
+          # The previous CPO makefile doesn't support arch
+          if [[ docker image ls | grep "${IMAGE_NAMES}-${ARCH}" ]]; then
+             docker tag k8scloudprovider/${IMAGE_NAMES}-${ARCH}:latest k8scloudprovider/${IMAGE_NAMES}:latest
+          fi
 
     - name: create cloud-config
       environment: '{{ global_env }}'
@@ -155,7 +158,7 @@
             --test \
             --provider=skeleton \
             --ginkgo-parallel=1 \
-            --test_args="--ginkgo.focus=\\[Conformance\\] --ginkgo.noColor=true --ginkgo.skip=\\[sig\\-apps\\]\\sDaemon\\sset\\s\\[Serial\\]\\sshould\\srollback\\swithout\\sunnecessary\\srestarts\\s\\[Conformance\\]" \
+            --test_args="--ginkgo.focus=\\[Conformance\\] --ginkgo.noColor=true --ginkgo.skip=\\[sig\\-apps\\]\\sDaemon\\sset\\s\\[Serial\\]\\sshould\\srollback\\swithout\\sunnecessary\\srestarts\\s\\[Conformance\\]|\\[sig\\-network\\]\\sServices\\sshould\\sbe\\sable\\sto\\schange\\sthe\\stype\\sfrom\\sExternalName\\sto\\sNodePort\\s\\[Conformance\\]|\\[sig\\-network\\]\\sServices\\sshould\\sbe\\sable\\sto\\screate\\sa\\sfunctioning\\sNodePort\\sservice\\s\\[Conformance\\]" \
             --extract ${K8S_VERSION} \
             --timeout=120m | tee $LOG_DIR/e2e.log
 
@@ -180,42 +183,3 @@
         executable: /bin/bash
         chdir: '{{ k8s_os_provider_src_dir }}'
       environment: '{{ global_env }}'
-
-- hosts: k8s-master
-  name: Upload conformance test result
-  become: yes
-
-  roles:
-    - export-gcp-account
-
-  tasks:
-    - name: Upload E2E conformance test result to kubernetes testgrid
-      environment: '{{ global_env }}'
-      shell:
-        executable: /bin/bash
-        cmd: |
-          set -e
-          set -x
-
-          # install gsutil, upload_e2e.py depends on it
-          export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)"
-          echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-          curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add
-          apt-get update && sudo apt-get install google-cloud-sdk --yes
-          apt-get install google-cloud-sdk-app-engine-java --yes
-
-          # get upload_e2e.py
-          wget https://raw.githubusercontent.com/kubernetes/test-infra/master/testgrid/conformance/upload_e2e.py
-
-          # TODO(RuiChen): Add timestamp for e2e.log in order to workaround upload_e2e.py bug
-          export LOG_DIR='{{ k8s_log_dir }}'
-          date  +"%b %e %H:%M:%S.999: DONE" >> $LOG_DIR/e2e.log
-          PIPELINE_LOGS_DIR='periodic-logs'
-          if [ '{{ zuul.pipeline }}' != 'periodic-14' ]; then
-              PIPELINE_LOGS_DIR='pr-logs'
-          fi
-
-          # upload e2e log to google storage
-          python3 upload_e2e.py --junit=$LOG_DIR/junit*.xml --log=$LOG_DIR/e2e.log \
-              --bucket=gs://k8s-conformance-openstack/$PIPELINE_LOGS_DIR/ci-'{{ zuul.job }}' \
-              --key-file='{{ hostvars[inventory_hostname]["gcp_key_file"] }}'
