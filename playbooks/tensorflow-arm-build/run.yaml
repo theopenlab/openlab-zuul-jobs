@@ -237,7 +237,7 @@
     - name: Get whl file name
       find:
         paths: "{{ ansible_user_dir }}/workspace/test_results/"
-        patterns: 'tensorflow-*.whl'
+        patterns: 'tensorflow*.whl'
       register: file_name_matched
 
     - name: Set whl file name
@@ -261,7 +261,7 @@
           pip3 install numpy==1.18.0
           pip3 install keras_preprocessing
           sudo apt install libblas-dev liblapack-dev gfortran -y
-          pip3 install tensorflow-*.whl
+          pip3 install tensorflow*.whl
           python3 -c "import tensorflow as tf; print(tf.__version__)"
       args:
         executable: /bin/bash
