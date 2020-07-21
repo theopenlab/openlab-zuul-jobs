@@ -571,6 +571,7 @@
     description: |
       Run Kubernetes E2E Conformance tests against a multinode Kubernetes cluster
     run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/run.yaml
+    post-run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/post.yaml
     nodeset: ubuntu-xenial-k8s-cluster-cpo
     secrets:
       - citynetwork_credentials
@@ -686,11 +687,12 @@
     parent: cloud-provider-openstack-acceptance-test-e2e-conformance
     description: |
       Run Kubernetes E2E Conformance tests against release-1.16 branch of Kubernetes
-    nodeset: ubuntu-xenial-citynetwork
+    nodeset: ubuntu-xenial-k8s-cluster-cpo
     vars:
       go_version: '1.13.5'
       k8s_version: 'release-1.16'
       etcd_version: 'v3.3.15'
+      kubernetes_version: 'v1.16.13'
     tags:
       - Category:Cloud
       - Project:kubernetes/cloud-provider-openstack
@@ -708,11 +710,12 @@
     parent: cloud-provider-openstack-acceptance-test-e2e-conformance
     description: |
       Run Kubernetes E2E Conformance tests against release-1.17 branch of Kubernetes
-    nodeset: ubuntu-xenial-citynetwork
+    nodeset: ubuntu-xenial-k8s-cluster-cpo
     vars:
       go_version: '1.13.4'
       k8s_version: 'release-1.17'
       etcd_version: 'v3.4.3'
+      kubernetes_version: 'v1.17.9'
     tags:
       - Category:Cloud
       - Project:kubernetes/cloud-provider-openstack
@@ -730,11 +733,12 @@
     parent: cloud-provider-openstack-acceptance-test-e2e-conformance
     description: |
       Run Kubernetes E2E Conformance tests against release-1.18 branch of Kubernetes
-    nodeset: ubuntu-xenial-citynetwork
+    nodeset: ubuntu-xenial-k8s-cluster-cpo
     vars:
       go_version: '1.13.4'
       k8s_version: 'release-1.18'
       etcd_version: 'v3.4.3'
+      kubernetes_version: 'v1.18.6'
     tags:
       - Category:Cloud
       - Project:kubernetes/cloud-provider-openstack
