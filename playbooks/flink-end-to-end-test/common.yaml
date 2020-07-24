@@ -30,7 +30,9 @@
       shell: pip3 install docker-compose
 
     - name: add zuul to docker group
-      shell: gpasswd -a zuul docker && newgrp docker
+      user:
+        name: zuul
+        group: docker
 
 - hosts: all
   become: no
