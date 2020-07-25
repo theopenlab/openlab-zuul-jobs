@@ -32,7 +32,11 @@
     - name: add zuul to docker group
       user:
         name: zuul
-        group: docker
+        groups: docker
+        append: yes
+
+    - name: Restart docker
+      shell: service docker restart
 
 - hosts: all
   become: no
