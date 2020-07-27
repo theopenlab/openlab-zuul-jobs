@@ -26,6 +26,7 @@
       shell:
         cmd: |
           set -xo pipefail
+          sudo su zuul
 
           PROFILE="-Dinclude-hadoop -Dhadoop.version=2.4.1 -Pskip-hive-tests -Pe2e-hadoop" FLINK_DIR=`pwd`/build-target flink-end-to-end-tests/run-nightly-tests.sh
       args:
