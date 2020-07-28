@@ -1432,7 +1432,7 @@
     precedence: high
     trigger:
       timer:
-        - time: '0 6 * * *'
+        - time: '55 5 * * *'
     success:
       mysql:
     failure:
