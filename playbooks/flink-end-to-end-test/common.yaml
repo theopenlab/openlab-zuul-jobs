@@ -30,13 +30,7 @@
       shell: pip3 install docker-compose
 
     - name: add zuul to docker group
-      user:
-        name: zuul
-        groups: docker
-        append: yes
-
-    - name: Restart docker
-      shell: service docker restart
+      shell: usermod -aG docker zuul
 
 - hosts: all
   become: no
