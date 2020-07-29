@@ -1,10 +1,5 @@
 - hosts: all
   tasks:
-    - name: debug all
-      debug:
-        msg: "--------------zuul {{ zuul }} -----------------"
-      environment: '{{ global_env }}'
-
     - name: collect artifacts to Zuul on version 1.15.3
       loop: "{{ zuul.artifacts }}"
       when:
