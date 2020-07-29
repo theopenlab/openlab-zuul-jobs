@@ -257,6 +257,26 @@
             branches: master
         - tensorflow-arm64-build-daily-v2.1.0:
             branches: master
+    periodic-22-weekly-2-4-6:
+      jobs:
+        - tensorflow-arm64-release-build-v1.15.3-py35:
+            branches: master
+        - tensorflow-arm64-release-build-v1.15.3-py36:
+            branches: master
+        - tensorflow-arm64-release-build-v1.15.3-py37:
+            branches: master
+        - tensorflow-arm64-release-build-v2.1.0-py35:
+            branches: master
+        - tensorflow-arm64-release-build-v2.1.0-py36:
+            branches: master
+        - tensorflow-arm64-release-build-v2.1.0-py37:
+            branches: master
+        - tensorflow-arm64-release-build-v2.1.0-py38:
+            branches: master
+        - tensorflow-v1.15.3-cpu-arm64-release-build-show:
+            branches: master
+        - tensorflow-v2.1.0-cpu-arm64-release-build-show:
+            branches: master
 
 ####################### periodic jobs on 20:00##########################
 - project:
@@ -293,7 +313,6 @@
 #            branches: master
 #        - rust-openstack-0.2.3-acceptance-queens:
 #            branches: master
-
 
 ############# Temp ##############
 # - project:
