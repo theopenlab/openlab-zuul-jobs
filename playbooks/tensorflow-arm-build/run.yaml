@@ -6,11 +6,10 @@
         cmd: |
           add-apt-repository ppa:deadsnakes/ppa -y
           apt update
-          apt install -y python3.5 python3.5-dev
-
+          apt autoremove -y python3-apt
+          apt install -y python3.5 python3.5-dev python3-apt
           rm /usr/bin/python3
           ln -s /usr/bin/python3.5 /usr/bin/python3
-
           curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
           python3 get-pip.py
       args:
@@ -26,11 +25,10 @@
         cmd: |
           add-apt-repository ppa:deadsnakes/ppa -y
           apt update
-          apt install -y python3.6 python3.6-dev
-
+          apt autoremove -y python3-apt
+          apt install -y python3.6 python3.6-dev python3-apt
           rm /usr/bin/python3
           ln -s /usr/bin/python3.6 /usr/bin/python3
-
           curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
           python3 get-pip.py
       args:
@@ -46,11 +44,10 @@
         cmd: |
           add-apt-repository ppa:deadsnakes/ppa -y
           apt update
-          apt install -y python3.7 python3.7-dev
-
+          apt autoremove -y python3-apt
+          apt install -y python3.7 python3.7-dev python3-apt
           rm /usr/bin/python3
           ln -s /usr/bin/python3.7 /usr/bin/python3
-
           curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
           python3 get-pip.py
       args:
@@ -66,11 +63,10 @@
         cmd: |
           add-apt-repository ppa:deadsnakes/ppa -y
           apt update
-          apt install -y python3.8 python3.8-dev
-
+          apt autoremove -y python3-apt
+          apt install -y python3.8 python3.8-dev python3-apt
           rm /usr/bin/python3
           ln -s /usr/bin/python3.8 /usr/bin/python3
-
           curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
           python3 get-pip.py
       args:
@@ -87,7 +83,6 @@
           apt update && \
           apt install -y build-essential \
           openjdk-8-jdk \
-          python \
           zip \
           unzip \
           gcc \
@@ -179,7 +174,7 @@
       shell:
         cmd: |
           set -xe
-          virtualenv --python=python3.6 ~/.env/tensorflow/
+          virtualenv --python=python3 ~/.env/tensorflow/
           source ~/.env/tensorflow/bin/activate
           release={{ global_env.RELEASE }}
           if [ $release == 'v1.15.3' ]; then
@@ -251,6 +246,11 @@
             artifacts:
               - name: "{{ whl_file_name }}"
                 url: "test_results/{{ whl_file_name }}"
+                metadata:
+                  version: "{{ global_env.RELEASE }}"
+                  python_version: "{{ global_env.PYTHON }}"
+                  is_cpu : 'true'
+      environment: '{{ global_env }}'
 
     - name: Verify Tensorflow whl package
       shell:

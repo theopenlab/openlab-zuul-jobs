@@ -1,0 +1,32 @@
+- hosts: all
+  tasks:
+    - name: debug all
+      debug:
+        msg: "--------------zuul {{ zuul }} -----------------"
+      environment: '{{ global_env }}'
+
+    - name: collect artifacts to Zuul on version 1.15.3
+      loop: "{{ zuul.artifacts }}"
+      when:
+        - item.metadata.version == 'v1.15.3'
+        - global_env.RELEASE == 'v1.15.3'
+      zuul_return:
+        data:
+          zuul:
+            artifacts:
+              - name: "{{ item.name }}"
+                url: "{{ item.url }}"
+      environment: '{{ global_env }}'
+
+    - name: collect artifact to Zuul on version 2.1.0
+      loop: "{{ zuul.artifacts }}"
+      when:
+        - item.metadata.version == 'v2.1.0'
+        - global_env.RELEASE == 'v2.1.0'
+      zuul_return:
+        data:
+          zuul:
+            artifacts:
+              - name: "{{ item.name }}"
+                url: "{{ item.url }}"
+      environment: '{{ global_env }}'

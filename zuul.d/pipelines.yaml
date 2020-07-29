@@ -1457,3 +1457,19 @@
         to: dev@kudu.apache.org
         subject: Daily KUDU ARM64 Cron Job Test Result - FAILED
       mysql:
+
+# The pipelines below use for release CI system.
+# Right now, it only apply into tensorflow release CI system.
+- pipeline:
+    name: periodic-22-weekly-2-4-6
+    description: |
+      Jobs in this queue are triggered on a timer. UTC-22 22:00 on each Tuesday, Thursday and Saturday.
+    manager: independent
+    precedence: high
+    trigger:
+      timer:
+        - time: '0 22 * * 2,4,6'
+    success:
+      mysql:
+    failure:
+      mysql:
