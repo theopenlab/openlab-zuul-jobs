@@ -43,6 +43,18 @@
         label: ubuntu-xenial-arm64
 
 - nodeset:
+    name: ubuntu-xenial-arm64-flink-docker
+    nodes:
+      - name: ubuntu-xenial-arm64-flink-docker
+        label: ubuntu-xenial-arm64-flink-docker
+
+- nodeset:
+    name: ubuntu-xenial-arm64-openlab
+    nodes:
+      - name: ubuntu-xenial-arm64-openlab
+        label: ubuntu-xenial-arm64-openlab
+
+- nodeset:
     name: ubuntu-xenial-arm64-huaweicloud
     nodes:
       - name: ubuntu-xenial-arm64-huaweicloud

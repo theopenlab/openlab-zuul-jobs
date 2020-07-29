@@ -63,7 +63,8 @@
           make build-images
 
           # The previous CPO makefile doesn't support arch
-          if [[ docker image ls | grep "${IMAGE_NAMES}-${ARCH}" ]]; then
+          docker image ls | grep "${IMAGE_NAMES}-${ARCH}"
+          if [[ $? -eq 0 ]]; then
              docker tag k8scloudprovider/${IMAGE_NAMES}-${ARCH}:latest k8scloudprovider/${IMAGE_NAMES}:latest
           fi
 

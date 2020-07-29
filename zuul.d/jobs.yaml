@@ -2422,7 +2422,7 @@
       The flink e2e test - hadoopfree
     run: playbooks/flink-end-to-end-test/e2e_cron_hadoopfree.yaml
     post-run: playbooks/flink-end-to-end-test/post.yaml
-    nodeset: ubuntu-xenial-arm64-huaweicloud-large
+    nodeset: ubuntu-xenial-arm64-flink-docker
     tags:
       - Category:BigData
       - Project:apache/flink
@@ -2439,7 +2439,7 @@
       The flink e2e test - hadoop241
     run: playbooks/flink-end-to-end-test/e2e_cron_hadoop241.yaml
     post-run: playbooks/flink-end-to-end-test/post.yaml
-    nodeset: ubuntu-xenial-arm64-huaweicloud-large
+    nodeset: ubuntu-xenial-arm64-flink-docker
     tags:
       - Category:BigData
       - Project:apache/flink
@@ -2456,7 +2456,7 @@
       The flink e2e test - jdk11
     run: playbooks/flink-end-to-end-test/e2e_cron_jdk11.yaml
     post-run: playbooks/flink-end-to-end-test/post.yaml
-    nodeset: ubuntu-xenial-arm64-huaweicloud-large
+    nodeset: ubuntu-xenial-arm64-flink-docker
     tags:
       - Category:BigData
       - Project:apache/flink
@@ -2473,7 +2473,7 @@
       The flink e2e test - scala212
     run: playbooks/flink-end-to-end-test/e2e_cron_scala212.yaml
     post-run: playbooks/flink-end-to-end-test/post.yaml
-    nodeset: ubuntu-xenial-arm64-huaweicloud-large
+    nodeset: ubuntu-xenial-arm64-flink-docker
     tags:
       - Category:BigData
       - Project:apache/flink
@@ -2489,7 +2489,7 @@
     description: |
       The flink-core build and test on ARM for core and tests component.
     run: playbooks/flink-end-to-end-test/build_and_test_core_and_tests.yaml
-    nodeset: ubuntu-xenial-arm64-huaweicloud
+    nodeset: ubuntu-xenial-arm64-flink-docker
     tags:
       - Category:BigData
       - Project:apache/flink
@@ -2505,7 +2505,7 @@
     description: |
       The flink-core build and test on ARM for libraies and blink_planner component.
     run: playbooks/flink-end-to-end-test/build_and_test_libraies_and_blink_planner.yaml
-    nodeset: ubuntu-xenial-arm64-huaweicloud-large
+    nodeset: ubuntu-xenial-arm64-flink-docker
     tags:
       - Category:BigData
       - Project:apache/flink
@@ -2521,7 +2521,7 @@
     description: |
       The flink-core build and test on ARM for kafka_gelly and connectors component.
     run: playbooks/flink-end-to-end-test/build_and_test_kafka_gelly_and_connectors.yaml
-    nodeset: ubuntu-xenial-arm64-huaweicloud
+    nodeset: ubuntu-xenial-arm64-flink-docker
     tags:
       - Category:BigData
       - Project:apache/flink
@@ -2537,7 +2537,7 @@
     description: |
       The flink-core build and test on ARM for misc component.
     run: playbooks/flink-end-to-end-test/build_and_test_misc.yaml
-    nodeset: ubuntu-xenial-arm64-huaweicloud
+    nodeset: ubuntu-xenial-arm64-flink-docker
     tags:
       - Category:BigData
       - Project:apache/flink
@@ -2553,7 +2553,7 @@
     description: |
       The flink-core build and test on ARM for scheduler_ng_core and scheduler_ng_tests case.
     run: playbooks/flink-end-to-end-test/build_and_test_scheduler_ng_core_and_ng_tests.yaml
-    nodeset: ubuntu-xenial-arm64-huaweicloud
+    nodeset: ubuntu-xenial-arm64-flink-docker
     tags:
       - Category:BigData
       - Project:apache/flink

@@ -16,6 +16,9 @@
 
         docker_cmd="docker run -d --cap-add=SYS_PTRACE --security-opt seccomp=unconfined "
 
+        # WORKAROUND FOR THE BANDWIDTH BOOST
+        sleep 600
+
         for build_type in {{ build_types  | join(' ') }}; do
             if [[ $build_type == 'debug' ]] || [[ $build_type == 'release' ]];then
                 docker_cmd="docker run -e EXTRA_BUILD_FLAGS=-DKUDU_LINK=dynamic -d --cap-add=SYS_PTRACE --security-opt seccomp=unconfined "
