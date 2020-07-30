@@ -14,6 +14,12 @@
     - name: Install docker compose
       shell: pip3 install docker-compose
 
+    - name: clean up iptable rules
+      shell: iptables -F
+
+    - name: Update resolv.conf
+      shell: sed -i 's/nameserver 127.0.0.1/nameserver 8.8.8.8/' /etc/resolv.conf
+
 - hosts: all
   become: no
   tasks:
