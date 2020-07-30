@@ -207,7 +207,7 @@
           pip3 install keras_preprocessing
           bazel clean --expunge
           bazel build --config=opt ${BUILD_OPTS} //tensorflow/tools/pip_package:build_pip_package \
-          --local_ram_resources=12240 --local_cpu_resources=6 --verbose_failures
+          --local_ram_resources=10240 --local_cpu_resources=6 --verbose_failures
           mkdir tensorflow-pkg
           bazel-bin/tensorflow/tools/pip_package/build_pip_package --cpu ./tensorflow-pkg
       args:
