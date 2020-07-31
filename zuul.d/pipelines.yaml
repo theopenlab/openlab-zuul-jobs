@@ -1425,7 +1425,7 @@
     precedence: high
     trigger:
       timer:
-        - time: '0 20 * * *'
+        - time: '0 20 * * 1,2,3,4,5'
     success:
       smtp:
         from: info@openlabtesting.org
