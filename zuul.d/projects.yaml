@@ -119,13 +119,6 @@
 #            branches: master
 
 - project:
-    name: kubernetes-sigs/kind
-    periodic-6:
-      jobs:
-        - kind-integration-test-arm64:
-            branches: master
-
-- project:
     name: apache/kudu
     periodic-kudu-mail:
       jobs:
@@ -296,13 +289,3 @@
             branches: master
 
 ####################### periodic jobs on 22:00##########################
-#- project:
-#    name: dtantsur/rust-openstack
-#    periodic-22:
-#      jobs:
-#        - rust-openstack-0.2.3-acceptance-stein:
-#            branches: master
-#        - rust-openstack-0.2.3-acceptance-rocky:
-#            branches: master
-#        - rust-openstack-0.2.3-acceptance-queens:
-#            branches: master

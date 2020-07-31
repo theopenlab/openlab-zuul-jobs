@@ -2131,29 +2131,6 @@
       - BuildType:Integration test
 
 - job:
-    name: kind-integration-test-arm64
-    parent: init-test
-    description: |
-      Run integration tests of Kubernetes IN Docker against ARM64 architecture
-    run: playbooks/kind-integration-test-arm64/run.yaml
-    post-run: playbooks/kind-integration-test-arm64/post.yaml
-    nodeset: ubuntu-xenial-arm64
-    vars:
-      k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
-    secrets:
-      - gcp_account_kind
-    tags:
-      - Category:Cloud
-      - Project:kubernetes-sigs/kind
-      - Application:Kind@master
-      - Application:Go@1.12.1
-      - Application:Kubernetes@master
-      - Application:Docker@18.09
-      - OS:ubuntu-xenial
-      - Arch:arm64
-      - BuildType:Integration test
-
-- job:
     name: helm-integration-test-kubeadm-k8s-v1.14.0
     parent: init-test
     description: |
@@ -2239,54 +2216,6 @@
       run_kubeflow_tfbenchmarks: true
       run_volcano_tfbenchmarks: true
     nodeset: ubuntu-xenial-k8s-tf
-
-# grandson job for stein
-- job:
-    name: rust-openstack-0.2.3-acceptance-stein
-    parent: rust-openstack-acceptance-stein
-    description: |
-      Run rust-openstack of 0.2.3 acceptance test on stein branch of OpenStack
-    override-checkout: 0.2.3
-    tags:
-      - Category:Cloud
-      - Project:dtantsur/rust-openstack
-      - Application:Rust-openstack@0.2.3
-      - Application:OpenStack@stein
-      - OS:ubuntu-xenial
-      - Arch:x86_64
-      - BuildType:Integration test
-
-# grandson job for rocky
-- job:
-    name: rust-openstack-0.2.3-acceptance-rocky
-    parent: rust-openstack-acceptance-rocky
-    description: |
-      Run rust-openstack of 0.2.3 acceptance test on rocky branch of OpenStack
-    override-checkout: 0.2.3
-    tags:
-      - Category:Cloud
-      - Project:dtantsur/rust-openstack
-      - Application:Rust-openstack@0.2.3
-      - Application:OpenStack@rocky
-      - OS:ubuntu-xenial
-      - Arch:x86_64
-      - BuildType:Integration test
-
-# grandson job for queens
-- job:
-    name: rust-openstack-0.2.3-acceptance-queens
-    parent: rust-openstack-acceptance-queens
-    description: |
-      Run rust-openstack of 0.2.3 acceptance test on queens branch of OpenStack
-    override-checkout: 0.2.3
-    tags:
-      - Category:Cloud
-      - Project:dtantsur/rust-openstack
-      - Application:Rust-openstack@0.2.3
-      - Application:OpenStack@queens
-      - OS:ubuntu-xenial
-      - Arch:x86_64
-      - BuildType:Integration test
 
 - job:
     name: flink-end-to-end-test-cron-hadoopfree
