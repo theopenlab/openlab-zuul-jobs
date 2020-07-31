@@ -246,10 +246,6 @@
       jobs:
         - tensorflow-arm64-build-daily-master:
             branches: master
-        - tensorflow-arm64-build-daily-v2.0.0:
-            branches: master
-        - tensorflow-arm64-build-daily-v2.1.0:
-            branches: master
     periodic-22-weekly-2-4-6:
       jobs:
         - tensorflow-arm64-release-build-v1.15.3-py35:
