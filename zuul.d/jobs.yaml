@@ -2495,30 +2495,6 @@
         PYTHON: v3.6
 
 - job:
-    name: tensorflow-arm64-build-daily-v2.0.0
-    parent: tensorflow-arm64-build-daily
-    description: |
-      Tensorflow v2.0.0 daily build on ARM64
-    vars:
-      global_env:
-        RELEASE: v2.0.0
-        BAZEL_VERSION: 0.26.0
-        GCC_VERSION: default
-        PYTHON: v3.6
-
-- job:
-    name: tensorflow-arm64-build-daily-v2.1.0
-    parent: tensorflow-arm64-build-daily
-    description: |
-      Tensorflow v2.1.0 daily build on ARM64
-    vars:
-      global_env:
-        RELEASE: v2.1.0
-        BAZEL_VERSION: 0.29.1
-        GCC_VERSION: default
-        PYTHON: v3.6
-
-- job:
     name: tensorflow-arm64-release-build-v1.15.3
     parent: tensorflow-arm64-build-daily
     description: |
