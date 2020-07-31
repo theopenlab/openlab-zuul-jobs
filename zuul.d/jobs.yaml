@@ -2252,6 +2252,23 @@
     timeout: 18000
 
 - job:
+    name: flink-end-to-end-test-cron-hadoop241-test
+    parent: init-test
+    description: |
+      The flink e2e test - hadoop241
+    run: playbooks/flink-end-to-end-test/e2e_cron_hadoop241_test.yaml
+    post-run: playbooks/flink-end-to-end-test/post.yaml
+    nodeset: ubuntu-xenial-arm64-flink-docker
+    tags:
+      - Category:BigData
+      - Project:apache/flink
+      - Application:Flink@master
+      - OS:ubuntu-xenial
+      - Arch:arm64
+      - BuildType:Integration test
+    timeout: 18000
+
+- job:
     name: flink-end-to-end-test-cron-jdk11
     parent: init-test
     description: |

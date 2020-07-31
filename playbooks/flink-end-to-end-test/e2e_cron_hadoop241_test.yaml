@@ -1,0 +1,34 @@
+- import_playbook: common.yaml
+
+- hosts: all
+  become: no
+  tasks:
+    - name: Build Flink
+      shell:
+        cmd: |
+          mvn clean install -B -DskipTests
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
+
+    - name: Hack - Use arm64 docker image
+      shell:
+         cmd: |
+           # https://github.com/apache/flink-docker/pull/23
+           sed -i 's/\/apache/\/wangxiyuan/' flink-end-to-end-tests/test-scripts/common_docker.sh
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
+
+    - name: Run e2e test - hadoop241
+      shell:
+        cmd: |
+          set -xo pipefail
+          sleep 36000
+          PROFILE="-Dinclude-hadoop -Dhadoop.version=2.4.1 -Pskip-hive-tests -Pe2e-hadoop" FLINK_DIR=`pwd`/build-target flink-end-to-end-tests/run-nightly-tests.sh
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
