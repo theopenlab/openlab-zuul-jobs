@@ -1,7 +1,8 @@
 - hosts: all
   roles:
     - config-golang
-    - install-k8s
+    - role: install-k8s
+      etcd_version: v3.4.9
     - clone-devstack-gate-to-workspace
     - role: create-devstack-local-conf
       enable_services:
