@@ -1454,6 +1454,6 @@
     failure:
       smtp:
         from: info@openlabtesting.org
-        to: dev@kudu.apache.org
+        to: builds@kudu.apache.org
         subject: Daily KUDU ARM64 Cron Job Test Result - FAILED
       mysql:
