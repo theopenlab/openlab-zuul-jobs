@@ -2,7 +2,8 @@
   roles:
     - config-golang
     - export-cloud-openrc
-    - install-k8s
+    - role: install-k8s
+      etcd_version: v3.4.9
   become: yes
   tasks:
     - name: Run csi cinder acceptance tests with cloud-provider-openstack
