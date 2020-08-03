@@ -56,6 +56,8 @@
             branches: master
         - pytorch-arm64-build-daily-master-py38:
             branches: master
+        - pytorch-arm64-build-daily-v1.6.0:
+            branches: master
         - pytorch-arm64-build-daily-v1.5.0:
             branches: master
         - pytorch-arm64-build-daily-v1.4.0:
