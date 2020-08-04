@@ -27,6 +27,13 @@
             files:
               - ^user_data_gpu/.*
 
+# TODO(wxy): Only for test.
+- project:
+    name: wangxiyuan/flink
+    check:
+      jobs:
+        - flink-end-to-end-test-cron-hadoop241-test
+
 ####################### periodic jobs on 00:00 ##########################
 #- project:
 #    name: ansible/ansible
