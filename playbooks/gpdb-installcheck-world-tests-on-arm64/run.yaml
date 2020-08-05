@@ -161,6 +161,12 @@
         executable: /bin/bash
         chdir: /home/zuul/gpdb
 
+    - name: debug
+      shell: |
+        sleep 36000
+      args:
+        executable: /bin/bash
+
     - name: Setup demo cluster and run installcheck-world tests
       shell: |
         set -xeo pipefail
