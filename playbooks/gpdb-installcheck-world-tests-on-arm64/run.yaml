@@ -161,6 +161,12 @@
         executable: /bin/bash
         chdir: /home/zuul/gpdb
 
+    - name: Genarate local known_hosts for demo cluster startup
+      shell: |
+        ssh-keyscan -H `hostname` >> ~/.ssh/known_hosts
+      args:
+        executable: /bin/bash
+
     - name: Setup demo cluster and run installcheck-world tests
       shell: |
         set -xeo pipefail

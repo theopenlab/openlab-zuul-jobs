@@ -26,6 +26,7 @@
       shell:
         cmd: |
           set -xo pipefail
+          sudo iptables -P FORWARD ACCEPT
           sleep 36000
           PROFILE="-Dinclude-hadoop -Dhadoop.version=2.4.1 -Pskip-hive-tests -Pe2e-hadoop" FLINK_DIR=`pwd`/build-target flink-end-to-end-tests/run-nightly-tests.sh
       args:
