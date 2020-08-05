@@ -161,9 +161,9 @@
         executable: /bin/bash
         chdir: /home/zuul/gpdb
 
-    - name: debug
+    - name: Genarate local known_hosts for demo cluster startup
       shell: |
-        sleep 36000
+        ssh-keyscan -H `hostname` >> ~/.ssh/known_hosts
       args:
         executable: /bin/bash
 
