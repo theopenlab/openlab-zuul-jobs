@@ -6,7 +6,7 @@
     - name: Use HuaweiCloud Maven Mirror
       shell:
         cmd: |
-          wget https://mirrors.huaweicloud.com/v1/configurations/maven? -O /opt/apache-maven-3.2.5/conf/settings.xml
+          wget https://gist.githubusercontent.com/wangxiyuan/7623d2e5e9f0c86330a5ba1ead960a2f/raw/b584fa8f6721e537894790e88fd92645bafde439/maven_setting.xml -O /opt/apache-maven-3.2.5/conf/settings.xml
       args:
         executable: /bin/bash
         chdir: '/opt'
