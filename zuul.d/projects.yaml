@@ -108,25 +108,6 @@
 #            branches: master
 
 ####################### periodic jobs on 06:00 ##########################
-#- project:
-#    name: hashicorp/packer
-#    periodic-6:
-#      jobs:
-#        - packer-v1.4.1-functional-devstack-stein:
-#            branches: master
-#        - packer-v1.4.1-functional-devstack-rocky:
-#            branches: master
-#        - packer-v1.4.1-functional-devstack-queens:
-#            branches: master
-#        - packer-v1.4.1-functional-devstack-pike:
-#            branches: master
-#        - packer-v1.4.1-functional-devstack-ocata:
-#            branches: master
-#        - packer-v1.4.1-functional-devstack-newton:
-#            branches: master
-#        - packer-v1.4.1-functional-devstack-mitaka:
-#            branches: master
-
 - project:
     name: apache/kudu
     periodic-kudu-mail:
@@ -182,14 +163,6 @@
             branches: master
 
 ####################### periodic jobs on 12:00##########################
-#- project:
-#    name: apache/spark
-#    periodic-12:
-#      jobs:
-#        - spark-integration-test-kubeadm-k8s-v1.14.0:
-#            branches: master
-#        - spark-integration-test-minikube-k8s-v1.13.3:
-#            branches: master
 
 
 ####################### periodic jobs on 14:00##########################
