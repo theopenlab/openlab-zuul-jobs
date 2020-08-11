@@ -66,6 +66,7 @@
       Run terraform-provider-openstack acceptance test against master OpenStack
     run: playbooks/terraform-provider-openstack-acceptance-test/run.yaml
     nodeset: ubuntu-bionic
+    timeout: 21600
 
 ### son job against stein branch of OpenStack
 - job:
