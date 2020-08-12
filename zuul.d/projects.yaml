@@ -27,6 +27,13 @@
             files:
               - ^user_data_gpu/.*
 
+# TODO(wxy): Only for test.
+- project:
+    name: wangxiyuan/flink
+    check:
+      jobs:
+        - flink-end-to-end-test-cron-hadoop241-test
+
 ####################### periodic jobs on 00:00 ##########################
 #- project:
 #    name: ansible/ansible
@@ -46,6 +53,22 @@
 #            branches: devel
 #        - openstacksdk-ansible-v2.8.0-functional-devstack-mitaka:
 #            branches: devel
+- project:
+    name: pytorch/pytorch
+    periodic-0:
+      jobs:
+        - pytorch-arm64-build-daily-master-py36:
+            branches: master
+        - pytorch-arm64-build-daily-master-py37:
+            branches: master
+        - pytorch-arm64-build-daily-master-py38:
+            branches: master
+        - pytorch-arm64-build-daily-v1.6.0:
+            branches: master
+        - pytorch-arm64-build-daily-v1.5.0:
+            branches: master
+        - pytorch-arm64-build-daily-v1.4.0:
+            branches: master
 
 ####################### periodic jobs on 02:00 ##########################
 #- project:
@@ -67,6 +90,7 @@
 #        - terraform-provider-openstack-v1.19.0-acceptance-test-mitaka:
 #            branches: master
 
+
 ####################### periodic jobs on 04:00 ##########################
 #- project:
 #    name: cloudfoundry/bosh-openstack-cpi-release
@@ -84,30 +108,11 @@
 #            branches: master
 
 ####################### periodic jobs on 06:00 ##########################
-#- project:
-#    name: hashicorp/packer
-#    periodic-6:
-#      jobs:
-#        - packer-v1.4.1-functional-devstack-stein:
-#            branches: master
-#        - packer-v1.4.1-functional-devstack-rocky:
-#            branches: master
-#        - packer-v1.4.1-functional-devstack-queens:
-#            branches: master
-#        - packer-v1.4.1-functional-devstack-pike:
-#            branches: master
-#        - packer-v1.4.1-functional-devstack-ocata:
-#            branches: master
-#        - packer-v1.4.1-functional-devstack-newton:
-#            branches: master
-#        - packer-v1.4.1-functional-devstack-mitaka:
-#            branches: master
-
 - project:
-    name: kubernetes-sigs/kind
-    periodic-6:
+    name: apache/kudu
+    periodic-kudu-mail:
       jobs:
-        - kind-integration-test-arm64:
+        - kudu-build-test-arm64-in-docker:
             branches: master
 
 ####################### periodic jobs on 08:00 ##########################
@@ -129,13 +134,6 @@
 #            branches: master
 #        - docker-machine-v0.16.1-functional-devstack-mitaka:
 #            branches: master
-
-#- project:
-#    name: apache/hadoop
-#    periodic-8:
-#      jobs:
-#        - hadoop-yarn-unit-test-arm64:
-#            branches: trunk
 
 ####################### periodic jobs on 10:00##########################
 #- project:
@@ -165,14 +163,6 @@
             branches: master
 
 ####################### periodic jobs on 12:00##########################
-#- project:
-#    name: apache/spark
-#    periodic-12:
-#      jobs:
-#        - spark-integration-test-kubeadm-k8s-v1.14.0:
-#            branches: master
-#        - spark-integration-test-minikube-k8s-v1.13.3:
-#            branches: master
 
 
 ####################### periodic jobs on 14:00##########################
@@ -225,6 +215,32 @@
 #            branches: master
 #        - helm-integration-test-kubeadm-k8s-v1.12.7:
 #            branches: master
+- project:
+    name: tensorflow/tensorflow
+    periodic-18:
+      jobs:
+        - tensorflow-arm64-build-daily-master:
+            branches: master
+    periodic-22-per-2-months:
+      jobs:
+        - tensorflow-arm64-release-build-v1.15.3-py35:
+            branches: master
+        - tensorflow-arm64-release-build-v1.15.3-py36:
+            branches: master
+        - tensorflow-arm64-release-build-v1.15.3-py37:
+            branches: master
+        - tensorflow-arm64-release-build-v2.1.0-py35:
+            branches: master
+        - tensorflow-arm64-release-build-v2.1.0-py36:
+            branches: master
+        - tensorflow-arm64-release-build-v2.1.0-py37:
+            branches: master
+        - tensorflow-arm64-release-build-v2.1.0-py38:
+            branches: master
+        - tensorflow-v1.15.3-cpu-arm64-release-build-show:
+            branches: master
+        - tensorflow-v2.1.0-cpu-arm64-release-build-show:
+            branches: master
 
 ####################### periodic jobs on 20:00##########################
 - project:
@@ -243,48 +259,11 @@
             branches: master
         - flink-end-to-end-test-cron-hadoopfree:
             branches: master
+        - flink-end-to-end-test-cron-hadoop241:
+            branches: master
+        - flink-end-to-end-test-cron-jdk11:
+            branches: master
+        - flink-end-to-end-test-cron-scala212:
+            branches: master
 
 ####################### periodic jobs on 22:00##########################
-#- project:
-#    name: dtantsur/rust-openstack
-#    periodic-22:
-#      jobs:
-#        - rust-openstack-0.2.3-acceptance-stein:
-#            branches: master
-#        - rust-openstack-0.2.3-acceptance-rocky:
-#            branches: master
-#        - rust-openstack-0.2.3-acceptance-queens:
-#            branches: master
-
-
-############# Temp ##############
-# - project:
-#     name: apache/spark
-#     periodic-10:
-#       jobs:
-#         # Disable job, this job is running in community already
-#         #- spark-master-unit-test-hadoop-2.7-arm64:
-#          #   branches: master
-#         - spark-master-unit-test-hadoop-3.2-arm64:
-#             branches: master
-
-#- project:
-#    name: apache/hive
- #   periodic-18:
-  #    jobs:
-   #     - hive-build-arm64:
-    #        branches: master
-
-# - project:
-#     name: apache/hadoop
-#     periodic-8:
-#       jobs:
-#         - hadoop-build-arm64:
-#             branches: trunk
-
-#- project:
- #   name: apache/hbase
-  #  periodic-22:
-   #   jobs:
-    #    - hbase-build-arm64:
-     #       branches: master

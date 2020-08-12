@@ -43,16 +43,16 @@
         label: ubuntu-xenial-arm64
 
 - nodeset:
-    name: ubuntu-xenial-arm64-huaweicloud
+    name: ubuntu-xenial-arm64-flink-docker
     nodes:
-      - name: ubuntu-xenial-arm64-huaweicloud
-        label: ubuntu-xenial-arm64-huaweicloud
+      - name: ubuntu-xenial-arm64-flink-docker
+        label: ubuntu-xenial-arm64-flink-docker
 
 - nodeset:
-    name: ubuntu-xenial-arm64-huaweicloud-large
+    name: ubuntu-xenial-arm64-openlab
     nodes:
-      - name: ubuntu-xenial-arm64-huaweicloud-large
-        label: ubuntu-xenial-arm64-huaweicloud-large
+      - name: ubuntu-xenial-arm64-openlab
+        label: ubuntu-xenial-arm64-openlab
 
 - nodeset:
     name: ubuntu-xenial-huaweicloud
@@ -116,13 +116,19 @@
         label: ubuntu-bionic-citynetwork
 
 - nodeset:
-    name: ubuntu-bionic-arm64-huaweicloud
-    nodes:
-      - name: ubuntu-bionic-arm64-huaweicloud
-        label: ubuntu-bionic-arm64-huaweicloud
-
-- nodeset:
     name: ubuntu-bionic-arm64-huaweicloud-official
     nodes:
       - name: ubuntu-bionic-arm64-huaweicloud-official
         label: ubuntu-bionic-arm64-huaweicloud-official
+
+- nodeset:
+    name: ubuntu-bionic-arm64-huaweicloud-8u16g
+    nodes:
+      - name: ubuntu-bionic-arm64-huaweicloud-8u16g
+        label: ubuntu-bionic-arm64-huaweicloud-8u16g
+
+- nodeset:
+    name: ubuntu-bionic-arm64-huaweicloud-16u32g
+    nodes:
+      - name: ubuntu-bionic-arm64-huaweicloud-16u32g
+        label: ubuntu-bionic-arm64-huaweicloud-16u32g

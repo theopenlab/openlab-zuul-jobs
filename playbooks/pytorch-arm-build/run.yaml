@@ -1,0 +1,127 @@
+- hosts: all
+  become: yes
+  tasks:
+    - name: Install python3.7
+      shell:
+        cmd: |
+          add-apt-repository ppa:deadsnakes/ppa -y
+          apt update
+          apt install -y python3.7 python3.7-dev
+
+          rm /usr/bin/python3
+          ln -s /usr/bin/python3.7 /usr/bin/python3
+
+          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+          python3 get-pip.py
+      args:
+        executable: /bin/bash
+        chdir: '/opt'
+      environment: '{{ global_env }}'
+      when:
+        global_env.PYTHON == 'v3.7'
+
+    - name: Install python3.8
+      shell:
+        cmd: |
+          add-apt-repository ppa:deadsnakes/ppa -y
+          apt update
+          apt install -y python3.8 python3.8-dev
+
+          rm /usr/bin/python3
+          ln -s /usr/bin/python3.8 /usr/bin/python3
+
+          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+          python3 get-pip.py
+      args:
+        executable: /bin/bash
+        chdir: '/opt'
+      environment: '{{ global_env }}'
+      when:
+        global_env.PYTHON == 'v3.8'
+
+    - name: prepare
+      shell:
+        cmd: |
+          apt update
+          apt install -y cmake libffi-dev clang
+          pip3 install -U pip
+          pip --version
+          pip install scikit-build
+          pip install numpy ninja pyyaml setuptools cffi
+
+      args:
+        executable: /bin/bash
+        chdir: '/opt'
+      environment: '{{ global_env }}'
+
+    - name: Checkout Release
+      shell:
+        cmd: |
+          git checkout {{ global_env.RELEASE }} -b {{ global_env.RELEASE }}
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
+      when:
+        global_env.RELEASE != 'master'
+
+    - name: Update Repo
+      shell:
+        cmd: |
+          git submodule sync
+          git submodule update --init --recursive
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
+
+    - name: Build Pytorch
+      shell:
+        cmd: |
+          pip install -r requirements.txt
+          CC=clang CXX=clang++ USE_CUDA=0 python3 setup.py bdist_wheel
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
+
+    - name: Simple Test
+      shell:
+        cmd: |
+          apt install -y zlib1g zlib1g-dev libjpeg-dev build-essential libopenblas-dev
+          pip install dist/torch-*.whl
+
+          # Do not import torch in pytorch source folder
+          cd /opt
+          python3 -c "import torch; print(torch.__version__)"
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
+
+    - name: Copy the built file
+      shell:
+        cmd: |
+          cp dist/torch-*.whl "{{ ansible_user_dir }}/workspace/test_results/"
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
+
+    - name: Get whl file name
+      find:
+        paths: "{{ ansible_user_dir }}/workspace/test_results/"
+        patterns: 'torch-*.whl'
+      register: file_name_matched
+
+    - name: Set whl file name
+      set_fact:
+        whl_file_name: "{{ file_name_matched.files[0].path.split('/')[-1] }}"
+
+    - name: Return artifact to Zuul
+      zuul_return:
+        data:
+          zuul:
+            artifacts:
+              - name: "whl file download"
+                url: "test_results/{{ whl_file_name }}"

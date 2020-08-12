@@ -1,7 +1,8 @@
 - hosts: all
   roles:
     - config-golang
-    - install-k8s
+    - role: install-k8s
+      etcd_version: v3.4.9
     - clone-devstack-gate-to-workspace
     - role: create-devstack-local-conf
       enable_services:
@@ -136,7 +137,7 @@
                 dir: /var/lib/kubelet/plugins/csi-nfsplugin
                 sockFile: csi.sock
           YAML
-          helm template examples/manila-csi-plugin/helm-deployment -f override-helm-values.yaml --name sharedstorage | '{{ kubectl }}' create -f -
+          helm template charts/manila-csi-plugin -f override-helm-values.yaml --name sharedstorage | '{{ kubectl }}' create -f -
 
           #
           # Prepare the prerequisites for the tests

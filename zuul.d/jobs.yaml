@@ -66,6 +66,7 @@
       Run terraform-provider-openstack acceptance test against master OpenStack
     run: playbooks/terraform-provider-openstack-acceptance-test/run.yaml
     nodeset: ubuntu-bionic
+    timeout: 21600
 
 ### son job against stein branch of OpenStack
 - job:
@@ -272,7 +273,7 @@
     description: |
       Run terraform-provider-openstack lbaas acceptance test on master branch
     run: playbooks/terraform-provider-openstack-acceptance-test-lbaas/run.yaml
-    timeout: 14400 # 4h
+    timeout: 25200 # 7h
     nodeset: ubuntu-bionic
 
 - job:
@@ -522,6 +523,7 @@
       k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
       kubectl: '{{ ansible_user_dir }}/src/k8s.io/kubernetes/cluster/kubectl.sh'
       cloud_name: citynetwork
+      go_version: '1.14.4'
 
 - job:
     name: cloud-provider-openstack-unittest
@@ -531,7 +533,7 @@
     run: playbooks/cloud-provider-openstack-unittest/run.yaml
     nodeset: ubuntu-xenial-citynetwork
     vars:
-      go_version: '1.13.4'
+      go_version: '1.14.4'
     secrets:
       - citynetwork_credentials
 
@@ -550,8 +552,6 @@
       Run csi sanity tests cloud-provider-openstack cinder-csi-plugin
     run: playbooks/cloud-provider-openstack-sanity-test-csi-cinder/run.yaml
     nodeset: ubuntu-xenial-citynetwork
-    vars:
-      go_version: '1.13.4'
     secrets:
       - citynetwork_credentials
 
@@ -563,8 +563,6 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-k8s-cinder/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-k8s-cinder/post.yaml
     nodeset: ubuntu-xenial-citynetwork
-    vars:
-      go_version: '1.13.4'
     secrets:
       - citynetwork_credentials
 
@@ -572,12 +570,10 @@
     name: cloud-provider-openstack-acceptance-test-e2e-conformance
     parent: cloud-provider-openstack-test
     description: |
-      Run Kubernetes E2E Conformance tests against Kubernetes master
-    vars:
-      go_version: '1.13.4'
+      Run Kubernetes E2E Conformance tests against a multinode Kubernetes cluster
     run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/post.yaml
-    nodeset: ubuntu-xenial-citynetwork
+    nodeset: ubuntu-xenial-k8s-cluster-cpo
     secrets:
       - citynetwork_credentials
       - gcp_account
@@ -692,11 +688,12 @@
     parent: cloud-provider-openstack-acceptance-test-e2e-conformance
     description: |
       Run Kubernetes E2E Conformance tests against release-1.16 branch of Kubernetes
-    nodeset: ubuntu-xenial-citynetwork
+    nodeset: ubuntu-xenial-k8s-cluster-cpo
     vars:
       go_version: '1.13.5'
       k8s_version: 'release-1.16'
       etcd_version: 'v3.3.15'
+      kubernetes_version: 'v1.16.13'
     tags:
       - Category:Cloud
       - Project:kubernetes/cloud-provider-openstack
@@ -714,11 +711,12 @@
     parent: cloud-provider-openstack-acceptance-test-e2e-conformance
     description: |
       Run Kubernetes E2E Conformance tests against release-1.17 branch of Kubernetes
-    nodeset: ubuntu-xenial-citynetwork
+    nodeset: ubuntu-xenial-k8s-cluster-cpo
     vars:
       go_version: '1.13.4'
       k8s_version: 'release-1.17'
       etcd_version: 'v3.4.3'
+      kubernetes_version: 'v1.17.9'
     tags:
       - Category:Cloud
       - Project:kubernetes/cloud-provider-openstack
@@ -736,11 +734,12 @@
     parent: cloud-provider-openstack-acceptance-test-e2e-conformance
     description: |
       Run Kubernetes E2E Conformance tests against release-1.18 branch of Kubernetes
-    nodeset: ubuntu-xenial-citynetwork
+    nodeset: ubuntu-xenial-k8s-cluster-cpo
     vars:
       go_version: '1.13.4'
       k8s_version: 'release-1.18'
       etcd_version: 'v3.4.3'
+      kubernetes_version: 'v1.18.6'
     tags:
       - Category:Cloud
       - Project:kubernetes/cloud-provider-openstack
@@ -761,8 +760,6 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-standalone-cinder/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-standalone-cinder/post.yaml
     nodeset: ubuntu-bionic
-    vars:
-      go_version: '1.13.4'
 
 - job:
     name: cloud-provider-openstack-acceptance-test-csi-cinder
@@ -772,8 +769,6 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/post.yaml
     nodeset: ubuntu-xenial-citynetwork
-    vars:
-      go_version: '1.13.4'
     secrets:
       - citynetwork_credentials
 
@@ -785,8 +780,6 @@
     run: playbooks/cloud-provider-openstack-e2e-test-csi-cinder/run.yaml
     post-run: playbooks/cloud-provider-openstack-e2e-test-csi-cinder/post.yaml
     nodeset: ubuntu-xenial-citynetwork
-    vars:
-      go_version: '1.13.4'
     secrets:
       - citynetwork_credentials
 
@@ -801,8 +794,6 @@
     run: playbooks/cloud-provider-openstack-multinode-csi-migration-test/run.yaml
     post-run: playbooks/cloud-provider-openstack-multinode-csi-migration-test/post.yaml
     nodeset: ubuntu-xenial-k8s-cluster-cpo
-    vars:
-      go_version: '1.13.4'
     secrets:
       - citynetwork_credentials
 
@@ -814,8 +805,6 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-manila-provisioner/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-manila-provisioner/post.yaml
     nodeset: ubuntu-bionic
-    vars:
-      go_version: '1.13.4'
 
 - job:
     name: cloud-provider-openstack-acceptance-test-csi-manila
@@ -825,8 +814,6 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-csi-manila/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-csi-manila/post.yaml
     nodeset: ubuntu-bionic
-    vars:
-      go_version: '1.13.4'
 
 # TODO(wxy): Delete this base job once lb job is moved to citynetwork.
 - job:
@@ -866,8 +853,6 @@
       Run keystone auth acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-keystone-authentication-authorization/run.yaml
     nodeset: ubuntu-bionic
-    vars:
-      go_version: '1.13.4'
 
 - job:
     name: cloud-provider-openstack-acceptance-test-flexvolume-cinder
@@ -876,8 +861,6 @@
       Run cinder flexvolume acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-flexvolume-cinder/run.yaml
     nodeset: ubuntu-bionic
-    vars:
-      go_version: '1.13.4'
 
 - job:
     name: cluster-api-provider-openstack-conformance
@@ -904,530 +887,6 @@
     vars:
       k8s_version_series: 'master'
       extra_args: '--use-ci-artifacts'
-
-# ansible jobs
-- job: # Deprecated
-    name: openstacksdk-ansible-devel-functional-devstack
-    parent: init-test
-    description: |
-      Run openstacksdk ansible functional tests against a master OpenStack with devel branch of ansible.
-    run: playbooks/ansible-functional-devstack/run.yaml
-    required-projects:
-      - openstack/openstacksdk
-    override-checkout: devel
-    vars:
-      os_sdk: openstacksdk
-
-# Ansible base job
-- job:
-    name: openstacksdk-ansible-functional-devstack
-    parent: init-test
-    description: |
-      Run openstacksdk ansible functional tests against master OpenStack with devel branch of ansible.
-    run: playbooks/ansible-functional-devstack/run.yaml
-    required-projects:
-      - openstack/openstacksdk
-    vars:
-      os_sdk: openstacksdk
-
-# Ansible son job for stein
-- job:
-    name: openstacksdk-ansible-functional-devstack-stein
-    parent: openstacksdk-ansible-functional-devstack
-    description: |
-      Run openstacksdk ansible functional tests against stein OpenStack with devel branch of ansible.
-    vars:
-      global_env:
-        OS_BRANCH: stable/stein
-# Ansible grandson job for stein
-- job:
-    name: openstacksdk-ansible-v2.8.0-functional-devstack-stein
-    parent: openstacksdk-ansible-functional-devstack-stein
-    description: |
-      Run openstacksdk ansible functional tests against stein OpenStack with ansible v2.8.0.
-    override-checkout: v2.8.0 #tag
-    tags:
-      - Category:Cloud
-      - Project:ansible/ansible
-      - Application:Ansible@v2.8.0
-      - Application:OpenStack@stein
-      - OS:ubuntu-xenial
-      - Arch:x86_64
-      - BuildType:Integration test
-
-# Ansible son job for rocky
-- job:
-    name: openstacksdk-ansible-functional-devstack-rocky
-    parent: openstacksdk-ansible-functional-devstack
-    description: |
-      Run openstacksdk ansible functional tests against rocky OpenStack with devel branch of ansible.
-    vars:
-      global_env:
-        OS_BRANCH: stable/rocky
-# Ansible grandson job for rocky
-- job:
-    name: openstacksdk-ansible-v2.8.0-functional-devstack-rocky
-    parent: openstacksdk-ansible-functional-devstack-rocky
-    description: |
-      Run openstacksdk ansible functional tests against rocky OpenStack with ansible v2.8.0.
-    override-checkout: v2.8.0
-    tags:
-      - Category:Cloud
-      - Project:ansible/ansible
-      - Application:Ansible@v2.8.0
-      - Application:OpenStack@rocky
-      - OS:ubuntu-xenial
-      - Arch:x86_64
-      - BuildType:Integration test
-
-# Ansible son job for queens
-- job:
-    name: openstacksdk-ansible-functional-devstack-queens
-    parent: openstacksdk-ansible-functional-devstack
-    description: |
-      Run openstacksdk ansible functional tests against queens OpenStack with devel branch of ansible.
-    vars:
-      global_env:
-        OS_BRANCH: stable/queens
-# Ansible grandson job for queens
-- job:
-    name: openstacksdk-ansible-v2.8.0-functional-devstack-queens
-    parent: openstacksdk-ansible-functional-devstack-queens
-    description: |
-      Run openstacksdk ansible functional tests against queens OpenStack with ansible v2.8.0.
-    override-checkout: v2.8.0
-    tags:
-      - Category:Cloud
-      - Project:ansible/ansible
-      - Application:Ansible@v2.8.0
-      - Application:OpenStack@queens
-      - OS:ubuntu-xenial
-      - Arch:x86_64
-      - BuildType:Integration test
-
-# Ansible son job for pike
-- job:
-    name: openstacksdk-ansible-functional-devstack-pike
-    parent: openstacksdk-ansible-functional-devstack
-    description: |
-      Run openstacksdk ansible functional tests against pike OpenStack with devel branch of ansible.
-    vars:
-      global_env:
-        OS_BRANCH: stable/pike
-# Ansible grandson job for pike
-- job:
-    name: openstacksdk-ansible-v2.8.0-functional-devstack-pike
-    parent: openstacksdk-ansible-functional-devstack-pike
-    description: |
-      Run openstacksdk ansible functional tests against pike OpenStack with ansible v2.8.0.
-    override-checkout: v2.8.0
-    tags:
-      - Category:Cloud
-      - Project:ansible/ansible
-      - Application:Ansible@v2.8.0
-      - Application:OpenStack@pike
-      - OS:ubuntu-xenial
-      - Arch:x86_64
-      - BuildType:Integration test
-
-# Ansible son job for ocata
-- job:
-    name: openstacksdk-ansible-functional-devstack-ocata
-    parent: openstacksdk-ansible-functional-devstack
-    description: |
-      Run openstacksdk ansible functional tests against ocata OpenStack with devel branch of ansible.
-    vars:
-      global_env:
-        OS_BRANCH: stable/ocata
-# Ansible grandson job for ocata
-- job:
-    name: openstacksdk-ansible-v2.8.0-functional-devstack-ocata
-    parent: openstacksdk-ansible-functional-devstack-ocata
-    description: |
-      Run openstacksdk ansible functional tests against ocata OpenStack with ansible v2.8.0.
-    override-checkout: v2.8.0
-    tags:
-      - Category:Cloud
-      - Project:ansible/ansible
-      - Application:Ansible@v2.8.0
-      - Application:OpenStack@ocata
-      - OS:ubuntu-xenial
-      - Arch:x86_64
-      - BuildType:Integration test
-
-# Ansible son job for newton
-- job:
-    name: openstacksdk-ansible-functional-devstack-newton
-    parent: openstacksdk-ansible-functional-devstack
-    description: |
-      Run openstacksdk ansible functional tests against newton OpenStack with devel branch of ansible.
-    vars:
-      global_env:
-        OS_BRANCH: stable/newton
-# Ansible grandson job for newton
-- job:
-    name: openstacksdk-ansible-v2.8.0-functional-devstack-newton
-    parent: openstacksdk-ansible-functional-devstack-newton
-    description: |
-      Run openstacksdk ansible functional tests against newton OpenStack with ansible v2.8.0.
-    override-checkout: v2.8.0
-    tags:
-      - Category:Cloud
-      - Project:ansible/ansible
-      - Application:Ansible@v2.8.0
-      - Application:OpenStack@newton
-      - OS:ubuntu-xenial
-      - Arch:x86_64
-      - BuildType:Integration test
-
-# Ansible son job for mitaka
-#- job:
-#    name: openstacksdk-ansible-functional-devstack-mitaka
-#    parent: openstacksdk-ansible-functional-devstack
-#    description: |
-#      Run openstacksdk ansible functional tests against mitaka OpenStack with devel branch of ansible.
-#    run: playbooks/ansible-functional-devstack/run.yaml
-#    vars:
-#      global_env:
-#        OS_BRANCH: stable/mitaka
-#    nodeset: ubuntu-trusty
-# Ansible grandson job for mitaka
-#- job:
-#    name: openstacksdk-ansible-v2.8.0-functional-devstack-mitaka
-#    parent: openstacksdk-ansible-functional-devstack-mitaka
-#    description: |
-#      Run openstacksdk ansible functional tests against mitaka OpenStack with ansible v2.8.0.
-#    override-checkout: v2.8.0
-#    tags:
-#      - Category:Cloud
-#      - Project:ansible/ansible
-#      - Application:Ansible@v2.8.0
-#      - Application:OpenStack@mitaka
-#      - OS:ubuntu-trusty
-#      - Arch:x86_64
-#      - BuildType:Integration test
-
-# the job is disabled
-- job:
-    name: shade-ansible-functional-devstack
-    parent: init-test
-    description: |
-      Run shade ansible functional tests against a master devstack using git stable-2.5 branch version of ansible.
-    run: playbooks/ansible-functional-devstack/run.yaml
-    required-projects:
-      - openstack/shade
-    override-checkout: stable-2.5
-    vars:
-      os_sdk: shade
-
-# the job is disabled
-- job:
-    name: openstacksdk-ansible-functional-opentelekomcloud
-    parent: init-test
-    description: |
-      Run openstacksdk ansible functional tests against a opentelekomcloud using git stable-2.7 branch version of ansible.
-    run: playbooks/ansible-functional-public-clouds/run.yaml
-    required-projects:
-      - openstack/openstacksdk
-    override-checkout: stable-2.7
-    vars:
-      cloud_name: opentelekomcloud
-      os_sdk: openstacksdk
-      # Disable public cloud policy limit roles: group keystone_domain keystone_role nova_flavor user user_group
-      test_cases: auth image keypair network object port router security_group server subnet volume
-    secrets:
-      - opentelekomcloud_credentials
-
-# the job is disabled
-- job:
-    name: openstacksdk-ansible-functional-orange
-    parent: init-test
-    description: |
-      Run openstacksdk ansible functional tests against orange cloud using git stable-2.7 branch version of ansible.
-    run: playbooks/ansible-functional-public-clouds/run.yaml
-    required-projects:
-      - openstack/openstacksdk
-    override-checkout: stable-2.7
-    vars:
-      cloud_name: orange
-      os_sdk: openstacksdk
-      # Disable public cloud policy limit roles: group keystone_domain keystone_role nova_flavor user user_group object
-      test_cases: auth image keypair network port router security_group server subnet volume
-    secrets:
-      - orange_credentials
-
-# the job is disabled
-- job:
-    name: openstacksdk-ansible-functional-telefonica
-    parent: init-test
-    description: |
-      Run openstacksdk ansible functional tests against telefonica cloud using git stable-2.7 branch version of ansible.
-    run: playbooks/ansible-functional-public-clouds/run.yaml
-    required-projects:
-      - openstack/openstacksdk
-    override-checkout: stable-2.7
-    vars:
-      cloud_name: telefonica
-      os_sdk: openstacksdk
-      # Disable public cloud policy limit roles: group keystone_domain keystone_role nova_flavor user user_group object
-      test_cases: auth image keypair network port router security_group server subnet volume
-    secrets:
-      - telefonica_credentials
-
-# the job is disabled now
-- job:
-    name: openstacksdk-ansible-functional-huaweicloud
-    parent: init-test
-    description: |
-      Run openstacksdk ansible functional tests against huaweicloud using git stable-2.7 branch version of ansible.
-    run: playbooks/ansible-functional-public-clouds/run.yaml
-    required-projects:
-      - openstack/openstacksdk
-    override-checkout: stable-2.7
-    vars:
-      cloud_name: huaweicloud
-      os_sdk: openstacksdk
-      # Disable public cloud policy limit roles: group keystone_domain keystone_role nova_flavor user user_group object
-      test_cases: auth image keypair network port router security_group server subnet volume
-    secrets:
-      - huaweicloud_credentials
-
-# packer jobs
-# the job is disabled
-- job:
-    name: packer-functional-opentelekomcloud
-    parent: init-test
-    description: |
-      Test image building functionality of Packer of v1.3.3 against opentelekomcloud.
-    run: playbooks/packer-functional-public-clouds/run.yaml
-    vars:
-      cloud_name: opentelekomcloud
-    secrets:
-      - opentelekomcloud_credentials
-    override-checkout: v1.3.3
-
-# the job is disabled
-- job:
-    name: packer-functional-orange
-    parent: init-test
-    description: |
-      Test image building functionality of Packer of v1.3.3 against orange.
-    run: playbooks/packer-functional-public-clouds/run.yaml
-    vars:
-      cloud_name: orange
-    secrets:
-      - orange_credentials
-    override-checkout: v1.3.3
-
-# the job is disabled
-- job:
-    name: packer-functional-telefonica
-    parent: init-test
-    description: |
-      Test image building functionality of Packer of v1.3.3 against telefonica.
-    run: playbooks/packer-functional-public-clouds/run.yaml
-    vars:
-      cloud_name: telefonica
-    secrets:
-      - telefonica_credentials
-    override-checkout: v1.3.3
-
-# the job is disabled
-- job:
-    name: packer-functional-huaweicloud
-    parent: init-test
-    description: |
-      Test image building functionality of Packer of v1.3.3 against huaweicloud.
-    run: playbooks/packer-functional-public-clouds/run.yaml
-    vars:
-      cloud_name: huaweicloud
-    secrets:
-      - huaweicloud_credentials
-    override-checkout: v1.3.3
-
-# parent job
-- job:
-    name: packer-functional-devstack
-    parent: init-test
-    description: |
-      Test image building functionality of master Packer against master OpenStack.
-    run: playbooks/packer-functional-devstack/run.yaml
-
-# son job for stein
-- job:
-    name: packer-functional-devstack-stein
-    parent: packer-functional-devstack
-    description: |
-      Test image building functionality of master Packer against stein branch of OpenStack.
-    vars:
-      global_env:
-        OS_BRANCH: stable/stein
-# grandson job for stein
-- job:
-    name: packer-v1.4.1-functional-devstack-stein
-    parent: packer-functional-devstack-stein
-    description: |
-      Test image building functionality of v1.4.1 Packer against stein branch of OpenStack.
-    override-checkout: v1.4.1
-    tags:
-      - Category:Cloud
-      - Project:hashicorp/packer
-      - Application:Packer@v1.4.1
-      - Application:OpenStack@stein
-      - OS:ubuntu-xenial
-      - Arch:x86_64
-      - BuildType:Integration test
-
-# son job for rocky
-- job:
-    name: packer-functional-devstack-rocky
-    parent: packer-functional-devstack
-    description: |
-      Test image building functionality of master Packer against rocky branch of OpenStack.
-    vars:
-      global_env:
-        OS_BRANCH: stable/rocky
-# grandson job for rocky
-- job:
-    name: packer-v1.4.1-functional-devstack-rocky
-    parent: packer-functional-devstack-rocky
-    description: |
-      Test image building functionality of v1.4.1 Packer against rocky branch of OpenStack.
-    override-checkout: v1.4.1
-    tags:
-      - Category:Cloud
-      - Project:hashicorp/packer
-      - Application:Packer@v1.4.1
-      - Application:OpenStack@rocky
-      - OS:ubuntu-xenial
-      - Arch:x86_64
-      - BuildType:Integration test
-
-# son job for queens
-- job:
-    name: packer-functional-devstack-queens
-    parent: packer-functional-devstack
-    description: |
-      Test image building functionality of master Packer against queens branch of OpenStack.
-    vars:
-      global_env:
-        OS_BRANCH: stable/queens
-# grandson job for queens
-- job:
-    name: packer-v1.4.1-functional-devstack-queens
-    parent: packer-functional-devstack-queens
-    description: |
-      Test image building functionality of v1.4.1 Packer against queens branch of OpenStack.
-    override-checkout: v1.4.1
-    tags:
-      - Category:Cloud
-      - Project:hashicorp/packer
-      - Application:Packer@v1.4.1
-      - Application:OpenStack@queens
-      - OS:ubuntu-xenial
-      - Arch:x86_64
-      - BuildType:Integration test
-
-# son job for pike
-- job:
-    name: packer-functional-devstack-pike
-    parent: packer-functional-devstack
-    description: |
-      Test image building functionality of master Packer against pike branch of OpenStack.
-    vars:
-      global_env:
-        OS_BRANCH: stable/pike
-# grandson job for pike
-- job:
-    name: packer-v1.4.1-functional-devstack-pike
-    parent: packer-functional-devstack-pike
-    description: |
-      Test image building functionality of v1.4.1 Packer against pike branch of OpenStack.
-    override-checkout: v1.4.1
-    tags:
-      - Category:Cloud
-      - Project:hashicorp/packer
-      - Application:Packer@v1.4.1
-      - Application:OpenStack@pike
-      - OS:ubuntu-xenial
-      - Arch:x86_64
-      - BuildType:Integration test
-
-# son job for ocata
-- job:
-    name: packer-functional-devstack-ocata
-    parent: packer-functional-devstack
-    description: |
-      Test image building functionality of master Packer against ocata branch of OpenStack.
-    vars:
-      global_env:
-        OS_BRANCH: stable/ocata
-# grandson job for ocata
-- job:
-    name: packer-v1.4.1-functional-devstack-ocata
-    parent: packer-functional-devstack-ocata
-    description: |
-      Test image building functionality of v1.4.1 Packer against ocata branch of OpenStack.
-    override-checkout: v1.4.1
-    tags:
-      - Category:Cloud
-      - Project:hashicorp/packer
-      - Application:Packer@v1.4.1
-      - Application:OpenStack@ocata
-      - OS:ubuntu-xenial
-      - Arch:x86_64
-      - BuildType:Integration test
-
-# son job for newton
-- job:
-    name: packer-functional-devstack-newton
-    parent: packer-functional-devstack
-    description: |
-      Test image building functionality of master Packer against newton branch of OpenStack.
-    vars:
-      global_env:
-        OS_BRANCH: stable/newton
-# grandson job for newton
-- job:
-    name: packer-v1.4.1-functional-devstack-newton
-    parent: packer-functional-devstack-newton
-    description: |
-      Test image building functionality of v1.4.1 Packer against newton branch of OpenStack.
-    override-checkout: v1.4.1
-    tags:
-      - Category:Cloud
-      - Project:hashicorp/packer
-      - Application:Packer@v1.4.1
-      - Application:OpenStack@newton
-      - OS:ubuntu-xenial
-      - Arch:x86_64
-      - BuildType:Integration test
-
-# son job for mitaka
-#- job:
-#    name: packer-functional-devstack-mitaka
-#    parent: packer-functional-devstack
-#    description: |
-#      Test image building functionality of master Packer against mitaka branch of OpenStack.
-#    vars:
-#      global_env:
-#        OS_BRANCH: stable/mitaka
-#    nodeset: ubuntu-trusty
-# grandson job for mitaka
-#- job:
-#    name: packer-v1.4.1-functional-devstack-mitaka
-#    parent: packer-functional-devstack-mitaka
-#    description: |
-#      Test image building functionality of v1.4.1 Packer against mitaka branch of OpenStack.
-#    override-checkout: v1.4.1
-#    tags:
-#      - Category:Cloud
-#      - Project:hashicorp/packer
-#      - Application:Packer@v1.4.1
-#      - Application:OpenStack@mitaka
-#      - OS:ubuntu-trusty
-#      - Arch:x86_64
-#      - BuildType:Integration test
 
 # docker machine jobs
 # the job is disabled now
@@ -1680,126 +1139,6 @@
       - OS:ubuntu-xenial
       - Arch:x86_64
       - BuildType:Integration test
-
-# bosh huaweicloud cpi jobs
-# the jobs are disabled now
-- job:
-    name: bosh-huaweicloud-cpi-release-validator-test-huaweicloud
-    parent: init-test
-    description: |
-      This job validation tests of bosh-huaweicloud-cpi-release aganist Huaweicloud
-    run: playbooks/bosh-huaweicloud-cpi-release-validator-test-huaweicloud/run.yaml
-    required-projects:
-      - zhongjun2/cf-huaweicloud-validator
-    secrets:
-      - huaweicloud_credentials
-    nodeset: ubuntu-xenial-huaweicloud
-
-- job:
-    name: bosh-huaweicloud-cpi-release-acceptance-test-huaweicloud
-    parent: init-test
-    description: |
-      This job run tests of bosh-acceptance-test aganist Huaweicloud
-    run: playbooks/bosh-huaweicloud-cpi-release-acceptance-test-huaweicloud/run.yaml
-    post-run: playbooks/bosh-huaweicloud-cpi-release-acceptance-test-huaweicloud/post.yaml
-    required-projects:
-      - cloudfoundry/bosh-acceptance-tests
-    secrets:
-      - huaweicloud_credentials
-    nodeset: ubuntu-xenial-huaweicloud
-
-## ========== bosh-openstack-cpi-release + openstack jobs ==============
-# grandson job for stein
-- job:
-    name: bosh-openstack-cpi-release-v42-acceptance-test-stein
-    parent: bosh-openstack-cpi-release-acceptance-test-stein
-    description: |
-      This job validation tests of v42 bosh-openstack-cpi-release against OpenStack Stein release.
-    override-checkout: v42
-    tags:
-      - Category:Cloud
-      - Project:cloudfoundry/bosh-openstack-cpi-release
-      - Application:Bosh@v42
-      - Application:OpenStack@stein
-      - OS:ubuntu-xenial
-      - Arch:x86_64
-      - BuildType:Integration test
-
-# grandson job for rocky
-- job:
-    name: bosh-openstack-cpi-release-v42-acceptance-test-rocky
-    parent: bosh-openstack-cpi-release-acceptance-test-rocky
-    description: |
-      This job validation tests of v42 bosh-openstack-cpi-release against OpenStack Rocky release.
-    override-checkout: v42
-    tags:
-      - Category:Cloud
-      - Project:cloudfoundry/bosh-openstack-cpi-release
-      - Application:Bosh@v42
-      - Application:OpenStack@rocky
-      - OS:ubuntu-xenial
-      - Arch:x86_64
-      - BuildType:Integration test
-
-# grandson job for queens
-- job:
-    name: bosh-openstack-cpi-release-v42-acceptance-test-queens
-    parent: bosh-openstack-cpi-release-acceptance-test-queens
-    description: |
-      This job validation tests of v42 bosh-openstack-cpi-release against OpenStack Queens release.
-    override-checkout: v42
-    tags:
-      - Category:Cloud
-      - Project:cloudfoundry/bosh-openstack-cpi-release
-      - Application:Bosh@v42
-      - Application:OpenStack@queens
-      - OS:ubuntu-xenial
-      - Arch:x86_64
-      - BuildType:Integration test
-
-# grandson job for pike
-- job:
-    name: bosh-openstack-cpi-release-v42-acceptance-test-pike
-    parent: bosh-openstack-cpi-release-acceptance-test-pike
-    description: |
-      This job validation tests of v42 bosh-openstack-cpi-release against OpenStack Pike release.
-    override-checkout: v42
-    tags:
-      - Category:Cloud
-      - Project:cloudfoundry/bosh-openstack-cpi-release
-      - Application:Bosh@v42
-      - Application:OpenStack@pike
-      - OS:ubuntu-xenial
-      - Arch:x86_64
-      - BuildType:Integration test
-# grandson job for ocata
-- job:
-    name: bosh-openstack-cpi-release-v42-acceptance-test-ocata
-    parent: bosh-openstack-cpi-release-acceptance-test-ocata
-    description: |
-      This job validation tests of v42 bosh-openstack-cpi-release against OpenStack Ocata release.
-    override-checkout: v42
-    tags:
-      - Category:Cloud
-      - Project:cloudfoundry/bosh-openstack-cpi-release
-      - Application:Bosh@v42
-      - Application:OpenStack@ocata
-      - OS:ubuntu-xenial
-      - Arch:x86_64
-      - BuildType:Integration test
-
-# open service broker checker jobs
-- job:
-    name: osb-checker-test-huaweicloud
-    parent: init-test
-    description: |
-      This job run tests of osb-checker aganist Huaweicloud
-    run: playbooks/osb-checker-test-huaweicloud/run.yaml
-    required-projects:
-      - openservicebrokerapi/osb-checker
-    secrets:
-      - huaweicloud_credentials
-
 # parent job
 - job:
     name: manageiq-providers-openstack-test-devstack
@@ -2105,73 +1444,6 @@
       - orange_credentials
 
 - job:
-    name: spark-integration-test-kubeadm-k8s-v1.14.0
-    parent: init-test
-    description: |
-      Run integration tests of spark of master against v1.14.0 k8s cluster deployed by kubeadm
-    run: playbooks/spark-integration-test-kubeadm-k8s/run.yaml
-    post-run: playbooks/spark-integration-test-kubeadm-k8s/post.yaml
-    secrets:
-      - dockerhub
-    vars:
-      k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
-      kubernetes_version: 1.14.0
-    tags:
-      - Category:BigData
-      - Project:apache/spark
-      - Application:Spark@master
-      - Application:Docker@18.06
-      - Application:Kubernetes@v1.14.0
-      - OS:ubuntu-xenial
-      - Arch:x86_64
-      - BuildType:Integration test
-
-- job:
-    name: spark-integration-test-minikube-k8s-v1.13.3
-    parent: init-test
-    description: |
-      Run integration tests of spark of v2.4.4 against v1.13.3 k8s cluster deployed by v0.34.1 minikube
-    run: playbooks/spark-integration-test-minikube-k8s/run.yaml
-    post-run: playbooks/spark-integration-test-minikube-k8s/post.yaml
-    override-checkout: v2.4.4
-    vars:
-      k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
-      minikube_version: v0.34.1
-      kubernetes_version: v1.13.3
-    tags:
-      - Category:BigData
-      - Project:apache/spark
-      - Application:Spark@v2.4.4
-      - Application:Docker@19.03
-      - Application:Kubernetes@v1.13.3
-      - OS:ubuntu-xenial
-      - Arch:x86_64
-      - BuildType:Integration test
-
-- job:
-    name: kind-integration-test-arm64
-    parent: init-test
-    description: |
-      Run integration tests of Kubernetes IN Docker against ARM64 architecture
-    run: playbooks/kind-integration-test-arm64/run.yaml
-    post-run: playbooks/kind-integration-test-arm64/post.yaml
-    nodeset: ubuntu-xenial-arm64
-    vars:
-      k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
-    secrets:
-      - gcp_account_kind
-    tags:
-      - Category:Cloud
-      - Project:kubernetes-sigs/kind
-      - Application:Kind@master
-      - Application:Go@1.12.1
-      - Application:Kubernetes@master
-      - Application:Docker@18.09
-      - OS:ubuntu-xenial
-      - Arch:arm64
-      - BuildType:Integration test
-
-- job:
     name: helm-integration-test-kubeadm-k8s-v1.14.0
     parent: init-test
     description: |
@@ -2258,181 +1530,6 @@
       run_volcano_tfbenchmarks: true
     nodeset: ubuntu-xenial-k8s-tf
 
-# grandson job for stein
-- job:
-    name: rust-openstack-0.2.3-acceptance-stein
-    parent: rust-openstack-acceptance-stein
-    description: |
-      Run rust-openstack of 0.2.3 acceptance test on stein branch of OpenStack
-    override-checkout: 0.2.3
-    tags:
-      - Category:Cloud
-      - Project:dtantsur/rust-openstack
-      - Application:Rust-openstack@0.2.3
-      - Application:OpenStack@stein
-      - OS:ubuntu-xenial
-      - Arch:x86_64
-      - BuildType:Integration test
-
-# grandson job for rocky
-- job:
-    name: rust-openstack-0.2.3-acceptance-rocky
-    parent: rust-openstack-acceptance-rocky
-    description: |
-      Run rust-openstack of 0.2.3 acceptance test on rocky branch of OpenStack
-    override-checkout: 0.2.3
-    tags:
-      - Category:Cloud
-      - Project:dtantsur/rust-openstack
-      - Application:Rust-openstack@0.2.3
-      - Application:OpenStack@rocky
-      - OS:ubuntu-xenial
-      - Arch:x86_64
-      - BuildType:Integration test
-
-# grandson job for queens
-- job:
-    name: rust-openstack-0.2.3-acceptance-queens
-    parent: rust-openstack-acceptance-queens
-    description: |
-      Run rust-openstack of 0.2.3 acceptance test on queens branch of OpenStack
-    override-checkout: 0.2.3
-    tags:
-      - Category:Cloud
-      - Project:dtantsur/rust-openstack
-      - Application:Rust-openstack@0.2.3
-      - Application:OpenStack@queens
-      - OS:ubuntu-xenial
-      - Arch:x86_64
-      - BuildType:Integration test
-
-# hbase arm build periodic job
-- job:
-    name: hbase-build-arm64
-    parent: init-test
-    description: |
-      Apache HBase build on arm64 server
-    run: playbooks/hbase-build-arm64/run.yaml
-    nodeset: ubuntu-xenial-arm64
-    tags:
-      - Category:BigData
-      - Project:apache/hbase
-      - Application:Hbase@master
-      - OS:ubuntu-xenial
-      - Arch:arm64
-      - BuildType:Compile
-
-# Hive arm build periodic job
-- job:
-    name: hive-build-arm64
-    parent: init-test
-    description: |
-      Apache Hive build on arm64 server
-    run: playbooks/hive-build-arm64/run.yaml
-    nodeset: ubuntu-xenial-arm64
-    tags:
-      - Category:BigData
-      - Project:apache/hive
-      - Application:Hive@master
-      - OS:ubuntu-xenial
-      - Arch:arm64
-      - BuildType:Compile
-
-# Hadoop arm64 build periodic job
-- job:
-    name: hadoop-build-arm64
-    parent: init-test
-    description: |
-      Apache Hadoop build on arm64 server
-    run: playbooks/hadoop-build-arm64/run.yaml
-    nodeset: ubuntu-xenial-arm64
-    tags:
-      - Category:BigData
-      - Project:apache/hadoop
-      - Application:hadoop@trunk
-      - OS:ubuntu-xenial
-      - Arch:arm64
-      - BuildType:Compile
-
-# Hadoop YARN build and run unit tests
-- job:
-    name: hadoop-yarn-unit-test-arm64
-    parent: init-test
-    description: |
-      Apache Hadoop YARN build and run unit tests on arm64 server
-    run: playbooks/hadoop-yarn-unit-test-arm64/run.yaml
-    nodeset: ubuntu-xenial-arm64
-    tags:
-      - Category:BigData
-      - Project:apache/hadoop
-      - Application:hadoop@trunk
-      - OS:ubuntu-xenial
-      - Arch:arm64
-      - BuildType:Unit test
-
-# Spark arm64 build and run unit tests periodic jobs
-- job:
-    name: spark-master-unit-test-hadoop-2.7-arm64
-    parent: init-test
-    description: |
-      Apache Spark build and run unit tests on arm64 server with hadoop2.7
-    run: playbooks/spark-unit-test-arm64/run.yaml
-    vars:
-      hadoop_version: 2.7
-    nodeset: ubuntu-xenial-arm64
-    tags:
-      - Category:BigData
-      - Project:apache/spark
-      - Application:Spark@master
-      - Application:Hadoop@2.7
-      - OS:ubuntu-xenial
-      - Arch:arm64
-      - BuildType:Unit test
-    timeout: 54000
-
-- job:
-    name: spark-master-unit-test-hadoop-3.2-arm64
-    parent: init-test
-    description: |
-      Apache Spark build and run unit tests on arm64 server with hadoop3.2
-    run: playbooks/spark-unit-test-arm64/run.yaml
-    vars:
-      hadoop_version: 3.2
-    nodeset: ubuntu-xenial-arm64
-    tags:
-      - Category:BigData
-      - Project:apache/spark
-      - Application:Spark@master
-      - Application:Hadoop@3.2
-      - OS:ubuntu-xenial
-      - Arch:arm64
-      - BuildType:Unit test
-    timeout: 54000
-
-# TODO(bzhaoopenstack) Notes: This is a demo job, once the upstream begin
-# to discuss, this job will be removed asap.
-# The forked Spark arm64 build and run unit tests periodic job with the commits
-# before 20190909
-- job:
-    name: spark-unchanged-branch-unit-test-hadoop-2.7-arm64
-    parent: init-test
-    description: |
-      The forked Apache Spark build and run unit tests with a unchanged
-      branch before 20190909 on arm64 server
-    run: playbooks/spark-unchanged-branch-unit-test/run.yaml
-    vars:
-      hadoop_version: 2.7
-    nodeset: ubuntu-xenial-arm64
-    tags:
-      - Category:BigData
-      - Project:theopenlab/spark
-      - Application:Spark@test-branch20190909
-      - Application:Hadoop@2.7
-      - OS:ubuntu-xenial
-      - Arch:arm64
-      - BuildType:Unit test
-    timeout: 54000
-
 - job:
     name: flink-end-to-end-test-cron-hadoopfree
     parent: init-test
@@ -2440,7 +1537,75 @@
       The flink e2e test - hadoopfree
     run: playbooks/flink-end-to-end-test/e2e_cron_hadoopfree.yaml
     post-run: playbooks/flink-end-to-end-test/post.yaml
-    nodeset: ubuntu-xenial-arm64-huaweicloud-large
+    nodeset: ubuntu-xenial-arm64-flink-docker
+    tags:
+      - Category:BigData
+      - Project:apache/flink
+      - Application:Flink@master
+      - OS:ubuntu-xenial
+      - Arch:arm64
+      - BuildType:Integration test
+    timeout: 18000
+
+- job:
+    name: flink-end-to-end-test-cron-hadoop241
+    parent: init-test
+    description: |
+      The flink e2e test - hadoop241
+    run: playbooks/flink-end-to-end-test/e2e_cron_hadoop241.yaml
+    post-run: playbooks/flink-end-to-end-test/post.yaml
+    nodeset: ubuntu-xenial-arm64-flink-docker
+    tags:
+      - Category:BigData
+      - Project:apache/flink
+      - Application:Flink@master
+      - OS:ubuntu-xenial
+      - Arch:arm64
+      - BuildType:Integration test
+    timeout: 18000
+
+- job:
+    name: flink-end-to-end-test-cron-hadoop241-test
+    parent: init-test
+    description: |
+      The flink e2e test - hadoop241
+    run: playbooks/flink-end-to-end-test/e2e_cron_hadoop241_test.yaml
+    post-run: playbooks/flink-end-to-end-test/post.yaml
+    nodeset: ubuntu-xenial-arm64-flink-docker
+    tags:
+      - Category:BigData
+      - Project:apache/flink
+      - Application:Flink@master
+      - OS:ubuntu-xenial
+      - Arch:arm64
+      - BuildType:Integration test
+    timeout: 18000
+
+- job:
+    name: flink-end-to-end-test-cron-jdk11
+    parent: init-test
+    description: |
+      The flink e2e test - jdk11
+    run: playbooks/flink-end-to-end-test/e2e_cron_jdk11.yaml
+    post-run: playbooks/flink-end-to-end-test/post.yaml
+    nodeset: ubuntu-xenial-arm64-flink-docker
+    tags:
+      - Category:BigData
+      - Project:apache/flink
+      - Application:Flink@master
+      - OS:ubuntu-xenial
+      - Arch:arm64
+      - BuildType:Integration test
+    timeout: 18000
+
+- job:
+    name: flink-end-to-end-test-cron-scala212
+    parent: init-test
+    description: |
+      The flink e2e test - scala212
+    run: playbooks/flink-end-to-end-test/e2e_cron_scala212.yaml
+    post-run: playbooks/flink-end-to-end-test/post.yaml
+    nodeset: ubuntu-xenial-arm64-flink-docker
     tags:
       - Category:BigData
       - Project:apache/flink
@@ -2456,7 +1621,7 @@
     description: |
       The flink-core build and test on ARM for core and tests component.
     run: playbooks/flink-end-to-end-test/build_and_test_core_and_tests.yaml
-    nodeset: ubuntu-xenial-arm64-huaweicloud
+    nodeset: ubuntu-xenial-arm64-flink-docker
     tags:
       - Category:BigData
       - Project:apache/flink
@@ -2472,7 +1637,7 @@
     description: |
       The flink-core build and test on ARM for libraies and blink_planner component.
     run: playbooks/flink-end-to-end-test/build_and_test_libraies_and_blink_planner.yaml
-    nodeset: ubuntu-xenial-arm64-huaweicloud-large
+    nodeset: ubuntu-xenial-arm64-flink-docker
     tags:
       - Category:BigData
       - Project:apache/flink
@@ -2488,7 +1653,7 @@
     description: |
       The flink-core build and test on ARM for kafka_gelly and connectors component.
     run: playbooks/flink-end-to-end-test/build_and_test_kafka_gelly_and_connectors.yaml
-    nodeset: ubuntu-xenial-arm64-huaweicloud
+    nodeset: ubuntu-xenial-arm64-flink-docker
     tags:
       - Category:BigData
       - Project:apache/flink
@@ -2504,7 +1669,7 @@
     description: |
       The flink-core build and test on ARM for misc component.
     run: playbooks/flink-end-to-end-test/build_and_test_misc.yaml
-    nodeset: ubuntu-xenial-arm64-huaweicloud
+    nodeset: ubuntu-xenial-arm64-flink-docker
     tags:
       - Category:BigData
       - Project:apache/flink
@@ -2520,7 +1685,7 @@
     description: |
       The flink-core build and test on ARM for scheduler_ng_core and scheduler_ng_tests case.
     run: playbooks/flink-end-to-end-test/build_and_test_scheduler_ng_core_and_ng_tests.yaml
-    nodeset: ubuntu-xenial-arm64-huaweicloud
+    nodeset: ubuntu-xenial-arm64-flink-docker
     tags:
       - Category:BigData
       - Project:apache/flink
@@ -2546,3 +1711,268 @@
       - Arch:arm64
       - BuildType:Unit test
     timeout: 18000
+
+- job:
+    name: kudu-build-test-arm64-in-docker
+    parent: init-test
+    description: |
+      Apache Kudu build and test on arm64 server
+    run: playbooks/kudu-build-test-arm64/run.yaml
+    nodeset: ubuntu-bionic-arm64-huaweicloud-16u32g
+    vars:
+      build_types:
+        - lint
+        - iwyu
+        - debug
+        - release
+    tags:
+      - Category:BigData
+      - Project:apache/kudu
+      - Application:Kudu@master
+      - OS:ubuntu-bionic
+      - Arch:arm64
+      - BuildType:Unit test
+    timeout: 18000
+
+- job:
+    name: pytorch-arm64-build-daily
+    parent: init-test
+    description: |
+      Base job for Pytorch daily build on ARM64
+    run: playbooks/pytorch-arm-build/run.yaml
+    nodeset: ubuntu-bionic-arm64-huaweicloud-8u16g
+    tags:
+      - Category:AI
+      - Project:Pytorch/Pytorch
+      - Application:Pytorch@master
+      - OS:ubuntu-bionic
+      - Arch:arm64
+      - BuildType:Build
+    timeout: 18000
+    vars:
+      global_env:
+        RELEASE: master
+        PYTHON: v3.6
+
+- job:
+    name: pytorch-arm64-build-daily-master-py36
+    parent: pytorch-arm64-build-daily
+    description: |
+      Pytorch Master daily build on ARM64 - py36
+
+- job:
+    name: pytorch-arm64-build-daily-master-py37
+    parent: pytorch-arm64-build-daily
+    description: |
+      Pytorch Master daily build on ARM64 - py37
+    vars:
+      global_env:
+        PYTHON: v3.7
+
+- job:
+    name: pytorch-arm64-build-daily-master-py38
+    parent: pytorch-arm64-build-daily
+    description: |
+      Pytorch Master daily build on ARM64 - py38
+    vars:
+      global_env:
+        PYTHON: v3.8
+
+- job:
+    name: pytorch-arm64-build-daily-v1.4.0
+    parent: pytorch-arm64-build-daily
+    description: |
+      Pytorch V1.4.0 daily build on ARM64
+    vars:
+      global_env:
+        RELEASE: v1.4.0
+
+- job:
+    name: pytorch-arm64-build-daily-v1.5.0
+    parent: pytorch-arm64-build-daily
+    description: |
+      Pytorch V1.5.0 daily build on ARM64
+    vars:
+      global_env:
+        RELEASE: v1.5.0
+
+- job:
+    name: pytorch-arm64-build-daily-v1.6.0
+    parent: pytorch-arm64-build-daily
+    description: |
+      Pytorch V1.6.0 daily build on ARM64
+    vars:
+      global_env:
+        RELEASE: v1.6.0
+
+- job:
+    name: tensorflow-arm64-build-daily
+    parent: init-test
+    description: |
+      Tensorflow daily build on ARM64
+    run: playbooks/tensorflow-arm-build/run.yaml
+    nodeset: ubuntu-bionic-arm64-huaweicloud-8u16g
+    tags:
+      - Category:AI
+      - Project:Tensorflow/Tensorflow
+      - Application:Tensorflow@master
+      - OS:ubuntu-bionic
+      - Arch:arm64
+      - BuildType:Build
+    timeout: 54000
+
+- job:
+    name: tensorflow-arm64-build-daily-master
+    parent: tensorflow-arm64-build-daily
+    description: |
+      Tensorflow Master daily build on ARM64
+    vars:
+      global_env:
+        RELEASE: master
+        BAZEL_VERSION: 3.1.0
+        GCC_VERSION: default
+        PYTHON: v3.6
+
+- job:
+    name: tensorflow-arm64-release-build-v1.15.3
+    parent: tensorflow-arm64-build-daily
+    description: |
+      Tensorflow v1.15.3 release build on ARM64
+    vars:
+      global_env:
+        RELEASE: v1.15.3
+        BAZEL_VERSION: 0.24.1
+        GCC_VERSION: default
+
+- job:
+    name: tensorflow-arm64-release-build-v1.15.3-py35
+    parent: tensorflow-arm64-release-build-v1.15.3
+    description: |
+      Tensorflow v1.15.3 release build on ARM64 with python3.5
+    provides: tf-cpu-whl-ready-for-1.15.3-py35
+    vars:
+      global_env:
+        PYTHON: v3.5
+
+- job:
+    name: tensorflow-arm64-release-build-v1.15.3-py36
+    parent: tensorflow-arm64-release-build-v1.15.3
+    description: |
+      Tensorflow v1.15.3 release build on ARM64 with python3.6
+    provides: tf-cpu-whl-ready-for-1.15.3-py36
+    vars:
+      global_env:
+        PYTHON: v3.6
+
+- job:
+    name: tensorflow-arm64-release-build-v1.15.3-py37
+    parent: tensorflow-arm64-release-build-v1.15.3
+    description: |
+      Tensorflow v1.15.3 release build on ARM64 with python3.7
+    provides: tf-cpu-whl-ready-for-1.15.3-py37
+    vars:
+      global_env:
+        PYTHON: v3.7
+
+- job:
+    name: tensorflow-arm64-release-build-v2.1.0
+    parent: tensorflow-arm64-build-daily
+    description: |
+      Tensorflow v2.1.0 release build on ARM64
+    vars:
+      global_env:
+        RELEASE: v2.1.0
+        BAZEL_VERSION: 0.29.1
+        GCC_VERSION: default
+
+- job:
+    name: tensorflow-arm64-release-build-v2.1.0-py35
+    parent: tensorflow-arm64-release-build-v2.1.0
+    description: |
+      Tensorflow v2.1.0 release build on ARM64 with python3.5
+    provides: tf-cpu-whl-ready-for-2.1.0-py35
+    vars:
+      global_env:
+        PYTHON: v3.5
+
+- job:
+    name: tensorflow-arm64-release-build-v2.1.0-py36
+    parent: tensorflow-arm64-release-build-v2.1.0
+    description: |
+      Tensorflow v2.1.0 release build on ARM64 with python3.6
+    provides: tf-cpu-whl-ready-for-2.1.0-py36
+    vars:
+      global_env:
+        PYTHON: v3.6
+
+- job:
+    name: tensorflow-arm64-release-build-v2.1.0-py37
+    parent: tensorflow-arm64-release-build-v2.1.0
+    description: |
+      Tensorflow v2.1.0 release build on ARM64 with python3.7
+    provides: tf-cpu-whl-ready-for-2.1.0-py37
+    vars:
+      global_env:
+        PYTHON: v3.7
+
+- job:
+    name: tensorflow-arm64-release-build-v2.1.0-py38
+    parent: tensorflow-arm64-release-build-v2.1.0
+    description: |
+      Tensorflow v2.1.0 release build on ARM64 with python3.8
+    provides: tf-cpu-whl-ready-for-2.1.0-py38
+    vars:
+      global_env:
+        PYTHON: v3.8
+
+- job:
+    name: tensorflow-arm64-release-build-show
+    parent: init-test
+    description: |
+      Tensorflow release build whl download links on ARM64 with supported python versions.
+    run: playbooks/tensorflow-arm-build/run_release.yaml
+    nodeset: ubuntu-bionic-arm64-huaweicloud-8u16g
+    tags:
+      - Category:AI
+      - Project:Tensorflow/Tensorflow
+      - Application:Tensorflow@master
+      - OS:ubuntu-bionic
+      - Arch:arm64
+      - BuildType:Release
+    timeout: 54000
+
+- job:
+    name: tensorflow-v1.15.3-cpu-arm64-release-build-show
+    parent: tensorflow-arm64-release-build-show
+    description: |
+      Tensorflow CPU 1.15.3 release build whl download links on ARM64 with supported python versions.
+    requires:
+      - tf-cpu-whl-ready-for-1.15.3-py35
+      - tf-cpu-whl-ready-for-1.15.3-py36
+      - tf-cpu-whl-ready-for-1.15.3-py37
+    dependencies:
+      - tensorflow-arm64-release-build-v1.15.3-py35
+      - tensorflow-arm64-release-build-v1.15.3-py36
+      - tensorflow-arm64-release-build-v1.15.3-py37
+    vars:
+      global_env:
+        RELEASE: v1.15.3
+
+- job:
+    name: tensorflow-v2.1.0-cpu-arm64-release-build-show
+    parent: tensorflow-arm64-release-build-show
+    description: |
+      Tensorflow CPU 2.1.0 release build whl download links on ARM64 with supported python versions.
+    requires:
+      - tf-cpu-whl-ready-for-2.1.0-py35
+      - tf-cpu-whl-ready-for-2.1.0-py36
+      - tf-cpu-whl-ready-for-2.1.0-py37
+      - tf-cpu-whl-ready-for-2.1.0-py38
+    dependencies:
+      - tensorflow-arm64-release-build-v2.1.0-py35
+      - tensorflow-arm64-release-build-v2.1.0-py36
+      - tensorflow-arm64-release-build-v2.1.0-py37
+      - tensorflow-arm64-release-build-v2.1.0-py38
+    vars:
+      global_env:
+        RELEASE: v2.1.0

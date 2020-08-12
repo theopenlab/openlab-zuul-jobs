@@ -83,10 +83,11 @@
         pip install setuptools
         pip install wheel
         pip install --no-use-pep517 --user "pyopenssl>=19.0.0"
-        pip install --no-use-pep517 --user --pre psutil
+        pip install --no-use-pep517 --user --pre psutil==5.7.0
         pip install --no-use-pep517 --user lockfile
         pip install --no-use-pep517 --no-binary :all: pynacl
         pip install --no-use-pep517 --user paramiko || true
+        pip install pygresql===5.1.2
       args:
         executable: /bin/bash
 
@@ -159,6 +160,12 @@
       args:
         executable: /bin/bash
         chdir: /home/zuul/gpdb
+
+    - name: Genarate local known_hosts for demo cluster startup
+      shell: |
+        ssh-keyscan -H `hostname` >> ~/.ssh/known_hosts
+      args:
+        executable: /bin/bash
 
     - name: Setup demo cluster and run installcheck-world tests
       shell: |

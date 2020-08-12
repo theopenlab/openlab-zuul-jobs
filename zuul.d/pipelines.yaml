@@ -509,6 +509,22 @@
     failure:
       mysql:
 
+# The pipelines below use for release CI system.
+# Right now, it only apply into tensorflow release CI system.
+- pipeline:
+    name: periodic-22-per-2-months
+    description: |
+      Jobs in this queue are triggered on a timer. UTC-22 22:00 per 2 months on Tuesday, Thursday and Saturday.
+    manager: independent
+    precedence: high
+    trigger:
+      timer:
+        - time: '0 22 * 1,3,5,7,9,11 2,4,6'
+    success:
+      mysql:
+    failure:
+      mysql:
+
 - pipeline:
     name: recheck-designate
     description: |
@@ -1421,4 +1437,23 @@
         from: info@openlabtesting.org
         to: builds@flink.apache.org
         subject: Daily Flink ARM Cron Job Test Result - FAILED
+      mysql:
+
+- pipeline:
+    name: periodic-kudu-mail
+    description: |
+      This pipeline is used for send Kudu periodic job result to spefied
+      maillist for Apache Kudu
+    manager: independent
+    precedence: high
+    trigger:
+      timer:
+        - time: '55 5 * * *'
+    success:
+      mysql:
+    failure:
+      smtp:
+        from: info@openlabtesting.org
+        to: builds@kudu.apache.org
+        subject: Daily KUDU ARM64 Cron Job Test Result - FAILED
       mysql:

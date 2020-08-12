@@ -1,0 +1,117 @@
+- hosts: all
+  become: yes
+  tasks:
+    - name: clean up iptable rules
+      shell: iptables -F
+
+    - name: Install Pre requirements
+      shell: apt install -y openssl libssl-dev libffi-dev python-dev python3-dev libevent-dev
+
+    - name: Update resolv.conf
+      shell: sed -i 's/nameserver 127.0.0.1/nameserver 8.8.8.8/' /etc/resolv.conf
+
+    - name: Install java11
+      shell:
+        cmd: |
+          wget https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk11u-2020-05-13-07-53/OpenJDK11U-jdk_aarch64_linux_hotspot_2020-05-13-07-53.tar.gz
+          tar xvf OpenJDK11U-jdk_aarch64_linux_hotspot_2020-05-13-07-53.tar.gz
+
+          for file in /home/zuul/jdk-11.0.8+1/bin/*
+          do
+            file_name=${file##*/}
+            ln -s /home/zuul/jdk-11.0.8+1/bin/$file_name /usr/local/bin/$file_name
+          done
+      args:
+        executable: /bin/bash
+        chdir: '/home/zuul'
+      environment: '{{ global_env }}'
+
+    - name: Install scala211
+      shell:
+        cmd: |
+          wget --no-check-certificate https://downloads.lightbend.com/scala/2.11.0/scala-2.11.0.tgz
+          tar -zxvf scala-2.11.0.tgz -C /usr/local
+      args:
+        executable: /bin/bash
+        chdir: '/home/zuul'
+      environment: '{{ global_env }}'
+
+    - name: Set java11 and scala211 env vars
+      set_fact:
+        scala211_java11_env:
+          JAVA_HOME: "/home/zuul/jdk-11.0.8+1/"
+          PATH: '/home/zuul/jdk-11.0.8+1/bin:/usr/local/scala-2.11.0/bin:{{ ansible_env.PATH }}'
+      no_log: yes
+
+    - name: Merge java11 and scala211 env vars into global env
+      set_fact:
+        global_env: '{{ global_env | combine(scala211_java11_env) }}'
+      no_log: yes
+
+    - name: Show installed JAVA & scala info
+      shell: |
+        javac -version
+        java -version
+        scala -version
+
+        # scala 2.11.0 returns error 1 even there is no error. Ignore the error.
+        exit 0
+      args:
+        executable: /bin/bash
+      environment: '{{ global_env }}'
+
+    - name: Install docker compose
+      shell: pip3 install docker-compose
+
+- hosts: all
+  become: yes
+  roles:
+    - role: install-maven
+      maven_version: '3.2.5'
+
+- hosts: all
+  become: no
+  tasks:
+    # Todo(wxy): Frocksdb doesn't have ARM release. Install it locally currently.
+    - name: Install frocksdb
+      shell:
+        cmd: |
+          wget https://github.com/wangxiyuan/Toy/raw/master/package/rocksdbjni-5.17.2-linux64.jar
+
+          mvn install:install-file -DgroupId=com.data-artisans \
+          -DartifactId=frocksdbjni -Dversion=5.17.2-artisans-2.0 \
+          -Dpackaging=jar -Dfile=./rocksdbjni-5.17.2-linux64.jar
+      args:
+        executable: /bin/bash
+        chdir: '/home/zuul'
+      environment: '{{ global_env }}'
+
+    - name: Build Flink
+      shell:
+        cmd: |
+          mvn clean install -B -DskipTests
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
+
+    - name: Hack - Use arm64 docker image
+      shell:
+         cmd: |
+           # https://github.com/apache/flink-docker/pull/23
+           sed -i 's/\/apache/\/wangxiyuan/' flink-end-to-end-tests/test-scripts/common_docker.sh
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
+
+    - name: Run e2e test - jdk11
+      shell:
+        cmd: |
+          set -xo pipefail
+          sudo iptables -P FORWARD ACCEPT
+          PROFILE="-Dinclude-hadoop -Dhadoop.version=2.8.3 -Dinclude_hadoop_aws -Dscala-2.11 -Djdk11 -Pe2e-hadoop" FLINK_DIR=`pwd`/build-target flink-end-to-end-tests/run-nightly-tests.sh
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'

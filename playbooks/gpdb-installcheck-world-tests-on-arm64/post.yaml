@@ -4,13 +4,18 @@
       shell: |
         set -ex
         cp -rf ~/gpAdminLogs "{{ ansible_user_dir }}/workspace/test_results/"
-        diff_file="/home/zuul/gpdb/src/test/regress/regression.diffs"
-        test_summary="/home/zuul/gpdb/src/test/regress/regression.out"
-        if [ -e "$diff_file" ]; then
-          cp $diff_file "{{ ansible_user_dir }}/workspace/test_results/"
-        fi
-        if [ -e "$test_summary" ]; then
-          cp $test_summary "{{ ansible_user_dir }}/workspace/test_results/"
-        fi
+        base_search_dir="/home/zuul/gpdb/"
+        for i in `find $base_search_dir -iname "*.diffs" -type f`; do
+            dir_path=`dirname $i`
+            file_name=`basename $i`
+            area=`basename $dir_path`
+            cp $i "{{ ansible_user_dir }}/workspace/test_results/${area}_${file_name}"
+        done
+        for i in `find $base_search_dir -iname regression.out -type f`; do
+            dir_path=`dirname $i`
+            file_name=`basename $i`
+            area=`basename $dir_path`
+            cp $i "{{ ansible_user_dir }}/workspace/test_results/${area}_${file_name}"
+        done
       args:
         executable: /bin/bash

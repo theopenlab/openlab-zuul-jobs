@@ -7,7 +7,7 @@
       shell:
         cmd: |
           set -x
-          pip3 install -U python-openstackclient
+          pip3 install -U --ignore-installed python-openstackclient
 
           if [ -d /mnt/config/openstack ]; then
               server_id=$(python -c "import json;print json.load(open('/mnt/config/openstack/latest/meta_data.json', 'r'))['uuid']")
