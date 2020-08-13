@@ -1531,11 +1531,28 @@
     nodeset: ubuntu-xenial-k8s-tf
 
 - job:
-    name: flink-end-to-end-test-cron-hadoopfree
+    name: flink-end-to-end-test-cron-openlab
     parent: init-test
     description: |
-      The flink e2e test - hadoopfree
-    run: playbooks/flink-end-to-end-test/e2e_cron_hadoopfree.yaml
+      The flink e2e test - openlab
+    run: playbooks/flink-end-to-end-test/e2e_cron_openlab.yaml
+    post-run: playbooks/flink-end-to-end-test/post.yaml
+    nodeset: ubuntu-xenial-arm64-flink-docker
+    tags:
+      - Category:BigData
+      - Project:apache/flink
+      - Application:Flink@master
+      - OS:ubuntu-xenial
+      - Arch:arm64
+      - BuildType:Integration test
+    timeout: 18000
+
+- job:
+    name: flink-end-to-end-test-cron-hadoop313
+    parent: init-test
+    description: |
+      The flink e2e test - hadoop313
+    run: playbooks/flink-end-to-end-test/e2e_cron_hadoop313.yaml
     post-run: playbooks/flink-end-to-end-test/post.yaml
     nodeset: ubuntu-xenial-arm64-flink-docker
     tags:

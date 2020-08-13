@@ -257,9 +257,11 @@
             branches: master
         - flink-build-and-test-arm64-scheduler-ng-core-and-ng-tests:
             branches: master
-        - flink-end-to-end-test-cron-hadoopfree:
+        - flink-end-to-end-test-cron-openlab:
             branches: master
         - flink-end-to-end-test-cron-hadoop241:
+            branches: master
+        - flink-end-to-end-test-cron-hadoop313:
             branches: master
         - flink-end-to-end-test-cron-jdk11:
             branches: master
