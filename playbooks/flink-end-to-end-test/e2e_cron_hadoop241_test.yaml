@@ -1,39 +1,34 @@
 - import_playbook: common.yaml
 
 - hosts: all
-  become: yes
+  become: no
   tasks:
-    - name: Build Flink misc
+    - name: Build Flink
       shell:
         cmd: |
-          set -xe
-
-          export PROFILE="-Dflink.forkCount=2 -Dflink.forkCountTestPackage=2 -Dfast -Pskip-webui-build -DskipTests -Dhadoop.version=2.8.3 -Dinclude_hadoop_aws -Dscala-2.11"
-          source tools/ci/stage.sh
-
-          mvn clean install -nsu -B $PROFILE
+          mvn clean install -B -DskipTests
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ global_env }}'
 
-    - name: Test Flink misc
+    - name: Hack - Use arm64 docker image
+      shell:
+         cmd: |
+           # https://github.com/apache/flink-docker/pull/23
+           sed -i 's/\/apache/\/wangxiyuan/' flink-end-to-end-tests/test-scripts/common_docker.sh
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
+
+    - name: Run e2e test - hadoopfree
       shell:
         cmd: |
-          set -xe
+          set -xo pipefail
+          sudo iptables -P FORWARD ACCEPT
           sleep 36000
-          export PROFILE="-Dflink.forkCount=2 -Dflink.forkCountTestPackage=2 -Dfast -Pskip-webui-build -Dflink.tests.with-openssl -Dhadoop.version=2.8.3 -Dinclude_hadoop_aws -Dscala-2.11"
-          source tools/ci/stage.sh
-
-          negated_core=\!${MODULES_CORE//,/,\!}
-          negated_libraries=\!${MODULES_LIBRARIES//,/,\!}
-          negated_blink_planner=\!${MODULES_BLINK_PLANNER//,/,\!}
-          negated_kafka_gelly=\!${MODULES_KAFKA_GELLY//,/,\!}
-          negated_connectors=\!${MODULES_CONNECTORS//,/,\!}
-          negated_tests=\!${MODULES_TESTS//,/,\!}
-          modules_misc="$negated_core,$negated_libraries,$negated_blink_planner,$negated_connectors,$negated_kafka_gelly,$negated_tests"
-
-          mvn verify -nsu -B $PROFILE -pl $modules_misc
+          PROFILE="" FLINK_DIR=`pwd`/build-target flink-end-to-end-tests/run-nightly-tests.sh
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
