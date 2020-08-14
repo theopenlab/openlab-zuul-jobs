@@ -1713,6 +1713,22 @@
     timeout: 18000
 
 - job:
+    name: frocksdb-build-and-test-arm64
+    parent: init-test
+    description: |
+      The job for Frocksdb build and test on ARM64
+    run: playbooks/frocksdb-build-and-test/build_and_test.yaml
+    nodeset: ubuntu-xenial-arm64-flink-docker
+    tags:
+      - Category:BigData
+      - Project:dataArtisans/frocksdb
+      - Application:frocksdb@5.17.2
+      - OS:ubuntu-xenial
+      - Arch:arm64
+      - BuildType:Unit test
+    timeout: 18000
+
+- job:
     name: gpdb-installcheck-world-tests-on-arm64
     parent: init-test
     description: |

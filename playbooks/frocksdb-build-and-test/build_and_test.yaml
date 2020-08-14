@@ -1,0 +1,23 @@
+- hosts: all
+  become: yes
+  roles:
+    - role: install-openjdk
+      java_version: '8'
+  tasks:
+    - name: Build frocksdbjni
+      shell:
+        cmd: |
+          FROCKSDB_VERSION=2.0 make -j8 rocksdbjavastaticrelease
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
+
+    - name: Check frocksdb
+      shell:
+        cmd: |
+          make check
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
