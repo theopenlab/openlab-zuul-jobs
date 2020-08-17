@@ -34,6 +34,12 @@
       jobs:
         - flink-end-to-end-test-cron-hadoop241-test
 
+- project:
+    name: wangxiyuan/frocksdb
+    check:
+      jobs:
+        - frocksdb-build-and-test-arm64
+
 ####################### periodic jobs on 00:00 ##########################
 #- project:
 #    name: ansible/ansible
