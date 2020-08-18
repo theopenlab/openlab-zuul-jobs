@@ -7,7 +7,7 @@
     - name: Build frocksdbjni
       shell:
         cmd: |
-          FROCKSDB_VERSION=2.0 make -j8 rocksdbjavastaticrelease
+          FROCKSDB_VERSION=2.0 make -j8 rocksdbjavastatic
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
