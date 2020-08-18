@@ -16,7 +16,7 @@
     - name: Check frocksdb
       shell:
         cmd: |
-          make check
+          make check_some
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
