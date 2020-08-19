@@ -1,0 +1,342 @@
+- hosts: all
+  tasks:
+    - name: Set maven env vars
+      set_fact:
+        test_env:
+          MYSQL_INSTALL_DIR: '/home/zuul/mysql-install/mysql'
+          MYSQL_DEBUG_INSTALL_DIR: '/home/zuul/mysql-debug-install/mysql'
+          MYSQL_TMP_INSTALL_DIR: '/home/zuul/mysql-tmp-install/mysql'
+          BOOST_DIR: '/home/zuul/boost/'
+          OPTIMIZED_SRC_DIR: '/home/zuul/opt/'
+          GOOGLE_TEST_DIR: '/home/zuul/opt/googletest/'
+          BUILD_DIR_PREFIX: 'build-mysql-dir-'
+
+    - name: Merge maven env vars into global env
+      set_fact:
+        global_env: '{{ global_env | combine(test_env) }}'
+
+    - name: Install necessary libs via apt
+      become: yes
+      shell:
+        cmd: |
+          add-apt-repository ppa:deadsnakes/ppa -y
+          apt-get -q update
+          apt-get -q install -y --no-install-recommends build-essential autoconf automake libtool cmake \
+          zlib1g-dev pkg-config libssl-dev libssl1.0.0 libsasl2-dev bats curl sudo git wget
+          apt-get install libaio1 libncurses5-dev bison -y
+          apt-get install libgmp-dev libmpfr-dev libmpc-dev -y
+          apt-get install libjson-perl -y
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
+
+    - name: Checkout Release
+      shell:
+        cmd: |
+          git checkout tags/mysql-{{ global_env.RELEASE }} -b {{ global_env.RELEASE }} || true
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
+      when:
+        - global_env.RELEASE != 'refs/heads/8.0'
+        - global_env.IS_OPTIMIZED == 'no'
+
+    - name: Clone optimized version
+      shell:
+        cmd: |
+          git clone https://gitee.com/src-openeuler/mysql5.git
+      args:
+        executable: /bin/bash
+        chdir: '{{ global_env.OPTIMIZED_SRC_DIR }}'
+      environment: '{{ global_env }}'
+      when:
+        - global_env.RELEASE != 'refs/heads/8.0'
+        - global_env.IS_OPTIMIZED == 'yes'
+
+    - name: Generate boost folder
+      file:
+        path: "{{ global_env.BOOST_DIR }}"
+        state: directory
+      environment: '{{ global_env }}'
+
+    - name: Generate googletest folder
+      file:
+        path: "{{ global_env.GOOGLE_TEST_DIR }}"
+        state: directory
+      environment: '{{ global_env }}'
+      when:
+        - global_env.RELEASE != 'refs/heads/8.0'
+        - global_env.IS_OPTIMIZED == 'yes'
+
+    - name: Download googletest {{ global_env.GOOGLE_TEST_VERSION }}
+      shell:
+        cmd: |
+          wget "http://github.com/google/googletest/archive/release-{{ global_env.GOOGLE_TEST_VERSION }}.zip"
+      args:
+        executable: /bin/bash
+        chdir: "{{ global_env.GOOGLE_TEST_DIR }}"
+      environment: '{{ global_env }}'
+      when:
+        - global_env.RELEASE != 'refs/heads/8.0'
+        - global_env.IS_OPTIMIZED == 'yes'
+
+    - name: Generate log result folder
+      file:
+        path: "{{ ansible_user_dir }}/workspace/test_results/"
+        state: directory
+
+    - name: Prepare boost for mysql {{ global_env.RELEASE }}
+      shell:
+        cmd: |
+          wget "http://sourceforge.net/projects/boost/files/boost/{{ global_env.BOOST_VERSION }}/boost_{{ global_env.BOOST_VERSION.split('.') | join('_') }}.tar.gz"
+      args:
+        executable: /bin/bash
+        chdir: "{{ global_env.BOOST_DIR }}"
+      environment: '{{ global_env }}'
+
+    - name: Get current date timestamp
+      shell: |
+        date "+%Y-%m-%d-%H-%M-%S"
+      args:
+        executable: /bin/bash
+      register: CURRENT_TIMESTAMP_STD
+
+    - name: Set current date timestamp variable
+      set_fact:
+        CURRENT_TIMESTAMP: '{{ CURRENT_TIMESTAMP_STD.stdout }}'
+
+    - name: Clean the previous build dir if possible for upstream version
+      shell:
+        cmd: |
+          make clean || true
+          rm -rf {{ zuul.project.src_dir }}/{{ global_env.BUILD_DIR_PREFIX }}*
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
+      when:
+        - global_env.IS_OPTIMIZED == 'no'
+
+    - name: Clean the previous build dir if possible for optimized version
+      shell:
+        cmd: |
+          make clean || true
+          rm -rf {{ global_env.OPTIMIZED_SRC_DIR }}/mysql5/mysql-5.7.27/{{ global_env.BUILD_DIR_PREFIX }}*
+      args:
+        executable: /bin/bash
+        chdir: '{{ global_env.OPTIMIZED_SRC_DIR }}/mysql5/mysql-5.7.27/'
+      environment: '{{ global_env }}'
+      when:
+        - global_env.IS_OPTIMIZED == 'yes'
+
+    - name: Prepare build dir for upstream repo
+      file:
+        path: "{{ zuul.project.src_dir }}/{{ global_env.BUILD_DIR_PREFIX }}{{ CURRENT_TIMESTAMP }}/"
+        state: directory
+      when:
+        - global_env.IS_OPTIMIZED == 'no'
+
+    - name: Prepare build dir for optimized repo
+      file:
+        path: "{{ global_env.OPTIMIZED_SRC_DIR }}/mysql5/mysql-5.7.27/{{ global_env.BUILD_DIR_PREFIX }}{{ CURRENT_TIMESTAMP }}/"
+        state: directory
+      when:
+        - global_env.IS_OPTIMIZED == 'yes'
+
+    - name: Compile and install Mysql {{ global_env.RELEASE }} upstream release version
+      shell:
+        cmd: |
+          set -xo pipefail
+          cmake .. -DCMAKE_INSTALL_PREFIX={{ global_env.MYSQL_INSTALL_DIR }} -DDOWNLOAD_BOOST=1 \
+          -DWITH_BOOST={{ global_env.BOOST_DIR }} | tee "{{ ansible_user_dir }}/workspace/test_results/compile_build_release.log"
+          make -j8 | tee -a "{{ ansible_user_dir }}/workspace/test_results/compile_build_release.log"
+          make install | tee -a "{{ ansible_user_dir }}/workspace/test_results/compile_build_release.log"
+      args:
+        executable: /bin/bash
+        chdir: "{{ zuul.project.src_dir }}/{{ global_env.BUILD_DIR_PREFIX }}{{ CURRENT_TIMESTAMP }}/"
+      environment: '{{ global_env }}'
+      when:
+        - global_env.IS_OPTIMIZED == 'no'
+
+    - name: Compile and install Mysql {{ global_env.RELEASE }} optimized release version
+      shell:
+        cmd: |
+          set -xo pipefail
+          cmake .. -DCMAKE_INSTALL_PREFIX={{ global_env.MYSQL_INSTALL_DIR }} -DDOWNLOAD_BOOST=1 \
+          -DWITH_BOOST={{ global_env.BOOST_DIR }} | tee "{{ ansible_user_dir }}/workspace/test_results/compile_build_release.log"
+          make -j8 | tee -a "{{ ansible_user_dir }}/workspace/test_results/compile_build_release.log"
+          make install | tee -a "{{ ansible_user_dir }}/workspace/test_results/compile_build_release.log"
+      args:
+        executable: /bin/bash
+        chdir: "{{ global_env.OPTIMIZED_SRC_DIR }}/mysql5/mysql-5.7.27/{{ global_env.BUILD_DIR_PREFIX }}{{ CURRENT_TIMESTAMP }}/"
+      environment: '{{ global_env }}'
+      when:
+        - global_env.IS_OPTIMIZED == 'yes'
+
+    - name: Clean the code source dir for upstream release version
+      shell:
+        cmd: |
+          make clean
+          rm -rf "{{ zuul.project.src_dir }}/{{ global_env.BUILD_DIR_PREFIX }}{{ CURRENT_TIMESTAMP }}"
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
+      when:
+        - global_env.IS_OPTIMIZED == 'no'
+
+    - name: Clean the code source dir for optimized release version
+      shell:
+        cmd: |
+          make clean
+          rm -rf "{{ global_env.OPTIMIZED_SRC_DIR }}/mysql5/mysql-5.7.27/{{ global_env.BUILD_DIR_PREFIX }}{{ CURRENT_TIMESTAMP }}"
+      args:
+        executable: /bin/bash
+        chdir: '{{ global_env.OPTIMIZED_SRC_DIR }}/mysql5/mysql-5.7.27/'
+      environment: '{{ global_env }}'
+      when:
+        - global_env.IS_OPTIMIZED == 'yes'
+
+    - name: Re-prepare build dir for upstream debug version
+      file:
+        path: "{{ zuul.project.src_dir }}/{{ global_env.BUILD_DIR_PREFIX }}{{ CURRENT_TIMESTAMP }}/"
+        state: directory
+      when:
+        - global_env.IS_OPTIMIZED == 'no'
+
+    - name: Re-prepare build dir for optimized debug version
+      file:
+        path: "{{ global_env.OPTIMIZED_SRC_DIR }}/mysql5/mysql-5.7.27/{{ global_env.BUILD_DIR_PREFIX }}{{ CURRENT_TIMESTAMP }}/"
+        state: directory
+      when:
+        - global_env.IS_OPTIMIZED == 'yes'
+
+    - name: Compile and install Mysql {{ global_env.RELEASE }} upstream debug version
+      shell:
+        cmd: |
+          set -xo pipefail
+          cmake .. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX={{ global_env.MYSQL_DEBUG_INSTALL_DIR }} \
+          -DDOWNLOAD_BOOST=1 -DWITH_BOOST={{ global_env.BOOST_DIR }} | tee "{{ ansible_user_dir }}/workspace/test_results/compile_build_debug.log"
+          make -j8 | tee -a "{{ ansible_user_dir }}/workspace/test_results/compile_build_debug.log"
+          make install | tee -a "{{ ansible_user_dir }}/workspace/test_results/compile_build_debug.log"
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}/{{ global_env.BUILD_DIR_PREFIX }}{{ CURRENT_TIMESTAMP }}/'
+      environment: '{{ global_env }}'
+      when:
+        - global_env.IS_OPTIMIZED == 'no'
+
+    - name: Compile and install Mysql {{ global_env.RELEASE }} optimized debug version
+      shell:
+        cmd: |
+          set -xo pipefail
+          cmake .. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX={{ global_env.MYSQL_DEBUG_INSTALL_DIR }} \
+          -DDOWNLOAD_BOOST=1 -DWITH_BOOST={{ global_env.BOOST_DIR }} | tee "{{ ansible_user_dir }}/workspace/test_results/compile_build_debug.log"
+          make -j8 | tee -a "{{ ansible_user_dir }}/workspace/test_results/compile_build_debug.log"
+          make install | tee -a "{{ ansible_user_dir }}/workspace/test_results/compile_build_debug.log"
+      args:
+        executable: /bin/bash
+        chdir: '{{ global_env.OPTIMIZED_SRC_DIR }}/mysql5/mysql-5.7.27/{{ global_env.BUILD_DIR_PREFIX }}{{ CURRENT_TIMESTAMP }}/'
+      environment: '{{ global_env }}'
+      when:
+        - global_env.IS_OPTIMIZED == 'yes'
+
+    - name: Run MTR test for Mysql {{ global_env.RELEASE }} release version
+      shell:
+        cmd: |
+          set -xo pipefail
+          ./mtr --force --timestamp --timer --max-test-fail=999 --suite-timeout=6000 --testcase-timeout=300 --retry=3 \
+          --parallel=8 --big-test --debug-server | tee "{{ ansible_user_dir }}/workspace/test_results/mtr-test-release.log"
+      args:
+        executable: /bin/bash
+        chdir: '{{ global_env.MYSQL_INSTALL_DIR }}/mysql-test/'
+      environment: '{{ global_env }}'
+
+    - name: Run MTR test for Mysql {{ global_env.RELEASE }} debug version
+      shell:
+        cmd: |
+          set -xo pipefail
+          ./mtr --force --timestamp --timer --max-test-fail=999 --suite-timeout=6000 --testcase-timeout=300 --retry=3 \
+          --parallel=8 --big-test --debug-server | tee "{{ ansible_user_dir }}/workspace/test_results/mtr-test-debug.log"
+      args:
+        executable: /bin/bash
+        chdir: '{{ global_env.MYSQL_DEBUG_INSTALL_DIR }}/mysql-test/'
+      environment: '{{ global_env }}'
+
+    - name: Clean the previous build dir if possible for upstream unittest
+      shell:
+        cmd: |
+          make clean || true
+          rm -rf {{ zuul.project.src_dir }}/{{ global_env.BUILD_DIR_PREFIX }}*
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
+      when:
+        - global_env.IS_OPTIMIZED == 'no'
+
+    - name: Clean the previous build dir if possible for optimized unittest
+      shell:
+        cmd: |
+          make clean || true
+          rm -rf {{ global_env.OPTIMIZED_SRC_DIR }}/mysql5/mysql-5.7.27/{{ global_env.BUILD_DIR_PREFIX }}*
+      args:
+        executable: /bin/bash
+        chdir: '{{ global_env.OPTIMIZED_SRC_DIR }}/mysql5/mysql-5.7.27/'
+      environment: '{{ global_env }}'
+      when:
+        - global_env.IS_OPTIMIZED == 'yes'
+
+    - name: Build on local src dir to prepare Unittest for upstream version
+      shell:
+        cmd: |
+          cmake . -DCMAKE_INSTALL_PREFIX={{ global_env.MYSQL_TMP_INSTALL_DIR }} -DDOWNLOAD_BOOST=1 \
+          -DWITH_BOOST={{ global_env.BOOST_DIR }} | tee "{{ ansible_user_dir }}/workspace/test_results/compile_build_tmp.log"
+          make -j8 | tee -a "{{ ansible_user_dir }}/workspace/test_results/compile_build_tmp.log"
+          make install | tee -a "{{ ansible_user_dir }}/workspace/test_results/compile_build_tmp.log"
+      args:
+        executable: /bin/bash
+        chdir: "{{ zuul.project.src_dir }}/{{ global_env.BUILD_DIR_PREFIX }}{{ CURRENT_TIMESTAMP }}/"
+      environment: '{{ global_env }}'
+      when:
+        - global_env.IS_OPTIMIZED == 'no'
+
+    - name: Build on local src dir to prepare Unittest for optimized version
+       shell:
+         cmd: |
+           cmake . -DCMAKE_INSTALL_PREFIX={{ global_env.MYSQL_TMP_INSTALL_DIR }} -DDOWNLOAD_BOOST=1 \
+           -DWITH_BOOST={{ global_env.BOOST_DIR }} | tee "{{ ansible_user_dir }}/workspace/test_results/compile_build_tmp.log"
+           make -j8 | tee -a "{{ ansible_user_dir }}/workspace/test_results/compile_build_tmp.log"
+           make install | tee -a "{{ ansible_user_dir }}/workspace/test_results/compile_build_tmp.log"
+       args:
+         executable: /bin/bash
+         chdir: "{{ global_env.OPTIMIZED_SRC_DIR }}/mysql5/mysql-5.7.27/{{ global_env.BUILD_DIR_PREFIX }}{{ CURRENT_TIMESTAMP }}/"
+       environment: '{{ global_env }}'
+       when:
+         - global_env.IS_OPTIMIZED == 'yes'
+
+    - name: Run Unittest for Mysql {{ global_env.RELEASE }} upstream version
+      shell:
+        cmd: |
+          set -xo pipefail
+          make test-unit | tee "{{ ansible_user_dir }}/workspace/test_results/unittest.log"
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}/unittest'
+      environment: '{{ global_env }}'
+      when:
+        - global_env.IS_OPTIMIZED == 'no'
+
+    - name: Run Unittest for Mysql {{ global_env.RELEASE }} optimized version
+      shell:
+        cmd: |
+          set -xo pipefail
+          make test-unit | tee "{{ ansible_user_dir }}/workspace/test_results/unittest.log"
+      args:
+        executable: /bin/bash
+        chdir: '{{ global_env.OPTIMIZED_SRC_DIR }}/mysql5/mysql-5.7.27/unittest'
+      environment: '{{ global_env }}'
+      when:
+        - global_env.IS_OPTIMIZED == 'yes'

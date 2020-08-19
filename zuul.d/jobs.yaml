@@ -2007,3 +2007,35 @@
     vars:
       global_env:
         RELEASE: v2.1.0
+
+- job:
+    name: mysql-full-test-on-arm64
+    parent: init-test
+    description: |
+      Full test for mysql on arm64.
+    run: playbooks/mysql-test-on-arm64/run.yaml
+    nodeset: ubuntu-bionic-arm64-huaweicloud-8u16g
+    tags:
+      - Category:Database
+      - Project:mysql/mysql-server
+      - Application:mysql-server@master
+      - OS:ubuntu-bionic
+      - Arch:arm64
+      - BuildType:Test
+    timeout: 864000
+    vars:
+      global_env:
+        RELEASE: "refs/heads/8.0"
+        IS_OPTIMIZED: 'no'
+        GOOGLE_TEST_VERSION: 1.8.0
+
+- job:
+    name: mysql-5.7-upstream-full-test-on-arm64
+    parent: mysql-full-test-on-arm64
+    description: |
+      Full test for mysql 5.7 upstream version on arm64.
+    run: playbooks/mysql-test-on-arm64/run.yaml
+    vars:
+      global_env:
+        RELEASE: 5.7.27
+        BOOST_VERSION: 1.59.0
