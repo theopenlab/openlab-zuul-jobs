@@ -813,7 +813,6 @@
     post-run: playbooks/cloud-provider-openstack-acceptance-test-csi-manila/post.yaml
     nodeset: ubuntu-bionic
 
-# TODO(wxy): Delete this base job once lb job is moved to citynetwork.
 - job:
     name: cloud-provider-openstack-test-lb
     parent: golang-test
@@ -821,17 +820,12 @@
       Base job for all types of cloud-provider-openstack-acceptance-test-lb-octavia test jobs
     pre-run: playbooks/cloud-provider-openstack-test/pre.yaml
     post-run: playbooks/cloud-provider-openstack-test/post.yaml
-    secrets:
-      - vexxhost_credentials
     vars:
       k8s_os_provider_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack'
       k8s_src_dir: '{{ ansible_user_dir }}/src/k8s.io/kubernetes'
       k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
       kubectl: '{{ ansible_user_dir }}/src/k8s.io/kubernetes/cluster/kubectl.sh'
-      cloud_name: vexxhost
 
-# TODO(wxy): Move lb test to citynetwork once octavia is available on
-# citynetwork.
 - job:
     name: cloud-provider-openstack-acceptance-test-lb-octavia
     parent: cloud-provider-openstack-test-lb
@@ -1374,18 +1368,6 @@
       cloud_name: telefonica
     secrets:
       - telefonica_credentials
-
-# terraform-provider-huaweicloud acceptance tests against FusionCloud
-- job:
-    name: terraform-provider-huaweicloud-acceptance-test-fusioncloud
-    parent: golang-test
-    description: |
-      Run acceptance tests of terraform-provider-huaweicloud repo against fusioncloud
-    run: playbooks/terraform-provider-huaweicloud-acceptance-test-fusioncloud/run.yaml
-    post-run: playbooks/terraform-provider-huaweicloud-acceptance-test-fusioncloud/post.yaml
-    timeout: 18000
-    secrets:
-      - fusioncloud_credentials
 
 # the openshift jobs are disabled now
 - job:
