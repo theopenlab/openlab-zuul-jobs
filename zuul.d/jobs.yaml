@@ -2022,7 +2022,7 @@
       - OS:ubuntu-bionic
       - Arch:arm64
       - BuildType:Test
-    timeout: 864000
+    timeout: 86400
     vars:
       global_env:
         RELEASE: "refs/heads/8.0"
