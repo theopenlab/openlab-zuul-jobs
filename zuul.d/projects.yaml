@@ -275,3 +275,11 @@
             branches: master
 
 ####################### periodic jobs on 22:00##########################
+
+####################### periodic jobs on 2:00 per week##########################
+- project:
+    name: mysql/mysql-server
+    periodic-2-weekly-7:
+      jobs:
+        - mysql-5.7-upstream-full-test-on-arm64:
+            branches: "refs/heads/8.0"
