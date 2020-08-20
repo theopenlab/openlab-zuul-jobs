@@ -814,26 +814,19 @@
     nodeset: ubuntu-bionic
 
 - job:
-    name: cloud-provider-openstack-test-lb
+    name: cloud-provider-openstack-acceptance-test-lb-octavia
     parent: golang-test
     description: |
-      Base job for all types of cloud-provider-openstack-acceptance-test-lb-octavia test jobs
-    pre-run: playbooks/cloud-provider-openstack-test/pre.yaml
-    post-run: playbooks/cloud-provider-openstack-test/post.yaml
+      Run lb acceptance tests of cloud-provider-openstack
+    pre-run: playbooks/cloud-provider-openstack-acceptance-test-lb-octavia/pre.yaml
+    run: playbooks/cloud-provider-openstack-acceptance-test-lb-octavia/run.yaml
+    post-run: playbooks/cloud-provider-openstack-acceptance-test-lb-octavia/post.yaml
+    nodeset: ubuntu-bionic
     vars:
       k8s_os_provider_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack'
       k8s_src_dir: '{{ ansible_user_dir }}/src/k8s.io/kubernetes'
       k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
       kubectl: '{{ ansible_user_dir }}/src/k8s.io/kubernetes/cluster/kubectl.sh'
-
-- job:
-    name: cloud-provider-openstack-acceptance-test-lb-octavia
-    parent: cloud-provider-openstack-test-lb
-    description: |
-      Run lb acceptance tests of cloud-provider-openstack
-    run: playbooks/cloud-provider-openstack-acceptance-test-lb-octavia/run.yaml
-    post-run: playbooks/cloud-provider-openstack-acceptance-test-lb-octavia/post.yaml
-    nodeset: ubuntu-bionic
     secrets:
       - kubeconfig
       - dockerhub
