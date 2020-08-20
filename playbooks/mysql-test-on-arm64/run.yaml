@@ -304,18 +304,18 @@
         - global_env.IS_OPTIMIZED == 'no'
 
     - name: Build on local src dir to prepare Unittest for optimized version
-       shell:
-         cmd: |
-           cmake . -DCMAKE_INSTALL_PREFIX={{ global_env.MYSQL_TMP_INSTALL_DIR }} -DDOWNLOAD_BOOST=1 \
-           -DWITH_BOOST={{ global_env.BOOST_DIR }} | tee "{{ ansible_user_dir }}/workspace/test_results/compile_build_tmp.log"
-           make -j8 | tee -a "{{ ansible_user_dir }}/workspace/test_results/compile_build_tmp.log"
-           make install | tee -a "{{ ansible_user_dir }}/workspace/test_results/compile_build_tmp.log"
-       args:
-         executable: /bin/bash
-         chdir: "{{ global_env.OPTIMIZED_SRC_DIR }}/mysql5/mysql-5.7.27/{{ global_env.BUILD_DIR_PREFIX }}{{ CURRENT_TIMESTAMP }}/"
-       environment: '{{ global_env }}'
-       when:
-         - global_env.IS_OPTIMIZED == 'yes'
+      shell:
+        cmd: |
+          cmake . -DCMAKE_INSTALL_PREFIX={{ global_env.MYSQL_TMP_INSTALL_DIR }} -DDOWNLOAD_BOOST=1 \
+          -DWITH_BOOST={{ global_env.BOOST_DIR }} | tee "{{ ansible_user_dir }}/workspace/test_results/compile_build_tmp.log"
+          make -j8 | tee -a "{{ ansible_user_dir }}/workspace/test_results/compile_build_tmp.log"
+          make install | tee -a "{{ ansible_user_dir }}/workspace/test_results/compile_build_tmp.log"
+      args:
+        executable: /bin/bash
+        chdir: "{{ global_env.OPTIMIZED_SRC_DIR }}/mysql5/mysql-5.7.27/{{ global_env.BUILD_DIR_PREFIX }}{{ CURRENT_TIMESTAMP }}/"
+      environment: '{{ global_env }}'
+      when:
+        - global_env.IS_OPTIMIZED == 'yes'
 
     - name: Run Unittest for Mysql {{ global_env.RELEASE }} upstream version
       shell:
