@@ -1472,3 +1472,26 @@
         to: builds@kudu.apache.org
         subject: Daily KUDU ARM64 Cron Job Test Result - FAILED
       mysql:
+
+- pipeline:
+    name: periodic-impala-mail
+    description: |
+      This pipeline is used for send Impala periodic job result to spefied
+      maillist for Apache Impala
+    manager: independent
+    precedence: high
+    trigger:
+      timer:
+        - time: '0 4 * * *'
+    failure:
+      smtp:
+        from: info@openlabtesting.org
+        to: huangtianhua223@gmail.com
+        subject: Daily IMPALA ARM64 Cron Job Test Result - FAILED
+      mysql:
+    success:
+      smtp:
+        from: info@openlabtesting.org
+        to: huangtianhua223@gmail.com
+        subject: Daily IMPALA ARM Cron Job Test Result - SUCCESS
+      mysql:
