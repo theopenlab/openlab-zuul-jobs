@@ -11,12 +11,6 @@
         - labkeeper-allinone-deployment-test
 
 - project:
-    name: theopenlab/volcano
-    check:
-      jobs:
-        - tensorflow-benchmarks-volcano-kubeflow-k8s-v1.14.0
-
-- project:
     name: moo-ai/moo-ai.github.io
     check:
       jobs:
@@ -122,24 +116,6 @@
             branches: master
 
 ####################### periodic jobs on 08:00 ##########################
-#- project:
-#    name: docker/machine
-#    periodic-8:
-#      jobs:
-#        - docker-machine-v0.16.1-functional-devstack-stein:
-#            branches: master
-#        - docker-machine-v0.16.1-functional-devstack-rocky:
-#            branches: master
-#        - docker-machine-v0.16.1-functional-devstack-queens:
-#            branches: master
-#        - docker-machine-v0.16.1-functional-devstack-pike:
-#            branches: master
-#        - docker-machine-v0.16.1-functional-devstack-ocata:
-#            branches: master
-#        - docker-machine-v0.16.1-functional-devstack-newton:
-#            branches: master
-#        - docker-machine-v0.16.1-functional-devstack-mitaka:
-#            branches: master
 
 ####################### periodic jobs on 10:00##########################
 #- project:
@@ -213,14 +189,6 @@
             branches: master
 
 ####################### periodic jobs on 18:00##########################
-#- project:
-#    name: helm/charts
-#    periodic-18:
-#      jobs:
-#        - helm-integration-test-kubeadm-k8s-v1.14.0:
-#            branches: master
-#        - helm-integration-test-kubeadm-k8s-v1.12.7:
-#            branches: master
 - project:
     name: tensorflow/tensorflow
     periodic-18:
