@@ -13,6 +13,12 @@
         # git clone https://github.com/liusheng/my-dockerfile
         # cd my-dockerfile/kudu-aarch64
         # docker build . -f BUILD3RD.Dockerfile -t liusheng2048/kudu-aarch64:build3rd
+        cat << EOF >> /etc/docker/daemon.json
+        {
+          "insecure-registries" : ["159.138.83.13:5000"]
+        }
+        EOF
+        systemctl restart docker
 
         docker_cmd="docker run -d --cap-add=SYS_PTRACE --security-opt seccomp=unconfined "
 
@@ -23,7 +29,7 @@
             if [[ $build_type == 'debug' ]] || [[ $build_type == 'release' ]];then
                 docker_cmd="docker run -e EXTRA_BUILD_FLAGS=-DKUDU_LINK=dynamic -d --cap-add=SYS_PTRACE --security-opt seccomp=unconfined "
             fi
-            $docker_cmd --name $build_type liusheng2048/kudu-aarch64:build3rd $build_type
+            $docker_cmd --name $build_type 159.138.83.13:5000/kudu-aarch64:build3rd $build_type
         done
 
         set +x
