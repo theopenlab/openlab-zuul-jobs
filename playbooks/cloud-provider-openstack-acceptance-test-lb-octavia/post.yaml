@@ -18,7 +18,3 @@
     - name: Remove PR label for openstack-cloud-controller-manager
       shell: kubectl -n kube-system label ds openstack-cloud-controller-manager PR-
       ignore_errors: True
-
-    - name: Remove openstack-cloud-controller-manager image from docker hub
-      shell: docker run --rm lumir/remove-dockerhub-tag --user {{ dockerhub.username }} --password {{ dockerhub.password }} {{ dockerhub.username }}/openstack-cloud-controller-manager:{{ zuul.change }}
-      no_log: yes

@@ -52,7 +52,7 @@
           - httpie
 
     - name: Login dockerhub
-      shell: docker login -u {{ dockerhub.username }} -p {{ dockerhub.password }}
+      shell: docker login -u ap-southeast-3@{{ swr.ak }} -p {{ swr.sk }} swr.ap-southeast-3.myhuaweicloud.com
       no_log: yes
 
     - name: Build and upload openstack-cloud-controller-manager image
@@ -62,7 +62,7 @@
           export IMAGE_NAMES=openstack-cloud-controller-manager
           export ARCHS=${ARCHS:-amd64}
 
-          REGISTRY={{ dockerhub.username }} VERSION={{ zuul.change }} make upload-images
+          REGISTRY=swr.ap-southeast-3.myhuaweicloud.com/openlab VERSION={{ zuul.change }} make upload-images
         chdir: '{{ k8s_os_provider_src_dir }}'
       environment: '{{ global_env }}'
 
@@ -83,7 +83,7 @@
         executable: /bin/bash
         cmd: |
           export KUBECONFIG={{ ansible_user_dir }}/.kube/config
-          kubectl -n kube-system set image daemonset/openstack-cloud-controller-manager openstack-cloud-controller-manager={{ dockerhub.username }}/openstack-cloud-controller-manager:{{ zuul.change }}
+          kubectl -n kube-system set image daemonset/openstack-cloud-controller-manager openstack-cloud-controller-manager=swr.ap-southeast-3.myhuaweicloud.com/openlab/openstack-cloud-controller-manager:{{ zuul.change }}
           kubectl -n kube-system label daemonset openstack-cloud-controller-manager PR={{ zuul.change }}
 
     - name: Wait for openstack-cloud-controller-manager up and running
