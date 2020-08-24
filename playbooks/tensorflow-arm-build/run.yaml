@@ -182,7 +182,7 @@
           elif [ $release != 'master' ]; then
               BUILD_OPTS=""
           else
-              BUILD_OPTS="--config=noaws --config=nogcp --config=nonccl"
+              BUILD_OPTS="--config=noaws --config=nogcp --config=nonccl --copt=-DARM_NON_MOBILE"
           fi
           sudo apt install tcl tk expect -y
           cat << EOF > input

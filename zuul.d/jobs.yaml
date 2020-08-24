@@ -498,15 +498,6 @@
       excluded_path: "playbooks/base/*"
     nodeset: ubuntu-xenial-ut
 
-# Deprecated (Kubernetes nested scenario)
-- job:
-    name: cloud-provider-openstack-unittest-nested
-    parent: golang-test
-    description: |
-      Run Kubernetes openstack-cloud-controller-manager unit test in devstack instance
-    run: playbooks/cloud-provider-openstack-unittest-nested/run.yaml
-    nodeset: ubuntu-bionic
-
 # Kubernetes cloud-provider-openstack jobs
 - job:
     name: cloud-provider-openstack-test
@@ -1427,7 +1418,7 @@
     description: |
       Apache Impala build and test on arm64 server
     run: playbooks/impala-build-test-arm64/run.yaml
-    nodeset: ubuntu-bionic-arm64-huaweicloud-16u32g-impala
+    nodeset: ubuntu-bionic-arm64-huaweicloud-impala
     tags:
       - Category:BigData
       - Project:apache/impala
