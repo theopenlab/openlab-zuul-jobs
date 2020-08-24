@@ -820,7 +820,7 @@
       kubectl: '{{ ansible_user_dir }}/src/k8s.io/kubernetes/cluster/kubectl.sh'
     secrets:
       - kubeconfig
-      - dockerhub
+      - swr
 
 - job:
     name: cloud-provider-openstack-acceptance-test-keystone-authentication-authorization
