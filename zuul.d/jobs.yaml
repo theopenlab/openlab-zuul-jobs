@@ -1397,6 +1397,8 @@
       Apache Kudu build and test on arm64 server
     run: playbooks/kudu-build-test-arm64/run.yaml
     nodeset: ubuntu-bionic-arm64-huaweicloud-16u32g
+    secrets:
+      - private_docker_registry
     vars:
       build_types:
         - lint
