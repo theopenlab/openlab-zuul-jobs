@@ -22,6 +22,15 @@
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ global_env }}'
 
+    - name: Login SWR
+      shell:
+         cmd: |
+           docker login -u ap-southeast-3@{{ swr.ak }} -p {{ swr.sk }} swr.ap-southeast-3.myhuaweicloud.com
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
+
     - name: Run e2e test - hadoop313
       shell:
         cmd: |

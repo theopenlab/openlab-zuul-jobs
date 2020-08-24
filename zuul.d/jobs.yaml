@@ -1197,13 +1197,22 @@
       is_gpu_enabled: true
 
 - job:
-    name: flink-end-to-end-test-cron-openlab
+    name: flink-test-base
     parent: init-test
+    description: |
+      The flink base test
+    nodeset: ubuntu-xenial-arm64-flink-docker
+    secrets:
+      - swr
+    timeout: 18000
+
+- job:
+    name: flink-end-to-end-test-cron-openlab
+    parent: flink-test-base
     description: |
       The flink e2e test - openlab
     run: playbooks/flink-end-to-end-test/e2e_cron_openlab.yaml
     post-run: playbooks/flink-end-to-end-test/post.yaml
-    nodeset: ubuntu-xenial-arm64-flink-docker
     tags:
       - Category:BigData
       - Project:apache/flink
@@ -1211,16 +1220,14 @@
       - OS:ubuntu-xenial
       - Arch:arm64
       - BuildType:Integration test
-    timeout: 18000
 
 - job:
     name: flink-end-to-end-test-cron-hadoop313
-    parent: init-test
+    parent: flink-test-base
     description: |
       The flink e2e test - hadoop313
     run: playbooks/flink-end-to-end-test/e2e_cron_hadoop313.yaml
     post-run: playbooks/flink-end-to-end-test/post.yaml
-    nodeset: ubuntu-xenial-arm64-flink-docker
     tags:
       - Category:BigData
       - Project:apache/flink
@@ -1228,16 +1235,14 @@
       - OS:ubuntu-xenial
       - Arch:arm64
       - BuildType:Integration test
-    timeout: 18000
 
 - job:
     name: flink-end-to-end-test-cron-hadoop241
-    parent: init-test
+    parent: flink-test-base
     description: |
       The flink e2e test - hadoop241
     run: playbooks/flink-end-to-end-test/e2e_cron_hadoop241.yaml
     post-run: playbooks/flink-end-to-end-test/post.yaml
-    nodeset: ubuntu-xenial-arm64-flink-docker
     tags:
       - Category:BigData
       - Project:apache/flink
@@ -1245,16 +1250,14 @@
       - OS:ubuntu-xenial
       - Arch:arm64
       - BuildType:Integration test
-    timeout: 18000
 
 - job:
     name: flink-end-to-end-test-cron-hadoop241-test
-    parent: init-test
+    parent: flink-test-base
     description: |
       The flink e2e test - hadoop241
     run: playbooks/flink-end-to-end-test/e2e_cron_hadoop241_test.yaml
     post-run: playbooks/flink-end-to-end-test/post.yaml
-    nodeset: ubuntu-xenial-arm64-flink-docker
     tags:
       - Category:BigData
       - Project:apache/flink
@@ -1262,16 +1265,14 @@
       - OS:ubuntu-xenial
       - Arch:arm64
       - BuildType:Integration test
-    timeout: 18000
 
 - job:
     name: flink-end-to-end-test-cron-jdk11
-    parent: init-test
+    parent: flink-test-base
     description: |
       The flink e2e test - jdk11
     run: playbooks/flink-end-to-end-test/e2e_cron_jdk11.yaml
     post-run: playbooks/flink-end-to-end-test/post.yaml
-    nodeset: ubuntu-xenial-arm64-flink-docker
     tags:
       - Category:BigData
       - Project:apache/flink
@@ -1279,16 +1280,14 @@
       - OS:ubuntu-xenial
       - Arch:arm64
       - BuildType:Integration test
-    timeout: 18000
 
 - job:
     name: flink-end-to-end-test-cron-scala212
-    parent: init-test
+    parent: flink-test-base
     description: |
       The flink e2e test - scala212
     run: playbooks/flink-end-to-end-test/e2e_cron_scala212.yaml
     post-run: playbooks/flink-end-to-end-test/post.yaml
-    nodeset: ubuntu-xenial-arm64-flink-docker
     tags:
       - Category:BigData
       - Project:apache/flink
@@ -1296,15 +1295,13 @@
       - OS:ubuntu-xenial
       - Arch:arm64
       - BuildType:Integration test
-    timeout: 18000
 
 - job:
     name: flink-build-and-test-arm64-core-and-tests
-    parent: init-test
+    parent: flink-test-base
     description: |
       The flink-core build and test on ARM for core and tests component.
     run: playbooks/flink-end-to-end-test/build_and_test_core_and_tests.yaml
-    nodeset: ubuntu-xenial-arm64-flink-docker
     tags:
       - Category:BigData
       - Project:apache/flink
@@ -1312,15 +1309,13 @@
       - OS:ubuntu-xenial
       - Arch:arm64
       - BuildType:Unit test
-    timeout: 18000
 
 - job:
     name: flink-build-and-test-arm64-libraies-and-blink_planner
-    parent: init-test
+    parent: flink-test-base
     description: |
       The flink-core build and test on ARM for libraies and blink_planner component.
     run: playbooks/flink-end-to-end-test/build_and_test_libraies_and_blink_planner.yaml
-    nodeset: ubuntu-xenial-arm64-flink-docker
     tags:
       - Category:BigData
       - Project:apache/flink
@@ -1328,15 +1323,13 @@
       - OS:ubuntu-xenial
       - Arch:arm64
       - BuildType:Unit test
-    timeout: 18000
 
 - job:
     name: flink-build-and-test-arm64-kafka_gelly-and-connectors
-    parent: init-test
+    parent: flink-test-base
     description: |
       The flink-core build and test on ARM for kafka_gelly and connectors component.
     run: playbooks/flink-end-to-end-test/build_and_test_kafka_gelly_and_connectors.yaml
-    nodeset: ubuntu-xenial-arm64-flink-docker
     tags:
       - Category:BigData
       - Project:apache/flink
@@ -1344,15 +1337,13 @@
       - OS:ubuntu-xenial
       - Arch:arm64
       - BuildType:Unit test
-    timeout: 18000
 
 - job:
     name: flink-build-and-test-arm64-misc
-    parent: init-test
+    parent: flink-test-base
     description: |
       The flink-core build and test on ARM for misc component.
     run: playbooks/flink-end-to-end-test/build_and_test_misc.yaml
-    nodeset: ubuntu-xenial-arm64-flink-docker
     tags:
       - Category:BigData
       - Project:apache/flink
@@ -1360,15 +1351,13 @@
       - OS:ubuntu-xenial
       - Arch:arm64
       - BuildType:Unit test
-    timeout: 18000
 
 - job:
     name: flink-build-and-test-arm64-scheduler-ng-core-and-ng-tests
-    parent: init-test
+    parent: flink-test-base
     description: |
       The flink-core build and test on ARM for scheduler_ng_core and scheduler_ng_tests case.
     run: playbooks/flink-end-to-end-test/build_and_test_scheduler_ng_core_and_ng_tests.yaml
-    nodeset: ubuntu-xenial-arm64-flink-docker
     tags:
       - Category:BigData
       - Project:apache/flink
@@ -1376,7 +1365,6 @@
       - OS:ubuntu-xenial
       - Arch:arm64
       - BuildType:Unit test
-    timeout: 18000
 
 - job:
     name: frocksdb-build-and-test-arm64
