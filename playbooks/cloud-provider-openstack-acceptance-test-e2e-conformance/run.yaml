@@ -163,8 +163,8 @@
             --extract ${K8S_VERSION} \
             --timeout=120m | tee $LOG_DIR/e2e.log
 
-    - name: Login dockerhub
-      shell: docker login -u {{ dockerhub.username }} -p {{ dockerhub.password }}
+    - name: Login swr
+      shell: docker login -u ap-southeast-3@{{ swr.ak }} -p {{ swr.sk }} swr.ap-southeast-3.myhuaweicloud.com
       no_log: yes
 
     - name: Run image build and publish for cloud-provider-openstack
@@ -174,7 +174,7 @@
             set -ex
             set -o pipefail
             export LOG_DIR='{{ k8s_log_dir }}'
-            export REGISTRY=${REGISTRY:-docker.io/k8scloudprovider}
+            export REGISTRY=${REGISTRY:-swr.ap-southeast-3.myhuaweicloud.com/openlab}
             export ARCHS=${ARCHS:-amd64}
             export VERSION=${VERSION:-latest}
             make upload-images 2>&1 | tee $LOG_DIR/image-build-upload.log
