@@ -1427,7 +1427,7 @@
     description: |
       Apache Impala build and test on arm64 server
     run: playbooks/impala-build-test-arm64/run.yaml
-    nodeset: ubuntu-bionic-arm64-huaweicloud-16u32g-impala
+    nodeset: ubuntu-bionic-arm64-huaweicloud-impala
     tags:
       - Category:BigData
       - Project:apache/impala
