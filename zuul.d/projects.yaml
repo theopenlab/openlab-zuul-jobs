@@ -145,7 +145,12 @@
             branches: master
 
 ####################### periodic jobs on 12:00##########################
-
+- project:
+    name: apache/impala
+    periodic-impala-mail:
+      jobs:
+        - impala-build-test-arm64:
+            branches: master
 
 ####################### periodic jobs on 14:00##########################
 - project:
