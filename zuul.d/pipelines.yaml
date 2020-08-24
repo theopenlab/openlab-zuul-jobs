@@ -238,6 +238,56 @@
         status: 'failure'
       mysql:
 
+- pipeline:
+    name: recheck-train
+    description: |
+      Commenting "recheck stable/train" enter this pipeline to run tests on
+      stable/train of OpenStack and receive an initial +/-1 Verified vote.
+    manager: independent
+    trigger:
+      github:
+        - event: pull_request
+          action: comment
+          comment: (?i)^\s*recheck\s+stable\/train\s*$
+    start:
+      github:
+        status: pending
+        comment: false
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
+    success:
+      github:
+        status: 'success'
+      mysql:
+    failure:
+      github:
+        status: 'failure'
+      mysql:
+
+- pipeline:
+    name: recheck-ussuri
+    description: |
+      Commenting "recheck stable/ussuri" enter this pipeline to run tests on
+      stable/ussuri of OpenStack and receive an initial +/-1 Verified vote.
+    manager: independent
+    trigger:
+      github:
+        - event: pull_request
+          action: comment
+          comment: (?i)^\s*recheck\s+stable\/ussuri\s*$
+    start:
+      github:
+        status: pending
+        comment: false
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
+    success:
+      github:
+        status: 'success'
+      mysql:
+    failure:
+      github:
+        status: 'failure'
+      mysql:
+
 # NOTES: Deprecated, don't accept any new jobs, but please don't remove it,
 #        some outside projects refer name "periodic" in repository.
 - pipeline:
