@@ -51,7 +51,7 @@
           - python-octaviaclient
           - httpie
 
-    - name: Login dockerhub
+    - name: Login SWR
       shell: docker login -u ap-southeast-3@{{ swr.ak }} -p {{ swr.sk }} swr.ap-southeast-3.myhuaweicloud.com
       no_log: yes
 
