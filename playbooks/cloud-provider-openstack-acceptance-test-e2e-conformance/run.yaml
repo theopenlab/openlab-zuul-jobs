@@ -60,7 +60,8 @@
           export ARCH=amd64
           export IMAGE_NAMES=openstack-cloud-controller-manager
           export VERSION=latest
-          make build-images
+          # To be compatible with old releases, using make image-controller-manager
+          make image-controller-manager
 
           # The previous CPO makefile doesn't support arch
           docker image ls | grep "${IMAGE_NAMES}-${ARCH}"
