@@ -526,6 +526,8 @@
       Run unit test of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-unittest/run.yaml
     nodeset: ubuntu-xenial-citynetwork
+    secrets:
+      - citynetwork_credentials
 
 - job:
     name: cloud-provider-openstack-format
@@ -542,6 +544,8 @@
       Run csi sanity tests cloud-provider-openstack cinder-csi-plugin
     run: playbooks/cloud-provider-openstack-sanity-test-csi-cinder/run.yaml
     nodeset: ubuntu-xenial-citynetwork
+    secrets:
+      - citynetwork_credentials
 
 - job:
     name: cloud-provider-openstack-acceptance-test-k8s-cinder
@@ -551,6 +555,8 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-k8s-cinder/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-k8s-cinder/post.yaml
     nodeset: ubuntu-xenial-citynetwork
+    secrets:
+      - citynetwork_credentials
 
 - job:
     name: cloud-provider-openstack-acceptance-test-e2e-conformance
@@ -560,6 +566,10 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/post.yaml
     nodeset: ubuntu-xenial-k8s-cluster-cpo
+    secrets:
+      - citynetwork_credentials
+      - gcp_account
+      - swr
 
 - job:
     name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.10
@@ -751,6 +761,9 @@
     run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/post.yaml
     nodeset: ubuntu-xenial-citynetwork
+    secrets:
+      - citynetwork_credentials
+      - swr
 
 - job:
     name: cloud-provider-openstack-e2e-test-csi-cinder
@@ -760,6 +773,8 @@
     run: playbooks/cloud-provider-openstack-e2e-test-csi-cinder/run.yaml
     post-run: playbooks/cloud-provider-openstack-e2e-test-csi-cinder/post.yaml
     nodeset: ubuntu-xenial-citynetwork
+    secrets:
+      - citynetwork_credentials
 
 - job:
     name: cloud-provider-openstack-multinode-csi-migration-test
@@ -772,6 +787,8 @@
     run: playbooks/cloud-provider-openstack-multinode-csi-migration-test/run.yaml
     post-run: playbooks/cloud-provider-openstack-multinode-csi-migration-test/post.yaml
     nodeset: ubuntu-xenial-k8s-cluster-cpo
+    secrets:
+      - citynetwork_credentials
 
 - job:
     name: cloud-provider-openstack-acceptance-test-manila-provisioner
@@ -804,6 +821,9 @@
       k8s_src_dir: '{{ ansible_user_dir }}/src/k8s.io/kubernetes'
       k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
       kubectl: '{{ ansible_user_dir }}/src/k8s.io/kubernetes/cluster/kubectl.sh'
+    secrets:
+      - kubeconfig
+      - swr
 
 - job:
     name: cloud-provider-openstack-acceptance-test-keystone-authentication-authorization
