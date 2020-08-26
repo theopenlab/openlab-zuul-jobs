@@ -11,6 +11,7 @@
            docker login -u ap-southeast-3@{{ swr.ak }} -p {{ swr.sk }} swr.ap-southeast-3.myhuaweicloud.com
            docker pull swr.ap-southeast-3.myhuaweicloud.com/openlab/alpine:3.11
            docker tag swr.ap-southeast-3.myhuaweicloud.com/openlab/alpine:3.11 alpine:3.11
+           docker logout swr.ap-southeast-3.myhuaweicloud.com
       no_log: yes
 
     - name: Run csi cinder acceptance tests with cloud-provider-openstack

@@ -13,6 +13,15 @@
         OVERRIDE_ENABLED_SERVICES: 'dstat,g-api,g-reg,key,mysql,n-api,n-api-meta,n-cauth,n-cond,n-cpu,n-novnc,n-obj,n-sch,placement-api,q-agt,q-dhcp,q-l3,q-meta,q-metering,q-svc,rabbit'
         PROJECTS: 'openstack/devstack-plugin-ceph'
   tasks:
+    - name: Prepare base alpine image
+      shell:
+         cmd: |
+           docker login -u ap-southeast-3@{{ swr.ak }} -p {{ swr.sk }} swr.ap-southeast-3.myhuaweicloud.com
+           docker pull swr.ap-southeast-3.myhuaweicloud.com/openlab/alpine:3.11
+           docker tag swr.ap-southeast-3.myhuaweicloud.com/openlab/alpine:3.11 alpine:3.11
+           docker logout swr.ap-southeast-3.myhuaweicloud.com
+      no_log: yes
+
     - name: Run Manila provisioner acceptance tests
       shell:
         cmd: |
