@@ -1196,8 +1196,6 @@
     description: |
       The flink base test
     nodeset: ubuntu-xenial-arm64-flink-docker
-    secrets:
-      - swr
     timeout: 18000
 
 - job:
@@ -1214,6 +1212,8 @@
       - OS:ubuntu-xenial
       - Arch:arm64
       - BuildType:Integration test
+    secrets:
+      - swr
 
 - job:
     name: flink-end-to-end-test-cron-hadoop313
@@ -1229,6 +1229,8 @@
       - OS:ubuntu-xenial
       - Arch:arm64
       - BuildType:Integration test
+    secrets:
+      - swr
 
 - job:
     name: flink-end-to-end-test-cron-hadoop241
@@ -1244,6 +1246,8 @@
       - OS:ubuntu-xenial
       - Arch:arm64
       - BuildType:Integration test
+    secrets:
+      - swr
 
 - job:
     name: flink-end-to-end-test-cron-hadoop241-test
@@ -1259,6 +1263,8 @@
       - OS:ubuntu-xenial
       - Arch:arm64
       - BuildType:Integration test
+    secrets:
+      - swr
 
 - job:
     name: flink-end-to-end-test-cron-jdk11
@@ -1274,6 +1280,8 @@
       - OS:ubuntu-xenial
       - Arch:arm64
       - BuildType:Integration test
+    secrets:
+      - swr
 
 - job:
     name: flink-end-to-end-test-cron-scala212
@@ -1289,6 +1297,8 @@
       - OS:ubuntu-xenial
       - Arch:arm64
       - BuildType:Integration test
+    secrets:
+      - swr
 
 - job:
     name: flink-build-and-test-arm64-core-and-tests
