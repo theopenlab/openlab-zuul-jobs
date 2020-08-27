@@ -72,11 +72,21 @@
           # To be compatible with old releases, using make image-controller-manager
           make image-controller-manager
 
+    - name: Tag image
+      environment: '{{ global_env }}'
+      shell:
+        executable: /bin/bash
+        chdir: '{{ k8s_os_provider_src_dir }}'
+        cmd: |
+          set -o pipefail
+          set -ex
+
+          export ARCH=amd64
+          export IMAGE_NAMES=openstack-cloud-controller-manager
+
           # The previous CPO makefile doesn't support arch
-          docker image ls | grep "${IMAGE_NAMES}-${ARCH}"
-          if [[ $? -eq 0 ]]; then
-             docker tag k8scloudprovider/${IMAGE_NAMES}-${ARCH}:latest k8scloudprovider/${IMAGE_NAMES}:latest
-          fi
+          docker tag k8scloudprovider/${IMAGE_NAMES}-${ARCH}:latest k8scloudprovider/${IMAGE_NAMES}:latest
+      ignore_errors: yes
 
     - name: create cloud-config
       environment: '{{ global_env }}'
