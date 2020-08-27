@@ -5,7 +5,7 @@
       shell: |
         set -o pipefail
         set -ex
-        sleep 21600
+
         wget https://mirrors.bfsu.edu.cn/apache/hadoop/common/hadoop-3.3.0/hadoop-3.3.0-aarch64.tar.gz
         tar -xvf hadoop-3.3.0-aarch64.tar.gz
 
@@ -30,7 +30,7 @@
         ./bin/bootstrap_toolchain.py
 
         # replace some libs for arm64
-        cp -r /home/impala/hadoop-3.3.0/lib/native/ $HADOOP_HOME/lib/
+        cp -r /home/zuul/hadoop-3.3.0/lib/native/ $HADOOP_HOME/lib/
         rm $HADOOP_HOME/lib/native/libsnappy.so*
         rm $HADOOP_HOME/lib/native/libzstd.so*
         cp $IMPALA_TOOLCHAIN_PACKAGES_HOME/snappy-*/lib/libsnappy.so* $HADOOP_HOME/lib/native/

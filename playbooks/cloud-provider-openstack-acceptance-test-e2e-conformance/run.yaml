@@ -46,6 +46,15 @@
       k8s_role_to_deploy: ["master"]
 
   tasks:
+    - name: Prepare base alpine image
+      shell:
+         cmd: |
+           docker login -u ap-southeast-3@{{ swr.ak }} -p {{ swr.sk }} swr.ap-southeast-3.myhuaweicloud.com
+           docker pull swr.ap-southeast-3.myhuaweicloud.com/openlab/alpine:3.11
+           docker tag swr.ap-southeast-3.myhuaweicloud.com/openlab/alpine:3.11 alpine:3.11
+           docker logout swr.ap-southeast-3.myhuaweicloud.com
+      no_log: yes
+
     - name: Build openstack-cloud-controller-manager image
       environment: '{{ global_env }}'
       shell:
@@ -126,6 +135,15 @@
       k8s_role_to_deploy:
         - node
       kubeadm_join_cmd: "{{ hostvars['k8s-master']['kubeadm_join_cmd']['stdout'] }}"
+  tasks:
+    - name: Prepare base alpine image
+      shell:
+         cmd: |
+           docker login -u ap-southeast-3@{{ swr.ak }} -p {{ swr.sk }} swr.ap-southeast-3.myhuaweicloud.com
+           docker pull swr.ap-southeast-3.myhuaweicloud.com/openlab/alpine:3.11
+           docker tag swr.ap-southeast-3.myhuaweicloud.com/openlab/alpine:3.11 alpine:3.11
+           docker logout swr.ap-southeast-3.myhuaweicloud.com
+      no_log: yes
 
 - hosts: k8s-master
   name: Run conformance test
@@ -174,16 +192,15 @@
             --extract ${K8S_VERSION} \
             --timeout=120m | tee $LOG_DIR/e2e.log
 
-    - name: Login swr
-      shell: docker login -u ap-southeast-3@{{ swr.ak }} -p {{ swr.sk }} swr.ap-southeast-3.myhuaweicloud.com
-      no_log: yes
-
     - name: Run image build and publish for cloud-provider-openstack
       shell:
         cmd: |
           if [ '{{ zuul.pipeline }}' == 'periodic-14' ] && [ '{{ zuul.branch }}' == 'master' ]; then
             set -ex
             set -o pipefail
+
+            docker login -u ap-southeast-3@{{ swr.ak }} -p {{ swr.sk }} swr.ap-southeast-3.myhuaweicloud.com
+
             export LOG_DIR='{{ k8s_log_dir }}'
             export REGISTRY=${REGISTRY:-swr.ap-southeast-3.myhuaweicloud.com/openlab}
             export ARCHS=${ARCHS:-amd64}
