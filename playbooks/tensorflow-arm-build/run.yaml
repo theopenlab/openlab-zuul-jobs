@@ -105,6 +105,19 @@
       when:
         global_env.RELEASE != 'master'
 
+    - name: Merge upstream 42461 PR to master branch
+      shell:
+        cmd: |
+          git fetch origin pull/42461/head:pr-42461
+          git checkout pr-42461
+          git rebase master
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
+      when:
+        global_env.RELEASE == 'master'
+
     - name: Install higher version cmake 3.5.2 and gcc {{ global_env.GCC_VERSION }}
       become: true
       shell:
