@@ -273,7 +273,7 @@
           set -ex
           export MPLLOCALFREETYPE=1
           sudo apt install -y libpng-dev
-          pip3 install matplotlib tensorflow_datasets==3.1.0
+          pip3 install --use-feature=2020-resolver matplotlib tensorflow_datasets==3.1.0
           wget https://raw.githubusercontent.com/bzhaoopenstack/dockertoy/master/tests/ai/examples/test_mnist.py
           python3 ./test_mnist.py
       args:
@@ -289,7 +289,7 @@
           set -ex
           export MPLLOCALFREETYPE=1
           sudo apt install -y libpng-dev
-          pip3 install matplotlib tensorflow_datasets==3.1.0 openbayestool
+          pip3 install --use-feature=2020-resolver matplotlib tensorflow_datasets==3.1.0 openbayestool
           wget https://raw.githubusercontent.com/bzhaoopenstack/dockertoy/master/tests/ai/examples/test_mnist_115.sh
           bash ./test_mnist_115.sh
       args:
