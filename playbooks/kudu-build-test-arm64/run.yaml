@@ -6,8 +6,7 @@
         cmd: |
           set -o pipefail
           set -ex
-          result_dir="{{ ansible_user_dir }}/workspace/test_results/"
-          mkdir -p "$result_dir"
+
           type docker || curl -sSL https://get.docker.com/ | sh -
 
           # build docker image to save running time
@@ -32,6 +31,9 @@
         cmd: |
           set -o pipefail
           set -ex
+
+          result_dir="{{ ansible_user_dir }}/workspace/test_results/"
+          mkdir -p "$result_dir"
           docker_cmd="docker run -d --cap-add=SYS_PTRACE --security-opt seccomp=unconfined "
 
           # WORKAROUND FOR THE BANDWIDTH BOOST
