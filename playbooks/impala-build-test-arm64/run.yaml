@@ -1,5 +1,5 @@
 - hosts: all
-  become: yes
+  become: no
   tasks:
     - name: Building and running tests of Impala
       shell: |
@@ -40,4 +40,4 @@
         ./bin/run-all-tests.sh
       args:
         executable: /bin/bash
-        chdir: /home/zuul
+        chdir: '/home/zuul'
