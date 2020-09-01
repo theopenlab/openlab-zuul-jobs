@@ -5,10 +5,14 @@
       shell: iptables -F
 
     - name: Install Pre requirements
-      shell: apt install -y openssl libssl-dev libffi-dev python-dev python3-dev libevent-dev
+      shell:
+        cmd: |
+          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+          python3 get-pip.py
+          apt install -y openssl libssl-dev libffi-dev python-dev python3-dev libevent-dev
 
-    - name: Update resolv.conf
-      shell: sed -i 's/nameserver 127.0.0.1/nameserver 8.8.8.8/' /etc/resolv.conf
+    - name: Refresh resolv.conf
+      shell: dhclient
 
 - hosts: all
   become: yes
@@ -21,7 +25,11 @@
       maven_version: '3.2.5'
   tasks:
     - name: Install docker compose
-      shell: pip3 install docker-compose
+      shell:
+        cmd: |
+          pip install -U pip=22.2.1
+          pip install -U setuptools==49.0.0
+          pip install docker-compose
 
 - hosts: all
   become: no

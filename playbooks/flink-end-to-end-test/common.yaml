@@ -18,14 +18,15 @@
     - name: Install docker compose
       shell:
         cmd: |
-          pip install -U setuptools
+          pip install -U pip=22.2.1
+          pip install -U setuptools==49.0.0
           pip install docker-compose
 
     - name: clean up iptable rules
       shell: iptables -F
 
-    - name: Update resolv.conf
-      shell: sed -i 's/nameserver 127.0.0.1/nameserver 8.8.8.8/' /etc/resolv.conf
+    - name: Refresh resolv.conf
+      shell: dhclient
 
 - hosts: all
   become: no
