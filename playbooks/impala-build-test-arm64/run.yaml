@@ -6,38 +6,19 @@
         set -o pipefail
         set -ex
 
-        wget https://mirrors.bfsu.edu.cn/apache/hadoop/common/hadoop-3.3.0/hadoop-3.3.0-aarch64.tar.gz
-        tar -xvf hadoop-3.3.0-aarch64.tar.gz
-
-        # to build native-toolchain if anything changed
-        cd native-toolchain
-        export NATIVE_TOOLCHAIN_HOME=`pwd`
-        git pull
-        ./buildall.sh
-
-        cd -
-        git clone http://github.com/huangtianhua/impala-1 impala
-        cd impala
         export IMPALA_HOME=`pwd`
-        export IMPALA_TOOLCHAIN=${IMPALA_HOME}/toolchain
 
-        echo "export SKIP_TOOLCHAIN_BOOTSTRAP=true" >> bin/impala-config-local.sh
-        . bin/impala-config.sh
+        # we move native-toolchain from ~/ to IMPALA_HOME/..
+        mv ~/native-toolchain $IMPALA_HOME/..
 
-        (mkdir -p $IMPALA_TOOLCHAIN_PACKAGES_HOME && cd $IMPALA_TOOLCHAIN_PACKAGES_HOME && ln -s ${NATIVE_TOOLCHAIN_HOME}/build/* .)
+        ./bin/bootstrap_development.sh
 
-        ./bin/bootstrap_system.sh
-        ./bin/bootstrap_toolchain.py
+        RET_CODE=0
+        if ! bin/run-all-tests.sh; then
+          RET_CODE=1
+        fi
 
-        # replace some libs for arm64
-        cp -r /home/zuul/hadoop-3.3.0/lib/native/ $HADOOP_HOME/lib/
-        rm $HADOOP_HOME/lib/native/libsnappy.so*
-        rm $HADOOP_HOME/lib/native/libzstd.so*
-        cp $IMPALA_TOOLCHAIN_PACKAGES_HOME/snappy-*/lib/libsnappy.so* $HADOOP_HOME/lib/native/
-        cp $IMPALA_TOOLCHAIN_PACKAGES_HOME/zstd-*/lib/libzstd.so* $HADOOP_HOME/lib/native/
-
-        ./buildall.sh -format -testdata -skiptests
-        ./bin/run-all-tests.sh
+        exit $RET_CODE
       args:
         executable: /bin/bash
-        chdir: '/home/zuul'
+        chdir: '{{ zuul.project.src_dir }}'
