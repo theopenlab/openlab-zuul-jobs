@@ -1209,7 +1209,7 @@
     description: |
       The flink base test
     nodeset: ubuntu-xenial-arm64-flink-docker
-    timeout: 18000
+    timeout: 21600
 
 - job:
     name: flink-end-to-end-test-cron-openlab
