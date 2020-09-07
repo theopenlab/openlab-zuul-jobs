@@ -131,7 +131,7 @@
               '{{ kubectl }}' get pod --all-namespaces
           else
               echo 'Run services failed'
-              '{{ kubectl }}' get pod --all-namespaces
+              '{{ kubectl }}' describe pod --all-namespaces
               exit 1
           fi
 
