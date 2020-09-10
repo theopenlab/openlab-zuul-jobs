@@ -8,9 +8,16 @@
           set -x
 
           '{{ kubectl }}' config use-context local
-          '{{ kubectl }}' delete -f examples/manila-csi-plugin/nfs/snapshot/pod.yaml
-          '{{ kubectl }}' delete -f examples/manila-csi-plugin/nfs/snapshot/snapshotrestore.yaml
-          '{{ kubectl }}' delete -f examples/manila-csi-plugin/nfs/snapshot/snapshotcreate.yaml
+
+          # There seems to be a bug in latest K8s which breaks snapshotting for csi-snapshotter v1.
+          # All tests related to snapshots are disabled until this issue is resolved.
+          #
+          # TODO: re-enable snapshot tests
+          #
+          # '{{ kubectl }}' delete -f examples/manila-csi-plugin/nfs/snapshot/pod.yaml
+          # '{{ kubectl }}' delete -f examples/manila-csi-plugin/nfs/snapshot/snapshotrestore.yaml
+          # '{{ kubectl }}' delete -f examples/manila-csi-plugin/nfs/snapshot/snapshotcreate.yaml
+
           '{{ kubectl }}' delete -f examples/manila-csi-plugin/nfs/dynamic-provisioning/pod.yaml
           '{{ kubectl }}' delete -f examples/manila-csi-plugin/nfs/dynamic-provisioning/pvc.yaml
         executable: /bin/bash

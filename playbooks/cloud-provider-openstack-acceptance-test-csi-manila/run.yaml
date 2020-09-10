@@ -209,19 +209,23 @@
           '{{ kubectl }}' create -f examples/manila-csi-plugin/nfs/dynamic-provisioning/pod.yaml
           '{{ kubectl }}' wait --for=condition=Ready pod/new-nfs-share-pod --timeout=300s
           '{{ kubectl }}' exec new-nfs-share-pod -- bash -c "echo 'hello' >> /var/lib/www/test"
-          '{{ kubectl }}' create -f examples/manila-csi-plugin/nfs/snapshot/snapshotcreate.yaml
-          sleep 60 # We need to wait till the snapshot is created
-          '{{ kubectl }}' exec new-nfs-share-pod -- bash -c "echo 'WORLD' >> /var/lib/www/test"
-          '{{ kubectl }}' create -f examples/manila-csi-plugin/nfs/snapshot/snapshotrestore.yaml
-          '{{ kubectl }}' create -f examples/manila-csi-plugin/nfs/snapshot/pod.yaml
-          '{{ kubectl }}' wait --for=condition=Ready pod/new-nfs-share-snap-restore-pod --timeout=300s
-          '{{ kubectl }}' exec new-nfs-share-snap-restore-pod -- bash -c "echo 'HELLO' >> /var/lib/www/test"
 
-          valShare="$('{{ kubectl }}' exec new-nfs-share-pod -- cat /var/lib/www/test | tr -d '\r\n')"
-          valSnapShare="$('{{ kubectl }}' exec new-nfs-share-snap-restore-pod -- cat /var/lib/www/test | tr -d '\r\n')"
-
-          [[ "$valShare" == "helloWORLD" ]]
-          [[ "$valSnapShare" == "helloHELLO" ]]
+          # There seems to be a bug in latest K8s which breaks snapshotting for csi-snapshotter v1.
+          # All tests related to snapshots are disabled until this issue is resolved.
+          #
+          # TODO: re-enable snapshot tests
+          #
+          # '{{ kubectl }}' create -f examples/manila-csi-plugin/nfs/snapshot/snapshotcreate.yaml
+          # sleep 60 # We need to wait till the snapshot is created
+          # '{{ kubectl }}' exec new-nfs-share-pod -- bash -c "echo 'WORLD' >> /var/lib/www/test"
+          # '{{ kubectl }}' create -f examples/manila-csi-plugin/nfs/snapshot/snapshotrestore.yaml
+          # '{{ kubectl }}' create -f examples/manila-csi-plugin/nfs/snapshot/pod.yaml
+          # '{{ kubectl }}' wait --for=condition=Ready pod/new-nfs-share-snap-restore-pod --timeout=300s
+          # '{{ kubectl }}' exec new-nfs-share-snap-restore-pod -- bash -c "echo 'HELLO' >> /var/lib/www/test"
+          # valShare="$('{{ kubectl }}' exec new-nfs-share-pod -- cat /var/lib/www/test | tr -d '\r\n')"
+          # valSnapShare="$('{{ kubectl }}' exec new-nfs-share-snap-restore-pod -- cat /var/lib/www/test | tr -d '\r\n')"
+          # [[ "$valShare" == "helloWORLD" ]]
+          # [[ "$valSnapShare" == "helloHELLO" ]]
 
         executable: /bin/bash
         chdir: '{{ k8s_os_provider_src_dir }}'
