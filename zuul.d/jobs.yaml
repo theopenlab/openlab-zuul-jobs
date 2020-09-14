@@ -86,7 +86,7 @@
     override-checkout: v1.19.0
     tags:
       - Category:Cloud
-      - Project:terraform-providers/terraform-provider-openstack
+      - Project:terraform-provider-openstack/terraform-provider-openstack
       - Application:terraform-provider-openstack@v1.19.0
       - Application:OpenStack@stein
       - Application:Go@1.12.1
@@ -112,7 +112,7 @@
     override-checkout: v1.19.0
     tags:
       - Category:Cloud
-      - Project:terraform-providers/terraform-provider-openstack
+      - Project:terraform-provider-openstack/terraform-provider-openstack
       - Application:terraform-provider-openstack@v1.19.0
       - Application:OpenStack@rocky
       - Application:Go@1.12.1
@@ -138,7 +138,7 @@
     override-checkout: v1.19.0
     tags:
       - Category:Cloud
-      - Project:terraform-providers/terraform-provider-openstack
+      - Project:terraform-provider-openstack/terraform-provider-openstack
       - Application:terraform-provider-openstack@v1.19.0
       - Application:OpenStack@queens
       - Application:Go@1.12.1
@@ -164,7 +164,7 @@
     override-checkout: v1.19.0
     tags:
       - Category:Cloud
-      - Project:terraform-providers/terraform-provider-openstack
+      - Project:terraform-provider-openstack/terraform-provider-openstack
       - Application:terraform-provider-openstack@v1.19.0
       - Application:OpenStack@pike
       - Application:Go@1.12.1
@@ -190,7 +190,7 @@
     override-checkout: v1.19.0
     tags:
       - Category:Cloud
-      - Project:terraform-providers/terraform-provider-openstack
+      - Project:terraform-provider-openstack/terraform-provider-openstack
       - Application:terraform-provider-openstack@v1.19.0
       - Application:OpenStack@ocata
       - Application:Go@1.12.1
@@ -216,7 +216,7 @@
     override-checkout: v1.19.0
     tags:
       - Category:Cloud
-      - Project:terraform-providers/terraform-provider-openstack
+      - Project:terraform-provider-openstack/terraform-provider-openstack
       - Application:terraform-provider-openstack@v1.19.0
       - Application:OpenStack@newton
       - Application:Go@1.12.1
@@ -243,7 +243,7 @@
 #    override-checkout: v1.19.0
 #    tags:
 #      - Category:Cloud
-#      - Project:terraform-providers/terraform-provider-openstack
+#      - Project:terraform-provider-openstack/terraform-provider-openstack
 #      - Application:terraform-provider-openstack@v1.19.0
 #      - Application:OpenStack@mitaka
 #      - Application:Go@1.12.1
