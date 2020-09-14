@@ -72,7 +72,7 @@
 
 ####################### periodic jobs on 02:00 ##########################
 #- project:
-#    name: terraform-providers/terraform-provider-openstack
+#    name: terraform-provider-openstack/terraform-provider-openstack
 #    periodic-2:
 #      jobs:
 #        - terraform-provider-openstack-v1.19.0-acceptance-test-stein:
