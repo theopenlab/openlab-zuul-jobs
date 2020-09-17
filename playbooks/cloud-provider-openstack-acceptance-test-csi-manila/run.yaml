@@ -45,9 +45,6 @@
           export ARCH=${ARCH:-amd64}
           export VERSION=${VERSION:-latest}
 
-          # We need this for snapshots support, at least for now
-          export FEATURE_GATES="VolumeSnapshotDataSource=true"
-
           mkdir -p '{{ k8s_log_dir }}'
           export LOG_DIR='{{ k8s_log_dir }}'
 
@@ -80,6 +77,18 @@
           #
           # Deployment
           #
+
+          # Install snapshot CRDs, RBACs and the snapshot controller
+          # We're using external-snapshotter v2.1, it makes sense to pin down these manifests to v2.1 as well...
+          for f in \
+            'https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/release-2.1/config/crd/snapshot.storage.k8s.io_volumesnapshotclasses.yaml' \
+            'https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/release-2.1/config/crd/snapshot.storage.k8s.io_volumesnapshotcontents.yaml' \
+            'https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/release-2.1/config/crd/snapshot.storage.k8s.io_volumesnapshots.yaml' \
+            'https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/release-2.1/deploy/kubernetes/snapshot-controller/rbac-snapshot-controller.yaml' \
+            'https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/release-2.1/deploy/kubernetes/snapshot-controller/setup-snapshot-controller.yaml'
+          do
+            '{{ kubectl }}' create -f "$f"
+          done
 
           # Deploy CSI NFS node plugin
           # We don't actually need to register csi-nfs with k8s CSI machinery,
@@ -210,22 +219,19 @@
           '{{ kubectl }}' wait --for=condition=Ready pod/new-nfs-share-pod --timeout=300s
           '{{ kubectl }}' exec new-nfs-share-pod -- bash -c "echo 'hello' >> /var/lib/www/test"
 
-          # There seems to be a bug in latest K8s which breaks snapshotting for csi-snapshotter v1.
-          # All tests related to snapshots are disabled until this issue is resolved.
-          #
-          # TODO: re-enable snapshot tests
-          #
-          # '{{ kubectl }}' create -f examples/manila-csi-plugin/nfs/snapshot/snapshotcreate.yaml
+          '{{ kubectl }}' create -f examples/manila-csi-plugin/nfs/snapshot/snapshotcreate.yaml
           # sleep 60 # We need to wait till the snapshot is created
-          # '{{ kubectl }}' exec new-nfs-share-pod -- bash -c "echo 'WORLD' >> /var/lib/www/test"
-          # '{{ kubectl }}' create -f examples/manila-csi-plugin/nfs/snapshot/snapshotrestore.yaml
-          # '{{ kubectl }}' create -f examples/manila-csi-plugin/nfs/snapshot/pod.yaml
-          # '{{ kubectl }}' wait --for=condition=Ready pod/new-nfs-share-snap-restore-pod --timeout=300s
-          # '{{ kubectl }}' exec new-nfs-share-snap-restore-pod -- bash -c "echo 'HELLO' >> /var/lib/www/test"
-          # valShare="$('{{ kubectl }}' exec new-nfs-share-pod -- cat /var/lib/www/test | tr -d '\r\n')"
-          # valSnapShare="$('{{ kubectl }}' exec new-nfs-share-snap-restore-pod -- cat /var/lib/www/test | tr -d '\r\n')"
-          # [[ "$valShare" == "helloWORLD" ]]
-          # [[ "$valSnapShare" == "helloHELLO" ]]
+          '{{ kubectl }}' exec new-nfs-share-pod -- bash -c "echo 'WORLD' >> /var/lib/www/test"
+          '{{ kubectl }}' create -f examples/manila-csi-plugin/nfs/snapshot/snapshotrestore.yaml
+          '{{ kubectl }}' create -f examples/manila-csi-plugin/nfs/snapshot/pod.yaml
+          '{{ kubectl }}' wait --for=condition=Ready pod/new-nfs-share-snap-restore-pod --timeout=300s
+          '{{ kubectl }}' exec new-nfs-share-snap-restore-pod -- bash -c "echo 'HELLO' >> /var/lib/www/test"
+
+          valShare="$('{{ kubectl }}' exec new-nfs-share-pod -- cat /var/lib/www/test | tr -d '\r\n')"
+          valSnapShare="$('{{ kubectl }}' exec new-nfs-share-snap-restore-pod -- cat /var/lib/www/test | tr -d '\r\n')"
+
+          [[ "$valShare" == "helloWORLD" ]]
+          [[ "$valSnapShare" == "helloHELLO" ]]
 
         executable: /bin/bash
         chdir: '{{ k8s_os_provider_src_dir }}'
