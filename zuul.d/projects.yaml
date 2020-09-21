@@ -35,24 +35,6 @@
         - frocksdb-build-and-test-arm64
 
 ####################### periodic jobs on 00:00 ##########################
-#- project:
-#    name: ansible/ansible
-#    periodic-0:
-#      jobs:
-#        - openstacksdk-ansible-v2.8.0-functional-devstack-stein:
-#            branches: devel
-#        - openstacksdk-ansible-v2.8.0-functional-devstack-rocky:
-#            branches: devel
-#        - openstacksdk-ansible-v2.8.0-functional-devstack-queens:
-#            branches: devel
-#        - openstacksdk-ansible-v2.8.0-functional-devstack-pike:
-#            branches: devel
-#        - openstacksdk-ansible-v2.8.0-functional-devstack-ocata:
-#            branches: devel
-#        - openstacksdk-ansible-v2.8.0-functional-devstack-newton:
-#            branches: devel
-#        - openstacksdk-ansible-v2.8.0-functional-devstack-mitaka:
-#            branches: devel
 - project:
     name: pytorch/pytorch
     periodic-0:
@@ -71,71 +53,20 @@
             branches: master
 
 ####################### periodic jobs on 02:00 ##########################
-#- project:
-#    name: terraform-provider-openstack/terraform-provider-openstack
-#    periodic-2:
-#      jobs:
-#        - terraform-provider-openstack-v1.19.0-acceptance-test-stein:
-#            branches: master
-#        - terraform-provider-openstack-v1.19.0-acceptance-test-rocky:
-#            branches: master
-#        - terraform-provider-openstack-v1.19.0-acceptance-test-queens:
-#            branches: master
-#        - terraform-provider-openstack-v1.19.0-acceptance-test-pike:
-#            branches: master
-#        - terraform-provider-openstack-v1.19.0-acceptance-test-ocata:
-#            branches: master
-#        - terraform-provider-openstack-v1.19.0-acceptance-test-newton:
-#            branches: master
-#        - terraform-provider-openstack-v1.19.0-acceptance-test-mitaka:
-#            branches: master
-
 
 ####################### periodic jobs on 04:00 ##########################
-#- project:
-#    name: cloudfoundry/bosh-openstack-cpi-release
-#    periodic-4:
-#      jobs:
-#        - bosh-openstack-cpi-release-v42-acceptance-test-stein:
-#            branches: master
-#        - bosh-openstack-cpi-release-v42-acceptance-test-rocky:
-#            branches: master
-#        - bosh-openstack-cpi-release-v42-acceptance-test-queens:
-#            branches: master
-#        - bosh-openstack-cpi-release-v42-acceptance-test-pike:
-#            branches: master
-#        - bosh-openstack-cpi-release-v42-acceptance-test-ocata:
-#            branches: master
 
 ####################### periodic jobs on 06:00 ##########################
+
+####################### periodic jobs on 08:00 ##########################
+
+####################### periodic jobs on 10:00##########################
 - project:
     name: apache/kudu
     periodic-kudu-mail:
       jobs:
         - kudu-build-test-arm64-in-docker:
             branches: master
-
-####################### periodic jobs on 08:00 ##########################
-
-####################### periodic jobs on 10:00##########################
-#- project:
-#    name: manageiq/manageiq-providers-openstack
-#    periodic-10:
-#      jobs:
-#        - manageiq-providers-openstack-hammer-6-test-devstack-stein:
-#            branches: master
-#        - manageiq-providers-openstack-hammer-6-test-devstack-rocky:
-#            branches: master
-#        - manageiq-providers-openstack-hammer-6-test-devstack-queens:
-#            branches: master
-#        - manageiq-providers-openstack-hammer-6-test-devstack-pike:
-#            branches: master
-#        - manageiq-providers-openstack-hammer-6-test-devstack-ocata:
-#            branches: master
-#        - manageiq-providers-openstack-hammer-6-test-devstack-newton:
-#            branches: master
-#        - manageiq-providers-openstack-hammer-6-test-devstack-mitaka:
-#            branches: master
 
 - project:
     name: kubernetes-sigs/cluster-api-provider-openstack
@@ -145,6 +76,14 @@
             branches: master
 
 ####################### periodic jobs on 12:00##########################
+- project:
+    name: greenplum-db/gpdb
+    periodic-12:
+      jobs:
+        - gpdb-installcheck-world-tests-on-arm64:
+            branches: master
+
+####################### periodic jobs on 12:30##########################
 - project:
     name: apache/impala
     periodic-impala-mail:
@@ -173,13 +112,6 @@
         - cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.16:
             branches: release-1.16
         - cloud-provider-openstack-multinode-csi-migration-test:
-            branches: master
-
-- project:
-    name: greenplum-db/gpdb
-    periodic-12:
-      jobs:
-        - gpdb-installcheck-world-tests-on-arm64:
             branches: master
 
 ####################### periodic jobs on 16:00##########################
@@ -256,7 +188,7 @@
 
 ####################### periodic jobs on 22:00##########################
 
-####################### periodic jobs on 2:00 per week##########################
+####################### periodic jobs on 2:00 per Sunday##########################
 - project:
     name: mysql/mysql-server
     periodic-2-weekly-7:
