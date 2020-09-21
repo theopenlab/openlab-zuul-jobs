@@ -20,7 +20,7 @@
           set -e
           set -o pipefail
           set -x
-          apt install -y libre2-dev
+          apt install -y python3-dev libre2-dev
           git clone https://opendev.org/zuul/zuul.git
           cd zuul
           pip3 install -e .
