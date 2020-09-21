@@ -10,6 +10,8 @@
           apt install -y python3.7
           rm /usr/bin/python3
           ln -s /usr/bin/python3.7 /usr/bin/python3
+          curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+          python3 get-pip.py
         executable: /bin/bash
 
     - name: Install Zuul
@@ -18,8 +20,7 @@
           set -e
           set -o pipefail
           set -x
-          apt install -y python3-pip libre2-dev
-          pip3 install -U pip
+          apt install -y libre2-dev
           git clone https://opendev.org/zuul/zuul.git
           cd zuul
           pip3 install -e .
