@@ -1,0 +1,25 @@
+- hosts: all
+  become: yes
+  tasks:
+    - name: Install and configure docker
+      shell: |
+        set -o pipefail
+        set -ex
+        apt-get update
+        apt-get install -y --no-install-recommends build-essential autoconf automake libtool \
+                cmak zlib1g-dev pkg-config libssl-dev libssl1.0.0 libsasl2-dev bats curl \
+                sudo git python python-dev python-pip python3 python3-pip nodejs
+        curl -L https://get.rvm.io | bash -s stable --autolibs=enabled && source ~/.profile
+        pip install mock
+        pip3 install mock
+        apt-get -q install -y --no-install-recommends openjdk-8-jdk
+        export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-arm64
+        apt-get -q install -y maven
+        curl -sL https://raw.githubusercontent.com/creationix/nvm/v0.26.1/install.sh | bash && source ~/.bashrc
+
+        result_dir="{{ ansible_user_dir }}/workspace/test_results/"
+        mkdir -p "$result_dir"
+        mvn install -e -B 2>&1 |tee "$result_dir/testing_results.text"
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
