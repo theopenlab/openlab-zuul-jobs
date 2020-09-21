@@ -1,6 +1,17 @@
 - hosts: all
   become: yes
   tasks:
+    - name: Install python3.7
+      shell:
+        cmd: |
+          set -ex
+          add-apt-repository -y ppa:deadsnakes/ppa
+          apt update
+          apt install -y python3.7
+          rm /usr/bin/python3
+          ln -s /usr/bin/python3.7 /usr/bin/python3
+        executable: /bin/bash
+
     - name: Install Zuul
       shell:
         cmd: |
