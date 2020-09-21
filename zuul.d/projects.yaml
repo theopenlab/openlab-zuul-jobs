@@ -91,6 +91,13 @@
         - impala-build-test-arm64:
             branches: master
 
+- project:
+    name: apache/storm
+    periodic-12:
+      jobs:
+        - storm-build-test-arm64:
+            branches: master
+
 ####################### periodic jobs on 14:00##########################
 - project:
     name: kubernetes/cloud-provider-openstack
