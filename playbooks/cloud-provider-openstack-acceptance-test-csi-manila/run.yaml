@@ -220,7 +220,8 @@
           '{{ kubectl }}' exec new-nfs-share-pod -- bash -c "echo 'hello' >> /var/lib/www/test"
 
           '{{ kubectl }}' create -f examples/manila-csi-plugin/nfs/snapshot/snapshotcreate.yaml
-          # sleep 60 # We need to wait till the snapshot is created
+          timeout 300 bash -c 'while [[ "$({{ kubectl }} get volumesnapshots.snapshot.storage.k8s.io/new-nfs-share-snap -o jsonpath={.status.readyToUse})" == false ]]; do sleep 1; done'
+          
           '{{ kubectl }}' exec new-nfs-share-pod -- bash -c "echo 'WORLD' >> /var/lib/www/test"
           '{{ kubectl }}' create -f examples/manila-csi-plugin/nfs/snapshot/snapshotrestore.yaml
           '{{ kubectl }}' create -f examples/manila-csi-plugin/nfs/snapshot/pod.yaml
