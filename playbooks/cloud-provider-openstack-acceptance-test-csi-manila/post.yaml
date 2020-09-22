@@ -9,12 +9,16 @@
 
           '{{ kubectl }}' config use-context local
 
-          '{{ kubectl }}' delete -f examples/manila-csi-plugin/nfs/snapshot/pod.yaml
-          '{{ kubectl }}' delete -f examples/manila-csi-plugin/nfs/snapshot/snapshotrestore.yaml
-          '{{ kubectl }}' delete -f examples/manila-csi-plugin/nfs/snapshot/snapshotcreate.yaml
+          for f in \
+            examples/manila-csi-plugin/nfs/snapshot/pod.yaml \
+            examples/manila-csi-plugin/nfs/snapshot/snapshotrestore.yaml \
+            examples/manila-csi-plugin/nfs/snapshot/snapshotcreate.yaml \
+            examples/manila-csi-plugin/nfs/dynamic-provisioning/pod.yaml \
+            examples/manila-csi-plugin/nfs/dynamic-provisioning/pvc.yaml
+          do
+            timeout 300 '{{ kubectl }}' delete -f "$f"
+          done
 
-          '{{ kubectl }}' delete -f examples/manila-csi-plugin/nfs/dynamic-provisioning/pod.yaml
-          '{{ kubectl }}' delete -f examples/manila-csi-plugin/nfs/dynamic-provisioning/pvc.yaml
         executable: /bin/bash
         chdir: '{{ k8s_os_provider_src_dir }}'
       environment: '{{ global_env }}'
