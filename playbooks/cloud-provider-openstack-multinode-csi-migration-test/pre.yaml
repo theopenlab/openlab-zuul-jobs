@@ -2,7 +2,7 @@
   name: prepare configuration of kubeadm and set CSIMigration feature-gates
   become: yes
   roles:
-    - export-cloud-openrc
+    - export_cloud_openrc
   tasks:
     - name: create /etc/kubernetes
       file:
@@ -47,7 +47,7 @@
   name: bootstrap kubernetes master
   become: yes
   roles:
-    - role: create-multinodes-k8s-cluster-with-kubeadm
+    - role: create_multinodes_k8s_cluster_with_kubeadm
       k8s_role_to_deploy:
         - master
   tasks:
@@ -103,7 +103,7 @@
   name: join kubernetes nodes
   become: yes
   roles:
-    - role: create-multinodes-k8s-cluster-with-kubeadm
+    - role: create_multinodes_k8s_cluster_with_kubeadm
       k8s_role_to_deploy:
         - node
       kubeadm_join_cmd: "{{ hostvars['k8s-master']['kubeadm_join_cmd']['stdout'] }}"
@@ -120,7 +120,7 @@
 - hosts: k8s-master
   name: prepare testcases, install necessary components
   roles:
-    - config-golang
+    - config_golang
   become: yes
   tasks:
     - name: install python-cinderclient

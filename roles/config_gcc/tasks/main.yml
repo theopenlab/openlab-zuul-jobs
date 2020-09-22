@@ -1,6 +1,6 @@
 # We can install specify version gcc/g++ in task, like this:
 #- roles:
-#  - role: config-gcc
+#  - role: config_gcc
 #      gcc_version: '7'
 ---
 - name: Install gcc and g++

@@ -1,8 +1,8 @@
 - hosts: all
   become: yes
   roles:
-    - config-golang
-    - role: export-cloud-openrc
+    - config_golang
+    - role: export_cloud_openrc
       vars:
         cloud_name: 'telefonica'
   tasks:

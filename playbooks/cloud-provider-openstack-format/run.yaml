@@ -1,6 +1,6 @@
 - hosts: all
   roles:
-    - config-golang
+    - config_golang
   become: yes
   tasks:
     - name: Run gofmt and typo checking of cloud-provider-openstack

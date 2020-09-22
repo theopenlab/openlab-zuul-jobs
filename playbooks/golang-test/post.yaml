@@ -1,5 +1,5 @@
 - hosts: all
   become: yes
   roles:
-    - config-golang
-    - format-golang-test-results
+    - config_golang
+    - format_golang_test_results

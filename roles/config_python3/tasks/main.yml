@@ -1,7 +1,7 @@
 # We can install specify version gcc/g++ in task, like this:
 # Note that this role is only for python3 setup.
 #- roles:
-#  - role: config-python3
+#  - role: config_python3
 #      python_version: '3.5'
 ---
 - name: Check if python3 has satisfied requirement

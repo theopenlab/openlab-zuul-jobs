@@ -1,6 +1,6 @@
 # We can install specify version ruby in task, like this:
 #- roles:
-#  - role: config-ruby
+#  - role: config_ruby
 #      ruby_version: '2.5.1'
 ---
 - name: Install rbenv dependences

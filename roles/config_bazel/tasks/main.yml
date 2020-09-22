@@ -1,6 +1,6 @@
 # We can install specify version bazel in task, like this:
 #- roles:
-#  - role: config-bazel
+#  - role: config_bazel
 #      bazel_version: '0.28.1'
 ---
 - name: Check if bazel has satisfied requirement

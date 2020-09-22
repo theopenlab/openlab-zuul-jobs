@@ -1,10 +1,10 @@
 - hosts: all
   become: yes
   roles:
-    - config-golang
-    - install-k8s
-    - clone-devstack-gate-to-workspace
-    - role: install-devstack
+    - config_golang
+    - install_k8s
+    - clone_devstack_gate_to_workspace
+    - role: install_devstack
       environment:
         OVERRIDE_ENABLED_SERVICES: 'key,c-sch,c-api,c-vol,rabbit,mysql'
   tasks:

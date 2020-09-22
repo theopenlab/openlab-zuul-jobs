@@ -1,6 +1,6 @@
 - name: Install Runtime Docker CE
   include_role:
-    name: install-docker
+    name: install_docker
   vars:
     docker_version: '18.09'
 

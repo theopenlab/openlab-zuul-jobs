@@ -3,7 +3,7 @@
   become: yes
 
   roles:
-    - export-gcp-account
+    - export_gcp_account
 
   tasks:
     - name: Upload E2E conformance test result to kubernetes testgrid

@@ -12,16 +12,16 @@
         cat /sys/module/kvm_intel/parameters/nested
         modinfo kvm_intel | grep nested
   roles:
-  - move-k8s-repo-to-k8s-specific-dir
-  - config-golang
-  - clone-devstack-gate-to-workspace
-  - role: create-devstack-local-conf
+  - move_k8s_repo_to_k8s_specific_dir
+  - config_golang
+  - clone_devstack_gate_to_workspace
+  - role: create_devstack_local_conf
     enable_services:
     - 'nova'
     - 'neutron'
     - 'keystone'
     - 'glance'
-  - role: install-devstack
+  - role: install_devstack
     environment:
       USE_PYTHON3: 'True'
       DEVSTACK_GATE_LIBVIRT_TYPE: 'kvm'

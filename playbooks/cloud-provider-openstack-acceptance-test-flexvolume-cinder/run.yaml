@@ -7,13 +7,13 @@
           apt install libvirt-bin -y
         executable: /bin/bash
   roles:
-    - config-golang
-    - install-k8s
-    - clone-devstack-gate-to-workspace
-    - role: create-devstack-local-conf
+    - config_golang
+    - install_k8s
+    - clone_devstack_gate_to_workspace
+    - role: create_devstack_local_conf
       enable_services:
         - 'ceph'
-    - role: install-devstack
+    - role: install_devstack
       environment:
         OVERRIDE_ENABLED_SERVICES: 'key,c-sch,c-api,c-vol,rabbit,mysql'
         PROJECTS: 'openstack/devstack-plugin-ceph'

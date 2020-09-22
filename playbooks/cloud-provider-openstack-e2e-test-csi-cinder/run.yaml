@@ -1,8 +1,8 @@
 - hosts: all
   roles:
-    - config-golang
-    - export-cloud-openrc
-    - install-k8s
+    - config_golang
+    - export_cloud_openrc
+    - install_k8s
   become: yes
   tasks:
     - name: Prepare base alpine image

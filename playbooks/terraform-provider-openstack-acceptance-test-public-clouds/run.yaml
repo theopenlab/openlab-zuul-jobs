@@ -1,8 +1,8 @@
 - hosts: all
   become: yes
   roles:
-    - config-golang
-    - export-cloud-openrc
+    - config_golang
+    - export_cloud_openrc
   tasks:
     - name: Run acceptance tests with terraform-provider-openstack against {{ cloud_name }}
       shell:

@@ -1,13 +1,13 @@
 - hosts: all
   become: yes
   roles:
-    - config-golang
-    - clone-devstack-gate-to-workspace
-    - role: create-devstack-local-conf
+    - config_golang
+    - clone_devstack_gate_to_workspace
+    - role: create_devstack_local_conf
       enable_services:
         - 'manila'
         - 'designate'
-    - install-devstack
+    - install_devstack
   tasks:
     - name: Run designate acceptance tests with terraform-provider-openstack
       shell:

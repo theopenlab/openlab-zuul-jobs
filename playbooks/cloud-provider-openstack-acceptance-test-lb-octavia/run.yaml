@@ -2,9 +2,9 @@
   become: yes
 
   roles:
-    - role: config-golang
+    - role: config_golang
       go_version: '1.13.4'
-    - install-docker
+    - install_docker
 
   tasks:
     - name: Install kubectl

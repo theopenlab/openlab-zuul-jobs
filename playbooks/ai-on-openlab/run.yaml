@@ -2,4 +2,4 @@
   become: yes
   connection: local
   roles:
-    - create-ai-environment
+    - create_ai_environment

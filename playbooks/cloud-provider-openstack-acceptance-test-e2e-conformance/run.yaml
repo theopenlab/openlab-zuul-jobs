@@ -40,9 +40,9 @@
   become: yes
 
   roles:
-    - config-golang
-    - export-cloud-openrc
-    - role: create-multinodes-k8s-cluster-with-kubeadm
+    - config_golang
+    - export_cloud_openrc
+    - role: create_multinodes_k8s_cluster_with_kubeadm
       k8s_role_to_deploy: ["master"]
 
   tasks:
@@ -131,7 +131,7 @@
   name: join kubernetes nodes
   become: yes
   roles:
-    - role: create-multinodes-k8s-cluster-with-kubeadm
+    - role: create_multinodes_k8s_cluster_with_kubeadm
       k8s_role_to_deploy:
         - node
       kubeadm_join_cmd: "{{ hostvars['k8s-master']['kubeadm_join_cmd']['stdout'] }}"

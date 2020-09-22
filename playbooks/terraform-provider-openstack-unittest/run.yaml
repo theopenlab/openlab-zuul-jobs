@@ -1,7 +1,7 @@
 - hosts: all
   become: yes
   roles:
-    - config-golang
+    - config_golang
   tasks:
     - name: Run unit tests with terraform-provider-openstack
       shell:

@@ -1,7 +1,7 @@
 - hosts: all
   become: yes
   roles:
-    - move-k8s-repo-to-k8s-specific-dir
+    - move_k8s_repo_to_k8s_specific_dir
   tasks:
     - name: Install python3.7
       shell:

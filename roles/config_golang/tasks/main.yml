@@ -1,6 +1,6 @@
 # We can install specify version golang in task, like this:
 #- roles:
-#  - role: config-golang
+#  - role: config_golang
 #      go_version: '1.10.1'
 ---
 - name: Check if go has satisfied requirement

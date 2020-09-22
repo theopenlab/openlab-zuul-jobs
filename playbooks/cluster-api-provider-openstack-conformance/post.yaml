@@ -1,6 +1,6 @@
 - hosts: all
   roles:
-    - export-capo-account
+    - export_capo_account
   become: yes
   tasks:
     - name: Upload E2E conformance test result to Kubernetes CAPI OpenStack bucket

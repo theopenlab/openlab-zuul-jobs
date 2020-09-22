@@ -1,6 +1,6 @@
 - hosts: all
   roles:
-    - prepare-workspace
+    - prepare_workspace
   tasks:
     - name: Get local hostname
       become: yes

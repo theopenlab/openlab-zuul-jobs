@@ -1,12 +1,12 @@
 - hosts: all
   roles:
-    - config-golang
-    - install-k8s
-    - clone-devstack-gate-to-workspace
-    - role: create-devstack-local-conf
+    - config_golang
+    - install_k8s
+    - clone_devstack_gate_to_workspace
+    - role: create_devstack_local_conf
       enable_services:
         - 'manila'
-    - role: install-devstack
+    - role: install_devstack
       environment:
         OVERRIDE_ENABLED_SERVICES: 'key,mysql,rabbit,manila,m-api,m-sch,m-shr,m-dat'
   become: yes

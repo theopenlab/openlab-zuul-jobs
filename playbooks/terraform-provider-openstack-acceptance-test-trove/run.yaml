@@ -1,11 +1,11 @@
 - hosts: all
   become: yes
   roles:
-    - clone-devstack-gate-to-workspace
-    - role: create-devstack-local-conf
+    - clone_devstack_gate_to_workspace
+    - role: create_devstack_local_conf
       enable_services:
         - 'trove'
-    - install-devstack
+    - install_devstack
 
 - hosts: all
   tasks:
@@ -38,7 +38,7 @@
 - hosts: all
   become: yes
   roles:
-    - config-golang
+    - config_golang
   tasks:
     - name: Run trove acceptance tests with terraform-provider-openstack
       shell:
