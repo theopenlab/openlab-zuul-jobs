@@ -20,7 +20,7 @@
           set -e
           set -o pipefail
           set -x
-          apt install -y python3-dev libre2-dev
+          apt install -y python3.7-dev libre2-dev
           git clone https://opendev.org/zuul/zuul.git
           cd zuul
           pip3 install -e .
@@ -36,7 +36,7 @@
           export ANSIBLE_ACTION_PLUGINS=/opt/zuul/zuul/ansible/base/actiongeneral
 
           pip install ansible-lint
-          find playbooks -type f -regex '.*.y[a]?ml' -not -path "{{ excluded_path }}" -print0 | xargs -t -n1 -0 ansible-lint -x203,204,301,206,305,303,405
+          find playbooks -type f -regex '.*.y[a]?ml' -not -path "{{ excluded_path }}" -print0 | xargs -t -n1 -0 ansible-lint -x106,203,204,208,301,206,305,303,405
           find playbooks -type f -regex '.*.y[a]?ml' -not -path "{{ excluded_path }}" -exec ansible-playbook -v --syntax-check -i ./playbooks/openlab-zuul-jobs-check/inventory \{\} + > /dev/null
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
