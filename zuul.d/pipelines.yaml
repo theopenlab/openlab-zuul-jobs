@@ -1536,12 +1536,12 @@
     failure:
       smtp:
         from: info@openlabtesting.org
-        to: commits@impala.apache.org
+        to: builds@impala.apache.org
         subject: Daily IMPALA ARM64 Cron Job Test Result - FAILED
       mysql:
     success:
       smtp:
         from: info@openlabtesting.org
-        to: commits@impala.apache.org
+        to: builds@impala.apache.org
         subject: Daily IMPALA ARM Cron Job Test Result - SUCCESS
       mysql:
