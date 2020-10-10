@@ -166,7 +166,7 @@
         cmd: |
           pip3 install cython
           pip3 install numpy==1.18.0
-          pip3 install future keras_preprocessing mock
+          pip3 install future keras_preprocessing mock portpicker
       args:
         executable: /bin/bash
 
@@ -259,7 +259,7 @@
           sudo apt install build-essential gcc libhdf5-serial-dev pkg-config -y
           pip3 install cython
           pip3 install numpy==1.18.0
-          pip3 install keras_preprocessing
+          pip3 install keras_preprocessing portpicker
           sudo apt install libblas-dev liblapack-dev gfortran -y
           pip3 install tensorflow*.whl
           python3 -c "import tensorflow as tf; print(tf.__version__)"
