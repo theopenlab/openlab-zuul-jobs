@@ -323,19 +323,6 @@
     vars:
       cloud_name: orange
 
-# terraform-provider-openstack acceptance tests with huawei cloud, now the job is disabled
-- job:
-    name: terraform-provider-openstack-acceptance-test-huaweicloud
-    parent: golang-test
-    description: |
-      Run acceptance tests of terraform-provider-openstack repo against huaweicloud
-    run: playbooks/terraform-provider-openstack-acceptance-test-public-clouds/run.yaml
-    post-run: playbooks/terraform-provider-openstack-acceptance-test-public-clouds/post.yaml
-    secrets:
-      - huaweicloud_credentials
-    vars:
-      cloud_name: huaweicloud
-
 # Gophercloud acceptance tests with Telefonica cloud, now the job is disabled
 - job:
     name: gophercloud-acceptance-test-telefonica
