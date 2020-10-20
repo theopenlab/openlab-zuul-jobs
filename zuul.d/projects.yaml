@@ -160,6 +160,13 @@
 #         - tensorflow-v2.1.0-cpu-arm64-release-build-show:
 #             branches: master
 
+- project:
+    name: kunpengcompute/hadoop
+    periodic-18:
+      jobs:
+        - hadoop-2.7.7-openeuler-build-test:
+            branches: release-2.7.7-aarch64
+
 ####################### periodic jobs on 20:00##########################
 - project:
     name: apache/flink

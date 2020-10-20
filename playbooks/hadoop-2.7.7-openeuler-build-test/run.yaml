@@ -1,0 +1,16 @@
+- hosts: all
+  become: yes
+  tasks:
+    - name: Install and configure docker
+      shell:
+        cmd: |
+          set -o pipefail
+          set -ex
+          result_dir="{{ ansible_user_dir }}/workspace/test_results/"
+          mkdir -p "$result_dir"
+
+          type docker || curl -sSL https://get.docker.com/ | sh -
+          docker run --name hadoop-openeuler-test ghcr.io/liusheng/hadoop-2.7.7-openeuler:pre-build test
+          docker cp hadoop-openeuler-test:/home/hadoop/hadoop-results/ $result_dir
+      args:
+        executable: /bin/bash
