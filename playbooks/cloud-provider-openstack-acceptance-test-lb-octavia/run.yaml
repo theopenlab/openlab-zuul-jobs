@@ -14,6 +14,10 @@
           chmod +x ./kubectl
           mv ./kubectl /usr/local/bin/kubectl
           mkdir {{ ansible_user_dir }}/.kube
+
+          # The functional tests of Service of LoadBalancer type is running against a k8s cluster in Catalyst Cloud.
+          # The supported features are limited.
+          # The cluster is maintained by Lingxian Kong.
           cat << EOF > {{ ansible_user_dir }}/.kube/config
           {{ kubeconfig.content }}
           EOF
