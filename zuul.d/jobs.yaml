@@ -1181,7 +1181,7 @@
       - OS:ubuntu-bionic
       - Arch:arm64
       - BuildType:Unit test
-    timeout: 18000
+    timeout: 54000
 
 - job:
     name: pytorch-arm64-build-daily
