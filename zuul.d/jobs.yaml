@@ -55,6 +55,8 @@
       Run terraform-provider-openstack unit test
     run: playbooks/terraform-provider-openstack-unittest/run.yaml
     nodeset: ubuntu-xenial-ut
+    vars:
+      go_version: '1.14'
 
 ## ========== terraform-provider-openstack + openstack jobs ==============
 
@@ -67,6 +69,8 @@
     run: playbooks/terraform-provider-openstack-acceptance-test/run.yaml
     nodeset: ubuntu-bionic
     timeout: 21600
+    vars:
+      go_version: '1.14'
 
 ### son job against stein branch of OpenStack
 - job:
@@ -258,6 +262,8 @@
       Run terraform-provider-openstack designate acceptance test on master branch
     run: playbooks/terraform-provider-openstack-acceptance-test-designate/run.yaml
     nodeset: ubuntu-bionic
+    vars:
+      go_version: '1.14'
 
 - job:
     name: terraform-provider-openstack-acceptance-test-trove
@@ -266,6 +272,8 @@
       Run terraform-provider-openstack trove acceptance test on master branch
     run: playbooks/terraform-provider-openstack-acceptance-test-trove/run.yaml
     nodeset: ubuntu-bionic
+    vars:
+      go_version: '1.14'
 
 - job:
     name: terraform-provider-openstack-acceptance-test-lbaas
@@ -275,6 +283,8 @@
     run: playbooks/terraform-provider-openstack-acceptance-test-lbaas/run.yaml
     timeout: 25200 # 7h
     nodeset: ubuntu-bionic
+    vars:
+      go_version: '1.14'
 
 - job:
     name: terraform-provider-openstack-acceptance-test-fwaas
@@ -283,6 +293,8 @@
       Run terraform-provider-openstack fwaas acceptance test on master branch
     run: playbooks/terraform-provider-openstack-acceptance-test-fwaas/run.yaml
     nodeset: ubuntu-bionic
+    vars:
+      go_version: '1.14'
 
 # terraform-provider-openstack acceptance tests with Telefonica cloud
 - job:
@@ -295,6 +307,7 @@
     secrets:
       - telefonica_credentials
     vars:
+      go_version: '1.14'
       cloud_name: telefonica
 
 # terraform-provider-openstack acceptance tests with Open Telekom cloud
@@ -308,6 +321,7 @@
     secrets:
       - opentelekomcloud_credentials
     vars:
+      go_version: '1.14'
       cloud_name: opentelekomcloud
 
 # terraform-provider-openstack acceptance tests with orange cloud
@@ -321,6 +335,7 @@
     secrets:
       - orange_credentials
     vars:
+      go_version: '1.14'
       cloud_name: orange
 
 # Gophercloud acceptance tests with Telefonica cloud, now the job is disabled
