@@ -1,36 +1,12 @@
 - hosts: all
   become: yes
   tasks:
-    - name: Install and configure docker
-      shell:
-        cmd: |
-          set -o pipefail
-          set -ex
-
-          type docker || curl -sSL https://get.docker.com/ | sh -
-
-          # build docker image to save running time
-          # git clone https://github.com/liusheng/my-dockerfile
-          # cd my-dockerfile/kudu-aarch64
-          # docker build . -f BUILD3RD.Dockerfile -t liusheng2048/kudu-aarch64:build3rd
-          cat << EOF >> /etc/docker/daemon.json
-          {
-            "insecure-registries" : ["159.138.83.13:5000"]
-          }
-          EOF
-          systemctl restart docker
-      args:
-        executable: /bin/bash
-
-    - name: Login private docker registry
-      shell: docker login 159.138.83.13:5000 -u openlab -p {{ private_docker_registry.password }}
-      no_log: yes
-
     - name: Building and running tests of Kudu
       shell:
         cmd: |
           set -o pipefail
           set -ex
+          type docker || curl -sSL https://get.docker.com/ | sh -
 
           result_dir="{{ ansible_user_dir }}/workspace/test_results/"
           mkdir -p "$result_dir"
@@ -43,7 +19,7 @@
               if [[ $build_type == 'debug' ]] || [[ $build_type == 'release' ]];then
                   docker_cmd="docker run -e EXTRA_BUILD_FLAGS=-DKUDU_LINK=dynamic -d --cap-add=SYS_PTRACE --security-opt seccomp=unconfined "
               fi
-              $docker_cmd --name $build_type 159.138.83.13:5000/kudu-aarch64:build3rd $build_type
+              $docker_cmd --name $build_type ghcr.io/liusheng/kudu-aarch64:build3rd $build_type
           done
 
           set +x
