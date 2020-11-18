@@ -185,7 +185,7 @@
           export LOG_DIR='{{ k8s_log_dir }}'
 
           kubetest --dump=$LOG_DIR \
-            --disable-log-dump=false
+            --disable-log-dump=false \
             --test \
             --provider=skeleton \
             --ginkgo-parallel=1 \
