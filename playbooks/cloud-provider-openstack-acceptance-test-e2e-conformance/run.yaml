@@ -185,12 +185,13 @@
           export LOG_DIR='{{ k8s_log_dir }}'
 
           kubetest --dump=$LOG_DIR \
+            --disable-log-dump=false \
             --test \
             --provider=skeleton \
             --ginkgo-parallel=1 \
             --test_args="--ginkgo.focus=\\[Conformance\\] --ginkgo.noColor=true --ginkgo.skip=\\[sig\\-apps\\]\\sDaemon\\sset\\s\\[Serial\\]\\sshould\\srollback\\swithout\\sunnecessary\\srestarts\\s\\[Conformance\\]|\\[sig\\-network\\]\\sServices\\sshould\\sbe\\sable\\sto\\schange\\sthe\\stype\\sfrom\\sExternalName\\sto\\sNodePort\\s\\[Conformance\\]|\\[sig\\-network\\]\\sServices\\sshould\\sbe\\sable\\sto\\screate\\sa\\sfunctioning\\sNodePort\\sservice\\s\\[Conformance\\]|\\[sig\\-network\\]\\sServices\\sshould\\shave\\ssession\\saffinity\\swork\\sfor\\sNodePort\\sservice\\s\\[LinuxOnly\\]\\s\\[Conformance\\]|\\[sig\\-network\\]\\sServices\\sshould\\sbe\\sable\\sto\\sswitch\\ssession\\saffinity\\sfor\\sNodePort\\sservice\\s\\[LinuxOnly\\]\\s\\[Conformance\\]|\\[sig\\-network\\]\\sServices\\sshould\\shave\\ssession\\saffinity\\stimeout\\swork\\sfor\\sNodePort\\sservice\\s\\[LinuxOnly\\]\\s\\[Conformance\\]" \
             --extract ${K8S_VERSION} \
-            --timeout=120m | tee $LOG_DIR/e2e.log
+            --timeout=200m | tee $LOG_DIR/e2e.log
 
     - name: Run image build and publish for cloud-provider-openstack
       shell:
