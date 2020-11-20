@@ -6,10 +6,14 @@
         set -o pipefail
         set -ex
         
+        # disable apt-daily service to avoid apt conflict
+        sudo systemctl mask apt-daily.service apt-daily-upgrade.service 
+        sudo systemctl disable apt-daily.service apt-daily-upgrade.service 
+        sudo systemctl disable apt-daily.timer apt-daily-upgrade.timer
+        
         result_dir="{{ ansible_user_dir }}/workspace/test_results/"
         mkdir -p "$result_dir"
         
-        sleep 10800
         export IMPALA_HOME=`pwd`
 
         # we move native-toolchain from ~/ to IMPALA_HOME/..
