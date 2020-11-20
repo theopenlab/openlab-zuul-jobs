@@ -8,7 +8,8 @@
         
         result_dir="{{ ansible_user_dir }}/workspace/test_results/"
         mkdir -p "$result_dir"
-
+        
+        sleep 10800
         export IMPALA_HOME=`pwd`
 
         # we move native-toolchain from ~/ to IMPALA_HOME/..
