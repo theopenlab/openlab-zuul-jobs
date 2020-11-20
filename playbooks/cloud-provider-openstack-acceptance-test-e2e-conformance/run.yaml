@@ -186,6 +186,7 @@
           sudo chmod 777 $LOG_DIR
           export KUBE_MASTER_IP=$(ip route get 1.1.1.1 | awk '{print $7}')
           export KUBE_MASTER=k8s-master
+          export MASTER_NAME=k8s-master
           export DUMP_ONLY_MASTER_LOGS=true
 
           kubetest --dump=$LOG_DIR \
