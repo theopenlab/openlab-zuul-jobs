@@ -18,7 +18,7 @@
         if ! bin/bootstrap_development.sh; then
           RET_CODE=1
         fi
-        cp $IMPALA_HOME/../native-toolchain/check "$result_dir"
+        cp -r $IMPALA_HOME/../native-toolchain/check "$result_dir"
   
         exit $RET_CODE
         
