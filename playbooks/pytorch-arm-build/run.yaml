@@ -75,7 +75,7 @@
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ global_env }}'
 
-    - name: Build Pytorch
+    - name: Build Pytorch stable
       shell:
         cmd: |
           pip install -r requirements.txt
@@ -84,6 +84,20 @@
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
       environment: '{{ global_env }}'
+      when:
+        global_env.RELEASE != 'master'
+
+    - name: Build Pytorch master
+      shell:
+        cmd: |
+          pip install -r requirements.txt
+          USE_CUDA=0 python3 setup.py bdist_wheel
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
+      when:
+        global_env.RELEASE == 'master'
 
     - name: Simple Test
       shell:
