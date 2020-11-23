@@ -5,10 +5,10 @@
       shell: |
         set -o pipefail
         set -ex
-        
+
         result_dir="{{ ansible_user_dir }}/workspace/test_results/"
         mkdir -p "$result_dir"
-        
+
         export IMPALA_HOME=`pwd`
 
         # we move native-toolchain from ~/ to IMPALA_HOME/..
@@ -22,7 +22,7 @@
         cp -r $IMPALA_HOME/../native-toolchain/check "$result_dir"
   
         exit $RET_CODE
-        
+
         if ! bin/run-all-tests.sh; then
           RET_CODE=1
         fi
