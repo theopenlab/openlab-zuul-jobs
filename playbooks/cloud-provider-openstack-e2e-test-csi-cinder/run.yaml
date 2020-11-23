@@ -140,7 +140,19 @@
               '{{ kubectl }}' get pod --all-namespaces
           else
               echo 'Run services failed'
-              '{{ kubectl }}' get pod --all-namespaces
+              '{{ kubectl }}' describe pod --all-namespaces
+              echo '-------------logs for controller plugin csi-attacher----------'
+              '{{ kubectl }}' logs csi-cinder-controllerplugin-0 -c csi-attacher
+              echo '-------------logs for controller plugin csi-provisioner----------'
+              '{{ kubectl }}' logs csi-cinder-controllerplugin-0 -c csi-provisioner
+              echo '-------------logs for controller plugin csi-snapshotter----------'
+              '{{ kubectl }}' logs csi-cinder-controllerplugin-0 -c csi-snapshotter
+              echo '-------------logs for controller plugin csi-resizer----------'
+              '{{ kubectl }}' logs csi-cinder-controllerplugin-0 -c csi-resizer
+              echo '-------------logs for controller plugin cinder-csi-plugin----------'
+              '{{ kubectl }}' logs csi-cinder-controllerplugin-0 -c cinder-csi-plugin
+
+              '{{ kubectl }}' describe pvc csi-pvc-cinderplugin
               exit 1
           fi
 
