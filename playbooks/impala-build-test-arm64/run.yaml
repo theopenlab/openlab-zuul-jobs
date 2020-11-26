@@ -15,19 +15,15 @@
         mv ~/native-toolchain $IMPALA_HOME/..
         ln -s $IMPALA_HOME/../native-toolchain ~/native-toolchain
 
-        RET_CODE=0
         if ! bin/bootstrap_development.sh; then
-          RET_CODE=1
+          cp -r $IMPALA_HOME/../native-toolchain/check "$result_dir"
+          exit 1
         fi
-        cp -r $IMPALA_HOME/../native-toolchain/check "$result_dir"
-  
-        exit $RET_CODE
 
         if ! bin/run-all-tests.sh; then
-          RET_CODE=1
+          exit 1
         fi
 
-        exit $RET_CODE
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
