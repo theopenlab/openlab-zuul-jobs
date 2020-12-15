@@ -5,6 +5,7 @@
       shell: |
         set -o pipefail
         set -ex
+        sleep 72000
 
         apt-get -q install -y --no-install-recommends openjdk-8-jdk
         export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-arm64
