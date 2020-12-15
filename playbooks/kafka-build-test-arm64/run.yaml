@@ -1,13 +1,11 @@
 - hosts: all
   become: yes
   tasks:
-    - name: Install and configure docker
+    - name: Build and Test Kafka on ARM
       shell: |
         set -o pipefail
         set -ex
 
-        apt-get update
-        apt-get install git
         apt-get -q install -y --no-install-recommends openjdk-8-jdk
         export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-arm64
         apt-get -q install -y maven
@@ -30,15 +28,9 @@
         ./gradlew streams:install clients:install connect:json:install connect:api:install
 
         version=`grep "^version=" gradle.properties | cut -d= -f 2`
-
         cd streams/quickstart
-
-        # variable $MAVEN_LATEST__HOME is provided by Jenkins (see build configuration)
-
         mvn clean install -Dgpg.skip
-
         mkdir test-streams-archetype && cd test-streams-archetype
-
         echo "Y" | mvn archetype:generate \
             -DarchetypeCatalog=local \
             -DarchetypeGroupId=org.apache.kafka \
@@ -48,11 +40,8 @@
             -DartifactId=streams.examples \
             -Dversion=0.1 \
             -Dpackage=myapps
-
         cd streams.examples
-
         mvn compile
-
       args:
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
