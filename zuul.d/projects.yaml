@@ -54,6 +54,13 @@
 
 ####################### periodic jobs on 02:00 ##########################
 
+- project:
+    name: apache/kafka
+    periodic-4/16:
+      jobs:
+        - kafka-build-test-arm64:
+            branches: trunk
+
 ####################### periodic jobs on 04:00 ##########################
 
 ####################### periodic jobs on 06:00 ##########################
@@ -97,13 +104,6 @@
       jobs:
         - storm-build-test-arm64:
             branches: master
-
-- project:
-    name: apache/kafka
-    periodic-12:
-      jobs:
-        - kafka-build-test-arm64:
-            branches: trunk
 
 ####################### periodic jobs on 14:00##########################
 - project:
