@@ -6,6 +6,7 @@
         set -o pipefail
         set -ex
 
+        apt-get update
         apt-get -q install -y --no-install-recommends openjdk-8-jdk
         export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-arm64
         apt-get -q install -y maven
