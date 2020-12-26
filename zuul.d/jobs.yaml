@@ -1293,7 +1293,7 @@
     vars:
       global_env:
         RELEASE: master
-        BAZEL_VERSION: 3.1.0
+        BAZEL_VERSION: 3.7.2
         GCC_VERSION: default
         PYTHON: v3.6
 
