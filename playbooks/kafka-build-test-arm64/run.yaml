@@ -1,0 +1,40 @@
+- hosts: all
+  tasks:
+    - name: Build and Test Kafka on ARM
+      shell: |
+        set -o pipefail
+        set -ex
+
+        sudo apt-get update
+        sudo apt-get -q install -y maven
+
+        ./gradlew -PscalaVersion=2.12 clean compileJava compileScala compileTestJava compileTestScala \
+            spotlessScalaCheck checkstyleMain checkstyleTest spotbugsMain rat \
+            --profile --no-daemon --continue -PxmlSpotBugsReport=true
+
+        # Run tests
+        ./gradlew -PscalaVersion=2.12 unitTest integrationTest \
+            --profile --no-daemon --continue -PtestLoggingEvents=started,passed,skipped,failed \
+            -PignoreFailures=true -PmaxParallelForks=2 -PmaxTestRetries=1 -PmaxTestRetryFailures=5
+
+        # Verify that Kafka Streams archetype compiles
+        ./gradlew streams:install clients:install connect:json:install connect:api:install
+
+        version=`grep "^version=" gradle.properties | cut -d= -f 2`
+        cd streams/quickstart
+        mvn clean install -Dgpg.skip
+        mkdir test-streams-archetype && cd test-streams-archetype
+        echo "Y" | mvn archetype:generate \
+            -DarchetypeCatalog=local \
+            -DarchetypeGroupId=org.apache.kafka \
+            -DarchetypeArtifactId=streams-quickstart-java \
+            -DarchetypeVersion=$version \
+            -DgroupId=streams.examples \
+            -DartifactId=streams.examples \
+            -Dversion=0.1 \
+            -Dpackage=myapps
+        cd streams.examples
+        mvn compile
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'

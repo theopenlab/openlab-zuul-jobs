@@ -256,11 +256,14 @@
       shell:
         cmd: |
           set -xe
+          sudo apt update
           sudo apt install build-essential gcc libhdf5-serial-dev pkg-config -y
           pip3 install cython
           pip3 install numpy==1.18.0
           pip3 install keras_preprocessing portpicker
           sudo apt install libblas-dev liblapack-dev gfortran -y
+          sudo ln -s /usr/include/locale.h /usr/include/xlocale.h
+          sudo apt-get install pkg-config libhdf5-100 libhdf5-dev -y
           pip3 install tensorflow*.whl
           python3 -c "import tensorflow as tf; print(tf.__version__)"
       args:
@@ -273,7 +276,7 @@
           set -ex
           export MPLLOCALFREETYPE=1
           sudo apt install -y libpng-dev
-          pip3 install --use-feature=2020-resolver matplotlib tensorflow_datasets==3.1.0
+          pip3 install matplotlib tensorflow_datasets==3.1.0
           wget https://raw.githubusercontent.com/bzhaoopenstack/dockertoy/master/tests/ai/examples/test_mnist.py
           python3 ./test_mnist.py
       args:
