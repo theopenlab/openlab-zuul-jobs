@@ -1,15 +1,12 @@
 - hosts: all
-  become: yes
   tasks:
     - name: Build and Test Kafka on ARM
       shell: |
         set -o pipefail
         set -ex
 
-        apt-get update
-        apt-get -q install -y --no-install-recommends openjdk-8-jdk
-        export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-arm64
-        apt-get -q install -y maven
+        sudo apt-get update
+        sudo apt-get -q install -y maven
 
         ./gradlew -PscalaVersion=2.12 clean compileJava compileScala compileTestJava compileTestScala \
             spotlessScalaCheck checkstyleMain checkstyleTest spotbugsMain rat \
