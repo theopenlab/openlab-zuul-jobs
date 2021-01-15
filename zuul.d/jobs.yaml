@@ -1210,7 +1210,7 @@
       - OS:ubuntu-bionic
       - Arch:arm64
       - BuildType:Unit test
-    timeout: 54000
+    timeout: 72000
 
 - job:
     name: storm-build-test-arm64
