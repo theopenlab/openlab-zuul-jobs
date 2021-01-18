@@ -39,6 +39,21 @@
         LOGS_PATH: '{{ ansible_user_dir }}/workspace/logs'
         RESULTS_PATH: '{{ ansible_user_dir }}/workspace/test_results'
 
+- job:
+    name: init-test-main
+    description: |
+      Base job for all types of test jobs(main branch). Ensure workspace and copy log files.
+    pre-run: playbooks/init-test/pre.yaml
+    post-run: playbooks/init-test/post.yaml
+    timeout: 10800
+    vars:
+      global_env:
+        OS_BRANCH: main
+        # LOGS/RESULTS_PATH is created in roles.prepare_workspace, we enable
+        # these two vars in here for cross playbook usage.
+        LOGS_PATH: '{{ ansible_user_dir }}/workspace/logs'
+        RESULTS_PATH: '{{ ansible_user_dir }}/workspace/test_results'
+
 # Golang test base job
 - job:
     name: golang-test
@@ -47,10 +62,17 @@
       Base job for all types of golang test jobs.
     post-run: playbooks/golang-test/post.yaml
 
+- job:
+    name: golang-test-main
+    parent: init-test-main
+    description: |
+      Base job for all types of golang test jobs(main branch).
+    post-run: playbooks/golang-test/post.yaml
+
 # Terraform-provider-openstack jobs
 - job:
     name: terraform-provider-openstack-unittest
-    parent: golang-test
+    parent: golang-test-main
     description: |
       Run terraform-provider-openstack unit test
     run: playbooks/terraform-provider-openstack-unittest/run.yaml
@@ -63,7 +85,7 @@
 ### parent job
 - job:
     name: terraform-provider-openstack-acceptance-test
-    parent: golang-test
+    parent: golang-test-main
     description: |
       Run terraform-provider-openstack acceptance test against master OpenStack
     run: playbooks/terraform-provider-openstack-acceptance-test/run.yaml
@@ -257,7 +279,7 @@
 
 - job:
     name: terraform-provider-openstack-acceptance-test-designate
-    parent: golang-test
+    parent: golang-test-main
     description: |
       Run terraform-provider-openstack designate acceptance test on master branch
     run: playbooks/terraform-provider-openstack-acceptance-test-designate/run.yaml
@@ -267,7 +289,7 @@
 
 - job:
     name: terraform-provider-openstack-acceptance-test-trove
-    parent: golang-test
+    parent: golang-test-main
     description: |
       Run terraform-provider-openstack trove acceptance test on master branch
     run: playbooks/terraform-provider-openstack-acceptance-test-trove/run.yaml
@@ -277,7 +299,7 @@
 
 - job:
     name: terraform-provider-openstack-acceptance-test-lbaas
-    parent: golang-test
+    parent: golang-test-main
     description: |
       Run terraform-provider-openstack lbaas acceptance test on master branch
     run: playbooks/terraform-provider-openstack-acceptance-test-lbaas/run.yaml
@@ -288,7 +310,7 @@
 
 - job:
     name: terraform-provider-openstack-acceptance-test-fwaas
-    parent: golang-test
+    parent: golang-test-main
     description: |
       Run terraform-provider-openstack fwaas acceptance test on master branch
     run: playbooks/terraform-provider-openstack-acceptance-test-fwaas/run.yaml
@@ -299,7 +321,7 @@
 # terraform-provider-openstack acceptance tests with Telefonica cloud
 - job:
     name: terraform-provider-openstack-acceptance-test-telefonica
-    parent: golang-test
+    parent: golang-test-main
     description: |
       Run acceptance tests of terraform-provider-openstack repo against telefonica cloud
     run: playbooks/terraform-provider-openstack-acceptance-test-public-clouds/run.yaml
@@ -313,7 +335,7 @@
 # terraform-provider-openstack acceptance tests with Open Telekom cloud
 - job:
     name: terraform-provider-openstack-acceptance-test-opentelekomcloud
-    parent: golang-test
+    parent: golang-test-main
     description: |
       Run acceptance tests of terraform-provider-openstack repo against opentelekomcloud
     run: playbooks/terraform-provider-openstack-acceptance-test-public-clouds/run.yaml
@@ -327,7 +349,7 @@
 # terraform-provider-openstack acceptance tests with orange cloud
 - job:
     name: terraform-provider-openstack-acceptance-test-orange
-    parent: golang-test
+    parent: golang-test-main
     description: |
       Run acceptance tests of terraform-provider-openstack repo against orange cloud
     run: playbooks/terraform-provider-openstack-acceptance-test-public-clouds/run.yaml
@@ -455,7 +477,7 @@
 # the job is disabled now
 - job:
     name: terraform-provider-telefonicaopencloud-acceptance-test-telefonica
-    parent: golang-test
+    parent: golang-test-main
     description: |
       Run acceptance tests of terraform-provider-telefonicaopencloud repo against telefonica cloud
     run: playbooks/terraform-provider-telefonicaopencloud-acceptance-test-telefonica/run.yaml
@@ -466,7 +488,7 @@
 # the job is disabled now
 - job:
     name: terraform-provider-flexibleengine-acceptance-test-orange
-    parent: golang-test
+    parent: golang-test-main
     description: |
       Run acceptance tests of terraform-provider-flexibleengine repo against orange cloud
     run: playbooks/terraform-provider-flexibleengine-acceptance-test-orange/run.yaml
@@ -477,7 +499,7 @@
 # the job is disabled now
 - job:
     name: terraform-provider-opentelekomcloud-acceptance-test-opentelekomcloud
-    parent: golang-test
+    parent: golang-test-main
     description: |
       Run acceptance tests of terraform-provider-opentelekomcloud repo against open telekom cloud
     run: playbooks/terraform-provider-opentelekomcloud-acceptance-test-opentelekomcloud/run.yaml
