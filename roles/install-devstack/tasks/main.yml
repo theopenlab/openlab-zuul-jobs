@@ -58,9 +58,16 @@
     cmd: |
       set -e
       set -x
+
+      branch='{{ global_env.OS_BRANCH }}'
+      if [[ $branch == 'main' ]];
+      then
+         branch='master'
+      fi
+
       export PYTHONUNBUFFERED=true
       export GIT_BASE=https://github.com
-      export OVERRIDE_ZUUL_BRANCH='{{ global_env.OS_BRANCH }}'
+      export OVERRIDE_ZUUL_BRANCH=$branch
       export DEVSTACK_GATE_NEUTRON=1
       export DEVSTACK_GATE_FIXED_RANGE=10.0.0.0/20
       export PROJECTS="openstack/designate $PROJECTS"
