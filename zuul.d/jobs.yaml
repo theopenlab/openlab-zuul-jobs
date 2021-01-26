@@ -1583,7 +1583,7 @@
     timeout: 86400
     vars:
       global_env:
-        ARCH: x86
+        ARCH: 'x86'
 
 - job:
     name: bucardo-unitest-on-X86-perl5.30-PG
@@ -1592,7 +1592,7 @@
       Test bucardo unitest on X86 with perl 5.30
     vars:
       global_env:
-        PERL_VERSION: 5.30
+        PERL_VERSION: '5.30'
 
 - job:
     name: bucardo-unitest-on-X86-perl5.30-PG10
@@ -1601,7 +1601,7 @@
       Test bucardo unitest on X86 with perl 5.30 and PG 10
     vars:
       global_env:
-        PGVERSION: 10
+        PGVERSION: '10'
 
 - job:
     name: bucardo-unitest-on-X86-perl5.30-PG11
@@ -1610,7 +1610,7 @@
       Test bucardo unitest on X86 with perl 5.30 and PG 11
     vars:
       global_env:
-        PGVERSION: 11
+        PGVERSION: '11'
 
 - job:
     name: bucardo-unitest-on-X86-perl5.30-PG12
@@ -1619,7 +1619,7 @@
       Test bucardo unitest on X86 with perl 5.30 and PG 12
     vars:
       global_env:
-        PGVERSION: 12
+        PGVERSION: '12'
 
 - job:
     name: bucardo-unitest-on-arm64-for-PR
@@ -1638,7 +1638,7 @@
     timeout: 86400
     vars:
       global_env:
-        ARCH: arm64
+        ARCH: 'arm64'
 
 - job:
     name: bucardo-unitest-on-arm64-perl5.30-PG
@@ -1647,7 +1647,7 @@
       Test bucardo unitest on aarch64 with perl 5.30
     vars:
       global_env:
-        PERL_VERSION: 5.30
+        PERL_VERSION: '5.30'
 
 - job:
     name: bucardo-unitest-on-arm64-perl5.30-PG12
@@ -1656,4 +1656,4 @@
       Test bucardo unitest on aarch64 with perl 5.30 and PG 12
     vars:
       global_env:
-        PGVERSION: 12
+        PGVERSION: '12'
