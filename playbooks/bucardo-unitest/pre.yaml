@@ -119,7 +119,8 @@
     - name: Set test env vars
       set_fact:
         test_env:
-          PATH: '/usr/lib/postgresql/${PGVERSION}/bin:{{ ansible_env.PATH }}'
+          PATH: '/usr/lib/postgresql/{{ global_env.PGVERSION }}/bin:{{ ansible_env.PATH }}'
+      environment: '{{ global_env }}'
       no_log: yes
 
     - name: Merge env vars into global env
