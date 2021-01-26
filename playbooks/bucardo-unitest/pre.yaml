@@ -65,7 +65,7 @@
       args:
         executable: /bin/bash
 
-    - name: Install perl {{ PERL_VERSION }}
+    - name: Install perl {{ global_env.PERL_VERSION }}
       shell:
         cmd: |
           source ~/perl5/perlbrew/etc/bashrc
@@ -89,16 +89,17 @@
       shell:
         cmd: |
           apt-get install -y \
-            postgresql-${PGVERSION} \
-            postgresql-client-${PGVERSION} \
-            postgresql-${PGVERSION}-pgtap \
-            postgresql-server-dev-${PGVERSION} \
+            postgresql-{{ global_env.PGVERSION }} \
+            postgresql-client-{{ global_env.PGVERSION }} \
+            postgresql-{{ global_env.PGVERSION }}-pgtap \
+            postgresql-server-dev-{{ global_env.PGVERSION }} \
             postgresql-server-dev-all \
-            postgresql-plperl-${PGVERSION} \
+            postgresql-plperl-{{ global_env.PGVERSION }} \
             debhelper fakeroot libdbd-pg-perl \
             libtap-parser-sourcehandler-pgtap-perl
       args:
         executable: /bin/bash
+      environment: '{{ global_env }}'
 
     - name: Install perl modules
       shell:
