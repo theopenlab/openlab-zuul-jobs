@@ -21,7 +21,7 @@
       shell:
         cmd:
           set -ex
-          if [ -f "log.context" ];then
+          if [[ -f "log.context" ]] ; then
               cat log.context
           fi
       args:
