@@ -19,7 +19,7 @@
 
     - name: Show the log if possible
       shell:
-        cmd:
+        cmd: |
           set -ex
           if [[ -f "log.context" ]] ; then
               cat log.context
