@@ -1,10 +1,18 @@
 - hosts: all
   tasks:
+    - name: Generate log result folder
+      file:
+        path: "{{ ansible_user_dir }}/workspace/test_results/"
+        state: directory
+
     - name: Copy result into result dir
       shell: |
         set -ex
         if [[ -f "log.context" ]] ; then
             cp -rf log.context "{{ ansible_user_dir }}/workspace/test_results/"
+        fi
+        if [[ -f "log.bucardo" ]] ; then
+            cp -rf log.bucardo "{{ ansible_user_dir }}/workspace/test_results/"
         fi
       args:
         executable: /bin/bash

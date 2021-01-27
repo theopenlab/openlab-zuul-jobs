@@ -15,11 +15,12 @@
       shell:
         cmd: |
           source /etc/lsb-release ;
-          echo "deb http://apt.postgresql.org/pub/repos/apt/ $DISTRIB_CODENAME-pgdg main ${PGVERSION}" > pgdg.list
+          echo "deb http://apt.postgresql.org/pub/repos/apt/ $DISTRIB_CODENAME-pgdg main {{ global_env.PGVERSION }}" > pgdg.list
           mv pgdg.list /etc/apt/sources.list.d/
           wget --quiet -O - https://apt.postgresql.org/pub/repos/apt/ACCC4CF8.asc | apt-key add -
       args:
         executable: /bin/bash
+      environment: '{{ global_env }}'
 
     - name: Install deps
       become: yes
