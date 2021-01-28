@@ -833,7 +833,7 @@
       Run cinder csi acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/post.yaml
-    nodeset: ubuntu-bionic-citynetwork
+    nodeset: ubuntu-focal-citynetwork
     secrets:
       - citynetwork_credentials
       - swr
@@ -845,7 +845,7 @@
       Run cinder csi e2e tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-e2e-test-csi-cinder/run.yaml
     post-run: playbooks/cloud-provider-openstack-e2e-test-csi-cinder/post.yaml
-    nodeset: ubuntu-bionic-citynetwork
+    nodeset: ubuntu-focal-citynetwork
     secrets:
       - citynetwork_credentials
       - swr
@@ -883,7 +883,7 @@
       Run manila csi acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-csi-manila/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-csi-manila/post.yaml
-    nodeset: ubuntu-bionic
+    nodeset: ubuntu-focal
     secrets:
       - swr
 
@@ -910,7 +910,7 @@
     description: |
       Run keystone auth acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-keystone-authentication-authorization/run.yaml
-    nodeset: ubuntu-bionic
+    nodeset: ubuntu-focal
     secrets:
       - swr
 
