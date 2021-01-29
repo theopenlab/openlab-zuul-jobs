@@ -1,3 +1,7 @@
+- name: Show vars
+  shell: 'echo {{ customize_docker_version }}'
+  register: customize_docker_version
+
 - name: Install Runtime Docker CE
   include_role:
     name: install-docker
