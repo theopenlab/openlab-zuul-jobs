@@ -4,8 +4,7 @@
     - export-cloud-openrc
     - role: install-k8s
       vars:
-        docker_version: '20.10'
-    
+        customize_docker_version: '20.10'
   become: yes
   tasks:
     - name: Prepare base alpine image

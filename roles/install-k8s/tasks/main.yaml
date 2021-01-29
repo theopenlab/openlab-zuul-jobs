@@ -3,6 +3,14 @@
     name: install-docker
   vars:
     docker_version: '18.09'
+  when: customize_docker_version is undefined
+
+- name: Install Runtime Docker CE
+  include_role:
+    name: install-docker
+  vars:
+    docker_version: {{ customize_docker_version }}
+  when: customize_docker_version is defined
 
 - name: Install etcd {{ etcd_version }} and kubernetes {{ k8s_version }}
   shell:
