@@ -2,7 +2,9 @@
   roles:
     - config-golang
     - export-cloud-openrc
-    - install-k8s
+    - role: install-k8s
+      vars:
+        customize_docker_version: '20.10'
   become: yes
   tasks:
     - name: Prepare base alpine image

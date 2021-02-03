@@ -1,0 +1,29 @@
+- hosts: all
+  tasks:
+    - name: Run the test
+      shell:
+        cmd: |
+          source ~/perl5/perlbrew/etc/bashrc
+          if [[ {{ global_env.ARCH }} =~ arm64* ]] && [[ {{ global_env.PERL_VERSION }} =~ ^([0-9]+\.){1}([0-9]+)$ ]]; then
+              INSTALL_VERSION={{ global_env.PERL_VERSION }}.0 ;
+              perlbrew switch $INSTALL_VERSION ;
+          else
+              perlbrew switch {{ global_env.PERL_VERSION }}.3
+          fi
+          perl Makefile.PL
+          BUCARDO_LOG_ERROR_CONTEXT=1 PATH=$PATH:/usr/lib/postgresql/{{ global_env.PGVERSION }}/bin make test
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
+
+    - name: Show the log if possible
+      shell:
+        cmd: |
+          set -ex
+          if [[ -f "log.context" ]] ; then
+              cat log.context
+          fi
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'

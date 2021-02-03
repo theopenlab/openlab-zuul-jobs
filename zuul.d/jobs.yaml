@@ -833,7 +833,7 @@
       Run cinder csi acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/post.yaml
-    nodeset: ubuntu-xenial-citynetwork
+    nodeset: ubuntu-focal-citynetwork
     secrets:
       - citynetwork_credentials
       - swr
@@ -845,7 +845,7 @@
       Run cinder csi e2e tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-e2e-test-csi-cinder/run.yaml
     post-run: playbooks/cloud-provider-openstack-e2e-test-csi-cinder/post.yaml
-    nodeset: ubuntu-xenial-citynetwork
+    nodeset: ubuntu-focal-citynetwork
     secrets:
       - citynetwork_credentials
       - swr
@@ -883,7 +883,7 @@
       Run manila csi acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-csi-manila/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-csi-manila/post.yaml
-    nodeset: ubuntu-bionic
+    nodeset: ubuntu-focal
     secrets:
       - swr
 
@@ -910,7 +910,7 @@
     description: |
       Run keystone auth acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-keystone-authentication-authorization/run.yaml
-    nodeset: ubuntu-bionic
+    nodeset: ubuntu-focal
     secrets:
       - swr
 
@@ -1556,3 +1556,104 @@
       - Arch:arm64
       - BuildType:Test
     timeout: 86400
+
+# Kubernetes cloud-provider-openstack jobs
+- job:
+    name: bucardo-unitest
+    parent: init-test
+    description: |
+      Base job for all types of bucardo test jobs
+    pre-run: playbooks/bucardo-unitest/pre.yaml
+    post-run: playbooks/bucardo-unitest/post.yaml
+
+- job:
+    name: bucardo-unitest-on-X86-for-PR
+    parent: bucardo-unitest
+    description: |
+      Run unit test of bucardo on X86
+    run: playbooks/bucardo-unitest/run.yaml
+    nodeset: ubuntu-bionic
+    tags:
+      - Category:Database
+      - Project:bucardo/bucardo
+      - Application:bucardo@master
+      - OS:ubuntu-bionic
+      - Arch:x86
+      - BuildType:Test
+    timeout: 86400
+    vars:
+      global_env:
+        ARCH: 'x86'
+
+- job:
+    name: bucardo-unitest-on-X86-perl5.30-PG
+    parent: bucardo-unitest-on-X86-for-PR
+    description: |
+      Test bucardo unitest on X86 with perl 5.30
+    vars:
+      global_env:
+        PERL_VERSION: '5.30'
+
+- job:
+    name: bucardo-unitest-on-X86-perl5.30-PG10
+    parent: bucardo-unitest-on-X86-perl5.30-PG
+    description: |
+      Test bucardo unitest on X86 with perl 5.30 and PG 10
+    vars:
+      global_env:
+        PGVERSION: '10'
+
+- job:
+    name: bucardo-unitest-on-X86-perl5.30-PG11
+    parent: bucardo-unitest-on-X86-perl5.30-PG
+    description: |
+      Test bucardo unitest on X86 with perl 5.30 and PG 11
+    vars:
+      global_env:
+        PGVERSION: '11'
+
+- job:
+    name: bucardo-unitest-on-X86-perl5.30-PG12
+    parent: bucardo-unitest-on-X86-perl5.30-PG
+    description: |
+      Test bucardo unitest on X86 with perl 5.30 and PG 12
+    vars:
+      global_env:
+        PGVERSION: '12'
+
+- job:
+    name: bucardo-unitest-on-arm64-for-PR
+    parent: bucardo-unitest
+    description: |
+      Run unit test of bucardo
+    run: playbooks/bucardo-unitest/run.yaml
+    nodeset: ubuntu-bionic-arm64-huaweicloud-8u16g
+    tags:
+      - Category:Database
+      - Project:bucardo/bucardo
+      - Application:bucardo@master
+      - OS:ubuntu-bionic
+      - Arch:arm64
+      - BuildType:Test
+    timeout: 86400
+    vars:
+      global_env:
+        ARCH: 'arm64'
+
+- job:
+    name: bucardo-unitest-on-arm64-perl5.30-PG
+    parent: bucardo-unitest-on-arm64-for-PR
+    description: |
+      Test bucardo unitest on aarch64 with perl 5.30
+    vars:
+      global_env:
+        PERL_VERSION: '5.30'
+
+- job:
+    name: bucardo-unitest-on-arm64-perl5.30-PG12
+    parent: bucardo-unitest-on-arm64-perl5.30-PG
+    description: |
+      Test bucardo unitest on aarch64 with perl 5.30 and PG 12
+    vars:
+      global_env:
+        PGVERSION: '12'

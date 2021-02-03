@@ -1,7 +1,9 @@
 - hosts: all
   roles:
     - config-golang
-    - install-k8s
+    - role: install-k8s
+      vars:
+        customize_docker_version: '20.10'
     - clone-devstack-gate-to-workspace
     - role: install-devstack
       environment:

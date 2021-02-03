@@ -1434,3 +1434,40 @@
         to: builds@impala.apache.org
         subject: Daily IMPALA ARM Cron Job Test Result - SUCCESS
       mysql:
+
+- pipeline:
+    name: bucardo-unitest
+    description: |
+      Commenting "/test bucardo-unitest" enter this pipeline to run
+      the unit tests of bucardo repo and receive an initial
+      +/-1 Verified vote.
+    manager: independent
+    trigger:
+      github:
+        - event: pull_request
+          action:
+            - opened
+            - changed
+            - reopened
+        - event: pull_request
+          action: comment
+          comment: (?i)^\s*\/test bucardo-unitest\s*$
+        - event: pull_request
+          action: comment
+          comment: (?i)^\s*\/retest\s*$
+        - event: pull_request
+          action: comment
+          comment: (?i)^\s*\/test all\s*$
+    start:
+      github:
+        status: pending
+        comment: false
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
+    success:
+      github:
+        status: 'success'
+      mysql:
+    failure:
+      github:
+        status: 'failure'
+      mysql:
