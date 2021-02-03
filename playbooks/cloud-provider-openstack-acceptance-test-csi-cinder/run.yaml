@@ -44,6 +44,7 @@
           ignore-volume-az = yes
           EOF
 
+          export ARTIFACTS=/home/zuul/workspace/logs/_artifacts
           export API_HOST_IP=$(ip route get 1.1.1.1 | awk '{print $7}')
           export KUBELET_HOST="0.0.0.0"
           export ALLOW_SECURITY_CONTEXT=true
@@ -152,6 +153,10 @@
               '{{ kubectl }}' get pod
           else
               echo 'Run test failed'
+
+              mkdir -p "${ARTIFACTS}/logs"
+              kubectl get clusters,openstackclusters,machines,openstackmachines,kubeadmconfigs,machinedeployments,openstackmachinetemplates,kubeadmconfigtemplates,machinesets --all-namespaces -o yaml > "${ARTIFACTS}/logs/all_object_info.txt" || true
+
               '{{ kubectl }}' get pod
               '{{ kubectl }}' describe pod nginx
               echo '-------------logs for controller plugin csi-attacher----------'
