@@ -39,6 +39,21 @@
         LOGS_PATH: '{{ ansible_user_dir }}/workspace/logs'
         RESULTS_PATH: '{{ ansible_user_dir }}/workspace/test_results'
 
+- job:
+    name: init-test-main
+    description: |
+      Base job for all types of test jobs(main branch). Ensure workspace and copy log files.
+    pre-run: playbooks/init-test/pre.yaml
+    post-run: playbooks/init-test/post.yaml
+    timeout: 10800
+    vars:
+      global_env:
+        OS_BRANCH: main
+        # LOGS/RESULTS_PATH is created in roles.prepare_workspace, we enable
+        # these two vars in here for cross playbook usage.
+        LOGS_PATH: '{{ ansible_user_dir }}/workspace/logs'
+        RESULTS_PATH: '{{ ansible_user_dir }}/workspace/test_results'
+
 # Golang test base job
 - job:
     name: golang-test
@@ -47,10 +62,17 @@
       Base job for all types of golang test jobs.
     post-run: playbooks/golang-test/post.yaml
 
+- job:
+    name: golang-test-main
+    parent: init-test-main
+    description: |
+      Base job for all types of golang test jobs(main branch).
+    post-run: playbooks/golang-test/post.yaml
+
 # Terraform-provider-openstack jobs
 - job:
     name: terraform-provider-openstack-unittest
-    parent: golang-test
+    parent: golang-test-main
     description: |
       Run terraform-provider-openstack unit test
     run: playbooks/terraform-provider-openstack-unittest/run.yaml
@@ -63,7 +85,7 @@
 ### parent job
 - job:
     name: terraform-provider-openstack-acceptance-test
-    parent: golang-test
+    parent: golang-test-main
     description: |
       Run terraform-provider-openstack acceptance test against master OpenStack
     run: playbooks/terraform-provider-openstack-acceptance-test/run.yaml
@@ -257,7 +279,7 @@
 
 - job:
     name: terraform-provider-openstack-acceptance-test-designate
-    parent: golang-test
+    parent: golang-test-main
     description: |
       Run terraform-provider-openstack designate acceptance test on master branch
     run: playbooks/terraform-provider-openstack-acceptance-test-designate/run.yaml
@@ -267,7 +289,7 @@
 
 - job:
     name: terraform-provider-openstack-acceptance-test-trove
-    parent: golang-test
+    parent: golang-test-main
     description: |
       Run terraform-provider-openstack trove acceptance test on master branch
     run: playbooks/terraform-provider-openstack-acceptance-test-trove/run.yaml
@@ -277,7 +299,7 @@
 
 - job:
     name: terraform-provider-openstack-acceptance-test-lbaas
-    parent: golang-test
+    parent: golang-test-main
     description: |
       Run terraform-provider-openstack lbaas acceptance test on master branch
     run: playbooks/terraform-provider-openstack-acceptance-test-lbaas/run.yaml
@@ -288,7 +310,7 @@
 
 - job:
     name: terraform-provider-openstack-acceptance-test-fwaas
-    parent: golang-test
+    parent: golang-test-main
     description: |
       Run terraform-provider-openstack fwaas acceptance test on master branch
     run: playbooks/terraform-provider-openstack-acceptance-test-fwaas/run.yaml
@@ -299,7 +321,7 @@
 # terraform-provider-openstack acceptance tests with Telefonica cloud
 - job:
     name: terraform-provider-openstack-acceptance-test-telefonica
-    parent: golang-test
+    parent: golang-test-main
     description: |
       Run acceptance tests of terraform-provider-openstack repo against telefonica cloud
     run: playbooks/terraform-provider-openstack-acceptance-test-public-clouds/run.yaml
@@ -313,7 +335,7 @@
 # terraform-provider-openstack acceptance tests with Open Telekom cloud
 - job:
     name: terraform-provider-openstack-acceptance-test-opentelekomcloud
-    parent: golang-test
+    parent: golang-test-main
     description: |
       Run acceptance tests of terraform-provider-openstack repo against opentelekomcloud
     run: playbooks/terraform-provider-openstack-acceptance-test-public-clouds/run.yaml
@@ -327,7 +349,7 @@
 # terraform-provider-openstack acceptance tests with orange cloud
 - job:
     name: terraform-provider-openstack-acceptance-test-orange
-    parent: golang-test
+    parent: golang-test-main
     description: |
       Run acceptance tests of terraform-provider-openstack repo against orange cloud
     run: playbooks/terraform-provider-openstack-acceptance-test-public-clouds/run.yaml
@@ -455,7 +477,7 @@
 # the job is disabled now
 - job:
     name: terraform-provider-telefonicaopencloud-acceptance-test-telefonica
-    parent: golang-test
+    parent: golang-test-main
     description: |
       Run acceptance tests of terraform-provider-telefonicaopencloud repo against telefonica cloud
     run: playbooks/terraform-provider-telefonicaopencloud-acceptance-test-telefonica/run.yaml
@@ -466,7 +488,7 @@
 # the job is disabled now
 - job:
     name: terraform-provider-flexibleengine-acceptance-test-orange
-    parent: golang-test
+    parent: golang-test-main
     description: |
       Run acceptance tests of terraform-provider-flexibleengine repo against orange cloud
     run: playbooks/terraform-provider-flexibleengine-acceptance-test-orange/run.yaml
@@ -477,7 +499,7 @@
 # the job is disabled now
 - job:
     name: terraform-provider-opentelekomcloud-acceptance-test-opentelekomcloud
-    parent: golang-test
+    parent: golang-test-main
     description: |
       Run acceptance tests of terraform-provider-opentelekomcloud repo against open telekom cloud
     run: playbooks/terraform-provider-opentelekomcloud-acceptance-test-opentelekomcloud/run.yaml
@@ -748,6 +770,52 @@
       - BuildType:Integration test
 
 - job:
+    name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.19
+    parent: cloud-provider-openstack-acceptance-test-e2e-conformance
+    description: |
+      Run Kubernetes E2E Conformance tests against release-1.19 branch of Kubernetes
+    nodeset: ubuntu-xenial-k8s-cluster-cpo
+    vars:
+      go_version: '1.15'
+      k8s_version: 'release-1.19'
+      etcd_version: 'v3.4.9'
+      kubernetes_version: 'v1.19.0'
+    tags:
+      - Category:Cloud
+      - Project:kubernetes/cloud-provider-openstack
+      - Application:cloud-provider-openstack@release-1.19
+      - Application:Kubernetes@release-1.19
+      - Application:Docker.io@v18.09
+      - Application:Etcd@v3.4.9
+      - Application:Go@1.15
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
+
+- job:
+    name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.20
+    parent: cloud-provider-openstack-acceptance-test-e2e-conformance
+    description: |
+      Run Kubernetes E2E Conformance tests against release-1.20 branch of Kubernetes
+    nodeset: ubuntu-xenial-k8s-cluster-cpo
+    vars:
+      go_version: '1.15'
+      k8s_version: 'release-1.20'
+      etcd_version: 'v3.4.13'
+      kubernetes_version: 'v1.20.0'
+    tags:
+      - Category:Cloud
+      - Project:kubernetes/cloud-provider-openstack
+      - Application:cloud-provider-openstack@release-1.20
+      - Application:Kubernetes@release-1.20
+      - Application:Docker.io@v18.09
+      - Application:Etcd@v3.4.13
+      - Application:Go@1.15
+      - OS:ubuntu-xenial
+      - Arch:x86_64
+      - BuildType:Integration test
+
+- job:
     name: cloud-provider-openstack-acceptance-test-standalone-cinder
     parent: cloud-provider-openstack-test
     description: |
@@ -765,7 +833,7 @@
       Run cinder csi acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/post.yaml
-    nodeset: ubuntu-xenial-citynetwork
+    nodeset: ubuntu-focal-citynetwork
     secrets:
       - citynetwork_credentials
       - swr
@@ -777,7 +845,7 @@
       Run cinder csi e2e tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-e2e-test-csi-cinder/run.yaml
     post-run: playbooks/cloud-provider-openstack-e2e-test-csi-cinder/post.yaml
-    nodeset: ubuntu-xenial-citynetwork
+    nodeset: ubuntu-focal-citynetwork
     secrets:
       - citynetwork_credentials
       - swr
@@ -815,7 +883,7 @@
       Run manila csi acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-csi-manila/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-csi-manila/post.yaml
-    nodeset: ubuntu-bionic
+    nodeset: ubuntu-focal
     secrets:
       - swr
 
@@ -842,7 +910,7 @@
     description: |
       Run keystone auth acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-keystone-authentication-authorization/run.yaml
-    nodeset: ubuntu-bionic
+    nodeset: ubuntu-focal
     secrets:
       - swr
 
@@ -1164,7 +1232,7 @@
       - OS:ubuntu-bionic
       - Arch:arm64
       - BuildType:Unit test
-    timeout: 54000
+    timeout: 72000
 
 - job:
     name: storm-build-test-arm64
@@ -1488,3 +1556,104 @@
       - Arch:arm64
       - BuildType:Test
     timeout: 86400
+
+# Kubernetes cloud-provider-openstack jobs
+- job:
+    name: bucardo-unitest
+    parent: init-test
+    description: |
+      Base job for all types of bucardo test jobs
+    pre-run: playbooks/bucardo-unitest/pre.yaml
+    post-run: playbooks/bucardo-unitest/post.yaml
+
+- job:
+    name: bucardo-unitest-on-X86-for-PR
+    parent: bucardo-unitest
+    description: |
+      Run unit test of bucardo on X86
+    run: playbooks/bucardo-unitest/run.yaml
+    nodeset: ubuntu-bionic
+    tags:
+      - Category:Database
+      - Project:bucardo/bucardo
+      - Application:bucardo@master
+      - OS:ubuntu-bionic
+      - Arch:x86
+      - BuildType:Test
+    timeout: 86400
+    vars:
+      global_env:
+        ARCH: 'x86'
+
+- job:
+    name: bucardo-unitest-on-X86-perl5.30-PG
+    parent: bucardo-unitest-on-X86-for-PR
+    description: |
+      Test bucardo unitest on X86 with perl 5.30
+    vars:
+      global_env:
+        PERL_VERSION: '5.30'
+
+- job:
+    name: bucardo-unitest-on-X86-perl5.30-PG10
+    parent: bucardo-unitest-on-X86-perl5.30-PG
+    description: |
+      Test bucardo unitest on X86 with perl 5.30 and PG 10
+    vars:
+      global_env:
+        PGVERSION: '10'
+
+- job:
+    name: bucardo-unitest-on-X86-perl5.30-PG11
+    parent: bucardo-unitest-on-X86-perl5.30-PG
+    description: |
+      Test bucardo unitest on X86 with perl 5.30 and PG 11
+    vars:
+      global_env:
+        PGVERSION: '11'
+
+- job:
+    name: bucardo-unitest-on-X86-perl5.30-PG12
+    parent: bucardo-unitest-on-X86-perl5.30-PG
+    description: |
+      Test bucardo unitest on X86 with perl 5.30 and PG 12
+    vars:
+      global_env:
+        PGVERSION: '12'
+
+- job:
+    name: bucardo-unitest-on-arm64-for-PR
+    parent: bucardo-unitest
+    description: |
+      Run unit test of bucardo
+    run: playbooks/bucardo-unitest/run.yaml
+    nodeset: ubuntu-bionic-arm64-huaweicloud-8u16g
+    tags:
+      - Category:Database
+      - Project:bucardo/bucardo
+      - Application:bucardo@master
+      - OS:ubuntu-bionic
+      - Arch:arm64
+      - BuildType:Test
+    timeout: 86400
+    vars:
+      global_env:
+        ARCH: 'arm64'
+
+- job:
+    name: bucardo-unitest-on-arm64-perl5.30-PG
+    parent: bucardo-unitest-on-arm64-for-PR
+    description: |
+      Test bucardo unitest on aarch64 with perl 5.30
+    vars:
+      global_env:
+        PERL_VERSION: '5.30'
+
+- job:
+    name: bucardo-unitest-on-arm64-perl5.30-PG12
+    parent: bucardo-unitest-on-arm64-perl5.30-PG
+    description: |
+      Test bucardo unitest on aarch64 with perl 5.30 and PG 12
+    vars:
+      global_env:
+        PGVERSION: '12'

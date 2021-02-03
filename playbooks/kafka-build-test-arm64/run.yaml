@@ -7,6 +7,13 @@
 
         sudo apt-get update
         sudo apt-get -q install -y maven
+        sudo apt-get -q install -y --no-install-recommends openjdk-8-jdk
+
+        # java setting
+        export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-arm64
+        export PATH=$JAVA_HOME/bin:$PATH
+        export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
+
 
         ./gradlew -PscalaVersion=2.12 clean compileJava compileScala compileTestJava compileTestScala \
             spotlessScalaCheck checkstyleMain checkstyleTest spotbugsMain rat \

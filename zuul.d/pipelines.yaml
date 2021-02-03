@@ -1234,9 +1234,9 @@
       mysql:
 
 - pipeline:
-    name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.10
+    name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.20
     description: |
-      Commenting "/test cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.10" enter this
+      Commenting "/test cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.20" enter this
       pipeline to run the tests job of Kubernetes+OpenStack E2E conformance test scenarios and receive an initial
       +/-1 Verified vote.
     manager: independent
@@ -1249,7 +1249,7 @@
             - reopened
         - event: pull_request
           action: comment
-          comment: (?i)^\s*\/test cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1\.10\s*$
+          comment: (?i)^\s*\/test cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1\.20\s*$
         - event: pull_request
           action: comment
           comment: (?i)^\s*\/retest\s*$
@@ -1271,46 +1271,9 @@
       mysql:
 
 - pipeline:
-    name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.11
+    name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.19
     description: |
-      Commenting "/test cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.11" enter this
-      pipeline to run the tests job of Kubernetes+OpenStack E2E conformance test scenarios and receive an initial
-      +/-1 Verified vote.
-    manager: independent
-    trigger:
-      github:
-      - event: pull_request
-        action:
-        - opened
-        - changed
-        - reopened
-      - event: pull_request
-        action: comment
-        comment: (?i)^\s*\/test cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1\.11\s*$
-      - event: pull_request
-        action: comment
-        comment: (?i)^\s*\/retest\s*$
-      - event: pull_request
-        action: comment
-        comment: (?i)^\s*\/test all\s*$
-    start:
-      github:
-        status: pending
-        comment: false
-        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
-    success:
-      github:
-        status: 'success'
-      mysql:
-    failure:
-      github:
-        status: 'failure'
-      mysql:
-
-- pipeline:
-    name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.12
-    description: |
-      Commenting "/test cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.12" enter this
+      Commenting "/test cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.19" enter this
       pipeline to run the tests job of Kubernetes+OpenStack E2E conformance test scenarios and receive an initial
       +/-1 Verified vote.
     manager: independent
@@ -1323,7 +1286,7 @@
             - reopened
         - event: pull_request
           action: comment
-          comment: (?i)^\s*\/test cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1\.12\s*$
+          comment: (?i)^\s*\/test cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1\.19\s*$
         - event: pull_request
           action: comment
           comment: (?i)^\s*\/retest\s*$
@@ -1345,9 +1308,9 @@
       mysql:
 
 - pipeline:
-    name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.13
+    name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.18
     description: |
-      Commenting "/test cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.13" enter this
+      Commenting "/test cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.18" enter this
       pipeline to run the tests job of Kubernetes+OpenStack E2E conformance test scenarios and receive an initial
       +/-1 Verified vote.
     manager: independent
@@ -1360,81 +1323,7 @@
             - reopened
         - event: pull_request
           action: comment
-          comment: (?i)^\s*\/test cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1\.13\s*$
-        - event: pull_request
-          action: comment
-          comment: (?i)^\s*\/retest\s*$
-        - event: pull_request
-          action: comment
-          comment: (?i)^\s*\/test all\s*$
-    start:
-      github:
-        status: pending
-        comment: false
-        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
-    success:
-      github:
-        status: 'success'
-      mysql:
-    failure:
-      github:
-        status: 'failure'
-      mysql:
-
-- pipeline:
-    name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.14
-    description: |
-      Commenting "/test cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.14" enter this
-      pipeline to run the tests job of Kubernetes+OpenStack E2E conformance test scenarios and receive an initial
-      +/-1 Verified vote.
-    manager: independent
-    trigger:
-      github:
-        - event: pull_request
-          action:
-            - opened
-            - changed
-            - reopened
-        - event: pull_request
-          action: comment
-          comment: (?i)^\s*\/test cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1\.14\s*$
-        - event: pull_request
-          action: comment
-          comment: (?i)^\s*\/retest\s*$
-        - event: pull_request
-          action: comment
-          comment: (?i)^\s*\/test all\s*$
-    start:
-      github:
-        status: pending
-        comment: false
-        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
-    success:
-      github:
-        status: 'success'
-      mysql:
-    failure:
-      github:
-        status: 'failure'
-      mysql:
-
-- pipeline:
-    name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.15
-    description: |
-      Commenting "/test cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.15" enter this
-      pipeline to run the tests job of Kubernetes+OpenStack E2E conformance test scenarios and receive an initial
-      +/-1 Verified vote.
-    manager: independent
-    trigger:
-      github:
-        - event: pull_request
-          action:
-            - opened
-            - changed
-            - reopened
-        - event: pull_request
-          action: comment
-          comment: (?i)^\s*\/test cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1\.15\s*$
+          comment: (?i)^\s*\/test cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1\.18\s*$
         - event: pull_request
           action: comment
           comment: (?i)^\s*\/retest\s*$
@@ -1544,4 +1433,41 @@
         from: info@openlabtesting.org
         to: builds@impala.apache.org
         subject: Daily IMPALA ARM Cron Job Test Result - SUCCESS
+      mysql:
+
+- pipeline:
+    name: bucardo-unitest
+    description: |
+      Commenting "/test bucardo-unitest" enter this pipeline to run
+      the unit tests of bucardo repo and receive an initial
+      +/-1 Verified vote.
+    manager: independent
+    trigger:
+      github:
+        - event: pull_request
+          action:
+            - opened
+            - changed
+            - reopened
+        - event: pull_request
+          action: comment
+          comment: (?i)^\s*\/test bucardo-unitest\s*$
+        - event: pull_request
+          action: comment
+          comment: (?i)^\s*\/retest\s*$
+        - event: pull_request
+          action: comment
+          comment: (?i)^\s*\/test all\s*$
+    start:
+      github:
+        status: pending
+        comment: false
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
+    success:
+      github:
+        status: 'success'
+      mysql:
+    failure:
+      github:
+        status: 'failure'
       mysql:

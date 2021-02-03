@@ -29,6 +29,10 @@
   become: yes
 
   tasks:
+    - name: Set a hostname
+      hostname:
+        name: "{{ inventory_hostname }}"
+
     - name: ship /etc/default/kubelet
       copy:
         dest: /etc/default/kubelet

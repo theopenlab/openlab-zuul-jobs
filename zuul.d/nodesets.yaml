@@ -120,3 +120,21 @@
     nodes:
       - name: impala-arm64-build-test
         label: ubuntu-bionic-arm64-huaweicloud-impala
+
+- nodeset:
+    name: ubuntu-focal
+    nodes:
+      - name: ubuntu-focal
+        label: ubuntu-focal
+
+- nodeset:
+    name: ubuntu-focal-large
+    nodes:
+      - name: ubuntu-focal-large
+        label: ubuntu-focal-large
+
+- nodeset:
+    name: ubuntu-focal-citynetwork
+    nodes:
+      - name: ubuntu-focal-citynetwork
+        label: ubuntu-focal-citynetwork
