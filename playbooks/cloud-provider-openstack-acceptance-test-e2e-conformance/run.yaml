@@ -39,6 +39,8 @@
           - build-essential
           - jq
 
+    # Nova VMs created in citynetwork use ubuntu as the default hostname, should be changed to the VM name so that
+    # the kubernetes node could be initialized.
     - name: Get instance hostname from Nova metadata service
       shell:
         executable: /bin/bash
@@ -54,12 +56,9 @@
     - name: hostname in /etc/hosts
       lineinfile:
         dest=/etc/hosts
-        regexp='.*{{ item }}$'
-        line="{{ hostvars[item].ansible_default_ipv4.address }} {{item}}"
+        regexp='^127\.0\.1\.1'
+        line=127.0.1.1 {{ hostname_output.stdout }}
         state=present
-      when: hostvars[item].ansible_default_ipv4.address is defined
-      loop:
-        - "{{ hostname_output.stdout }}"
 
     - name: ship /etc/default/kubelet
       copy:
