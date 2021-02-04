@@ -76,6 +76,7 @@
     fi
     kubelet --version
     apt-mark hold kubelet kubeadm kubectl
+    sleep 28800
     {{ kubeadm_join_cmd }}
     # for NFS pvc
     apt-get install -y nfs-common
