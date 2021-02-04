@@ -29,9 +29,27 @@
   become: yes
 
   tasks:
-    - name: Set a hostname
+    - name: Make sure the utility packages are installed
+      apt:
+        name: "{{ packages }}"
+        state: present
+        update_cache: yes
+      vars:
+        packages:
+          - build-essential
+          - jq
+
+    - name: Get instance hostname from Nova metadata service
+      shell:
+        executable: /bin/bash
+        cmd: |
+          nova_hostname=$(curl -sS http://169.254.169.254/openstack/latest/meta_data.json | jq -r '.hostname')
+          echo ${nova_hostname%%.novalocal}
+        register: hostname_output
+
+    - name: Set hostname
       hostname:
-        name: "{{ inventory_hostname }}"
+        name: "{{ hostname_output.stdout }}"
 
     - name: hostname in /etc/hosts
       lineinfile:
@@ -41,7 +59,7 @@
         state=present
       when: hostvars[item].ansible_default_ipv4.address is defined
       loop:
-        - "{{ inventory_hostname }}"
+        - "{{ hostname_output.stdout }}"
 
     - name: ship /etc/default/kubelet
       copy:
@@ -77,8 +95,6 @@
         cmd: |
           set -o pipefail
           set -ex
-
-          apt-get install build-essential jq -y
 
           export ARCH=amd64
           export IMAGE_NAMES=openstack-cloud-controller-manager
