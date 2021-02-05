@@ -57,7 +57,7 @@
       lineinfile:
         dest=/etc/hosts
         regexp='^127\.0\.1\.1'
-        line=127.0.1.1 {{ hostname_output.stdout }}
+        line='127.0.1.1 {{ hostname_output.stdout }}'
         state=present
 
     - name: ship /etc/default/kubelet
