@@ -61,6 +61,16 @@
     executable: /bin/bash
   when: ansible_distribution_release == "focal"
 
+- name: Workaround for devstack pip constraints on Ubuntu Focal
+  shell:
+    cmd: |
+      # workaround for bug https://bugs.launchpad.net/devstack/+bug/1906322
+      rm -f /opt/stack/new/devstack/tools/cap-pip.txt
+      sed -i 's|  "$flags|  "# $name filtered. Installed from local source:|g' /opt/stack/new/devstack/inc/python
+      sed -i 's|sudo -H -E python.*|sudo -H -E python${PYTHON3_VERSION} $LOCAL_PIP|g' /opt/stack/new/devstack/tools/install_pip.sh
+    executable: /bin/bash
+  when: ansible_distribution_release == "focal"
+
 - name: Install devstack on {{ global_env.OS_BRANCH }} branch
   shell:
     cmd: |
