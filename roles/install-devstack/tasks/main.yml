@@ -119,7 +119,6 @@
       echo "{$openrc}"
     executable: /bin/bash
   register: output
-  no_log: yes
 
 - name: Set fact for devstack openrc
   set_fact:
