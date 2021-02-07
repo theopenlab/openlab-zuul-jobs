@@ -53,6 +53,14 @@
   when:
     - global_env.OS_BRANCH == 'stable/mitaka'
 
+- name: Workaround for devstack installation on Ubuntu Focal
+  shell:
+    cmd: |
+      # workaround for bug https://bugs.launchpad.net/devstack/+bug/1891694
+      sudo rm -rf /usr/lib/python3/dist-packages/PyYAML-*.egg-info
+    executable: /bin/bash
+  when: ansible_distribution_release == "focal"
+
 - name: Install devstack on {{ global_env.OS_BRANCH }} branch
   shell:
     cmd: |
@@ -111,7 +119,6 @@
       echo "{$openrc}"
     executable: /bin/bash
   register: output
-  no_log: yes
 
 - name: Set fact for devstack openrc
   set_fact:
