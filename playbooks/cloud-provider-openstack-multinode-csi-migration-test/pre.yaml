@@ -1,3 +1,60 @@
+# Nova VMs created in citynetwork use ubuntu as the default hostname, should be changed to the VM name so that
+# the kubernetes node could be initialized.
+- hosts: all
+  name: workaround setting host and collecting data
+  become: true
+  tasks:
+    - name: get hostname from openstack
+      uri:
+        url: http://169.254.169.254/openstack/latest/meta_data.json
+        method: GET
+        body_format: json
+      register: os_meta_data
+
+    - name: setting os_hostname
+      set_fact:
+        os_hostname: "{{ os_meta_data.json.hostname.split('.') | first }}"
+
+    - name: detecting os_hostname
+      debug:
+        var: os_hostname
+
+    - name: old hostname to be replaced
+      debug:
+        var: ansible_hostname
+
+    - name: set hostname
+      hostname:
+        name: "{{ os_hostname }}"
+        use: systemd
+
+- hosts: all
+  name: workaround create /etc/hosts
+  become: true
+  tasks:
+    - name: new hostname
+      debug:
+        var: ansible_hostname
+
+    - name: create /etc/hosts
+      copy:
+        backup: true
+        dest: /etc/hosts
+        content: |
+          127.0.0.1 localhost
+
+          # The following lines are desirable for IPv6 capable hosts
+          ::1 ip6-localhost ip6-loopback
+          fe00::0 ip6-localnet
+          ff00::0 ip6-mcastprefix
+          ff02::1 ip6-allnodes
+          ff02::2 ip6-allrouters
+          ff02::3 ip6-allhosts
+
+          {% for host in ansible_play_hosts %}
+          {{ hostvars[host].ansible_default_ipv4.address }} {{ hostvars[host].ansible_hostname }}
+          {% endfor %}
+
 - hosts: k8s-master
   name: prepare configuration of kubeadm and set CSIMigration feature-gates
   become: yes
