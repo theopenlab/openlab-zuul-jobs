@@ -65,9 +65,11 @@
   shell:
     cmd: |
       # workaround for bug https://bugs.launchpad.net/devstack/+bug/1906322
+      # workaround for bug https://bugs.launchpad.net/devstack/+bug/1791892
       sed -i '/"Running gate_hook"/ a\
       rm -f /opt/stack/new/devstack/tools/cap-pip.txt\
       sed -i '\''s|  "$flags|  "# $name filtered. Installed from local source:|g'\'' /opt/stack/new/devstack/inc/python\
+      sed -i '\''s|$cmd_pip $upgrade |$cmd_pip $upgrade --ignore-installed |g'\'' /opt/stack/new/devstack/inc/python\
       sed -i '\''s|sudo -H -E python.*|sudo -H -E python${PYTHON3_VERSION} $LOCAL_PIP|g'\'' /opt/stack/new/devstack/tools/install_pip.sh' '{{ ansible_user_dir }}/workspace/devstack-gate/devstack-vm-gate-wrap.sh'
     executable: /bin/bash
   when: ansible_distribution_release == "focal"
