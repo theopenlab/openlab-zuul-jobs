@@ -1,46 +1,14 @@
 - hosts: all
-  name: workaround to set up hostname
   become: yes
 
-  tasks:
-    - name: Make sure the utility packages are installed
-      apt:
-        name: "{{ packages }}"
-        state: present
-        update_cache: yes
-      vars:
-        packages:
-          - jq
-
-    # Nova VMs created in citynetwork use ubuntu as the default hostname, should be changed to the VM name so that
-    # the kubernetes node could be initialized.
-    - name: Get instance hostname from Nova metadata service
-      shell:
-        executable: /bin/bash
-        cmd: |
-          nova_hostname=$(curl -sS http://169.254.169.254/openstack/latest/meta_data.json | jq -r '.hostname')
-          echo ${nova_hostname%%.novalocal}
-      register: hostname_output
-
-    - name: Set hostname
-      hostname:
-        name: "{{ hostname_output.stdout }}"
-
-    - name: hostname in /etc/hosts
-      lineinfile:
-        dest: /etc/hosts
-        regexp: '^127\.0\.1\.1'
-        line: '127.0.1.1 {{ hostname_output.stdout }}'
-        state: present
-
-- hosts: all
   roles:
+    - cloud-instance-hostname
     - config-golang
     - export-cloud-openrc
     - role: install-k8s
       vars:
         customize_docker_version: '20.10'
-  become: yes
+
   tasks:
     - name: Prepare base alpine image
       shell:
