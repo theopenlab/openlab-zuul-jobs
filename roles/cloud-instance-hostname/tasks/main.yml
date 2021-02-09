@@ -22,7 +22,7 @@
 - name: Hostname | Set hostname
   hostname:
     name: "{{ hostname_output.stdout }}"
-    use: debian
+    use: systemd
 
 - name: Hostname | Set hostname in /etc/hosts
   lineinfile:
