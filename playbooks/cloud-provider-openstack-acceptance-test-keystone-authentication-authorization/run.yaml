@@ -31,7 +31,8 @@
           # Build cloud-provider-openstack binaries
           make build
 
-          apt-get install python-pip -y
+          # if python-pip cannot be found, install python3-pip
+          apt-get install python-pip -y || apt-get install python3-pip -y
           pip install -U python-openstackclient
 
           # Create cloud-config
