@@ -35,31 +35,31 @@
         - frocksdb-build-and-test-arm64
 
 ####################### periodic jobs on 00:00 ##########################
-- project:
-    name: pytorch/pytorch
-    periodic-0:
-      jobs:
-        - pytorch-arm64-build-daily-master-py36:
-            branches: master
-        - pytorch-arm64-build-daily-master-py37:
-            branches: master
-        - pytorch-arm64-build-daily-master-py38:
-            branches: master
-        - pytorch-arm64-build-daily-v1.6.0:
-            branches: master
-        - pytorch-arm64-build-daily-v1.5.0:
-            branches: master
-        - pytorch-arm64-build-daily-v1.4.0:
-            branches: master
+#- project:
+#    name: pytorch/pytorch
+#    periodic-0:
+#      jobs:
+#        - pytorch-arm64-build-daily-master-py36:
+#            branches: master
+#        - pytorch-arm64-build-daily-master-py37:
+#            branches: master
+#        - pytorch-arm64-build-daily-master-py38:
+#            branches: master
+#        - pytorch-arm64-build-daily-v1.6.0:
+#            branches: master
+#        - pytorch-arm64-build-daily-v1.5.0:
+#            branches: master
+#        - pytorch-arm64-build-daily-v1.4.0:
+#            branches: master
 
 ####################### periodic jobs on 02:00 ##########################
 
-- project:
-    name: apache/kafka
-    periodic-4/16:
-      jobs:
-        - kafka-build-test-arm64:
-            branches: trunk
+#- project:
+#    name: apache/kafka
+#    periodic-4/16:
+#      jobs:
+#        - kafka-build-test-arm64:
+#            branches: trunk
 
 ####################### periodic jobs on 04:00 ##########################
 
@@ -68,12 +68,12 @@
 ####################### periodic jobs on 08:00 ##########################
 
 ####################### periodic jobs on 10:00##########################
-- project:
-    name: apache/kudu
-    periodic-kudu-mail:
-      jobs:
-        - kudu-build-test-arm64-in-docker:
-            branches: master
+#- project:
+#    name: apache/kudu
+#    periodic-kudu-mail:
+#      jobs:
+#        - kudu-build-test-arm64-in-docker:
+#            branches: master
 
 - project:
     name: kubernetes-sigs/cluster-api-provider-openstack
@@ -83,27 +83,27 @@
             branches: master
 
 ####################### periodic jobs on 12:00##########################
-- project:
-    name: greenplum-db/gpdb
-    periodic-12:
-      jobs:
-        - gpdb-installcheck-world-tests-on-arm64:
-            branches: master
+#- project:
+#    name: greenplum-db/gpdb
+#    periodic-12:
+#      jobs:
+#        - gpdb-installcheck-world-tests-on-arm64:
+#            branches: master
 
 ####################### periodic jobs on 12:30##########################
-- project:
-    name: apache/impala
-    periodic-impala-mail:
-      jobs:
-        - impala-build-test-arm64:
-            branches: master
-
-- project:
-    name: apache/storm
-    periodic-12:
-      jobs:
-        - storm-build-test-arm64:
-            branches: master
+#- project:
+#    name: apache/impala
+#    periodic-impala-mail:
+#      jobs:
+#        - impala-build-test-arm64:
+#            branches: master
+#
+#- project:
+#    name: apache/storm
+#    periodic-12:
+#      jobs:
+#        - storm-build-test-arm64:
+#            branches: master
 
 ####################### periodic jobs on 14:00##########################
 - project:
@@ -140,12 +140,12 @@
             branches: master
 
 ####################### periodic jobs on 18:00##########################
-- project:
-    name: tensorflow/tensorflow
-    periodic-18:
-      jobs:
-        - tensorflow-arm64-build-daily-master:
-            branches: master
+#- project:
+#    name: tensorflow/tensorflow
+#    periodic-18:
+#      jobs:
+#        - tensorflow-arm64-build-daily-master:
+#            branches: master
 #     periodic-22-per-2-months:
 #       jobs:
 #         - tensorflow-arm64-release-build-v1.15.3-py35:
@@ -167,45 +167,45 @@
 #         - tensorflow-v2.1.0-cpu-arm64-release-build-show:
 #             branches: master
 
-- project:
-    name: kunpengcompute/hadoop
-    periodic-18:
-      jobs:
-        - hadoop-2.7.7-openeuler-build-test:
-            branches: release-2.7.7-aarch64
+#- project:
+#    name: kunpengcompute/hadoop
+#    periodic-18:
+#      jobs:
+#        - hadoop-2.7.7-openeuler-build-test:
+#            branches: release-2.7.7-aarch64
 
 ####################### periodic jobs on 20:00##########################
-- project:
-    name: apache/flink
-    periodic-20-flink-mail:
-      jobs:
-        - flink-build-and-test-arm64-core-and-tests:
-            branches: master
-        - flink-build-and-test-arm64-libraies-and-blink_planner:
-            branches: master
-        - flink-build-and-test-arm64-kafka_gelly-and-connectors:
-            branches: master
-        - flink-build-and-test-arm64-misc:
-            branches: master
-        - flink-build-and-test-arm64-scheduler-ng-core-and-ng-tests:
-            branches: master
-        - flink-end-to-end-test-cron-openlab:
-            branches: master
-        - flink-end-to-end-test-cron-hadoop241:
-            branches: master
-        - flink-end-to-end-test-cron-hadoop313:
-            branches: master
-        - flink-end-to-end-test-cron-jdk11:
-            branches: master
-        - flink-end-to-end-test-cron-scala212:
-            branches: master
+#- project:
+#    name: apache/flink
+#    periodic-20-flink-mail:
+#      jobs:
+#        - flink-build-and-test-arm64-core-and-tests:
+#            branches: master
+#        - flink-build-and-test-arm64-libraies-and-blink_planner:
+#            branches: master
+#        - flink-build-and-test-arm64-kafka_gelly-and-connectors:
+#            branches: master
+#        - flink-build-and-test-arm64-misc:
+#            branches: master
+#        - flink-build-and-test-arm64-scheduler-ng-core-and-ng-tests:
+#            branches: master
+#        - flink-end-to-end-test-cron-openlab:
+#            branches: master
+#        - flink-end-to-end-test-cron-hadoop241:
+#            branches: master
+#        - flink-end-to-end-test-cron-hadoop313:
+#            branches: master
+#        - flink-end-to-end-test-cron-jdk11:
+#            branches: master
+#        - flink-end-to-end-test-cron-scala212:
+#            branches: master
 
 ####################### periodic jobs on 22:00##########################
 
 ####################### periodic jobs on 2:00 per Sunday##########################
-- project:
-    name: mysql/mysql-server
-    periodic-2-weekly-7:
-      jobs:
-        - mysql-5.7-upstream-full-test-on-arm64:
-            branches: "refs/heads/8.0"
+#- project:
+#    name: mysql/mysql-server
+#    periodic-2-weekly-7:
+#      jobs:
+#        - mysql-5.7-upstream-full-test-on-arm64:
+#            branches: "refs/heads/8.0"
