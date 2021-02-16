@@ -36,3 +36,7 @@
           python3.7 upload_e2e.py --junit=$LOG_DIR/junit*.xml --log=$LOG_DIR/e2e.log \
               --bucket=gs://k8s-conformance-openstack/$PIPELINE_LOGS_DIR/ci-'{{ zuul.job }}' \
               --key-file='{{ hostvars[inventory_hostname]["gcp_key_file"] }}'
+
+          python3.7 upload_e2e.py --junit=$LOG_DIR/junit*.xml --log=$LOG_DIR/e2e.log \
+              --bucket=gs://k8s-conform-provider-openstack/$PIPELINE_LOGS_DIR/ci-'{{ zuul.job }}' \
+              --key-file='{{ hostvars[inventory_hostname]["gcp_cpo_key_file"] }}'
