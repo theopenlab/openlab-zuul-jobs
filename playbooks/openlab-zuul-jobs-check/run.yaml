@@ -38,7 +38,7 @@
           export CRYPTOGRAPHY_DONT_BUILD_RUST=1
 
           pip install ansible-lint[core]
-          find playbooks -type f -regex '.*.y[a]?ml' -not -path "{{ excluded_path }}" -print0 | xargs -t -n1 -0 ansible-lint -xrole-name,no-tabs,no-jinja-nesting,risky-file-permissions,no-changed-when,var-spacing,command-instead-of-shell,command-instead-of-module,experimental
+          find playbooks -type f -regex '.*.y[a]?ml' -not -path "{{ excluded_path }}" -print0 | xargs -t -n1 -0 ansible-lint -x106,203,204,207,208,301,206,305,303,405
           find playbooks -type f -regex '.*.y[a]?ml' -not -path "{{ excluded_path }}" -exec ansible-playbook -v --syntax-check -i ./playbooks/openlab-zuul-jobs-check/inventory \{\} + > /dev/null
         executable: /bin/bash
         chdir: '{{ zuul.project.src_dir }}'
