@@ -1543,22 +1543,6 @@
         RELEASE: 5.7.27
         BOOST_VERSION: 1.59.0
 
-- job:
-    name: kafka-build-test-arm64
-    parent: init-test
-    description: |
-      Full test for kafka on arm64.
-    run: playbooks/kafka-build-test-arm64/run.yaml
-    nodeset: ubuntu-bionic-arm64-huaweicloud-8u16g
-    tags:
-      - Category:Bigdata
-      - Project:apache/kafka
-      - Application:kafka@trunk
-      - OS:ubuntu-bionic
-      - Arch:arm64
-      - BuildType:Test
-    timeout: 86400
-
 # Kubernetes cloud-provider-openstack jobs
 - job:
     name: bucardo-unitest
