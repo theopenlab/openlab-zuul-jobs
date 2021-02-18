@@ -37,7 +37,7 @@
           export ANSIBLE_ACTION_PLUGINS=/opt/zuul/zuul/ansible/base/actiongeneral
           export CRYPTOGRAPHY_DONT_BUILD_RUST=1
 
-          pip install ansible-lint[core]
+          pip install ansible-lint==4.3.7
           find playbooks -type f -regex '.*.y[a]?ml' -not -path "{{ excluded_path }}" -print0 | xargs -t -n1 -0 ansible-lint -x106,203,204,207,208,301,206,305,303,405
           find playbooks -type f -regex '.*.y[a]?ml' -not -path "{{ excluded_path }}" -exec ansible-playbook -v --syntax-check -i ./playbooks/openlab-zuul-jobs-check/inventory \{\} + > /dev/null
         executable: /bin/bash
