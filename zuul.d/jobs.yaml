@@ -534,6 +534,7 @@
       - citynetwork_credentials
       - kubeconfig
       - gcp_account
+      - gcp_account_cpo
       - swr
     vars:
       k8s_os_provider_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack'
@@ -594,6 +595,7 @@
     secrets:
       - citynetwork_credentials
       - gcp_account
+      - gcp_account_cpo
       - swr
 
 - job:
