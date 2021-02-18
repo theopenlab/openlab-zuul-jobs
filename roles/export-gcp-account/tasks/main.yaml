@@ -15,11 +15,20 @@
 - name: Set google account key file path for cpo
   set_fact:
     gcp_cpo_key_file: '/tmp/gcp_cpo_key.json'
-  no_log: yes
 
+- name: DEBUG gcp_cpo_key_file
+  debug:
+    var: gcp_cpo_key_file
+
+- name: DEBUG secret accessible
+  debug:
+    msg: "gcp_account_cpo.key_json is defined: {{ gcp_account_cpo.key_json is defined }}"
+
+# TODO(chrigl): ignoring errors for now to not block other jobs
 - name: Save google account key file for cpo
   shell:
     cmd: |
-      echo '{{ gcp_account_cpo.key_json }}' > '{{ hostvars[inventory_hostname]["gcp_cpo_key_file"] }}'
+      echo '{{ gcp_account_cpo.key_json }}' > '{{ gcp_cpo_key_file }}'
     executable: /bin/bash
   no_log: yes
+  ignore_errors: yes
