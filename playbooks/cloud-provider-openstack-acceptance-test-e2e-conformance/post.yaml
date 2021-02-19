@@ -37,6 +37,8 @@
               --bucket=gs://k8s-conformance-openstack/$PIPELINE_LOGS_DIR/ci-'{{ zuul.job }}' \
               --key-file='{{ hostvars[inventory_hostname]["gcp_key_file"] }}'
 
+          # upload e2e log to new google storage bucket.
+          # TODO(chrigl): errors are ignored for now, to not block any jobs.
           python3.7 upload_e2e.py --junit=$LOG_DIR/junit*.xml --log=$LOG_DIR/e2e.log \
               --bucket=gs://k8s-conform-provider-openstack/$PIPELINE_LOGS_DIR/ci-'{{ zuul.job }}' \
-              --key-file='{{ hostvars[inventory_hostname]["gcp_cpo_key_file"] }}'
+              --key-file='{{ gcp_cpo_key_file }}' || true
