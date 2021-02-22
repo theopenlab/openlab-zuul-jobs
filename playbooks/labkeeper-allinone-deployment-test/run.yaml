@@ -45,7 +45,6 @@
         chmod 600 openlab.pem
         chown ubuntu.ubuntu openlab.pem
         echo 'youneverknow' > vault-password.txt
-        sleep 18000
         # Ansible will not load ansible.cfg automatically because this directory is world writable
         export ANSIBLE_CONFIG=ansible.cfg
         ansible-playbook playbooks/site.yaml -i inventory/test-allinone.yaml -e \
