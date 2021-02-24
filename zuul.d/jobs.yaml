@@ -533,7 +533,6 @@
     secrets:
       - citynetwork_credentials
       - kubeconfig
-      - gcp_account
       - gcp_account_cpo
       - swr
     vars:
@@ -594,7 +593,6 @@
     nodeset: ubuntu-xenial-k8s-cluster-cpo
     secrets:
       - citynetwork_credentials
-      - gcp_account
       - gcp_account_cpo
       - swr
 
