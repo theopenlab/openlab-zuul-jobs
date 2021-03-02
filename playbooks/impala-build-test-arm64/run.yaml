@@ -19,6 +19,8 @@
           cp -r $IMPALA_HOME/../native-toolchain/check "$result_dir"
           exit 1
         fi
+        
+        apt upgrade -y openjdk-8-jdk
 
         if ! bin/run-all-tests.sh; then
           exit 1
