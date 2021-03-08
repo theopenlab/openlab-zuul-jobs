@@ -849,6 +849,8 @@
     secrets:
       - citynetwork_credentials
       - swr
+    vars:
+      go_version: '1.15'
 
 - job:
     name: cloud-provider-openstack-multinode-csi-migration-test
