@@ -79,17 +79,18 @@
           kubectl -n kube-system get ds openstack-cloud-controller-manager -o json | jq -r '.metadata.labels | keys | .[]'
       register: result
       until: '"PR" not in result.stdout_lines'
-      retries: 30
+      retries: 60
       delay: 10
 
-    - name: Update openstack-cloud-controller-manager image and add PR label if signal file doesn't exist
+    - name: Update openstack-cloud-controller-manager daemonset and create signal file
       shell:
         executable: /bin/bash
         cmd: |
           export KUBECONFIG={{ ansible_user_dir }}/.kube/config
           kubectl -n kube-system set image daemonset/openstack-cloud-controller-manager openstack-cloud-controller-manager=swr.ap-southeast-3.myhuaweicloud.com/openlab/openstack-cloud-controller-manager:{{ zuul.change }}
           kubectl -n kube-system label daemonset openstack-cloud-controller-manager PR={{ zuul.change }}
-        creates: "{{ ansible_user_dir }}/pr_label.signal"
+          touch {{ ansible_user_dir }}/pr-{{ zuul.change }}.signal
+        creates: "{{ ansible_user_dir }}/pr-{{ zuul.change }}.signal"
 
     - name: Wait for openstack-cloud-controller-manager up and running
       shell:
