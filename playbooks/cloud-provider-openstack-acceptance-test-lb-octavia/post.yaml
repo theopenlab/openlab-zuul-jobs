@@ -5,16 +5,8 @@
     KUBECONFIG: "{{ ansible_user_dir }}/.kube/config"
 
   tasks:
-    - name: Clean up k8s services
-      shell:
-        executable: /bin/bash
-        cmd: |
-          set -o pipefail
-          services=$(kubectl -n octavia-lb-test get svc -o json | jq -r '.items[] | .metadata.name')
-          for i in $services; do kubectl -n octavia-lb-test delete svc $i; done
-          # Sleep 10s to make sure occm finishes deleting all the cloud resources.
-          sleep 10
-
-    - name: Remove PR label for openstack-cloud-controller-manager
+    - name: Removv openstack-cloud-controller-manager PR label only if the signal file exsits.
       shell: kubectl -n kube-system label ds openstack-cloud-controller-manager PR-
+      args:
+        removes: "{{ ansible_user_dir }}/pr_label.signal"
       ignore_errors: True
