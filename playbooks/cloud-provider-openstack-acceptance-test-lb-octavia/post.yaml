@@ -5,8 +5,8 @@
     KUBECONFIG: "{{ ansible_user_dir }}/.kube/config"
 
   tasks:
-    - name: Removv openstack-cloud-controller-manager PR label only if the signal file exsits.
+    - name: Remove openstack-cloud-controller-manager PR label only if the signal file exsits.
       shell: kubectl -n kube-system label ds openstack-cloud-controller-manager PR-
       args:
-        removes: "{{ ansible_user_dir }}/pr_label.signal"
+        removes: "{{ ansible_user_dir }}/pr-{{ zuul.change }}.signal"
       ignore_errors: True
