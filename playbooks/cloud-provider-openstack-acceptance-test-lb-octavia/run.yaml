@@ -82,13 +82,14 @@
       retries: 30
       delay: 10
 
-    - name: Update openstack-cloud-controller-manager with the new docker image and add testing label
+    - name: Update openstack-cloud-controller-manager image and add PR label if signal file doesn't exist
       shell:
         executable: /bin/bash
         cmd: |
           export KUBECONFIG={{ ansible_user_dir }}/.kube/config
           kubectl -n kube-system set image daemonset/openstack-cloud-controller-manager openstack-cloud-controller-manager=swr.ap-southeast-3.myhuaweicloud.com/openlab/openstack-cloud-controller-manager:{{ zuul.change }}
           kubectl -n kube-system label daemonset openstack-cloud-controller-manager PR={{ zuul.change }}
+        creates: "{{ ansible_user_dir }}/pr_label.signal"
 
     - name: Wait for openstack-cloud-controller-manager up and running
       shell:
