@@ -7,6 +7,11 @@
     - name: Install Pre requirements
       shell:
         cmd: |
+          add-apt-repository -y ppa:deadsnakes/ppa
+          apt update
+          apt install -y python3.7 python3.7-dev
+          rm /usr/bin/python3
+          ln -s /usr/bin/python3.7 /usr/bin/python3
           curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
           python3 get-pip.py
           apt update
