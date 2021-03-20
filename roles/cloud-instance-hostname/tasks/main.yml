@@ -19,6 +19,11 @@
       echo ${nova_hostname%%.novalocal}
   register: hostname_output
 
+- name: Hostname | Ensure dbus installation as a dependency of hostnamectl
+  apt:
+    name: dbus
+    state: present
+
 - name: Hostname | Set hostname
   hostname:
     name: "{{ hostname_output.stdout }}"
