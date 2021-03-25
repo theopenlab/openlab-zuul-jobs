@@ -372,106 +372,106 @@
 
 ## ========== gophercloud + openstack jobs ==============
 ## grandson job for stein
-- job:
-    name: gophercloud-v0.4.0-acceptance-test-stein
-    parent: gophercloud-acceptance-test-stein
-    description: |
-      Run gophercloud v0.4.0 acceptance test on stein branch of OpenStack
-    override-checkout: v0.4.0
-    tags:
-      - Category:Cloud
-      - Project:gophercloud/gophercloud
-      - Application:gophercloud@v0.4.0
-      - Application:OpenStack@stein
-      - Application:Go@1.12.1
-      - Arch:x86_64
-      - OS:ubuntu-xenial
-      - BuildType:Integration test
-
-## grandson job for rocky
-- job:
-    name: gophercloud-v0.4.0-acceptance-test-rocky
-    parent: gophercloud-acceptance-test-rocky
-    description: |
-      Run gophercloud v0.4.0 acceptance test on rocky branch of OpenStack
-    override-checkout: v0.4.0
-    tags:
-      - Category:Cloud
-      - Project:gophercloud/gophercloud
-      - Application:gophercloud@v0.4.0
-      - Application:OpenStack@rocky
-      - Application:Go@1.12.1
-      - Arch:x86_64
-      - OS:ubuntu-xenial
-      - BuildType:Integration test
-
-## grandson job for queens
-- job:
-    name: gophercloud-v0.4.0-acceptance-test-queens
-    parent: gophercloud-acceptance-test-queens
-    description: |
-      Run gophercloud v0.4.0 acceptance test on queens branch of OpenStack
-    override-checkout: v0.4.0
-    tags:
-      - Category:Cloud
-      - Project:gophercloud/gophercloud
-      - Application:gophercloud@v0.4.0
-      - Application:OpenStack@queens
-      - Application:Go@1.12.1
-      - Arch:x86_64
-      - OS:ubuntu-xenial
-      - BuildType:Integration test
-
-## grandson job for pike
-- job:
-    name: gophercloud-v0.4.0-acceptance-test-pike
-    parent: gophercloud-acceptance-test-pike
-    description: |
-      Run gophercloud v0.4.0 acceptance test on pike branch of OpenStack
-    override-checkout: v0.4.0
-    tags:
-      - Category:Cloud
-      - Project:gophercloud/gophercloud
-      - Application:gophercloud@v0.4.0
-      - Application:OpenStack@pike
-      - Application:Go@1.12.1
-      - Arch:x86_64
-      - OS:ubuntu-xenial
-      - BuildType:Integration test
-
-## grandson job for ocata
-- job:
-    name: gophercloud-v0.4.0-acceptance-test-ocata
-    parent: gophercloud-acceptance-test-ocata
-    description: |
-      Run gophercloud v0.4.0 acceptance test on ocata branch of OpenStack
-    override-checkout: v0.4.0
-    tags:
-      - Category:Cloud
-      - Project:gophercloud/gophercloud
-      - Application:gophercloud@v0.4.0
-      - Application:OpenStack@ocata
-      - Application:Go@1.12.1
-      - Arch:x86_64
-      - OS:ubuntu-xenial
-      - BuildType:Integration test
-
-## grandson job for newton
-- job:
-    name: gophercloud-v0.4.0-acceptance-test-newton
-    parent: gophercloud-acceptance-test-newton
-    description: |
-      Run gophercloud v0.4.0 acceptance test on newton branch of OpenStack
-    override-checkout: v0.4.0
-    tags:
-      - Category:Cloud
-      - Project:gophercloud/gophercloud
-      - Application:gophercloud@v0.4.0
-      - Application:OpenStack@newton
-      - Application:Go@1.12.1
-      - Arch:x86_64
-      - OS:ubuntu-xenial
-      - BuildType:Integration test
+# - job:
+#     name: gophercloud-v0.4.0-acceptance-test-stein
+#     parent: gophercloud-acceptance-test-stein
+#     description: |
+#       Run gophercloud v0.4.0 acceptance test on stein branch of OpenStack
+#     override-checkout: v0.4.0
+#     tags:
+#       - Category:Cloud
+#       - Project:gophercloud/gophercloud
+#       - Application:gophercloud@v0.4.0
+#       - Application:OpenStack@stein
+#       - Application:Go@1.12.1
+#       - Arch:x86_64
+#       - OS:ubuntu-xenial
+#       - BuildType:Integration test
+#
+### grandson job for rocky
+# - job:
+#     name: gophercloud-v0.4.0-acceptance-test-rocky
+#     parent: gophercloud-acceptance-test-rocky
+#     description: |
+#       Run gophercloud v0.4.0 acceptance test on rocky branch of OpenStack
+#     override-checkout: v0.4.0
+#     tags:
+#       - Category:Cloud
+#       - Project:gophercloud/gophercloud
+#       - Application:gophercloud@v0.4.0
+#       - Application:OpenStack@rocky
+#       - Application:Go@1.12.1
+#       - Arch:x86_64
+#       - OS:ubuntu-xenial
+#       - BuildType:Integration test
+#
+# ## grandson job for queens
+# - job:
+#     name: gophercloud-v0.4.0-acceptance-test-queens
+#     parent: gophercloud-acceptance-test-queens
+#     description: |
+#       Run gophercloud v0.4.0 acceptance test on queens branch of OpenStack
+#     override-checkout: v0.4.0
+#     tags:
+#       - Category:Cloud
+#       - Project:gophercloud/gophercloud
+#       - Application:gophercloud@v0.4.0
+#       - Application:OpenStack@queens
+#       - Application:Go@1.12.1
+#       - Arch:x86_64
+#       - OS:ubuntu-xenial
+#       - BuildType:Integration test
+#
+# ## grandson job for pike
+# - job:
+#     name: gophercloud-v0.4.0-acceptance-test-pike
+#     parent: gophercloud-acceptance-test-pike
+#     description: |
+#       Run gophercloud v0.4.0 acceptance test on pike branch of OpenStack
+#     override-checkout: v0.4.0
+#     tags:
+#       - Category:Cloud
+#       - Project:gophercloud/gophercloud
+#       - Application:gophercloud@v0.4.0
+#       - Application:OpenStack@pike
+#       - Application:Go@1.12.1
+#       - Arch:x86_64
+#       - OS:ubuntu-xenial
+#       - BuildType:Integration test
+#
+# ## grandson job for ocata
+# - job:
+#     name: gophercloud-v0.4.0-acceptance-test-ocata
+#     parent: gophercloud-acceptance-test-ocata
+#     description: |
+#       Run gophercloud v0.4.0 acceptance test on ocata branch of OpenStack
+#     override-checkout: v0.4.0
+#     tags:
+#       - Category:Cloud
+#       - Project:gophercloud/gophercloud
+#       - Application:gophercloud@v0.4.0
+#       - Application:OpenStack@ocata
+#       - Application:Go@1.12.1
+#       - Arch:x86_64
+#       - OS:ubuntu-xenial
+#       - BuildType:Integration test
+#
+# ## grandson job for newton
+# - job:
+#     name: gophercloud-v0.4.0-acceptance-test-newton
+#     parent: gophercloud-acceptance-test-newton
+#     description: |
+#       Run gophercloud v0.4.0 acceptance test on newton branch of OpenStack
+#     override-checkout: v0.4.0
+#     tags:
+#       - Category:Cloud
+#       - Project:gophercloud/gophercloud
+#       - Application:gophercloud@v0.4.0
+#       - Application:OpenStack@newton
+#       - Application:Go@1.12.1
+#       - Arch:x86_64
+#       - OS:ubuntu-xenial
+#       - BuildType:Integration test
 
 # terraform-provider-telefonicaopencloud acceptance tests with Telefonica cloud
 # the job is disabled now
