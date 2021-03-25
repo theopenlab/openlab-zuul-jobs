@@ -94,6 +94,18 @@
     vars:
       go_version: '1.14'
 
+### job that runs with admin creds
+- job:
+    name: terraform-provider-openstack-acceptance-test-admin
+    parent: golang-test-main
+    description: |
+      Run terraform-provider-openstack acceptance test against master OpenStack with admin creds
+    run: playbooks/terraform-provider-openstack-acceptance-test-admin/run.yaml
+    nodeset: ubuntu-bionic
+    timeout: 21600
+    vars:
+      go_version: '1.14'
+
 ### son job against stein branch of OpenStack
 - job:
     name: terraform-provider-openstack-acceptance-test-stein
