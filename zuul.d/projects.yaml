@@ -108,22 +108,22 @@
             branches: master
 
 ####################### periodic jobs on 16:00##########################
-# - project:
-#     name: gophercloud/gophercloud
-#     periodic-16:
-#       jobs:
-#         - gophercloud-v0.4.0-acceptance-test-stein:
-#             branches: master
-#         - gophercloud-v0.4.0-acceptance-test-rocky:
-#             branches: master
-#         - gophercloud-v0.4.0-acceptance-test-queens:
-#             branches: master
-#         - gophercloud-v0.4.0-acceptance-test-pike:
-#             branches: master
-#         - gophercloud-v0.4.0-acceptance-test-ocata:
-#             branches: master
-#         - gophercloud-v0.4.0-acceptance-test-newton:
-#             branches: master
+- project:
+    name: gophercloud/gophercloud
+    periodic-16:
+      jobs:
+        - gophercloud-v0.4.0-acceptance-test-stein:
+            branches: master
+        - gophercloud-v0.4.0-acceptance-test-rocky:
+            branches: master
+        - gophercloud-v0.4.0-acceptance-test-queens:
+            branches: master
+        - gophercloud-v0.4.0-acceptance-test-pike:
+            branches: master
+        - gophercloud-v0.4.0-acceptance-test-ocata:
+            branches: master
+        - gophercloud-v0.4.0-acceptance-test-newton:
+            branches: master
 
 ####################### periodic jobs on 18:00##########################
 - project:
