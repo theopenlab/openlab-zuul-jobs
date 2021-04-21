@@ -195,17 +195,23 @@
 
           export GO111MODULE=on
           export KUBECONFIG=/var/run/kubernetes/admin.kubeconfig
-
           function dump_container_logs {
             controller_pod=$({{ kubectl }} -n kube-system get pods -l app=csi-cinder-controllerplugin -o name  | head -n 1)
             nodeplugin_pod=$({{ kubectl }} -n kube-system get pods -l app=csi-cinder-nodeplugin -o name  | head -n 1)
 
             if [[ ! -z "$controller_pod" ]]; then
               {{ kubectl }} -n kube-system logs "$controller_pod" -c cinder-csi-plugin > "$LOG_DIR/csi-cinder-controllerplugin.txt"
+              {{ kubectl }} -n kube-system logs "$controller_pod" -c csi-attacher > "$LOG_DIR/csi-external-attacher.txt"
+              {{ kubectl }} -n kube-system logs "$controller_pod" -c csi-provisioner > "$LOG_DIR/csi-external-provisioner.txt"
+              {{ kubectl }} -n kube-system logs "$controller_pod" -c csi-snapshotter > "$LOG_DIR/csi-external-snapshotter.txt"
+              {{ kubectl }} -n kube-system logs "$controller_pod" -c csi-resizer > "$LOG_DIR/csi-external-resizer.txt"
+              {{ kubectl }} -n kube-system logs "$controller_pod" -c liveness-probe >  "$LOG_DIR/csi-controller-liveness-probe.txt"
             fi
 
             if [[ ! -z "$nodeplugin_pod" ]]; then
                 {{ kubectl }} -n kube-system logs "$nodeplugin_pod" -c cinder-csi-plugin > "$LOG_DIR/csi-cinder-nodeplugin.txt"
+                {{ kubectl }} -n kube-system logs "$nodeplugin_pod" -c node-driver-registrar > "$LOG_DIR/csi-cinder-driver-registrar.txt"
+                {{ kubectl }} -n kube-system logs "$nodeplugin_pod" -c liveness-probe >  "$LOG_DIR/csi-node-liveness-probe.txt"
             fi
           }
 
