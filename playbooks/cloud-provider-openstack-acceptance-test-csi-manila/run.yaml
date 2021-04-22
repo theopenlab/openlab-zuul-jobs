@@ -63,10 +63,8 @@
           '{{ kubectl }}' config set-context local --cluster=local --user=myself
           '{{ kubectl }}' config use-context local
 
-          # Install Helm
-          # We only need the client
-          curl -L https://git.io/get_helm.sh | bash
-          helm init --client-only
+          # Install Helm 3
+          curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
 
           # Build CSI Manila plugin binary and Docker image
           make image-manila-csi-plugin
@@ -156,7 +154,7 @@
                 dir: /var/lib/kubelet/plugins/csi-nfsplugin
                 sockFile: csi.sock
           YAML
-          helm template charts/manila-csi-plugin -f override-helm-values.yaml --name sharedstorage | '{{ kubectl }}' create -f -
+          helm template sharedstorage charts/manila-csi-plugin -f override-helm-values.yaml | '{{ kubectl }}' create -f -
 
           #
           # Prepare the prerequisites for the tests
