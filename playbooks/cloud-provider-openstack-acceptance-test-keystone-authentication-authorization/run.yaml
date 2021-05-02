@@ -1,15 +1,38 @@
 - hosts: all
+  become: yes
+
   roles:
-    - config-golang
-    - role: install-k8s
-      vars:
-        customize_docker_version: '20.10'
+    - role: config-golang
+      go_version: '1.15.11'
+    - install-docker
     - clone-devstack-gate-to-workspace
     - role: install-devstack
       environment:
         OVERRIDE_ENABLED_SERVICES: 'key,mysql'
-  become: yes
+
   tasks:
+    - name: Install python 3
+      raw: test -e /usr/bin/python3 || (apt -y update && apt install -y python3-minimal)
+
+    - name: Install packages
+      apt:
+        name: "{{ packages }}"
+        state: present
+        update_cache: yes
+      vars:
+        packages:
+          - python3-pip
+          - jq
+
+    - name: Install pypi libraries
+      pip:
+        name: "{{ libraries }}"
+      ignore_errors: True
+      vars:
+        libraries:
+          - python-openstackclient
+          - httpie
+
     - name: Prepare base alpine image
       shell:
          cmd: |
@@ -19,118 +42,83 @@
            docker logout swr.ap-southeast-3.myhuaweicloud.com
       no_log: yes
 
-    - name: Run keystone authentication and authorization acceptance tests with cloud-provider-openstack
+    - name: Air-gap deploy k3s
       shell:
+        executable: /bin/bash
+        creates: /etc/rancher/k3s/k3s.yaml
         cmd: |
-          set -x
-          set -e
-          set -o pipefail
+          set -ex
 
-          export ARCH=${ARCH:-amd64}
-          export BUILD_CMDS='k8s-keystone-auth openstack-cloud-controller-manager'
-          # Build cloud-provider-openstack binaries
-          make build
-
-          # if python-pip cannot be found, install python3-pip
-          apt-get install python-pip -y || apt-get install python3-pip -y
-          pip install -U python-openstackclient
-
-          # Create cloud-config
-          mkdir -p /etc/kubernetes/
-          cat << EOF >> /etc/kubernetes/cloud-config
-          [Global]
-          domain-id = $OS_PROJECT_DOMAIN_ID
-          tenant-name = $OS_PROJECT_NAME
-          auth-url = $OS_AUTH_URL
-          password = $OS_PASSWORD
-          username = $OS_USERNAME
-          region = $OS_REGION_NAME
-
-          [BlockStorage]
-          bs-version = v3
-          ignore-volume-az = yes
-          EOF
-
-          # Create webhook.kubeconfig
-          cat << EOF >> /etc/kubernetes/webhook.kubeconfig
+          keystone_auth_conf={{ ansible_user_dir }}/keystone-auth
+          mkdir -p ${keystone_auth_conf}
+          cat <<EOF > ${keystone_auth_conf}/webhookconfig.yaml
+          ---
           apiVersion: v1
-          clusters:
-          - cluster:
-              insecure-skip-tls-verify: true
-              server: https://localhost:8443/webhook
-            name: webhook
-          contexts:
-          - context:
-              cluster: webhook
-              user: webhook
-            name: webhook
-          current-context: webhook
           kind: Config
           preferences: {}
+          clusters:
+            - cluster:
+                insecure-skip-tls-verify: true
+                server: https://localhost:8443/webhook
+              name: webhook
           users:
-          - name: webhook
+            - name: webhook
+          contexts:
+            - context:
+                cluster: webhook
+                user: webhook
+              name: webhook
+          current-context: webhook
           EOF
 
-          export API_HOST_IP=$(ip route get 1.1.1.1 | awk '{print $7}')
-          export KUBELET_HOST="0.0.0.0"
-          export ALLOW_SECURITY_CONTEXT=true
-          export ENABLE_CRI=false
-          export ENABLE_HOSTPATH_PROVISIONER=true
-          export ENABLE_SINGLE_CA_SIGNER=true
-          export KUBE_ENABLE_CLUSTER_DNS=false
-          export LOG_LEVEL=4
-          # We want to use the openstack cloud provider
-          export CLOUD_PROVIDER=openstack
-          # We want to run a separate cloud-controller-manager for openstack
-          export EXTERNAL_CLOUD_PROVIDER=true
-          # DO NOT change the location of the cloud-config file. It is important for the old cinder provider to work
-          export CLOUD_CONFIG=/etc/kubernetes/cloud-config
-          # Specify the OCCM binary
-          export EXTERNAL_CLOUD_PROVIDER_BINARY="$PWD/openstack-cloud-controller-manager"
-          # set auth options
-          export AUTHORIZATION_WEBHOOK_CONFIG_FILE=/etc/kubernetes/webhook.kubeconfig
-          export AUTHENTICATION_WEBHOOK_CONFIG_FILE=/etc/kubernetes/webhook.kubeconfig
+          k3s_release=$(curl -s "https://api.github.com/repos/k3s-io/k3s/releases/latest" | grep '"tag_name":' | awk -F '"' '{print $4}')
+          mkdir -p /var/lib/rancher/k3s/agent/images/
+          curl -sSL https://github.com/k3s-io/k3s/releases/download/${k3s_release}/k3s-airgap-images-amd64.tar -o /var/lib/rancher/k3s/agent/images/k3s-airgap-images.tar
+          curl -sSL https://github.com/k3s-io/k3s/releases/download/${k3s_release}/k3s -o /usr/local/bin/k3s
+          curl -sSL https://get.k3s.io -o /var/lib/rancher/k3s/install.sh
+          chmod u+x /var/lib/rancher/k3s/install.sh /usr/local/bin/k3s
 
-          # location of where the kubernetes processes log their output
-          mkdir -p '{{ k8s_log_dir }}'
-          export LOG_DIR='{{ k8s_log_dir }}'
-          # We need this for one of the conformance tests
-          export ALLOW_PRIVILEGED=true
-          # Just kick off all the processes and drop down to the command line
-          export ENABLE_DAEMON=true
-          if [ -d /mnt/config/openstack ]; then
-              export HOSTNAME_OVERRIDE=$(hostname)
-          else
-              export HOSTNAME_OVERRIDE=$(curl http://169.254.169.254/openstack/latest/meta_data.json | python -c "import sys, json; print json.load(sys.stdin)['name']")
-          fi
-          export MAX_TIME_FOR_URL_API_SERVER=5
-          export AUTHORIZATION_MODE="Node,Webhook,RBAC"
+          INSTALL_K3S_SKIP_DOWNLOAD=true /var/lib/rancher/k3s/install.sh \
+            --kube-apiserver-arg="authentication-token-webhook-config-file=${keystone_auth_conf}/webhookconfig.yaml" \
+            --kube-apiserver-arg="authorization-webhook-config-file=${keystone_auth_conf}/webhookconfig.yaml" \
+            --kube-apiserver-arg="authorization-mode=Node,RBAC,Webhook"
 
-          K8S_INSTALL_SCRIPT='{{ k8s_src_dir }}/hack/local-up-cluster.sh'
-          sed -i -e "/kube::util::wait_for_url.*$/,+1d" "$K8S_INSTALL_SCRIPT"
-          sed -i -e '/{GO_OUT}\/kube-apiserver\".*$/a \      --authorization-webhook-version=v1beta1 \\' "$K8S_INSTALL_SCRIPT"
-          sed -i -e '/{GO_OUT}\/kube-apiserver\".*$/a \      --authentication-token-webhook-version=v1beta1 \\' "$K8S_INSTALL_SCRIPT"
+    - name: Wait for node ready
+      shell:
+        executable: /bin/bash
+        cmd: |
+          export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+          kubectl get node
+      register: result
+      until: result.stdout.find("NotReady") == -1
+      retries: 5
+      delay: 10
 
-          # -E preserves the current env vars, but we need to special case PATH
-          # Must run local-up-cluster.sh under kubernetes root directory
-          pushd '{{ k8s_src_dir }}'
-          sudo -E PATH=$PATH SHELLOPTS=$SHELLOPTS ./hack/local-up-cluster.sh -O
-          popd
+    - name: Build k8s-keystone-auth binary
+      shell:
+        executable: /bin/bash
+        chdir: '{{ k8s_os_provider_src_dir }}'
+        cmd: |
+          set -ex
 
-          # Set up the kubeconfig
-          curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
-          chmod +x ./kubectl
-          mv ./kubectl /usr/local/bin/kubectl
-          mkdir -p {{ ansible_user_dir }}/.kube
-          kubefile={{ ansible_user_dir }}/.kube/config
-          touch $kubefile
-          kubectl config set-cluster local --server=https://localhost:6443 --certificate-authority=/var/run/kubernetes/server-ca.crt --kubeconfig=$kubefile
-          kubectl config set-credentials myself --client-key=/var/run/kubernetes/client-admin.key --client-certificate=/var/run/kubernetes/client-admin.crt --kubeconfig=$kubefile
-          kubectl config set-context local --cluster=local --user=myself --kubeconfig=$kubefile
-          kubectl config use-context local --kubeconfig=$kubefile
-          export KUBECONFIG={{ ansible_user_dir }}/.kube/config
+          export ARCH=${ARCH:-amd64}
+          export BUILD_CMDS='k8s-keystone-auth'
+          make build
 
-          # Create the initial configmaps for k8s-keystone-auth webhook
+    - name: Deploy k8s-keystone-auth
+      environment: "{{ global_env }}"
+      shell:
+        creates: "{{ k8s_log_dir }}/keystone-auth.log"
+        executable: /bin/bash
+        chdir: "{{ k8s_os_provider_src_dir }}"
+        cmd: |
+          set -ex
+
+          mkdir -p {{ k8s_log_dir }}
+          export LOG_DIR={{ k8s_log_dir }}
+          keystone_auth_conf={{ ansible_user_dir }}/keystone-auth
+
+          export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
           cat <<EOF | kubectl apply -f -
           apiVersion: v1
           kind: ConfigMap
@@ -146,7 +134,7 @@
                     "roles": ["member"]
                   },
                   "resource_permissions": {
-                    "*/pods": ["get", "list", "watch", "create"]
+                    "default/pods": ["get", "list"]
                   }
                 }
               ]
@@ -165,38 +153,65 @@
                   groups: ["member"]
           EOF
 
-          # Start k8s-keystone-auth webhook service
-          [[ "$OS_AUTH_URL" =~ "v3" ]] && keystone_url=${OS_AUTH_URL} || keystone_url=${OS_AUTH_URL}/v3
+          [ ! -f ${keystone_auth_conf}/ca.crt ] && openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ${keystone_auth_conf}/ca.key -out ${keystone_auth_conf}/ca.crt -subj "/CN=keystone-auth"
+
+          keystone_auth_url=${OS_AUTH_URL}/v3
           nohup ./k8s-keystone-auth \
-                --tls-cert-file /var/run/kubernetes/serving-kube-apiserver.crt \
-                --tls-private-key-file /var/run/kubernetes/serving-kube-apiserver.key \
+                --tls-cert-file ${keystone_auth_conf}/ca.crt \
+                --tls-private-key-file ${keystone_auth_conf}/ca.key \
                 --policy-configmap-name keystone-auth-policy \
                 --sync-configmap-name keystone-sync-policy \
                 --log-dir=${LOG_DIR} \
-                --v=10 \
-                --kubeconfig /var/run/kubernetes/admin.kubeconfig \
-                --keystone-url ${keystone_url} >"${LOG_DIR}/keystone-auth.log" 2>&1 &
+                --v=2 \
+                --kubeconfig /etc/rancher/k3s/k3s.yaml \
+                --keystone-url ${keystone_auth_url} >"${LOG_DIR}/keystone-auth.log" 2>&1 &
 
-          kubectl create clusterrolebinding --user system:serviceaccount:kube-system:default kube-system-cluster-admin-1 --clusterrole cluster-admin
-          kubectl create clusterrolebinding --user system:serviceaccount:kube-system:pvl-controller kube-system-cluster-admin-2 --clusterrole cluster-admin
-          kubectl create clusterrolebinding --user system:serviceaccount:kube-system:cloud-node-controller kube-system-cluster-admin-3 --clusterrole cluster-admin
-          kubectl create clusterrolebinding --user system:serviceaccount:kube-system:cloud-controller-manager kube-system-cluster-admin-4 --clusterrole cluster-admin
-          kubectl create clusterrolebinding --user system:serviceaccount:kube-system:shared-informers kube-system-cluster-admin-5 --clusterrole cluster-admin
-          kubectl create clusterrolebinding --user system:kube-controller-manager kube-system-cluster-admin-6 --clusterrole cluster-admin
+    - name: Send request to k8s-keystone-auth - DEBUG
+      shell:
         executable: /bin/bash
-        chdir: '{{ k8s_os_provider_src_dir }}'
-      environment: '{{ global_env }}'
+        cmd: |
+          set -ex
 
-    - name: Add openstack user context
+          source /opt/stack/new/devstack/openrc demo demo > /dev/null
+          token=$(openstack token issue -f yaml -c id | awk '{print $2}')
+          cat <<EOF | http -b --verify no post https://localhost:8443/webhook
+          {
+            "apiVersion": "authentication.k8s.io/v1beta1",
+            "kind": "TokenReview",
+            "metadata": {
+              "creationTimestamp": null
+            },
+            "spec": {
+              "token": "$token"
+            }
+          }
+          EOF
+
+    # Restart k3s will reset /etc/rancher/k3s/k3s.yaml
+    - name: Restart k3s service
+      ansible.builtin.systemd:
+        state: restarted
+        name: k3s
+
+    - name: Get kubeconfig contexts
+      shell:
+        executable: /bin/bash
+        cmd: |
+          export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+          kubectl config get-contexts --no-headers=true -o name
+      register: contexts_ret
+
+    - name: Config openstack user in kubeconfig
+      when: '"openstack" not in contexts_ret.stdout_lines'
       blockinfile:
-        path: "{{ ansible_user_dir }}/.kube/config"
+        path: /etc/rancher/k3s/k3s.yaml
         insertafter: "users:"
         block: |
-          - name: openstactokenkuser
+          - name: openstackuser
             user:
               exec:
                 command: /bin/bash
-                apiVersion: client.authentication.k8s.io/v1alpha1
+                apiVersion: client.authentication.k8s.io/v1beta1
                 args:
                 - -c
                 - >
@@ -204,8 +219,18 @@
                       echo 'Error: Missing OpenStack credential from environment variable $OS_TOKEN' > /dev/stderr
                       exit 1
                   else
-                      echo '{ "apiVersion": "client.authentication.k8s.io/v1alpha1", "kind": "ExecCredential", "status": { "token": "'"${OS_TOKEN}"'"}}'
+                      echo '{ "apiVersion": "client.authentication.k8s.io/v1beta1", "kind": "ExecCredential", "status": { "token": "'"${OS_TOKEN}"'"}}'
                   fi
+
+    - name: Config openstack context in kubeconfig
+      when: '"openstack" not in contexts_ret.stdout_lines'
+      shell:
+        executable: /bin/bash
+        cmd: |
+          set -ex
+
+          export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+          kubectl config set-context --cluster=default --user=openstackuser openstack
 
     - name: Run e2e tests for k8s-keystone-auth webhook
       shell:
@@ -213,11 +238,9 @@
         chdir: '{{ k8s_os_provider_src_dir }}'
         cmd: |
           source /opt/stack/new/devstack/openrc demo demo > /dev/null
-
           # The default Keystone token expiration time in devstack is 3 hours.
           token=$(openstack token issue -f yaml -c id | awk '{print $2}')
           export OS_TOKEN=$token
-          export KUBECONFIG={{ ansible_user_dir }}/.kube/config
-          kubectl config set-context openstack --cluster local --user openstactokenkuser
+          export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
 
           OS_TOKEN=$token OS_CONTEXT_NAME=openstack AUTH_POLICY_CONFIGMAP=keystone-auth-policy ROLE_MAPPING_CONFIGMAP=keystone-sync-policy tests/e2e/k8s-keystone-auth/test-authz.sh
