@@ -27,7 +27,6 @@
     - name: Install pypi libraries
       pip:
         name: "{{ libraries }}"
-      ignore_errors: True
       vars:
         libraries:
           - python-openstackclient
@@ -41,6 +40,14 @@
            docker tag swr.ap-southeast-3.myhuaweicloud.com/openlab/alpine:3.11 alpine:3.11
            docker logout swr.ap-southeast-3.myhuaweicloud.com
       no_log: yes
+
+    - name: Uninstall k3s if it is deployed
+      shell:
+        executable: /bin/bash
+        removes: /usr/local/bin/k3s-uninstall.sh
+        cmd: |
+          set -ex
+          /usr/local/bin/k3s-uninstall.sh
 
     - name: Air-gap deploy k3s
       shell:
@@ -71,7 +78,19 @@
           current-context: webhook
           EOF
 
-          k3s_release=$(curl -s "https://api.github.com/repos/k3s-io/k3s/releases/latest" | grep '"tag_name":' | awk -F '"' '{print $4}')
+          # Use branch variable directly will cause ansible parsing error.
+          branch={{ zuul.branch }}
+          if [[ "$branch" = "master" ]]; then
+            k3s_release=$(curl -s "https://api.github.com/repos/k3s-io/k3s/releases/latest" | grep '"tag_name":' | awk -F '"' '{print $4}')
+          else
+            # e.g. release-1.21 --> 1.21
+            k8s_minor=${branch##*-}
+            # e.g. 1.21 --> v1.21.3
+            k8s_version=$(curl -s "https://api.github.com/repos/kubernetes/kubernetes/tags" | jq -r '.[].name' | grep -E "^v${k8s_minor}.[0-9]$")
+            # e.g. v1.21.3 --> v1.21.3+k3s1
+            k3s_release="${k8s_version}+k3s1"
+          fi
+
           mkdir -p /var/lib/rancher/k3s/agent/images/
           curl -sSL https://github.com/k3s-io/k3s/releases/download/${k3s_release}/k3s-airgap-images-amd64.tar -o /var/lib/rancher/k3s/agent/images/k3s-airgap-images.tar
           curl -sSL https://github.com/k3s-io/k3s/releases/download/${k3s_release}/k3s -o /usr/local/bin/k3s
@@ -84,41 +103,25 @@
             --kube-apiserver-arg="authorization-mode=Node,RBAC,Webhook"
 
     - name: Wait for node ready
+      environment:
+        KUBECONFIG: /etc/rancher/k3s/k3s.yaml
       shell:
         executable: /bin/bash
         cmd: |
-          export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
           kubectl get node
       register: result
-      until: result.stdout.find("NotReady") == -1
+      until: '" Ready "  in result.stdout'
       retries: 5
       delay: 10
 
-    - name: Build k8s-keystone-auth binary
+    - name: Deploy config maps for k8s-keystone-auth
+      environment:
+        KUBECONFIG: /etc/rancher/k3s/k3s.yaml
       shell:
         executable: /bin/bash
-        chdir: '{{ k8s_os_provider_src_dir }}'
         cmd: |
           set -ex
 
-          export ARCH=${ARCH:-amd64}
-          export BUILD_CMDS='k8s-keystone-auth'
-          make build
-
-    - name: Deploy k8s-keystone-auth
-      environment: "{{ global_env }}"
-      shell:
-        creates: "{{ k8s_log_dir }}/keystone-auth.log"
-        executable: /bin/bash
-        chdir: "{{ k8s_os_provider_src_dir }}"
-        cmd: |
-          set -ex
-
-          mkdir -p {{ k8s_log_dir }}
-          export LOG_DIR={{ k8s_log_dir }}
-          keystone_auth_conf={{ ansible_user_dir }}/keystone-auth
-
-          export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
           cat <<EOF | kubectl apply -f -
           apiVersion: v1
           kind: ConfigMap
@@ -152,6 +155,33 @@
                 - keystone-role: member
                   groups: ["member"]
           EOF
+
+    # global_env is needed to make sure go binary is in the PATH.
+    - name: Build k8s-keystone-auth binary
+      environment: "{{ global_env }}"
+      shell:
+        executable: /bin/bash
+        chdir: '{{ k8s_os_provider_src_dir }}'
+        cmd: |
+          set -ex
+
+          export ARCH=${ARCH:-amd64}
+          export BUILD_CMDS='k8s-keystone-auth'
+          make build
+
+    # global_env is needed to access openstack credentials.
+    - name: Deploy k8s-keystone-auth
+      environment: "{{ global_env }}"
+      shell:
+        creates: "{{ k8s_log_dir }}/keystone-auth.log"
+        executable: /bin/bash
+        chdir: "{{ k8s_os_provider_src_dir }}"
+        cmd: |
+          set -ex
+
+          mkdir -p {{ k8s_log_dir }}
+          export LOG_DIR={{ k8s_log_dir }}
+          keystone_auth_conf={{ ansible_user_dir }}/keystone-auth
 
           [ ! -f ${keystone_auth_conf}/ca.crt ] && openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout ${keystone_auth_conf}/ca.key -out ${keystone_auth_conf}/ca.crt -subj "/CN=keystone-auth"
 
@@ -194,10 +224,11 @@
         name: k3s
 
     - name: Get kubeconfig contexts
+      environment:
+        KUBECONFIG: /etc/rancher/k3s/k3s.yaml
       shell:
         executable: /bin/bash
         cmd: |
-          export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
           kubectl config get-contexts --no-headers=true -o name
       register: contexts_ret
 
@@ -224,12 +255,13 @@
 
     - name: Config openstack context in kubeconfig
       when: '"openstack" not in contexts_ret.stdout_lines'
+      environment:
+        KUBECONFIG: /etc/rancher/k3s/k3s.yaml
       shell:
         executable: /bin/bash
         cmd: |
           set -ex
 
-          export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
           kubectl config set-context --cluster=default --user=openstackuser openstack
 
     - name: Run e2e tests for k8s-keystone-auth webhook
