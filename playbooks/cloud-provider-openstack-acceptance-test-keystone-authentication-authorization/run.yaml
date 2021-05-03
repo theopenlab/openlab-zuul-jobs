@@ -200,7 +200,8 @@
       shell:
         executable: /bin/bash
         cmd: |
-          set -ex
+          set -e
+          sleep 14400
 
           source /opt/stack/new/devstack/openrc demo demo > /dev/null
           token=$(openstack token issue -f yaml -c id | awk '{print $2}')
@@ -269,6 +270,8 @@
         executable: /bin/bash
         chdir: '{{ k8s_os_provider_src_dir }}'
         cmd: |
+          set -e
+
           source /opt/stack/new/devstack/openrc demo demo > /dev/null
           # The default Keystone token expiration time in devstack is 3 hours.
           token=$(openstack token issue -f yaml -c id | awk '{print $2}')
