@@ -98,6 +98,7 @@
           chmod u+x /var/lib/rancher/k3s/install.sh /usr/local/bin/k3s
 
           INSTALL_K3S_SKIP_DOWNLOAD=true /var/lib/rancher/k3s/install.sh \
+            --disable traefik --disable metrics-server --disable servicelb \
             --kube-apiserver-arg="authentication-token-webhook-config-file=${keystone_auth_conf}/webhookconfig.yaml" \
             --kube-apiserver-arg="authorization-webhook-config-file=${keystone_auth_conf}/webhookconfig.yaml" \
             --kube-apiserver-arg="authorization-mode=Node,RBAC,Webhook"
@@ -201,7 +202,6 @@
         executable: /bin/bash
         cmd: |
           set -e
-          sleep 14400
 
           source /opt/stack/new/devstack/openrc demo demo > /dev/null
           token=$(openstack token issue -f yaml -c id | awk '{print $2}')
