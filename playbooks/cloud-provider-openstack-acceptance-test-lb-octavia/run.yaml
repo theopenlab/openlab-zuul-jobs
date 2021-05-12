@@ -104,6 +104,26 @@
       until: check_pod.rc == 0
       retries: 24
       delay: 5
+      ignore_errors: yes
+
+    - name: Gather additional evidence if openstack-cloud-controller-manager failed to come up
+      when: check_pod.failed
+      block:
+        - name: Describe failed openstack-cloud-controller-manager
+          shell:
+            executable: /bin/bash
+            cmd: |
+              kubectl -n kube-system describe daemonset openstack-cloud-controller-manager
+          register: describe_occm
+          changed_when: false
+
+        - name: Log failed openstack-cloud-controller-manager daemonset
+          debug:
+            var: describe_occm.stdout_lines
+
+        - name: &failmsg Stop due to prior failure of openstack-cloud-controller-manager
+          fail:
+            msg: *failmsg
 
     - name: Run acceptance tests for LoadBalancer Service
       shell:
