@@ -187,6 +187,10 @@
             branches: master
 
 ####################### periodic jobs on 22:00##########################
+- project:
+    periodic-22:
+      jobs:
+        - cloud-provider-openstack-cleanup-volumes
 
 ####################### periodic jobs on 2:00 per Sunday##########################
 - project:

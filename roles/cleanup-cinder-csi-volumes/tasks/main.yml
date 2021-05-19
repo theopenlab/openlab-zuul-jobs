@@ -1,0 +1,12 @@
+- name: isntall openstacksdk
+  apt:
+    name: python3-openstacksdk
+
+- name: copy cleanup_volumes.py
+  copy:
+    src: cleanup_volumes.py
+    dest: /tmp/cleanup_volumes.py
+    mode: "0755"
+
+- name: call cleanup_volumes.py
+  command: python3 /tmp/cleanup_volumes.py

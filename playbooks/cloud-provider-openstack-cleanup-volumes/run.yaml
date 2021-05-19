@@ -1,0 +1,6 @@
+- name: cleanup orphaned volumes
+  hosts: all
+  become: yes
+  roles:
+    - export-cloud-openrc
+    - cleanup-cinder-csi-volumes

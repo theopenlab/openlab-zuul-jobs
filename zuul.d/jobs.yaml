@@ -901,6 +901,16 @@
       - swr
 
 - job:
+    name: cloud-provider-openstack-cleanup-volumes
+    parent: init-test
+    description: |
+      Cleanup orphaned resources of volume tests
+    run: playbooks/cloud-provider-openstack-cleanup-volumes/run.yaml
+    nodeset: ubuntu-focal-citynetwork
+    secrets:
+      - citynetwork_credentials
+
+- job:
     name: cloud-provider-openstack-acceptance-test-manila-provisioner
     parent: cloud-provider-openstack-test
     description: |
