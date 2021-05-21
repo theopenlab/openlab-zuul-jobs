@@ -89,7 +89,7 @@
     description: |
       Run terraform-provider-openstack acceptance test against master OpenStack
     run: playbooks/terraform-provider-openstack-acceptance-test/run.yaml
-    nodeset: ubuntu-bionic
+    nodeset: ubuntu-focal
     timeout: 21600
     vars:
       go_version: '1.14'
@@ -101,7 +101,7 @@
     description: |
       Run terraform-provider-openstack acceptance test against master OpenStack with admin creds
     run: playbooks/terraform-provider-openstack-acceptance-test-admin/run.yaml
-    nodeset: ubuntu-bionic
+    nodeset: ubuntu-focal
     timeout: 21600
     vars:
       go_version: '1.14'
@@ -295,7 +295,7 @@
     description: |
       Run terraform-provider-openstack designate acceptance test on master branch
     run: playbooks/terraform-provider-openstack-acceptance-test-designate/run.yaml
-    nodeset: ubuntu-bionic
+    nodeset: ubuntu-focal
     vars:
       go_version: '1.14'
 
@@ -305,7 +305,7 @@
     description: |
       Run terraform-provider-openstack trove acceptance test on master branch
     run: playbooks/terraform-provider-openstack-acceptance-test-trove/run.yaml
-    nodeset: ubuntu-bionic
+    nodeset: ubuntu-focal
     vars:
       go_version: '1.14'
 
@@ -316,7 +316,7 @@
       Run terraform-provider-openstack lbaas acceptance test on master branch
     run: playbooks/terraform-provider-openstack-acceptance-test-lbaas/run.yaml
     timeout: 25200 # 7h
-    nodeset: ubuntu-bionic
+    nodeset: ubuntu-focal
     vars:
       go_version: '1.14'
 
@@ -326,7 +326,7 @@
     description: |
       Run terraform-provider-openstack fwaas acceptance test on master branch
     run: playbooks/terraform-provider-openstack-acceptance-test-fwaas/run.yaml
-    nodeset: ubuntu-bionic
+    nodeset: ubuntu-focal
     vars:
       go_version: '1.14'
 
