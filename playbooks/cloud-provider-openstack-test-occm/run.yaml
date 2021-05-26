@@ -5,10 +5,6 @@
     - role: config-golang
       go_version: '1.15.11'
     - install-docker
-    - clone-devstack-gate-to-workspace
-    - role: install-devstack
-      environment:
-        OVERRIDE_ENABLED_SERVICES: 'rabbit,key,mysql,n-api,n-cpu,n-cond,n-sch,n-api-meta,placement-api,placement-client,g-api,g-reg,cinder,c-api,c-vol,c-sch,q-svc,q-agt,q-dhcp,q-l3,q-meta,octavia,o-cw,o-hm,o-hk,o-api'
 
   tasks:
     - name: Install packages
