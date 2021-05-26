@@ -950,6 +950,19 @@
       - swr
 
 - job:
+    name: cloud-provider-openstack-test-occm
+    parent: cloud-provider-openstack-test
+    description: |
+      Functional test for openstack-cloud-controller-manager
+    run: playbooks/cloud-provider-openstack-test-occm/run.yaml
+    nodeset: ubuntu-focal-large
+    vars:
+      cpo_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack'
+    secrets:
+      - kubeconfig
+      - swr
+
+- job:
     name: cloud-provider-openstack-acceptance-test-keystone-authentication-authorization
     parent: cloud-provider-openstack-test
     description: |
