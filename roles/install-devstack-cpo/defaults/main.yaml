@@ -1,0 +1,4 @@
+---
+user: "zuul"
+workdir: "/home/{{ user }}/devstack"
+branch: "stable/wallaby"
