@@ -5,6 +5,7 @@
     - role: config-golang
       go_version: '1.15.11'
     - install-docker
+    - install-devstack-cpo
 
   tasks:
     - name: Install packages
