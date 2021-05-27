@@ -44,3 +44,8 @@
     cmd: |
       set -ex
       sudo -u {{ user }} -H ./stack.sh
+
+- name: Add global env
+  set_fact:
+    global_env: "{{ global_env | combine({'devstack_workdir': workdir}) }}"
+  no_log: yes
