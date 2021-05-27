@@ -43,14 +43,14 @@
           cd ${devstack_workdir}
 
           # Create Ubuntu Bionic image
-          source openrc admin admin > /dev/null
+          set +x; source openrc admin admin > /dev/null; set -x
           bionic="http://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-amd64.img"
           curl -sSLO $bionic
           image_id=$(openstack image create ubuntu-bionic --container-format bare --disk-format qcow2 --public --file bionic-server-cloudimg-amd64.img --property hw_rng_model='virtio' -f value -c id)
 
           # Create resources for demo tenant
-          source openrc demo demo > /dev/null
-          ssh-keygen -t rsa -b 4096 -N "" -f {{ ansible_user_dir }}/.ssh/id_rsa
+          set +x; source openrc demo demo > /dev/null; set -x
+          test -e {{ ansible_user_dir }}/.ssh/id_rsa || ssh-keygen -t rsa -b 4096 -N "" -f {{ ansible_user_dir }}/.ssh/id_rsa
           openstack keypair create --public-key {{ ansible_user_dir }}/.ssh/id_rsa.pub k3s_keypair
           sg_name=k3s_sg
           openstack security group create $sg_name
@@ -94,7 +94,7 @@
       shell:
         executable: /bin/bash
         cmd: |
-          source ${devstack_workdir}/openrc demo demo > /dev/null
+          set +x; source ${devstack_workdir}/openrc demo demo > /dev/null; set -x
           openstack floating ip list --port k3s -c "Floating IP Address" -f value
       register: fip_ret
 
@@ -104,6 +104,16 @@
 
     - name: Wait for ssh ready for k3s VM
       wait_for: port=22 host={{ k3s_fip }} search_regex=OpenSSH timeout=120 delay=5
+
+    - name: Wait until k3s installation is finished
+      uri:
+        url: "https://{{ k3s_fip }}:6443/healthz"
+        method: GET
+        validate_certs: no
+      register: result
+      until: result.status == 200
+      retries: 24
+      delay: 5
 
     - name: THIS TASK IS ONLY FOR DEBUGGING PURPOSE, SHOULD BE REMOVED
       shell:
