@@ -9,6 +9,16 @@
     - install-devstack-cpo
 
   tasks:
+    - name: Install packages
+      apt:
+        name: "{{ packages }}"
+        state: present
+        update_cache: yes
+      vars:
+        packages:
+          - jq
+          - httpie
+
     - name: Login SWR
       shell:
         executable: /bin/bash
@@ -100,7 +110,7 @@
 
     - name: Set fact for k3s VM floating IP
       set_fact:
-        k3s_fip: '{{ fip_ret.stdout }}'
+        k3s_fip: "{{ fip_ret.stdout }}"
 
     - name: Wait for ssh ready for k3s VM
       wait_for: port=22 host={{ k3s_fip }} search_regex=OpenSSH timeout=120 delay=5
