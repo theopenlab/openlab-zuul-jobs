@@ -93,7 +93,7 @@
             - curl -sSL https://get.k3s.io -o /var/lib/rancher/k3s/install.sh
             - chmod u+x /var/lib/rancher/k3s/install.sh /usr/local/bin/k3s
             - INSTALL_K3S_SKIP_DOWNLOAD=true /var/lib/rancher/k3s/install.sh --disable traefik --disable metrics-server --disable servicelb --disable-cloud-controller --kubelet-arg="cloud-provider=external" --tls-san $fip
-            - chmod 755 /etc/rancher/k3s/k3s.yaml
+            - chmod 777 /etc/rancher/k3s/k3s.yaml
           EOF
 
           # Create k3s VM
@@ -275,9 +275,35 @@
       delay: 5
       ignore_errors: yes
 
+    - name: Gather additional evidence if openstack-cloud-controller-manager failed to come up
+      when: check_occm.failed
+      block:
+        - name: Describe failed openstack-cloud-controller-manager
+          shell:
+            executable: /bin/bash
+            cmd: |
+              kubectl -n kube-system describe daemonset openstack-cloud-controller-manager --kubeconfig {{ ansible_user_dir }}/.kube/config
+          register: describe_occm
+          changed_when: false
+
+        - name: Log failed openstack-cloud-controller-manager daemonset
+          debug:
+            var: describe_occm.stdout_lines
+
+        - name: &failmsg Stop due to prior failure of openstack-cloud-controller-manager
+          fail:
+            msg: *failmsg
+
     - name: THIS TASK IS ONLY FOR DEBUGGING PURPOSE, SHOULD BE REMOVED
       shell:
         executable: /bin/bash
         cmd: |
           set -ex
+          set -o pipefail
           sleep 14400
+
+    # - name: Run functional tests for openstack-cloud-controller-manager
+    #   shell:
+    #     executable: /bin/bash
+    #     chdir: '{{ cpo_src_dir }}'
+    #     cmd: KUBECONFIG={{ ansible_user_dir }}/.kube/config bash tests/e2e/cloudprovider/test-lb-service.sh
