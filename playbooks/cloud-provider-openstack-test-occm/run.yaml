@@ -119,7 +119,7 @@
       shell:
         executable: /bin/bash
         cmd: |
-          ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ubuntu@{{ k3s_fip }} test -e /etc/rancher/k3s/k3s.yaml
+          ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i {{ ansible_user_dir }}/.ssh/id_rsa ubuntu@{{ k3s_fip }} test -e /etc/rancher/k3s/k3s.yaml
       register: result
       until: result.rc == 0
       retries: 60
@@ -131,7 +131,7 @@
         cmd: |
           set -ex
           mkdir -p {{ ansible_user_dir }}/.kube
-          scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ubuntu@{{ k3s_fip }}:/etc/rancher/k3s/k3s.yaml {{ ansible_user_dir }}/.kube/config
+          scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i {{ ansible_user_dir }}/.ssh/id_rsa ubuntu@{{ k3s_fip }}:/etc/rancher/k3s/k3s.yaml {{ ansible_user_dir }}/.kube/config
           curl -sLO# https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
           chmod +x ./kubectl; sudo mv ./kubectl /usr/local/bin/kubectl
           kubectl config set-cluster default --server=https://{{ k3s_fip }}:6443 --kubeconfig {{ ansible_user_dir }}/.kube/config
