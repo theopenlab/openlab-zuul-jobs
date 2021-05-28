@@ -37,8 +37,7 @@
           REGISTRY=swr.ap-southeast-3.myhuaweicloud.com/openlab \
           VERSION={{ zuul.change }} \
           IMAGE_NAMES=openstack-cloud-controller-manager \
-          ARCHS=amd64 \
-          make upload-images
+          make upload-image-amd64
 
     - name: Create VM and install k3s
       environment: '{{ global_env }}'
@@ -117,19 +116,168 @@
       wait_for: port=22 host={{ k3s_fip }} search_regex=OpenSSH timeout=300 delay=5
 
     - name: Wait until k3s installation is finished
-      uri:
-        url: "https://{{ k3s_fip }}:6443/healthz"
-        method: GET
-        validate_certs: no
+      shell:
+        executable: /bin/bash
+        cmd: |
+          ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ubuntu@{{ k3s_fip }} test -e /etc/rancher/k3s/k3s.yaml
       register: result
-      until: result.status == 200
+      until: result.rc == 0
       retries: 60
       delay: 5
+
+    - name: Prepare kubectl and kubeconfig file
+      shell:
+        executable: /bin/bash
+        cmd: |
+          set -ex
+          mkdir -p {{ ansible_user_dir }}/.kube
+          scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ubuntu@{{ k3s_fip }}:/etc/rancher/k3s/k3s.yaml {{ ansible_user_dir }}/.kube/config
+          curl -sLO# https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+          chmod +x ./kubectl; sudo mv ./kubectl /usr/local/bin/kubectl
+          kubectl config set-cluster default --server=https://{{ k3s_fip }}:6443 --kubeconfig {{ ansible_user_dir }}/.kube/config
+
+    - name: Set fact kubeconfig
+      set_fact:
+        kubeconfig: "{{ ansible_user_dir }}/.kube/config"
+
+    - name: Add kubeconfig to global env
+      set_fact:
+        global_env: "{{ global_env | combine({'KUBECONFIG': kubeconfig}) }}"
+      no_log: yes
+
+    - name: Wait for node ready
+      environment: "{{ global_env }}"
+      shell:
+        executable: /bin/bash
+        cmd: |
+          kubectl get node
+      register: result
+      until: '" Ready "  in result.stdout'
+      retries: 5
+      delay: 10
+
+    - name: Prepare openstack-cloud-controller-manager config
+      environment: "{{ global_env }}"
+      shell:
+        executable: /bin/bash
+        cmd: |
+          set -ex
+
+          set +x; source ${devstack_workdir}/openrc admin admin > /dev/null; set -x
+          tenant_id=$(openstack project show demo -c id -f value)
+          sudnet_id=$(openstack subnet show private-subnet -c id -f value)
+          external_network_id=$(openstack network list --external -c ID -f value)
+
+          set +x; source ${devstack_workdir}/openrc demo demo > /dev/null; set -x
+          cat <<EOF > {{ ansible_user_dir }}/cloud.conf
+          [Global]
+          auth-url=http://${OS_AUTH_URL}/v3
+          username=${OS_USERNAME}
+          password=${OS_PASSWORD}
+          region=${OS_REGION_NAME}
+          tenant-id=$tenant_id
+          domain-id=default
+
+          [LoadBalancer]
+          use-octavia=true
+          subnet-id=$sudnet_id
+          floating-network-id=$external_network_id
+
+          [BlockStorage]
+          bs-version=v2
+          EOF
+
+          kubectl create secret -n kube-system generic cloud-config --from-file={{ ansible_user_dir }}/cloud.conf
+
+    - name: Deploy openstack-cloud-controller-manager
+      environment: "{{ global_env }}"
+      shell:
+        executable: /bin/bash
+        cmd: |
+          set -x
+
+          cat <<EOF | kubectl apply -f -
+          ---
+          apiVersion: v1
+          kind: ServiceAccount
+          metadata:
+            name: cloud-controller-manager
+            namespace: kube-system
+          ---
+          apiVersion: rbac.authorization.k8s.io/v1
+          kind: ClusterRoleBinding
+          metadata:
+            name: system:cloud-controller-manager
+          roleRef:
+            apiGroup: rbac.authorization.k8s.io
+            kind: ClusterRole
+            name: cluster-admin
+          subjects:
+          - kind: ServiceAccount
+            name: cloud-controller-manager
+            namespace: kube-system
+          ---
+          apiVersion: apps/v1
+          kind: DaemonSet
+          metadata:
+            name: openstack-cloud-controller-manager
+            namespace: kube-system
+            labels:
+              k8s-app: openstack-cloud-controller-manager
+          spec:
+            selector:
+              matchLabels:
+                k8s-app: openstack-cloud-controller-manager
+            updateStrategy:
+              type: RollingUpdate
+            template:
+              metadata:
+                labels:
+                  k8s-app: openstack-cloud-controller-manager
+              spec:
+                tolerations:
+                - key: node.cloudprovider.kubernetes.io/uninitialized
+                  value: "true"
+                  effect: NoSchedule
+                - key: node-role.kubernetes.io/master
+                  effect: NoSchedule
+                serviceAccountName: cloud-controller-manager
+                containers:
+                  - name: openstack-cloud-controller-manager
+                    image: swr.ap-southeast-3.myhuaweicloud.com/openlab/openstack-cloud-controller-manager-amd64:{{ zuul.change }}
+                    args:
+                      - /bin/openstack-cloud-controller-manager
+                      - --v=4
+                      - --cloud-config=/etc/config/cloud.conf
+                      - --cloud-provider=openstack
+                      - --use-service-account-credentials=true
+                      - --bind-address=127.0.0.1
+                    volumeMounts:
+                      - mountPath: /etc/config
+                        name: cloud-config-volume
+                        readOnly: true
+                hostNetwork: true
+                volumes:
+                - name: cloud-config-volume
+                  secret:
+                    secretName: cloud-config
+          EOF
+
+    - name: Wait for openstack-cloud-controller-manager up and running
+      environment: "{{ global_env }}"
+      shell:
+        executable: /bin/bash
+        cmd: |
+          kubectl -n kube-system get pod | grep openstack-cloud-controller-manager | grep Running
+      register: check_occm
+      until: check_occm.rc == 0
+      retries: 24
+      delay: 5
+      ignore_errors: yes
 
     - name: THIS TASK IS ONLY FOR DEBUGGING PURPOSE, SHOULD BE REMOVED
       shell:
         executable: /bin/bash
         cmd: |
           set -ex
-          set -o pipefail
           sleep 14400
