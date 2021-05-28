@@ -105,7 +105,7 @@
       shell:
         executable: /bin/bash
         cmd: |
-          set +x; source ${devstack_workdir}/openrc demo demo > /dev/null; set -x
+          set +x; source ${devstack_workdir}/openrc demo demo > /dev/null
           openstack floating ip list --port k3s -c "Floating IP Address" -f value
       register: fip_ret
 
@@ -114,7 +114,7 @@
         k3s_fip: "{{ fip_ret.stdout }}"
 
     - name: Wait for ssh ready for k3s VM
-      wait_for: port=22 host={{ k3s_fip }} search_regex=OpenSSH timeout=120 delay=5
+      wait_for: port=22 host={{ k3s_fip }} search_regex=OpenSSH timeout=300 delay=5
 
     - name: Wait until k3s installation is finished
       uri:
@@ -123,7 +123,7 @@
         validate_certs: no
       register: result
       until: result.status == 200
-      retries: 24
+      retries: 60
       delay: 5
 
     - name: THIS TASK IS ONLY FOR DEBUGGING PURPOSE, SHOULD BE REMOVED
