@@ -93,7 +93,6 @@
             - curl -sSL https://get.k3s.io -o /var/lib/rancher/k3s/install.sh
             - chmod u+x /var/lib/rancher/k3s/install.sh /usr/local/bin/k3s
             - INSTALL_K3S_SKIP_DOWNLOAD=true /var/lib/rancher/k3s/install.sh --disable traefik --disable metrics-server --disable servicelb --disable-cloud-controller --kubelet-arg="cloud-provider=external" --tls-san $fip
-            - chmod 777 /etc/rancher/k3s/k3s.yaml
           EOF
 
           # Create k3s VM
@@ -113,16 +112,16 @@
         k3s_fip: "{{ fip_ret.stdout }}"
 
     - name: Wait for ssh ready for k3s VM
-      wait_for: port=22 host={{ k3s_fip }} search_regex=OpenSSH timeout=300 delay=5
+      wait_for: port=22 host={{ k3s_fip }} search_regex=OpenSSH timeout=500 delay=5
 
     - name: Wait until k3s installation is finished
       shell:
         executable: /bin/bash
         cmd: |
-          ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i {{ ansible_user_dir }}/.ssh/id_rsa ubuntu@{{ k3s_fip }} test -e /etc/rancher/k3s/k3s.yaml
+          ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i {{ ansible_user_dir }}/.ssh/id_rsa ubuntu@{{ k3s_fip }} sudo chmod 777 /etc/rancher/k3s/k3s.yaml
       register: result
       until: result.rc == 0
-      retries: 60
+      retries: 100
       delay: 5
 
     - name: Prepare kubectl and kubeconfig file
