@@ -53,9 +53,9 @@
 
           # Create Ubuntu Bionic image
           set +x; source openrc admin admin > /dev/null; set -x
-          bionic="http://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-amd64.img"
-          curl -sSLO $bionic
-          image_id=$(openstack image create ubuntu-bionic --container-format bare --disk-format qcow2 --public --file bionic-server-cloudimg-amd64.img --property hw_rng_model='virtio' -f value -c id)
+          bionic_image_url="https://cloud-images.ubuntu.com/releases/bionic/release/ubuntu-18.04-server-cloudimg-amd64.img"
+          curl -sSLO $bionic_image_url
+          image_id=$(openstack image create ubuntu-bionic --container-format bare --disk-format qcow2 --public --file ubuntu-18.04-server-cloudimg-amd64.img -f value -c id)
 
           # Create resources for demo tenant
           set +x; source openrc demo demo > /dev/null; set -x
