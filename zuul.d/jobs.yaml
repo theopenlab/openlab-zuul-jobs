@@ -544,7 +544,6 @@
     post-run: playbooks/cloud-provider-openstack-test/post.yaml
     secrets:
       - citynetwork_credentials
-      - kubeconfig
       - gcp_account_cpo
       - swr
     vars:
@@ -959,7 +958,6 @@
     vars:
       cpo_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack'
     secrets:
-      - kubeconfig
       - swr
 
 - job:
