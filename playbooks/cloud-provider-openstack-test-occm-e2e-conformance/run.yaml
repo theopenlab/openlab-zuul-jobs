@@ -1,0 +1,154 @@
+- hosts: all
+  become: yes
+
+  vars:
+    registry: swr.ap-southeast-3.myhuaweicloud.com
+    registry_account: openlab
+
+  roles:
+    - role: config-golang
+      vars:
+        go_version: '1.15.11'
+    - install-docker
+    - install-devstack-cpo
+
+  tasks:
+    - name: Install packages
+      apt:
+        name: "{{ packages }}"
+        state: present
+        update_cache: yes
+      vars:
+        packages:
+          - jq
+          - httpie
+
+    - name: Login SWR
+      shell:
+        executable: /bin/bash
+        cmd: |
+          docker login -u ap-southeast-3@{{ swr.ak }} -p {{ swr.sk }} {{ registry }}
+          docker pull {{ registry }}/{{ registry_account }}/alpine:3.11
+          docker tag {{ registry }}/{{ registry_account }}/alpine:3.11 alpine:3.11
+      no_log: yes
+
+    - name: Build and upload openstack-cloud-controller-manager image
+      environment: '{{ global_env }}'
+      shell:
+        executable: /bin/bash
+        chdir: '{{ cpo_src_dir }}'
+        cmd: |
+          REGISTRY={{ registry }}/{{ registry_account }} \
+          VERSION={{ zuul.change }} \
+          IMAGE_NAMES=openstack-cloud-controller-manager \
+          make upload-image-amd64
+
+    - name: Create VMs and install k3s cluster
+      environment: '{{ global_env }}'
+      shell:
+        executable: /bin/bash
+        cmd: |
+          set -ex
+
+          # To avoid the warning msg: "CryptographyDeprecationWarning: int_from_bytes is deprecated, use int.from_bytes instead"
+          python3 -m pip install cryptography==3.3.2
+
+          cd ${devstack_workdir}
+
+          # Create Ubuntu Bionic image
+          set +x; source openrc admin admin > /dev/null; set -x
+          image_url="https://cloud-images.ubuntu.com/releases/focal/release/ubuntu-20.04-server-cloudimg-amd64.img"
+          curl -sSLO $image_url
+          image_id=$(openstack image create ubuntu-focal --container-format bare --disk-format qcow2 --public --file ubuntu-20.04-server-cloudimg-amd64.img -f value -c id)
+
+          # Create resources for demo tenant
+          set +x; source openrc demo demo > /dev/null; set -x
+          test -e {{ ansible_user_dir }}/.ssh/id_rsa || ssh-keygen -t rsa -b 4096 -N "" -f {{ ansible_user_dir }}/.ssh/id_rsa
+          openstack keypair create --public-key {{ ansible_user_dir }}/.ssh/id_rsa.pub k3s_keypair
+          sg_name=k3s_sg
+          openstack security group create $sg_name
+          openstack security group rule create --proto icmp $sg_name
+          openstack security group rule create --protocol tcp --dst-port 1:65535 $sg_name
+          openstack security group rule create --protocol udp --dst-port 1:65535 $sg_name
+          openstack subnet set private-subnet --dns-nameserver 8.8.8.8
+          port_id=$(openstack port create k3s --network private --security-group $sg_name -f value -c id)
+          fip=$(openstack floating ip create public -c floating_ip_address -f value)
+          openstack floating ip set $fip --port $port_id
+
+          # Get k3s release based on the CPO branch.
+          branch={{ zuul.branch }}
+          if [[ "$branch" = "master" ]]; then
+            k3s_release=$(curl -s "https://api.github.com/repos/k3s-io/k3s/tags" | jq -r '.[0].name')
+          else
+            # release-1.20 --> 1.20
+            k8s_minor=${branch##*-}
+            # 1.20 --> v1.20.x+k3s1
+            k3s_release=$(curl -s "https://api.github.com/repos/k3s-io/k3s/tags" | jq -r '.[].name' | grep -E "^v${k8s_minor}.[0-9]\++k3s1$" | awk 'NR==1 {print}')
+          fi
+
+          # Prepare user data file for k3s master
+          cat <<EOF > ${devstack_workdir}/init_k3s.yaml
+          #cloud-config
+          manage_etc_hosts: "localhost"
+          runcmd:
+            - mkdir -p /var/lib/rancher/k3s/agent/images/
+            - curl -sSL https://github.com/k3s-io/k3s/releases/download/${k3s_release}/k3s-airgap-images-amd64.tar -o /var/lib/rancher/k3s/agent/images/k3s-airgap-images.tar
+            - curl -sSL https://github.com/k3s-io/k3s/releases/download/${k3s_release}/k3s -o /usr/local/bin/k3s
+            - curl -sSL https://get.k3s.io -o /var/lib/rancher/k3s/install.sh
+            - chmod u+x /var/lib/rancher/k3s/install.sh /usr/local/bin/k3s
+            - INSTALL_K3S_SKIP_DOWNLOAD=true /var/lib/rancher/k3s/install.sh --disable traefik --disable metrics-server --disable servicelb --disable-cloud-controller --kubelet-arg="cloud-provider=external" --tls-san $fip --token 9a08jv.c0izixklcxtmnze7
+          EOF
+
+          # Create k3s VM
+          openstack server create k3s --image $image_id --flavor ds2G --key-name k3s_keypair --nic port-id=$port_id --user-data ${devstack_workdir}/init_k3s.yaml --wait
+
+          # Prepare user data file for k3s worker 1
+          cat <<EOF > ${devstack_workdir}/init_k3s_worker1.yaml
+          #cloud-config
+          manage_etc_hosts: "localhost"
+          runcmd:
+            - mkdir -p /var/lib/rancher/k3s/agent/images/
+            - curl -sSL https://github.com/k3s-io/k3s/releases/download/${k3s_release}/k3s-airgap-images-amd64.tar -o /var/lib/rancher/k3s/agent/images/k3s-airgap-images.tar
+            - curl -sSL https://github.com/k3s-io/k3s/releases/download/${k3s_release}/k3s -o /usr/local/bin/k3s
+            - curl -sSL https://get.k3s.io -o /var/lib/rancher/k3s/install.sh
+            - chmod u+x /var/lib/rancher/k3s/install.sh /usr/local/bin/k3s
+            - INSTALL_K3S_SKIP_DOWNLOAD=true K3S_URL=https://$fip:6443 K3S_TOKEN=9a08jv.c0izixklcxtmnze7 /var/lib/rancher/k3s/install.sh --kubelet-arg="cloud-provider=external"
+          EOF
+          # Create k3s worker 1
+          openstack server create k3s_worker1 --image $image_id --flavor ds2G --key-name k3s_keypair --network private --security-group $sg_name --user-data ${devstack_workdir}/init_k3s_worker1.yaml --wait
+
+          # Prepare user data file for k3s worker 2
+          cat <<EOF > ${devstack_workdir}/init_k3s_worker2.yaml
+          #cloud-config
+          manage_etc_hosts: "localhost"
+          runcmd:
+            - mkdir -p /var/lib/rancher/k3s/agent/images/
+            - curl -sSL https://github.com/k3s-io/k3s/releases/download/${k3s_release}/k3s-airgap-images-amd64.tar -o /var/lib/rancher/k3s/agent/images/k3s-airgap-images.tar
+            - curl -sSL https://github.com/k3s-io/k3s/releases/download/${k3s_release}/k3s -o /usr/local/bin/k3s
+            - curl -sSL https://get.k3s.io -o /var/lib/rancher/k3s/install.sh
+            - chmod u+x /var/lib/rancher/k3s/install.sh /usr/local/bin/k3s
+            - INSTALL_K3S_SKIP_DOWNLOAD=true K3S_URL=https://$fip:6443 K3S_TOKEN=9a08jv.c0izixklcxtmnze7 /var/lib/rancher/k3s/install.sh --kubelet-arg="cloud-provider=external"
+          EOF
+          # Create k3s worker 2
+          openstack server create k3s_worker2 --image $image_id --flavor ds2G --key-name k3s_keypair --network private --security-group $sg_name --user-data ${devstack_workdir}/init_k3s_worker2.yaml --wait
+
+    - name: Get floating IP
+      environment: '{{ global_env }}'
+      shell:
+        executable: /bin/bash
+        cmd: |
+          set +x; source ${devstack_workdir}/openrc demo demo > /dev/null
+          openstack floating ip list --port k3s -c "Floating IP Address" -f value
+      register: fip_ret
+
+    - name: Set fact for k3s VM floating IP
+      set_fact:
+        k3s_fip: "{{ fip_ret.stdout }}"
+
+    - name: THIS TASK IS ONLY FOR DEBUGGING PURPOSE, SHOULD BE REMOVED
+      shell:
+        executable: /bin/bash
+        cmd: |
+          set -ex
+          set -o pipefail
+          sleep 14400

@@ -595,6 +595,16 @@
       - swr
 
 - job:
+    name: cloud-provider-openstack-test-occm-e2e-conformance
+    parent: cloud-provider-openstack-test
+    description: |
+      Run Kubernetes E2E Conformance tests against a multinode k3s cluster
+    run: playbooks/cloud-provider-openstack-test-occm-e2e-conformance/run.yaml
+    nodeset: ubuntu-focal-large
+    vars:
+      cpo_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack'
+
+- job:
     name: cloud-provider-openstack-acceptance-test-e2e-conformance
     parent: cloud-provider-openstack-test
     description: |
