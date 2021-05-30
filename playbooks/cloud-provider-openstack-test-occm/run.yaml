@@ -164,7 +164,7 @@
           set +x; source ${devstack_workdir}/openrc demo demo > /dev/null; set -x
           cat <<EOF > {{ ansible_user_dir }}/cloud.conf
           [Global]
-          auth-url=http://${OS_AUTH_URL}/v3
+          auth-url=${OS_AUTH_URL}/v3
           username=${OS_USERNAME}
           password=${OS_PASSWORD}
           region=${OS_REGION_NAME}
@@ -302,16 +302,8 @@
           fail:
             msg: *failmsg
 
-    - name: THIS TASK IS ONLY FOR DEBUGGING PURPOSE, SHOULD BE REMOVED
+    - name: Run functional tests for openstack-cloud-controller-manager
       shell:
         executable: /bin/bash
-        cmd: |
-          set -ex
-          set -o pipefail
-          sleep 14400
-
-    # - name: Run functional tests for openstack-cloud-controller-manager
-    #   shell:
-    #     executable: /bin/bash
-    #     chdir: '{{ cpo_src_dir }}'
-    #     cmd: KUBECONFIG={{ ansible_user_dir }}/.kube/config bash tests/e2e/cloudprovider/test-lb-service.sh
+        chdir: '{{ cpo_src_dir }}'
+        cmd: KUBECONFIG={{ ansible_user_dir }}/.kube/config GATEWAY_IP=172.24.5.1 bash tests/e2e/cloudprovider/test-lb-service.sh
