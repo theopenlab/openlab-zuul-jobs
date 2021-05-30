@@ -100,7 +100,7 @@
           EOF
 
           # Create k3s VM
-          openstack server create k3s --image $image_id --flavor ds2G --key-name k3s_keypair --nic port-id=$port_id --config-drive true --user-data ${devstack_workdir}/init_k3s.yaml --wait
+          openstack server create k3s --image $image_id --flavor ds2G --key-name k3s_keypair --nic port-id=$port_id --user-data ${devstack_workdir}/init_k3s.yaml --wait
 
     - name: Get floating IP
       environment: '{{ global_env }}'
