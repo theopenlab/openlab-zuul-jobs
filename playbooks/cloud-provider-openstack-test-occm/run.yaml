@@ -1,6 +1,10 @@
 - hosts: all
   become: yes
 
+  vars:
+    registry: swr.ap-southeast-3.myhuaweicloud.com
+    registry_account: openlab
+
   roles:
     - role: config-golang
       vars:
@@ -23,9 +27,9 @@
       shell:
         executable: /bin/bash
         cmd: |
-          docker login -u ap-southeast-3@{{ swr.ak }} -p {{ swr.sk }} swr.ap-southeast-3.myhuaweicloud.com
-          docker pull swr.ap-southeast-3.myhuaweicloud.com/openlab/alpine:3.11
-          docker tag swr.ap-southeast-3.myhuaweicloud.com/openlab/alpine:3.11 alpine:3.11
+          docker login -u ap-southeast-3@{{ swr.ak }} -p {{ swr.sk }} {{ registry }}
+          docker pull {{ registry }}/{{ registry_account }}/alpine:3.11
+          docker tag {{ registry }}/{{ registry_account }}/alpine:3.11 alpine:3.11
       no_log: yes
 
     - name: Build and upload openstack-cloud-controller-manager image
@@ -34,7 +38,7 @@
         executable: /bin/bash
         chdir: '{{ cpo_src_dir }}'
         cmd: |
-          REGISTRY=swr.ap-southeast-3.myhuaweicloud.com/openlab \
+          REGISTRY={{ registry }}/{{ registry_account }} \
           VERSION={{ zuul.change }} \
           IMAGE_NAMES=openstack-cloud-controller-manager \
           make upload-image-amd64
@@ -178,13 +182,24 @@
 
           kubectl --kubeconfig {{ ansible_user_dir }}/.kube/config create secret -n kube-system generic cloud-config --from-file={{ ansible_user_dir }}/cloud.conf
 
+    - name: Create secret for pulling the image
+      environment:
+        KUBECONFIG: "{{ ansible_user_dir }}/.kube/config"
+      no_log: yes
+      shell:
+        executable: /bin/bash
+        cmd: |
+          kubectl -n kube-system get secret openlab || kubectl -n kube-system create secret docker-registry openlab --docker-server={{ registry }} --docker-username=ap-southeast-3@{{ swr.ak }} --docker-password={{ swr.sk }}
+
     - name: Deploy openstack-cloud-controller-manager
+      environment:
+        KUBECONFIG: "{{ ansible_user_dir }}/.kube/config"
       shell:
         executable: /bin/bash
         cmd: |
           set -x
 
-          cat <<EOF | kubectl --kubeconfig {{ ansible_user_dir }}/.kube/config apply -f -
+          cat <<EOF | kubectl apply -f -
           ---
           apiVersion: v1
           kind: ServiceAccount
@@ -230,9 +245,11 @@
                 - key: node-role.kubernetes.io/master
                   effect: NoSchedule
                 serviceAccountName: cloud-controller-manager
+                imagePullSecrets:
+                - name: openlab
                 containers:
                   - name: openstack-cloud-controller-manager
-                    image: swr.ap-southeast-3.myhuaweicloud.com/openlab/openstack-cloud-controller-manager-amd64:{{ zuul.change }}
+                    image: {{ registry }}/{{ registry_account }}/openstack-cloud-controller-manager-amd64:{{ zuul.change }}
                     args:
                       - /bin/openstack-cloud-controller-manager
                       - --v=4
@@ -252,10 +269,12 @@
           EOF
 
     - name: Wait for openstack-cloud-controller-manager up and running
+      environment:
+        KUBECONFIG: "{{ ansible_user_dir }}/.kube/config"
       shell:
         executable: /bin/bash
         cmd: |
-          kubectl --kubeconfig {{ ansible_user_dir }}/.kube/config -n kube-system get pod | grep openstack-cloud-controller-manager | grep Running
+          kubectl -n kube-system get pod | grep openstack-cloud-controller-manager | grep Running
       register: check_occm
       until: check_occm.rc == 0
       retries: 24
@@ -263,13 +282,15 @@
       ignore_errors: yes
 
     - name: Gather additional evidence if openstack-cloud-controller-manager failed to come up
+      environment:
+        KUBECONFIG: "{{ ansible_user_dir }}/.kube/config"
       when: check_occm.failed
       block:
         - name: Describe failed openstack-cloud-controller-manager
           shell:
             executable: /bin/bash
             cmd: |
-              kubectl --kubeconfig {{ ansible_user_dir }}/.kube/config -n kube-system describe daemonset openstack-cloud-controller-manager
+              kubectl -n kube-system describe daemonset openstack-cloud-controller-manager
           register: describe_occm
           changed_when: false
 
