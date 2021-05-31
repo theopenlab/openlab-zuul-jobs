@@ -30,7 +30,6 @@
           docker login -u ap-southeast-3@{{ swr.ak }} -p {{ swr.sk }} {{ registry }}
           docker pull {{ registry }}/{{ registry_account }}/alpine:3.11
           docker tag {{ registry }}/{{ registry_account }}/alpine:3.11 alpine:3.11
-      no_log: yes
 
     - name: Build and upload openstack-cloud-controller-manager image
       environment: '{{ global_env }}'
