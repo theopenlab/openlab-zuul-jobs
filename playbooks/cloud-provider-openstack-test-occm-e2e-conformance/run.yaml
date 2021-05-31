@@ -2,8 +2,8 @@
   become: yes
 
   vars:
-    registry: swr.ap-southeast-3.myhuaweicloud.com
-    registry_account: openlab
+    swr_registry: swr.ap-southeast-3.myhuaweicloud.com
+    swr_account: openlab
 
   roles:
     - role: config-golang
@@ -27,9 +27,9 @@
       shell:
         executable: /bin/bash
         cmd: |
-          docker login -u ap-southeast-3@{{ swr.ak }} -p {{ swr.sk }} {{ registry }}
-          docker pull {{ registry }}/{{ registry_account }}/alpine:3.11
-          docker tag {{ registry }}/{{ registry_account }}/alpine:3.11 alpine:3.11
+          docker login -u ap-southeast-3@{{ swr.ak }} -p {{ swr.sk }} {{ swr_registry }}
+          docker pull {{ swr_registry }}/{{ swr_account }}/alpine:3.11
+          docker tag {{ swr_registry }}/{{ swr_account }}/alpine:3.11 alpine:3.11
 
     - name: Build and upload openstack-cloud-controller-manager image
       environment: '{{ global_env }}'
@@ -37,7 +37,7 @@
         executable: /bin/bash
         chdir: '{{ cpo_src_dir }}'
         cmd: |
-          REGISTRY={{ registry }}/{{ registry_account }} \
+          REGISTRY={{ swr_registry }}/{{ swr_account }} \
           VERSION={{ zuul.change }} \
           IMAGE_NAMES=openstack-cloud-controller-manager \
           make upload-image-amd64
@@ -57,8 +57,8 @@
         KUBECONFIG: "{{ ansible_user_dir }}/.kube/config"
       vars:
         devstack_workdir: "{{ global_env.devstack_workdir }}"
-        swr_registry: "{{ registry }}"
-        registry_account: "{{ registry_account }}"
+        swr_registry: "{{ swr_registry }}"
+        swr_account: "{{ swr_account }}"
         swr_ak: "{{ swr.ak }}"
         swr_sk: "{{ swr.sk }}"
         occm_image_tag: "{{ zuul.change }}"
