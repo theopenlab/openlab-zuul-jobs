@@ -603,6 +603,9 @@
     nodeset: ubuntu-focal-large
     vars:
       cpo_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack'
+    secrets:
+      - gcp_account_cpo
+      - swr
 
 - job:
     name: cloud-provider-openstack-acceptance-test-e2e-conformance
