@@ -93,7 +93,7 @@
             - name: openlab
             containers:
               - name: openstack-cloud-controller-manager
-                image: {{ swr_registry }}/{{ registry_account }}/openstack-cloud-controller-manager-amd64:{{ occm_image_tag }}
+                image: {{ swr_registry }}/{{ swr_account }}/openstack-cloud-controller-manager-amd64:{{ occm_image_tag }}
                 args:
                   - /bin/openstack-cloud-controller-manager
                   - --v=4

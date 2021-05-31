@@ -1,7 +1,7 @@
 ---
 devstack_workdir: "{{ ansible_user_dir }}/devstack"
 swr_registry: "swr.ap-southeast-3.myhuaweicloud.com"
-registry_account: "openlab"
+swr_account: "openlab"
 swr_ak: ""
 swr_sk: ""
 occm_image_tag: "latest"
