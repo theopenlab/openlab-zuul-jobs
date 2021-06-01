@@ -62,7 +62,55 @@
         swr_sk: "{{ swr.sk }}"
         occm_image_tag: "{{ zuul.change }}"
 
+    - name: Install kubetest
+      environment: '{{ global_env }}'
+      shell:
+        executable: /bin/bash
+        cmd: |
+          set -ex
+          git clone https://github.com/kubernetes/test-infra --depth 1
+          cd test-infra
+          go install ./kubetest
+
     - name: THIS TASK IS ONLY FOR DEBUGGING PURPOSE, SHOULD BE REMOVED
       shell:
         executable: /bin/bash
         cmd: sleep 14400
+
+    - name: Run conformance test
+      environment: '{{ global_env }}'
+      shell:
+        executable: /bin/bash
+        cmd: |
+          set -ex
+
+          export KUBECONFIG={{ ansible_user_dir }}/.kube/config
+          K8S_VERSION=$(kubectl version -o json | jq -r '.serverVersion.gitVersion')
+          export KUBERNETES_CONFORMANCE_TEST=y
+
+          mkdir -p '{{ k8s_log_dir }}'
+          export LOG_DIR='{{ k8s_log_dir }}'
+          sudo chmod 777 $LOG_DIR
+          export KUBE_MASTER_IP={{ k3s_fip }}
+          export KUBE_MASTER=k8s-master
+          export MASTER_NAME=k8s-master
+          export DUMP_ONLY_MASTER_LOGS=true
+
+          kubetest --dump=$LOG_DIR \
+            --test \
+            --provider=skeleton \
+            --ginkgo-parallel=1 \
+            --test_args="--ginkgo.focus=\\[Conformance\\] --ginkgo.noColor=true --ginkgo.v=true --ginkgo.trace=true --disable-log-dump=true --ginkgo.skip=\\[sig\\-apps\\]\\sDaemon\\sset\\s\\[Serial\\]\\sshould\\srollback\\swithout\\sunnecessary\\srestarts\\s\\[Conformance\\]|\\[sig\\-network\\]\\sServices\\sshould\\sbe\\sable\\sto\\schange\\sthe\\stype\\sfrom\\sExternalName\\sto\\sNodePort\\s\\[Conformance\\]|\\[sig\\-network\\]\\sServices\\sshould\\sbe\\sable\\sto\\screate\\sa\\sfunctioning\\sNodePort\\sservice\\s\\[Conformance\\]|\\[sig\\-network\\]\\sServices\\sshould\\shave\\ssession\\saffinity\\swork\\sfor\\sNodePort\\sservice\\s\\[LinuxOnly\\]\\s\\[Conformance\\]|\\[sig\\-network\\]\\sServices\\sshould\\sbe\\sable\\sto\\sswitch\\ssession\\saffinity\\sfor\\sNodePort\\sservice\\s\\[LinuxOnly\\]\\s\\[Conformance\\]|\\[sig\\-network\\]\\sServices\\sshould\\shave\\ssession\\saffinity\\stimeout\\swork\\sfor\\sNodePort\\sservice\\s\\[LinuxOnly\\]\\s\\[Conformance\\]" \
+            --extract ${K8S_VERSION} \
+            --timeout=150m | tee $LOG_DIR/e2e.log
+
+    - name: Update latest image tag for openstack-cloud-controller-manager
+      environment: '{{ global_env }}'
+      shell:
+        executable: /bin/bash
+        chdir: '{{ cpo_src_dir }}'
+        cmd: |
+          if [ '{{ zuul.pipeline }}' == 'periodic-14' ] && [ '{{ zuul.branch }}' == 'master' ]; then
+            docker tag {{ swr_registry }}/{{ swr_account }}/openstack-cloud-controller-manager-amd64:{{ zuul.change }} {{ swr_registry }}/{{ swr_account }}/openstack-cloud-controller-manager:latest
+            docker push {{ swr_registry }}/{{ swr_account }}/openstack-cloud-controller-manager:latest
+          fi

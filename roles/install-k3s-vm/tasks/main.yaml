@@ -41,10 +41,8 @@
   shell:
     executable: /bin/bash
     cmd: |
-      set -ex
-
       set +x; source {{ devstack_workdir }}/openrc demo demo > /dev/null; set -x
-      openstack port show {{ master_port_name }} || true
+      openstack port show {{ master_port_name }}
       if [ $? -ne 0 ]; then
         port_id=$(openstack port create {{ master_port_name }} --network private --security-group {{ sg_name }} -f value -c id)
         fip=$(openstack floating ip create public -c floating_ip_address -f value)
