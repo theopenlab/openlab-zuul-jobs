@@ -62,16 +62,6 @@
         swr_sk: "{{ swr.sk }}"
         occm_image_tag: "{{ zuul.change }}"
 
-    - name: Install kubetest
-      environment: '{{ global_env }}'
-      shell:
-        executable: /bin/bash
-        cmd: |
-          set -ex
-          git clone https://github.com/kubernetes/test-infra --depth 1
-          cd test-infra
-          go install ./kubetest
-
     - name: THIS TASK IS ONLY FOR DEBUGGING PURPOSE, SHOULD BE REMOVED
       shell:
         executable: /bin/bash
@@ -84,16 +74,21 @@
         cmd: |
           set -ex
 
+          git clone https://github.com/kubernetes/test-infra --depth 1
+          cd test-infra
+          go install ./kubetest
+
           export KUBECONFIG={{ ansible_user_dir }}/.kube/config
           K8S_VERSION=$(kubectl version -o json | jq -r '.serverVersion.gitVersion')
+          K8S_VERSION=${K8S_VERSION%%+*}
           export KUBERNETES_CONFORMANCE_TEST=y
 
           mkdir -p '{{ k8s_log_dir }}'
           export LOG_DIR='{{ k8s_log_dir }}'
           sudo chmod 777 $LOG_DIR
           export KUBE_MASTER_IP={{ k3s_fip }}
-          export KUBE_MASTER=k8s-master
-          export MASTER_NAME=k8s-master
+          export KUBE_MASTER=k3s-master
+          export MASTER_NAME=k3s-master
           export DUMP_ONLY_MASTER_LOGS=true
 
           kubetest --dump=$LOG_DIR \
