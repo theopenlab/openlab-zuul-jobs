@@ -84,7 +84,7 @@
 
       # Create k3s master
       port_id=$(openstack port show {{ master_port_name }} -c id -f value)
-      openstack server create k3s_master --image {{ image_name }} --flavor {{ flavor_name }} --key-name {{ keypair_name }} --nic port-id=$port_id --user-data {{ devstack_workdir }}/init_k3s.yaml --wait
+      openstack server create k3s-master --image {{ image_name }} --flavor {{ flavor_name }} --key-name {{ keypair_name }} --nic port-id=$port_id --user-data {{ devstack_workdir }}/init_k3s.yaml --wait
 
 - name: Run k3s workers
   when: enable_cluster
@@ -111,7 +111,7 @@
         - INSTALL_K3S_SKIP_DOWNLOAD=true K3S_URL=https://{{ k3s_fip }}:6443 K3S_TOKEN={{ cluster_token }} /var/lib/rancher/k3s/install.sh --kubelet-arg="cloud-provider=external"
       EOF
       # Create k3s worker
-      openstack server create k3s_worker{{ item }} --image {{ image_name }} --flavor {{ flavor_name }} --key-name {{ keypair_name }} --network private --security-group {{ sg_name }} --user-data {{ devstack_workdir }}/init_k3s_worker{{ item }}.yaml --wait
+      openstack server create k3s-worker{{ item }} --image {{ image_name }} --flavor {{ flavor_name }} --key-name {{ keypair_name }} --network private --security-group {{ sg_name }} --user-data {{ devstack_workdir }}/init_k3s_worker{{ item }}.yaml --wait
 
 - name: Wait for ssh ready for k3s VM
   wait_for: port=22 host={{ k3s_fip }} search_regex=OpenSSH timeout=500 delay=5

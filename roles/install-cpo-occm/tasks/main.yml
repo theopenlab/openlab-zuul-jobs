@@ -65,18 +65,17 @@
         namespace: kube-system
       ---
       apiVersion: apps/v1
-      kind: DaemonSet
+      kind: Deployment
       metadata:
         name: openstack-cloud-controller-manager
         namespace: kube-system
         labels:
           k8s-app: openstack-cloud-controller-manager
       spec:
+        replicas: 1
         selector:
           matchLabels:
             k8s-app: openstack-cloud-controller-manager
-        updateStrategy:
-          type: RollingUpdate
         template:
           metadata:
             labels:
