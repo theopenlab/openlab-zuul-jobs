@@ -30,6 +30,7 @@
           docker login -u ap-southeast-3@{{ swr.ak }} -p {{ swr.sk }} {{ swr_registry }}
           docker pull {{ swr_registry }}/{{ swr_account }}/alpine:3.11
           docker tag {{ swr_registry }}/{{ swr_account }}/alpine:3.11 alpine:3.11
+      no_log: yes
 
     - name: Build and upload openstack-cloud-controller-manager image
       environment: '{{ global_env }}'
@@ -57,8 +58,6 @@
         KUBECONFIG: "{{ ansible_user_dir }}/.kube/config"
       vars:
         devstack_workdir: "{{ global_env.devstack_workdir }}"
-        swr_registry: "{{ swr_registry }}"
-        swr_account: "{{ swr_account }}"
         swr_ak: "{{ swr.ak }}"
         swr_sk: "{{ swr.sk }}"
         occm_image_tag: "{{ zuul.change }}"
