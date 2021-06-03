@@ -901,6 +901,117 @@
       mysql:
 
 - pipeline:
+    name: cloud-provider-openstack-test-occm-1.21
+    description: |
+      Commenting "/test cloud-provider-openstack-test-occm-1.21" enter this pipeline to run
+      the test job of Kubernetes+OpenStack LBaaS scenarios and receive an initial
+      +/-1 Verified vote.
+    manager: independent
+    trigger:
+      github:
+        - event: pull_request
+          action:
+            - opened
+            - changed
+            - reopened
+        - event: pull_request
+          action: comment
+          comment: (?i)^\s*\/test cloud-provider-openstack-test-occm-1.21\s*$
+        - event: pull_request
+          action: comment
+          comment: (?i)^\s*\/retest\s*$
+        - event: pull_request
+          action: comment
+          comment: (?i)^\s*\/test all\s*$
+    start:
+      github:
+        status: pending
+        comment: false
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
+    success:
+      github:
+        status: 'success'
+      mysql:
+    failure:
+      github:
+        status: 'failure'
+      mysql:
+
+- pipeline:
+    name: cloud-provider-openstack-test-occm-1.20
+    description: |
+      Commenting "/test cloud-provider-openstack-test-occm-1.20" enter this pipeline to run
+      the test job of Kubernetes+OpenStack LBaaS scenarios and receive an initial
+      +/-1 Verified vote.
+    manager: independent
+    trigger:
+      github:
+        - event: pull_request
+          action:
+            - opened
+            - changed
+            - reopened
+        - event: pull_request
+          action: comment
+          comment: (?i)^\s*\/test cloud-provider-openstack-test-occm-1.20\s*$
+        - event: pull_request
+          action: comment
+          comment: (?i)^\s*\/retest\s*$
+        - event: pull_request
+          action: comment
+          comment: (?i)^\s*\/test all\s*$
+    start:
+      github:
+        status: pending
+        comment: false
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
+    success:
+      github:
+        status: 'success'
+      mysql:
+    failure:
+      github:
+        status: 'failure'
+      mysql:
+
+- pipeline:
+    name: cloud-provider-openstack-test-occm-1.19
+    description: |
+      Commenting "/test cloud-provider-openstack-test-occm-1.19" enter this pipeline to run
+      the test job of Kubernetes+OpenStack LBaaS scenarios and receive an initial
+      +/-1 Verified vote.
+    manager: independent
+    trigger:
+      github:
+        - event: pull_request
+          action:
+            - opened
+            - changed
+            - reopened
+        - event: pull_request
+          action: comment
+          comment: (?i)^\s*\/test cloud-provider-openstack-test-occm-1.19\s*$
+        - event: pull_request
+          action: comment
+          comment: (?i)^\s*\/retest\s*$
+        - event: pull_request
+          action: comment
+          comment: (?i)^\s*\/test all\s*$
+    start:
+      github:
+        status: pending
+        comment: false
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
+    success:
+      github:
+        status: 'success'
+      mysql:
+    failure:
+      github:
+        status: 'failure'
+      mysql:
+
+- pipeline:
     name: cloud-provider-openstack-acceptance-test-keystone-authentication-authorization
     description: |
       Commenting "/test cloud-provider-openstack-acceptance-test-keystone-authentication-authorization" enter this

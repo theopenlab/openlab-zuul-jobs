@@ -974,6 +974,42 @@
       - swr
 
 - job:
+    name: cloud-provider-openstack-test-occm-1.21
+    parent: cloud-provider-openstack-test
+    description: |
+      Functional test for openstack-cloud-controller-manager release-1.21
+    run: playbooks/cloud-provider-openstack-test-occm/run-1.21.yaml
+    nodeset: ubuntu-focal-large
+    vars:
+      cpo_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack'
+    secrets:
+      - swr
+
+- job:
+    name: cloud-provider-openstack-test-occm-1.20
+    parent: cloud-provider-openstack-test
+    description: |
+      Functional test for openstack-cloud-controller-manager release-1.20
+    run: playbooks/cloud-provider-openstack-test-occm/run-1.20.yaml
+    nodeset: ubuntu-focal-large
+    vars:
+      cpo_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack'
+    secrets:
+      - swr
+
+- job:
+    name: cloud-provider-openstack-test-occm-1.19
+    parent: cloud-provider-openstack-test
+    description: |
+      Functional test for openstack-cloud-controller-manager release-1.19
+    run: playbooks/cloud-provider-openstack-test-occm/run-1.19.yaml
+    nodeset: ubuntu-focal-large
+    vars:
+      cpo_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack'
+    secrets:
+      - swr
+
+- job:
     name: cloud-provider-openstack-acceptance-test-keystone-authentication-authorization
     parent: cloud-provider-openstack-test
     description: |
