@@ -87,10 +87,8 @@
       openstack server create k3s-master --image {{ image_name }} --flavor {{ flavor_name }} --key-name {{ keypair_name }} --nic port-id=$port_id --user-data {{ devstack_workdir }}/init_k3s.yaml --wait
 
 - name: Run k3s workers
-  when: enable_cluster
-  loop:
-    - 1
-    - 2
+  when: worker_node_count > 0
+  loop: "{{ range(0, worker_node_count)|list }}"
   shell:
     executable: /bin/bash
     cmd: |
@@ -144,6 +142,6 @@
     cmd: |
       kubectl --kubeconfig {{ ansible_user_dir }}/.kube/config get node | grep " Ready " | wc -l
   register: result
-  until: result.stdout == node_count
+  until: result.stdout == (worker_node_count + 1)|string
   retries: 6
   delay: 10

@@ -1,7 +1,6 @@
 ---
 cpo_branch: "master"
-enable_cluster: false
-node_count: "{{ '3' if enable_cluster else '1' }}"
+worker_node_count: 0
 cluster_token: "9a08jv.c0izixklcxtmnze7"
 devstack_workdir: "{{ ansible_user_dir }}/devstack"
 flavor_name: "ds2G"
