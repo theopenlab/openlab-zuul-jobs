@@ -62,6 +62,11 @@
         swr_sk: "{{ swr.sk }}"
         occm_image_tag: "{{ zuul.change }}"
 
+    - name: THIS TASK IS ONLY FOR DEBUGGING PURPOSE, SHOULD BE REMOVED
+      shell:
+        executable: /bin/bash
+        cmd: sleep 14400
+
     - name: Run functional tests for openstack-cloud-controller-manager
       shell:
         executable: /bin/bash
