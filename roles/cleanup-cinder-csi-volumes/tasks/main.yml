@@ -1,6 +1,8 @@
 - name: isntall openstacksdk
   apt:
     name: python3-openstacksdk
+    state: present
+    update_cache: yes
 
 - name: copy cleanup_volumes.py
   copy:
