@@ -921,6 +921,8 @@
     nodeset: ubuntu-focal-citynetwork
     secrets:
       - citynetwork_credentials
+    vars:
+      cloud_name: citynetwork
 
 - job:
     name: cloud-provider-openstack-acceptance-test-manila-provisioner
