@@ -11,4 +11,5 @@
     mode: "0755"
 
 - name: call cleanup_volumes.py
+  environment: "{{ global_env }}"
   command: python3 /tmp/cleanup_volumes.py
