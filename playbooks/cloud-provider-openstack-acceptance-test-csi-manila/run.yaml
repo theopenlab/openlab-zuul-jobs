@@ -81,11 +81,11 @@
           # Install snapshot CRDs, RBACs and the snapshot controller
           # We're using external-snapshotter v2.1, it makes sense to pin down these manifests to v2.1 as well...
           for f in \
-            'https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/release-2.1/config/crd/snapshot.storage.k8s.io_volumesnapshotclasses.yaml' \
-            'https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/release-2.1/config/crd/snapshot.storage.k8s.io_volumesnapshotcontents.yaml' \
-            'https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/release-2.1/config/crd/snapshot.storage.k8s.io_volumesnapshots.yaml' \
-            'https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/release-2.1/deploy/kubernetes/snapshot-controller/rbac-snapshot-controller.yaml' \
-            'https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/release-2.1/deploy/kubernetes/snapshot-controller/setup-snapshot-controller.yaml'
+            'https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/release-4.1/client/config/crd/snapshot.storage.k8s.io_volumesnapshots.yaml' \
+            'https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/release-4.1/client/config/crd/snapshot.storage.k8s.io_volumesnapshotcontents.yaml' \
+            'https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/release-4.1/client/config/crd/snapshot.storage.k8s.io_volumesnapshotclasses.yaml' \
+            'https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/release-4.1/deploy/kubernetes/snapshot-controller/rbac-snapshot-controller.yaml' \
+            'https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/release-4.1/deploy/kubernetes/snapshot-controller/setup-snapshot-controller.yaml'
           do
             '{{ kubectl }}' create -f "$f"
           done
