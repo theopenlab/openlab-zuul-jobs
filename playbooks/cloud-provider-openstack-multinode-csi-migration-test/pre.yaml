@@ -120,7 +120,8 @@
     - name: depoy openstack cloud controller manager for topology support
       shell: |
         set -ex
-        kubectl apply -f cluster/addons/rbac/
+        kubectl apply -f manifests/controller-manager/cloud-controller-manager-roles.yaml
+        kubectl apply -f manifests/controller-manager/cloud-controller-manager-role-bindings.yaml
         kubectl apply -f manifests/controller-manager/openstack-cloud-controller-manager-ds.yaml
       args:
         chdir: "{{ k8s_os_provider_src_dir }}"
