@@ -2,8 +2,8 @@
   shell:
     executable: /bin/bash
     cmd: |
-      # Get k3s release based on the CPO branch.
-      branch={{ cpo_branch }}
+      # Get k3s release based on the given k8s branch.
+      branch={{ k8s_branch }}
       if [[ "$branch" = "master" ]]; then
         k3s_release=$(curl -s "https://api.github.com/repos/k3s-io/k3s/tags" | jq -r '.[0].name')
       else

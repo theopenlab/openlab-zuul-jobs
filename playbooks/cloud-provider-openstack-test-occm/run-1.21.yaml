@@ -48,7 +48,7 @@
         name: install-k3s-vm
       vars:
         devstack_workdir: "{{ global_env.devstack_workdir }}"
-        cpo_branch: "{{ zuul.branch }}"
+        k8s_branch: "{{ k8s_release | default(zuul.branch) }}"
         worker_node_count: 1
 
     - name: Deploy openstack-cloud-controller-manager
