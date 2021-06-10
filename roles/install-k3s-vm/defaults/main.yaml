@@ -1,5 +1,5 @@
 ---
-cpo_branch: "master"
+k8s_branch: "master"
 worker_node_count: 0
 cluster_token: "9a08jv.c0izixklcxtmnze7"
 devstack_workdir: "{{ ansible_user_dir }}/devstack"
