@@ -39,7 +39,7 @@
         chdir: '{{ cpo_src_dir }}'
         cmd: |
           REGISTRY={{ swr_registry }}/{{ swr_account }} \
-          VERSION={{ zuul.change }} \
+          VERSION={{ zuul.change | default("latest") }} \
           IMAGE_NAMES=openstack-cloud-controller-manager \
           make upload-image-amd64
 
@@ -60,7 +60,7 @@
         devstack_workdir: "{{ global_env.devstack_workdir }}"
         swr_ak: "{{ swr.ak }}"
         swr_sk: "{{ swr.sk }}"
-        occm_image_tag: "{{ zuul.change }}"
+        occm_image_tag: "{{ zuul.change | default(‘latest’) }}"
 
     - name: Run conformance test
       environment: '{{ global_env }}'
@@ -101,6 +101,6 @@
         chdir: '{{ cpo_src_dir }}'
         cmd: |
           if [ '{{ zuul.pipeline }}' == 'periodic-14' ] && [ '{{ zuul.branch }}' == 'master' ]; then
-            docker tag {{ swr_registry }}/{{ swr_account }}/openstack-cloud-controller-manager-amd64:{{ zuul.change }} {{ swr_registry }}/{{ swr_account }}/openstack-cloud-controller-manager:latest
+            docker tag {{ swr_registry }}/{{ swr_account }}/openstack-cloud-controller-manager-amd64:latest {{ swr_registry }}/{{ swr_account }}/openstack-cloud-controller-manager:latest
             docker push {{ swr_registry }}/{{ swr_account }}/openstack-cloud-controller-manager:latest
           fi
