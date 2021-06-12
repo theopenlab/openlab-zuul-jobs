@@ -60,7 +60,7 @@
         devstack_workdir: "{{ global_env.devstack_workdir }}"
         swr_ak: "{{ swr.ak }}"
         swr_sk: "{{ swr.sk }}"
-        occm_image_tag: "{{ zuul.change | default(‘latest’) }}"
+        occm_image_tag: "{{ zuul.change | default('latest') }}"
 
     - name: Run conformance test
       environment: '{{ global_env }}'
