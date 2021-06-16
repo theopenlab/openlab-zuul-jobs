@@ -795,19 +795,27 @@
       - Arch:x86_64
       - BuildType:Integration test
 
+# Intentionally use cloud-provider-openstack-test-occm-e2e-conformance as base for release-1.19
 - job:
     name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.19
     parent: cloud-provider-openstack-test-occm-e2e-conformance
     description: |
-      Run Kubernetes E2E Conformance tests against v1.19 release of Kubernetes(k3s)
-    nodeset: ubuntu-focal-large
+      Run Kubernetes E2E Conformance tests against release-1.19 branch of Kubernetes
+    nodeset: ubuntu-xenial-k8s-cluster-cpo
     vars:
-      k8s_release: 'release-1.19'
+      go_version: '1.15'
+      k8s_version: 'release-1.19'
+      etcd_version: 'v3.4.9'
+      kubernetes_version: 'v1.19.0'
     tags:
       - Category:Cloud
       - Project:kubernetes/cloud-provider-openstack
       - Application:cloud-provider-openstack@release-1.19
       - Application:Kubernetes@release-1.19
+      - Application:Docker.io@v18.09
+      - Application:Etcd@v3.4.9
+      - Application:Go@1.15
+      - OS:ubuntu-xenial
       - Arch:x86_64
       - BuildType:Integration test
 
