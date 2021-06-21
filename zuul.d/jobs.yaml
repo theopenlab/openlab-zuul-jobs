@@ -595,16 +595,15 @@
       - swr
 
 - job:
-    name: cloud-provider-openstack-test-occm-e2e-conformance
+    name: cloud-provider-openstack-acceptance-test-e2e-conformance-legacy
     parent: cloud-provider-openstack-test
     description: |
-      Run Kubernetes E2E Conformance tests against a multinode k3s cluster
-    run: playbooks/cloud-provider-openstack-test-occm-e2e-conformance/run.yaml
-    post-run: playbooks/cloud-provider-openstack-test-occm-e2e-conformance/post.yaml
-    nodeset: ubuntu-focal-large
-    vars:
-      cpo_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack'
+      Run Kubernetes E2E Conformance tests against a multinode Kubernetes cluster created by kubeadm
+    run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/run.yaml
+    post-run: playbooks/cloud-provider-openstack-acceptance-test-e2e-conformance/post.yaml
+    nodeset: ubuntu-xenial-k8s-cluster-cpo
     secrets:
+      - citynetwork_credentials
       - gcp_account_cpo
       - swr
 
@@ -795,10 +794,9 @@
       - Arch:x86_64
       - BuildType:Integration test
 
-# Intentionally use cloud-provider-openstack-test-occm-e2e-conformance as base for release-1.19
 - job:
     name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.19
-    parent: cloud-provider-openstack-test-occm-e2e-conformance
+    parent: cloud-provider-openstack-acceptance-test-e2e-conformance-legacy
     description: |
       Run Kubernetes E2E Conformance tests against release-1.19 branch of Kubernetes
     nodeset: ubuntu-xenial-k8s-cluster-cpo
@@ -821,7 +819,7 @@
 
 - job:
     name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.20
-    parent: cloud-provider-openstack-test-occm-e2e-conformance
+    parent: cloud-provider-openstack-acceptance-test-e2e-conformance
     description: |
       Run Kubernetes E2E Conformance tests against v1.20 release of Kubernetes(k3s)
     nodeset: ubuntu-focal-large
@@ -837,7 +835,7 @@
 
 - job:
     name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.21
-    parent: cloud-provider-openstack-test-occm-e2e-conformance
+    parent: cloud-provider-openstack-acceptance-test-e2e-conformance
     description: |
       Run Kubernetes E2E Conformance tests against v1.21 release of Kubernetes(k3s)
     nodeset: ubuntu-focal-large
