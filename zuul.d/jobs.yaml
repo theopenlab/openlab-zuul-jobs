@@ -1379,31 +1379,31 @@
         PYTHON: v3.8
 
 - job:
-    name: pytorch-arm64-build-daily-v1.4.0
+    name: pytorch-arm64-build-daily-v1.7.1
     parent: pytorch-arm64-build-daily
     description: |
-      Pytorch V1.4.0 daily build on ARM64
+      Pytorch V1.7.1 daily build on ARM64
     vars:
       global_env:
-        RELEASE: v1.4.0
+        RELEASE: v1.7.1
 
 - job:
-    name: pytorch-arm64-build-daily-v1.5.0
+    name: pytorch-arm64-build-daily-v1.8.1
     parent: pytorch-arm64-build-daily
     description: |
-      Pytorch V1.5.0 daily build on ARM64
+      Pytorch V1.8.1 daily build on ARM64
     vars:
       global_env:
-        RELEASE: v1.5.0
+        RELEASE: v1.8.1
 
 - job:
-    name: pytorch-arm64-build-daily-v1.6.0
+    name: pytorch-arm64-build-daily-v1.9.0
     parent: pytorch-arm64-build-daily
     description: |
-      Pytorch V1.6.0 daily build on ARM64
+      Pytorch V1.9.0 daily build on ARM64
     vars:
       global_env:
-        RELEASE: v1.6.0
+        RELEASE: v1.9.0
 
 - job:
     name: tensorflow-arm64-build-daily
