@@ -45,11 +45,11 @@
             branches: master
         - pytorch-arm64-build-daily-master-py38:
             branches: master
-        - pytorch-arm64-build-daily-v1.6.0:
+        - pytorch-arm64-build-daily-v1.7.1:
             branches: master
-        - pytorch-arm64-build-daily-v1.5.0:
+        - pytorch-arm64-build-daily-v1.8.1:
             branches: master
-        - pytorch-arm64-build-daily-v1.4.0:
+        - pytorch-arm64-build-daily-v1.9.0:
             branches: master
 
 ####################### periodic jobs on 02:00 ##########################
