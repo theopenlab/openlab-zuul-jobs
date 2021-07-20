@@ -885,6 +885,16 @@
       - swr
 
 - job:
+    name: cloud-provider-openstack-test-csi-cinder
+    parent: cloud-provider-openstack-test
+    description: |
+      Run cinder csi e2e tests of cloud-provider-openstack on devstack
+    run: playbooks/cloud-provider-openstack-test-csi-cinder/run.yaml
+    nodeset: ubuntu-focal-large
+    secrets:
+      - swr
+
+- job:
     name: cloud-provider-openstack-multinode-csi-migration-test
     parent: cloud-provider-openstack-test
     description: |

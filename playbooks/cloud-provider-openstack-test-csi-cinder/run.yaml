@@ -1,0 +1,140 @@
+- hosts: all
+  become: yes
+
+  vars:
+    registry: swr.ap-southeast-3.myhuaweicloud.com
+    registry_account: openlab
+
+  roles:
+    - role: config-golang
+      vars:
+        go_version: '1.15.11'
+    - install-docker
+    - install-devstack-cpo
+
+  tasks:
+    # TODO: merge this with OCCM to make a role
+    - name: Install packages
+      apt:
+        name: "{{ packages }}"
+        state: present
+        update_cache: yes
+      vars:
+        packages:
+          - jq
+          - httpie
+
+    - name: Login SWR
+      shell:
+        executable: /bin/bash
+        cmd: |
+          docker login -u ap-southeast-3@{{ swr.ak }} -p {{ swr.sk }} {{ registry }}
+          docker pull {{ registry }}/{{ registry_account }}/alpine:3.11
+          docker tag {{ registry }}/{{ registry_account }}/alpine:3.11 alpine:3.11
+      no_log: yes
+
+    - name: Build and upload openstack-cloud-controller-manager image
+      environment: '{{ global_env }}'
+      shell:
+        executable: /bin/bash
+        chdir: '{{ cpo_src_dir }}'
+        cmd: |
+          REGISTRY={{ registry }}/{{ registry_account }} \
+          VERSION={{ zuul.change }} \
+          IMAGE_NAMES=openstack-cloud-controller-manager \
+          make upload-image-amd64
+
+    - name: Install k3s cluster
+      import_role:
+        name: install-k3s-vm
+      vars:
+        devstack_workdir: "{{ global_env.devstack_workdir }}"
+        k8s_branch: "{{ k8s_release | default(zuul.branch) }}"
+        worker_node_count: 1
+
+    - name: Deploy openstack-cloud-controller-manager (required for external cloud provider)
+      import_role:
+        name: install-cpo-occm
+      environment:
+        KUBECONFIG: "{{ ansible_user_dir }}/.kube/config"
+      vars:
+        devstack_workdir: "{{ global_env.devstack_workdir }}"
+        swr_ak: "{{ swr.ak }}"
+        swr_sk: "{{ swr.sk }}"
+        occm_image_tag: "{{ zuul.change }}"
+
+    # start the install and run the CSI e2e test 
+    - name: Install manifests of cinder CSI plugin
+      environment: '{{ global_env }}'
+      shell:
+        cmd: |
+          set -x
+          set -e
+          set -o pipefail
+
+          branch="{{ zuul.branch }}"
+          if [[ $branch == "master" ]]; then
+              version=latest
+          else
+              version="v${branch##release-}.0"
+          fi
+
+          export VERSION=$version
+          make image-csi-plugin
+
+          if [[ -z "$(docker images -q k8scloudprovider/cinder-csi-plugin:$VERSION 2> /dev/null)" ]]; then
+              # add tag without architecture so we don't need to push manifests
+              docker image tag k8scloudprovider/cinder-csi-plugin-$ARCH:$VERSION k8scloudprovider/cinder-csi-plugin:$VERSION
+          fi
+
+          # Replace custom cloud config
+          {
+              cloud_cfg=$(base64 -w 0 ${CLOUD_CONFIG})
+              sed "s/cloud\.conf:.*$/cloud.conf: $cloud_cfg/g" -i manifests/cinder-csi-plugin/csi-secret-cinderplugin.yaml
+          } > /dev/null 2>&1
+
+          # Enable services
+          '{{ kubectl }}' create -f manifests/cinder-csi-plugin
+          sleep 5
+          # If services up
+          if timeout 300 bash -c '
+              while :
+              do
+                  {{ kubectl }} get pod --all-namespaces | sed "1d" | awk '\''$4 != "Running" {err = 1} END {exit err}'\'' && break
+                  sleep 1
+              done
+              '
+          then
+              echo 'Run services successful'
+              '{{ kubectl }}' get pod --all-namespaces
+          else
+              echo 'Run services failed'
+              exit 1
+          fi
+
+          export GO111MODULE=on
+          export KUBECONFIG=/var/run/kubernetes/admin.kubeconfig
+          function dump_container_logs {
+            controller_pod=$({{ kubectl }} -n kube-system get pods -l app=csi-cinder-controllerplugin -o name  | head -n 1)
+            nodeplugin_pod=$({{ kubectl }} -n kube-system get pods -l app=csi-cinder-nodeplugin -o name  | head -n 1)
+            if [[ ! -z "$controller_pod" ]]; then
+              {{ kubectl }} -n kube-system logs "$controller_pod" -c cinder-csi-plugin > "$LOG_DIR/csi-cinder-controllerplugin.txt"
+              {{ kubectl }} -n kube-system logs "$controller_pod" -c csi-attacher > "$LOG_DIR/csi-external-attacher.txt"
+              {{ kubectl }} -n kube-system logs "$controller_pod" -c csi-provisioner > "$LOG_DIR/csi-external-provisioner.txt"
+              {{ kubectl }} -n kube-system logs "$controller_pod" -c csi-snapshotter > "$LOG_DIR/csi-external-snapshotter.txt"
+              {{ kubectl }} -n kube-system logs "$controller_pod" -c csi-resizer > "$LOG_DIR/csi-external-resizer.txt"
+              {{ kubectl }} -n kube-system logs "$controller_pod" -c liveness-probe >  "$LOG_DIR/csi-controller-liveness-probe.txt"
+            fi
+            if [[ ! -z "$nodeplugin_pod" ]]; then
+                {{ kubectl }} -n kube-system logs "$nodeplugin_pod" -c cinder-csi-plugin > "$LOG_DIR/csi-cinder-nodeplugin.txt"
+                {{ kubectl }} -n kube-system logs "$nodeplugin_pod" -c node-driver-registrar > "$LOG_DIR/csi-cinder-driver-registrar.txt"
+                {{ kubectl }} -n kube-system logs "$nodeplugin_pod" -c liveness-probe >  "$LOG_DIR/csi-node-liveness-probe.txt"
+            fi
+          }
+          trap dump_container_logs EXIT
+
+          # Download kubectl binary
+          go test -v ./cmd/tests/cinder_csi_e2e_suite_test.go -ginkgo.v -ginkgo.progress -ginkgo.skip="\[Disruptive\]" -ginkgo.focus="\[cinder-csi-e2e\]" -ginkgo.noColor -timeout=0 -report-dir='{{ k8s_log_dir }}' | tee "{{ k8s_log_dir }}/e2e.log"
+
+        executable: /bin/bash
+        chdir: '{{ k8s_os_provider_src_dir }}'
