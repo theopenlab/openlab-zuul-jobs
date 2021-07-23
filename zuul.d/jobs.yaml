@@ -579,8 +579,6 @@
       Run csi sanity tests cloud-provider-openstack cinder-csi-plugin
     run: playbooks/cloud-provider-openstack-sanity-test-csi-cinder/run.yaml
     nodeset: ubuntu-xenial-citynetwork
-    vars:
-      cpo_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack'
     secrets:
       - citynetwork_credentials
 
@@ -893,6 +891,8 @@
       Run cinder csi e2e tests of cloud-provider-openstack on devstack
     run: playbooks/cloud-provider-openstack-test-csi-cinder/run.yaml
     nodeset: ubuntu-focal-large
+    vars:
+      cpo_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack'
     secrets:
       - swr
 
