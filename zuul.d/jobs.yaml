@@ -1727,8 +1727,8 @@
     parent: init-test
     description: |
       openlab healthy check test
-    pre-run: playbooks/bucardo-unitest/pre.yaml
-    post-run: playbooks/bucardo-unitest/post.yaml
+    pre-run: playbooks/openlab-health-check/pre.yaml
+    post-run: playbooks/openlab-health-check/post.yaml
 
 - job:
     name: openlab-health-check-on-x86
