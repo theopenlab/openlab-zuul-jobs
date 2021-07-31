@@ -1721,3 +1721,43 @@
     vars:
       global_env:
         PGVERSION: '12'
+
+- job:
+    name: openlab-health-check
+    parent: init-test
+    description: |
+      openlab healthy check test
+    pre-run: playbooks/bucardo-unitest/pre.yaml
+    post-run: playbooks/bucardo-unitest/post.yaml
+
+- job:
+    name: openlab-health-check-on-x86
+    parent: openlab-health-check
+    description: |
+      openlab healthy check test on X86
+    run: playbooks/openlab-health-check/run.yaml
+    nodeset: ubuntu-bionic
+    tags:
+      - Category:Self-Healthy-Check
+      - Project:bzhaoopenstack/openlab-health-check
+      - Application:openlab-health-check@master
+      - OS:ubuntu-bionic
+      - Arch:x86
+      - BuildType:Test
+    timeout: 86400
+
+- job:
+    name: openlab-health-check-on-aarch64
+    parent: openlab-health-check
+    description: |
+      openlab healthy check test on Aarch64
+    run: playbooks/openlab-health-check/run.yaml
+    nodeset: ubuntu-bionic-arm64-huaweicloud-8u16g
+    tags:
+      - Category:Self-Healthy-Check
+      - Project:bzhaoopenstack/openlab-health-check
+      - Application:openlab-health-check@master
+      - OS:ubuntu-bionic
+      - Arch:aarch64
+      - BuildType:Test
+    timeout: 86400

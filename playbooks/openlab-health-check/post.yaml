@@ -1,0 +1,10 @@
+- hosts: all
+  tasks:
+    - name: Post job
+      become: yes
+      shell:
+        cmd: |
+          echo "Post job"
+          echo "Do nothing"
+      args:
+        executable: /bin/bash
