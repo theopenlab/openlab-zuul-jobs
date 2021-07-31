@@ -1,0 +1,10 @@
+- hosts: all
+  tasks:
+    - name: Pre job
+      become: yes
+      shell:
+        cmd: |
+          echo "Pre job"
+          echo "Do nothing"
+      args:
+        executable: /bin/bash

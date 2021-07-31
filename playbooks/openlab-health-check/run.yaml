@@ -1,0 +1,13 @@
+- hosts: all
+  tasks:
+    - name: Run the health test
+      shell:
+        cmd: |
+          echo "test"
+          echo "Start Test"
+          sleep 30
+          echo "Finish"
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
