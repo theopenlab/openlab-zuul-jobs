@@ -560,7 +560,7 @@
     description: |
       Run unit test of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-unittest/run.yaml
-    nodeset: ubuntu-xenial-citynetwork
+    nodeset: ubuntu-xenial
     secrets:
       - citynetwork_credentials
 
@@ -578,7 +578,7 @@
     description: |
       Run csi sanity tests cloud-provider-openstack cinder-csi-plugin
     run: playbooks/cloud-provider-openstack-sanity-test-csi-cinder/run.yaml
-    nodeset: ubuntu-xenial-citynetwork
+    nodeset: ubuntu-xenial
     secrets:
       - citynetwork_credentials
 
@@ -589,7 +589,7 @@
       Run cinder in-tree acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-k8s-cinder/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-k8s-cinder/post.yaml
-    nodeset: ubuntu-xenial-citynetwork
+    nodeset: ubuntu-xenial
     secrets:
       - citynetwork_credentials
       - swr
@@ -614,7 +614,7 @@
       Run Kubernetes E2E Conformance tests against a multinode k3s cluster
     run: playbooks/cloud-provider-openstack-test-occm-e2e-conformance/run.yaml
     post-run: playbooks/cloud-provider-openstack-test-occm-e2e-conformance/post.yaml
-    nodeset: ubuntu-focal-large
+    nodeset: ubuntu-focal
     vars:
       cpo_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack'
     secrets:
@@ -664,7 +664,7 @@
     parent: cloud-provider-openstack-acceptance-test-e2e-conformance
     description: |
       Run Kubernetes E2E Conformance tests against release-1.13 branch of Kubernetes
-    nodeset: ubuntu-xenial-citynetwork
+    nodeset: ubuntu-xenial
     vars:
       go_version: '1.12'
       k8s_version: 'release-1.13'
@@ -686,7 +686,7 @@
     parent: cloud-provider-openstack-acceptance-test-e2e-conformance
     description: |
       Run Kubernetes E2E Conformance tests against release-1.14 branch of Kubernetes
-    nodeset: ubuntu-xenial-citynetwork
+    nodeset: ubuntu-xenial
     vars:
       go_version: '1.12.1'
       k8s_version: 'release-1.14'
@@ -708,7 +708,7 @@
     parent: cloud-provider-openstack-acceptance-test-e2e-conformance
     description: |
       Run Kubernetes E2E Conformance tests against release-1.15 branch of Kubernetes
-    nodeset: ubuntu-xenial-citynetwork
+    nodeset: ubuntu-xenial
     vars:
       go_version: '1.12.1'
       k8s_version: 'release-1.15'
@@ -822,7 +822,7 @@
     parent: cloud-provider-openstack-acceptance-test-e2e-conformance
     description: |
       Run Kubernetes E2E Conformance tests against v1.20 release of Kubernetes(k3s)
-    nodeset: ubuntu-focal-large
+    nodeset: ubuntu-focal
     vars:
       k8s_release: 'release-1.20'
     tags:
@@ -838,7 +838,7 @@
     parent: cloud-provider-openstack-acceptance-test-e2e-conformance
     description: |
       Run Kubernetes E2E Conformance tests against v1.21 release of Kubernetes(k3s)
-    nodeset: ubuntu-focal-large
+    nodeset: ubuntu-focal
     vars:
       k8s_release: 'release-1.21'
     tags:
@@ -867,7 +867,7 @@
       Run cinder csi acceptance tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/run.yaml
     post-run: playbooks/cloud-provider-openstack-acceptance-test-csi-cinder/post.yaml
-    nodeset: ubuntu-focal-citynetwork
+    nodeset: ubuntu-focal
     secrets:
       - citynetwork_credentials
       - swr
@@ -879,7 +879,7 @@
       Run cinder csi e2e tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-e2e-test-csi-cinder/run.yaml
     post-run: playbooks/cloud-provider-openstack-e2e-test-csi-cinder/post.yaml
-    nodeset: ubuntu-focal-citynetwork
+    nodeset: ubuntu-focal
     secrets:
       - citynetwork_credentials
       - swr
@@ -890,7 +890,7 @@
     description: |
       Run cinder csi e2e tests of cloud-provider-openstack on devstack
     run: playbooks/cloud-provider-openstack-test-csi-cinder/run.yaml
-    nodeset: ubuntu-focal-large
+    nodeset: ubuntu-focal
     vars:
       cpo_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack'
     secrets:
@@ -917,7 +917,7 @@
     description: |
       Cleanup orphaned resources of volume tests
     run: playbooks/cloud-provider-openstack-cleanup-volumes/run.yaml
-    nodeset: ubuntu-focal-citynetwork
+    nodeset: ubuntu-focal
     secrets:
       - citynetwork_credentials
     vars:
@@ -968,7 +968,7 @@
     description: |
       Functional test for openstack-cloud-controller-manager
     run: playbooks/cloud-provider-openstack-test-occm/run.yaml
-    nodeset: ubuntu-focal-large
+    nodeset: ubuntu-focal
     vars:
       cpo_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack'
     secrets:
@@ -980,7 +980,7 @@
     description: |
       Functional test for openstack-cloud-controller-manager release-1.21
     run: playbooks/cloud-provider-openstack-test-occm/run-1.21.yaml
-    nodeset: ubuntu-focal-large
+    nodeset: ubuntu-focal
     vars:
       cpo_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack'
     secrets:
@@ -992,7 +992,7 @@
     description: |
       Functional test for openstack-cloud-controller-manager release-1.20
     run: playbooks/cloud-provider-openstack-test-occm/run-1.20.yaml
-    nodeset: ubuntu-focal-large
+    nodeset: ubuntu-focal
     vars:
       cpo_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack'
     secrets:
@@ -1004,7 +1004,7 @@
     description: |
       Functional test for openstack-cloud-controller-manager release-1.19
     run: playbooks/cloud-provider-openstack-test-occm/run-1.19.yaml
-    nodeset: ubuntu-focal-large
+    nodeset: ubuntu-focal
     vars:
       cpo_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack'
     secrets:
@@ -1417,310 +1417,310 @@
       global_env:
         RELEASE: v1.9.0
 
-- job:
-    name: tensorflow-arm64-build-daily
-    parent: init-test
-    description: |
-      Tensorflow daily build on ARM64
-    run: playbooks/tensorflow-arm-build/run.yaml
-    nodeset: ubuntu-bionic-arm64-huaweicloud-8u16g
-    tags:
-      - Category:AI
-      - Project:Tensorflow/Tensorflow
-      - Application:Tensorflow@master
-      - OS:ubuntu-bionic
-      - Arch:arm64
-      - BuildType:Build
-    timeout: 54000
-
-- job:
-    name: tensorflow-arm64-build-daily-master
-    parent: tensorflow-arm64-build-daily
-    description: |
-      Tensorflow Master daily build on ARM64
-    vars:
-      global_env:
-        RELEASE: master
-        BAZEL_VERSION: 3.7.2
-        GCC_VERSION: default
-        PYTHON: v3.6
-
-- job:
-    name: tensorflow-arm64-release-build-v1.15.3
-    parent: tensorflow-arm64-build-daily
-    description: |
-      Tensorflow v1.15.3 release build on ARM64
-    vars:
-      global_env:
-        RELEASE: v1.15.3
-        BAZEL_VERSION: 0.24.1
-        GCC_VERSION: default
-
-- job:
-    name: tensorflow-arm64-release-build-v1.15.3-py35
-    parent: tensorflow-arm64-release-build-v1.15.3
-    description: |
-      Tensorflow v1.15.3 release build on ARM64 with python3.5
-    provides: tf-cpu-whl-ready-for-1.15.3-py35
-    vars:
-      global_env:
-        PYTHON: v3.5
-
-- job:
-    name: tensorflow-arm64-release-build-v1.15.3-py36
-    parent: tensorflow-arm64-release-build-v1.15.3
-    description: |
-      Tensorflow v1.15.3 release build on ARM64 with python3.6
-    provides: tf-cpu-whl-ready-for-1.15.3-py36
-    vars:
-      global_env:
-        PYTHON: v3.6
-
-- job:
-    name: tensorflow-arm64-release-build-v1.15.3-py37
-    parent: tensorflow-arm64-release-build-v1.15.3
-    description: |
-      Tensorflow v1.15.3 release build on ARM64 with python3.7
-    provides: tf-cpu-whl-ready-for-1.15.3-py37
-    vars:
-      global_env:
-        PYTHON: v3.7
-
-- job:
-    name: tensorflow-arm64-release-build-v2.1.0
-    parent: tensorflow-arm64-build-daily
-    description: |
-      Tensorflow v2.1.0 release build on ARM64
-    vars:
-      global_env:
-        RELEASE: v2.1.0
-        BAZEL_VERSION: 0.29.1
-        GCC_VERSION: default
-
-- job:
-    name: tensorflow-arm64-release-build-v2.1.0-py35
-    parent: tensorflow-arm64-release-build-v2.1.0
-    description: |
-      Tensorflow v2.1.0 release build on ARM64 with python3.5
-    provides: tf-cpu-whl-ready-for-2.1.0-py35
-    vars:
-      global_env:
-        PYTHON: v3.5
-
-- job:
-    name: tensorflow-arm64-release-build-v2.1.0-py36
-    parent: tensorflow-arm64-release-build-v2.1.0
-    description: |
-      Tensorflow v2.1.0 release build on ARM64 with python3.6
-    provides: tf-cpu-whl-ready-for-2.1.0-py36
-    vars:
-      global_env:
-        PYTHON: v3.6
-
-- job:
-    name: tensorflow-arm64-release-build-v2.1.0-py37
-    parent: tensorflow-arm64-release-build-v2.1.0
-    description: |
-      Tensorflow v2.1.0 release build on ARM64 with python3.7
-    provides: tf-cpu-whl-ready-for-2.1.0-py37
-    vars:
-      global_env:
-        PYTHON: v3.7
-
-- job:
-    name: tensorflow-arm64-release-build-v2.1.0-py38
-    parent: tensorflow-arm64-release-build-v2.1.0
-    description: |
-      Tensorflow v2.1.0 release build on ARM64 with python3.8
-    provides: tf-cpu-whl-ready-for-2.1.0-py38
-    vars:
-      global_env:
-        PYTHON: v3.8
-
-- job:
-    name: tensorflow-arm64-release-build-show
-    parent: init-test
-    description: |
-      Tensorflow release build whl download links on ARM64 with supported python versions.
-    run: playbooks/tensorflow-arm-build/run_release.yaml
-    nodeset: ubuntu-bionic-arm64-huaweicloud-8u16g
-    tags:
-      - Category:AI
-      - Project:Tensorflow/Tensorflow
-      - Application:Tensorflow@master
-      - OS:ubuntu-bionic
-      - Arch:arm64
-      - BuildType:Release
-    timeout: 54000
-
-- job:
-    name: tensorflow-v1.15.3-cpu-arm64-release-build-show
-    parent: tensorflow-arm64-release-build-show
-    description: |
-      Tensorflow CPU 1.15.3 release build whl download links on ARM64 with supported python versions.
-    requires:
-      - tf-cpu-whl-ready-for-1.15.3-py35
-      - tf-cpu-whl-ready-for-1.15.3-py36
-      - tf-cpu-whl-ready-for-1.15.3-py37
-    dependencies:
-      - tensorflow-arm64-release-build-v1.15.3-py35
-      - tensorflow-arm64-release-build-v1.15.3-py36
-      - tensorflow-arm64-release-build-v1.15.3-py37
-    vars:
-      global_env:
-        RELEASE: v1.15.3
-
-- job:
-    name: tensorflow-v2.1.0-cpu-arm64-release-build-show
-    parent: tensorflow-arm64-release-build-show
-    description: |
-      Tensorflow CPU 2.1.0 release build whl download links on ARM64 with supported python versions.
-    requires:
-      - tf-cpu-whl-ready-for-2.1.0-py35
-      - tf-cpu-whl-ready-for-2.1.0-py36
-      - tf-cpu-whl-ready-for-2.1.0-py37
-      - tf-cpu-whl-ready-for-2.1.0-py38
-    dependencies:
-      - tensorflow-arm64-release-build-v2.1.0-py35
-      - tensorflow-arm64-release-build-v2.1.0-py36
-      - tensorflow-arm64-release-build-v2.1.0-py37
-      - tensorflow-arm64-release-build-v2.1.0-py38
-    vars:
-      global_env:
-        RELEASE: v2.1.0
-
-- job:
-    name: mysql-full-test-on-arm64
-    parent: init-test
-    description: |
-      Full test for mysql on arm64.
-    run: playbooks/mysql-test-on-arm64/run.yaml
-    nodeset: ubuntu-bionic-arm64-huaweicloud-8u16g
-    tags:
-      - Category:Database
-      - Project:mysql/mysql-server
-      - Application:mysql-server@master
-      - OS:ubuntu-bionic
-      - Arch:arm64
-      - BuildType:Test
-    timeout: 86400
-    vars:
-      global_env:
-        RELEASE: "refs/heads/8.0"
-        IS_OPTIMIZED: 'no'
-        GOOGLE_TEST_VERSION: 1.8.0
-
-- job:
-    name: mysql-5.7-upstream-full-test-on-arm64
-    parent: mysql-full-test-on-arm64
-    description: |
-      Full test for mysql 5.7 upstream version on arm64.
-    run: playbooks/mysql-test-on-arm64/run.yaml
-    vars:
-      global_env:
-        RELEASE: 5.7.27
-        BOOST_VERSION: 1.59.0
+#- job:
+#    name: tensorflow-arm64-build-daily
+#    parent: init-test
+#    description: |
+#      Tensorflow daily build on ARM64
+#    run: playbooks/tensorflow-arm-build/run.yaml
+#    nodeset: ubuntu-bionic-arm64-huaweicloud-8u16g
+#    tags:
+#      - Category:AI
+#      - Project:Tensorflow/Tensorflow
+#      - Application:Tensorflow@master
+#      - OS:ubuntu-bionic
+#      - Arch:arm64
+#      - BuildType:Build
+#    timeout: 54000
+#
+#- job:
+#    name: tensorflow-arm64-build-daily-master
+#    parent: tensorflow-arm64-build-daily
+#    description: |
+#      Tensorflow Master daily build on ARM64
+#    vars:
+#      global_env:
+#        RELEASE: master
+#        BAZEL_VERSION: 3.7.2
+#        GCC_VERSION: default
+#        PYTHON: v3.6
+#
+#- job:
+#    name: tensorflow-arm64-release-build-v1.15.3
+#    parent: tensorflow-arm64-build-daily
+#    description: |
+#      Tensorflow v1.15.3 release build on ARM64
+#    vars:
+#      global_env:
+#        RELEASE: v1.15.3
+#        BAZEL_VERSION: 0.24.1
+#        GCC_VERSION: default
+#
+#- job:
+#    name: tensorflow-arm64-release-build-v1.15.3-py35
+#    parent: tensorflow-arm64-release-build-v1.15.3
+#    description: |
+#      Tensorflow v1.15.3 release build on ARM64 with python3.5
+#    provides: tf-cpu-whl-ready-for-1.15.3-py35
+#    vars:
+#      global_env:
+#        PYTHON: v3.5
+#
+#- job:
+#    name: tensorflow-arm64-release-build-v1.15.3-py36
+#    parent: tensorflow-arm64-release-build-v1.15.3
+#    description: |
+#      Tensorflow v1.15.3 release build on ARM64 with python3.6
+#    provides: tf-cpu-whl-ready-for-1.15.3-py36
+#    vars:
+#      global_env:
+#        PYTHON: v3.6
+#
+#- job:
+#    name: tensorflow-arm64-release-build-v1.15.3-py37
+#    parent: tensorflow-arm64-release-build-v1.15.3
+#    description: |
+#      Tensorflow v1.15.3 release build on ARM64 with python3.7
+#    provides: tf-cpu-whl-ready-for-1.15.3-py37
+#    vars:
+#      global_env:
+#        PYTHON: v3.7
+#
+#- job:
+#    name: tensorflow-arm64-release-build-v2.1.0
+#    parent: tensorflow-arm64-build-daily
+#    description: |
+#      Tensorflow v2.1.0 release build on ARM64
+#    vars:
+#      global_env:
+#        RELEASE: v2.1.0
+#        BAZEL_VERSION: 0.29.1
+#        GCC_VERSION: default
+#
+#- job:
+#    name: tensorflow-arm64-release-build-v2.1.0-py35
+#    parent: tensorflow-arm64-release-build-v2.1.0
+#    description: |
+#      Tensorflow v2.1.0 release build on ARM64 with python3.5
+#    provides: tf-cpu-whl-ready-for-2.1.0-py35
+#    vars:
+#      global_env:
+#        PYTHON: v3.5
+#
+#- job:
+#    name: tensorflow-arm64-release-build-v2.1.0-py36
+#    parent: tensorflow-arm64-release-build-v2.1.0
+#    description: |
+#      Tensorflow v2.1.0 release build on ARM64 with python3.6
+#    provides: tf-cpu-whl-ready-for-2.1.0-py36
+#    vars:
+#      global_env:
+#        PYTHON: v3.6
+#
+#- job:
+#    name: tensorflow-arm64-release-build-v2.1.0-py37
+#    parent: tensorflow-arm64-release-build-v2.1.0
+#    description: |
+#      Tensorflow v2.1.0 release build on ARM64 with python3.7
+#    provides: tf-cpu-whl-ready-for-2.1.0-py37
+#    vars:
+#      global_env:
+#        PYTHON: v3.7
+#
+#- job:
+#    name: tensorflow-arm64-release-build-v2.1.0-py38
+#    parent: tensorflow-arm64-release-build-v2.1.0
+#    description: |
+#      Tensorflow v2.1.0 release build on ARM64 with python3.8
+#    provides: tf-cpu-whl-ready-for-2.1.0-py38
+#    vars:
+#      global_env:
+#        PYTHON: v3.8
+#
+#- job:
+#    name: tensorflow-arm64-release-build-show
+#    parent: init-test
+#    description: |
+#      Tensorflow release build whl download links on ARM64 with supported python versions.
+#    run: playbooks/tensorflow-arm-build/run_release.yaml
+#    nodeset: ubuntu-bionic-arm64-huaweicloud-8u16g
+#    tags:
+#      - Category:AI
+#      - Project:Tensorflow/Tensorflow
+#      - Application:Tensorflow@master
+#      - OS:ubuntu-bionic
+#      - Arch:arm64
+#      - BuildType:Release
+#    timeout: 54000
+#
+#- job:
+#    name: tensorflow-v1.15.3-cpu-arm64-release-build-show
+#    parent: tensorflow-arm64-release-build-show
+#    description: |
+#      Tensorflow CPU 1.15.3 release build whl download links on ARM64 with supported python versions.
+#    requires:
+#      - tf-cpu-whl-ready-for-1.15.3-py35
+#      - tf-cpu-whl-ready-for-1.15.3-py36
+#      - tf-cpu-whl-ready-for-1.15.3-py37
+#    dependencies:
+#      - tensorflow-arm64-release-build-v1.15.3-py35
+#      - tensorflow-arm64-release-build-v1.15.3-py36
+#      - tensorflow-arm64-release-build-v1.15.3-py37
+#    vars:
+#      global_env:
+#        RELEASE: v1.15.3
+#
+#- job:
+#    name: tensorflow-v2.1.0-cpu-arm64-release-build-show
+#    parent: tensorflow-arm64-release-build-show
+#    description: |
+#      Tensorflow CPU 2.1.0 release build whl download links on ARM64 with supported python versions.
+#    requires:
+#      - tf-cpu-whl-ready-for-2.1.0-py35
+#      - tf-cpu-whl-ready-for-2.1.0-py36
+#      - tf-cpu-whl-ready-for-2.1.0-py37
+#      - tf-cpu-whl-ready-for-2.1.0-py38
+#    dependencies:
+#      - tensorflow-arm64-release-build-v2.1.0-py35
+#      - tensorflow-arm64-release-build-v2.1.0-py36
+#      - tensorflow-arm64-release-build-v2.1.0-py37
+#      - tensorflow-arm64-release-build-v2.1.0-py38
+#    vars:
+#      global_env:
+#        RELEASE: v2.1.0
+#
+#- job:
+#    name: mysql-full-test-on-arm64
+#    parent: init-test
+#    description: |
+#      Full test for mysql on arm64.
+#    run: playbooks/mysql-test-on-arm64/run.yaml
+#    nodeset: ubuntu-bionic-arm64-huaweicloud-8u16g
+#    tags:
+#      - Category:Database
+#      - Project:mysql/mysql-server
+#      - Application:mysql-server@master
+#      - OS:ubuntu-bionic
+#      - Arch:arm64
+#      - BuildType:Test
+#    timeout: 86400
+#    vars:
+#      global_env:
+#        RELEASE: "refs/heads/8.0"
+#        IS_OPTIMIZED: 'no'
+#        GOOGLE_TEST_VERSION: 1.8.0
+#
+#- job:
+#    name: mysql-5.7-upstream-full-test-on-arm64
+#    parent: mysql-full-test-on-arm64
+#    description: |
+#      Full test for mysql 5.7 upstream version on arm64.
+#    run: playbooks/mysql-test-on-arm64/run.yaml
+#    vars:
+#      global_env:
+#        RELEASE: 5.7.27
+#        BOOST_VERSION: 1.59.0
 
 # Kubernetes cloud-provider-openstack jobs
-- job:
-    name: bucardo-unitest
-    parent: init-test
-    description: |
-      Base job for all types of bucardo test jobs
-    pre-run: playbooks/bucardo-unitest/pre.yaml
-    post-run: playbooks/bucardo-unitest/post.yaml
-
-- job:
-    name: bucardo-unitest-on-X86-for-PR
-    parent: bucardo-unitest
-    description: |
-      Run unit test of bucardo on X86
-    run: playbooks/bucardo-unitest/run.yaml
-    nodeset: ubuntu-bionic
-    tags:
-      - Category:Database
-      - Project:bucardo/bucardo
-      - Application:bucardo@master
-      - OS:ubuntu-bionic
-      - Arch:x86
-      - BuildType:Test
-    timeout: 86400
-    vars:
-      global_env:
-        ARCH: 'x86'
-
-- job:
-    name: bucardo-unitest-on-X86-perl5.30-PG
-    parent: bucardo-unitest-on-X86-for-PR
-    description: |
-      Test bucardo unitest on X86 with perl 5.30
-    vars:
-      global_env:
-        PERL_VERSION: '5.30'
-
-- job:
-    name: bucardo-unitest-on-X86-perl5.30-PG10
-    parent: bucardo-unitest-on-X86-perl5.30-PG
-    description: |
-      Test bucardo unitest on X86 with perl 5.30 and PG 10
-    vars:
-      global_env:
-        PGVERSION: '10'
-
-- job:
-    name: bucardo-unitest-on-X86-perl5.30-PG11
-    parent: bucardo-unitest-on-X86-perl5.30-PG
-    description: |
-      Test bucardo unitest on X86 with perl 5.30 and PG 11
-    vars:
-      global_env:
-        PGVERSION: '11'
-
-- job:
-    name: bucardo-unitest-on-X86-perl5.30-PG12
-    parent: bucardo-unitest-on-X86-perl5.30-PG
-    description: |
-      Test bucardo unitest on X86 with perl 5.30 and PG 12
-    vars:
-      global_env:
-        PGVERSION: '12'
-
-- job:
-    name: bucardo-unitest-on-arm64-for-PR
-    parent: bucardo-unitest
-    description: |
-      Run unit test of bucardo
-    run: playbooks/bucardo-unitest/run.yaml
-    nodeset: ubuntu-bionic-arm64-huaweicloud-8u16g
-    tags:
-      - Category:Database
-      - Project:bucardo/bucardo
-      - Application:bucardo@master
-      - OS:ubuntu-bionic
-      - Arch:arm64
-      - BuildType:Test
-    timeout: 86400
-    vars:
-      global_env:
-        ARCH: 'arm64'
-
-- job:
-    name: bucardo-unitest-on-arm64-perl5.30-PG
-    parent: bucardo-unitest-on-arm64-for-PR
-    description: |
-      Test bucardo unitest on aarch64 with perl 5.30
-    vars:
-      global_env:
-        PERL_VERSION: '5.30'
-
-- job:
-    name: bucardo-unitest-on-arm64-perl5.30-PG12
-    parent: bucardo-unitest-on-arm64-perl5.30-PG
-    description: |
-      Test bucardo unitest on aarch64 with perl 5.30 and PG 12
-    vars:
-      global_env:
-        PGVERSION: '12'
+#- job:
+#    name: bucardo-unitest
+#    parent: init-test
+#    description: |
+#      Base job for all types of bucardo test jobs
+#    pre-run: playbooks/bucardo-unitest/pre.yaml
+#    post-run: playbooks/bucardo-unitest/post.yaml
+#
+#- job:
+#    name: bucardo-unitest-on-X86-for-PR
+#    parent: bucardo-unitest
+#    description: |
+#      Run unit test of bucardo on X86
+#    run: playbooks/bucardo-unitest/run.yaml
+#    nodeset: ubuntu-bionic
+#    tags:
+#      - Category:Database
+#      - Project:bucardo/bucardo
+#      - Application:bucardo@master
+#      - OS:ubuntu-bionic
+#      - Arch:x86
+#      - BuildType:Test
+#    timeout: 86400
+#    vars:
+#      global_env:
+#        ARCH: 'x86'
+#
+#- job:
+#    name: bucardo-unitest-on-X86-perl5.30-PG
+#    parent: bucardo-unitest-on-X86-for-PR
+#    description: |
+#      Test bucardo unitest on X86 with perl 5.30
+#    vars:
+#      global_env:
+#        PERL_VERSION: '5.30'
+#
+#- job:
+#    name: bucardo-unitest-on-X86-perl5.30-PG10
+#    parent: bucardo-unitest-on-X86-perl5.30-PG
+#    description: |
+#      Test bucardo unitest on X86 with perl 5.30 and PG 10
+#    vars:
+#      global_env:
+#        PGVERSION: '10'
+#
+#- job:
+#    name: bucardo-unitest-on-X86-perl5.30-PG11
+#    parent: bucardo-unitest-on-X86-perl5.30-PG
+#    description: |
+#      Test bucardo unitest on X86 with perl 5.30 and PG 11
+#    vars:
+#      global_env:
+#        PGVERSION: '11'
+#
+#- job:
+#    name: bucardo-unitest-on-X86-perl5.30-PG12
+#    parent: bucardo-unitest-on-X86-perl5.30-PG
+#    description: |
+#      Test bucardo unitest on X86 with perl 5.30 and PG 12
+#    vars:
+#      global_env:
+#        PGVERSION: '12'
+#
+#- job:
+#    name: bucardo-unitest-on-arm64-for-PR
+#    parent: bucardo-unitest
+#    description: |
+#      Run unit test of bucardo
+#    run: playbooks/bucardo-unitest/run.yaml
+#    nodeset: ubuntu-bionic-arm64-huaweicloud-8u16g
+#    tags:
+#      - Category:Database
+#      - Project:bucardo/bucardo
+#      - Application:bucardo@master
+#      - OS:ubuntu-bionic
+#      - Arch:arm64
+#      - BuildType:Test
+#    timeout: 86400
+#    vars:
+#      global_env:
+#        ARCH: 'arm64'
+#
+#- job:
+#    name: bucardo-unitest-on-arm64-perl5.30-PG
+#    parent: bucardo-unitest-on-arm64-for-PR
+#    description: |
+#      Test bucardo unitest on aarch64 with perl 5.30
+#    vars:
+#      global_env:
+#        PERL_VERSION: '5.30'
+#
+#- job:
+#    name: bucardo-unitest-on-arm64-perl5.30-PG12
+#    parent: bucardo-unitest-on-arm64-perl5.30-PG
+#    description: |
+#      Test bucardo unitest on aarch64 with perl 5.30 and PG 12
+#    vars:
+#      global_env:
+#        PGVERSION: '12'
 
 - job:
     name: openlab-health-check
