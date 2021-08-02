@@ -18,11 +18,11 @@
       - name: ubuntu-xenial-ut
         label: ubuntu-xenial-ut
 
-- nodeset:
-    name: ubuntu-xenial-citynetwork
-    nodes:
-      - name: ubuntu-xenial-citynetwork
-        label: ubuntu-xenial-citynetwork
+#- nodeset:
+#    name: ubuntu-xenial-citynetwork
+#    nodes:
+#      - name: ubuntu-xenial-citynetwork
+#        label: ubuntu-xenial-citynetwork
 
 - nodeset:
     name: ubuntu-xenial-arm64
@@ -52,15 +52,15 @@
     name: ubuntu-xenial-k8s-tf
     nodes:
       - name: k8s-master
-        label: ubuntu-xenial-tf
+        label: ubuntu-xenial
       - name: k8s-node-1
-        label: ubuntu-xenial-tf
+        label: ubuntu-xenial
       - name: k8s-node-2
-        label: ubuntu-xenial-tf
+        label: ubuntu-xenial
       - name: k8s-node-3
-        label: ubuntu-xenial-tf
+        label: ubuntu-xenial
       - name: k8s-node-4
-        label: ubuntu-xenial-tf
+        label: ubuntu-xenial
     groups:
       - name: k8s-nodes
         nodes:
@@ -73,11 +73,11 @@
     name: ubuntu-xenial-k8s-cluster-cpo
     nodes:
       - name: k8s-master
-        label: ubuntu-xenial-citynetwork
+        label: ubuntu-xenial
       - name: k8s-node-1
-        label: ubuntu-xenial-citynetwork
+        label: ubuntu-xenial
       - name: k8s-node-2
-        label: ubuntu-xenial-citynetwork
+        label: ubuntu-xenial
 
 - nodeset:
     name: ubuntu-bionic
@@ -85,17 +85,17 @@
       - name: ubuntu-bionic
         label: ubuntu-bionic
 
-- nodeset:
-    name: ubuntu-bionic-large
-    nodes:
-      - name: ubuntu-bionic-large
-        label: ubuntu-bionic-large
+#- nodeset:
+#    name: ubuntu-bionic-large
+#    nodes:
+#      - name: ubuntu-bionic-large
+#        label: ubuntu-bionic-large
 
-- nodeset:
-    name: ubuntu-bionic-citynetwork
-    nodes:
-      - name: ubuntu-bionic-citynetwork
-        label: ubuntu-bionic-citynetwork
+#- nodeset:
+#    name: ubuntu-bionic-citynetwork
+#    nodes:
+#      - name: ubuntu-bionic-citynetwork
+#        label: ubuntu-bionic-citynetwork
 
 - nodeset:
     name: ubuntu-bionic-arm64-huaweicloud-official
@@ -127,14 +127,14 @@
       - name: ubuntu-focal
         label: ubuntu-focal
 
-- nodeset:
-    name: ubuntu-focal-large
-    nodes:
-      - name: ubuntu-focal-large
-        label: ubuntu-focal-large
+#- nodeset:
+#    name: ubuntu-focal-large
+#    nodes:
+#      - name: ubuntu-focal-large
+#        label: ubuntu-focal-large
 
-- nodeset:
-    name: ubuntu-focal-citynetwork
-    nodes:
-      - name: ubuntu-focal-citynetwork
-        label: ubuntu-focal-citynetwork
+#- nodeset:
+#    name: ubuntu-focal-citynetwork
+#    nodes:
+#      - name: ubuntu-focal-citynetwork
+#        label: ubuntu-focal-citynetwork
