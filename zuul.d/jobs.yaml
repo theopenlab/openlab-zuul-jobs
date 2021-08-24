@@ -560,7 +560,7 @@
     description: |
       Run unit test of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-unittest/run.yaml
-    nodeset: ubuntu-xenial
+    nodeset: ubuntu-xenial-citynetwork
     secrets:
       - citynetwork_credentials
 
@@ -578,7 +578,7 @@
     description: |
       Run csi sanity tests cloud-provider-openstack cinder-csi-plugin
     run: playbooks/cloud-provider-openstack-sanity-test-csi-cinder/run.yaml
-    nodeset: ubuntu-xenial
+    nodeset: ubuntu-xenial-citynetwork
     secrets:
       - citynetwork_credentials
 
@@ -614,7 +614,7 @@
       Run Kubernetes E2E Conformance tests against a multinode k3s cluster
     run: playbooks/cloud-provider-openstack-test-occm-e2e-conformance/run.yaml
     post-run: playbooks/cloud-provider-openstack-test-occm-e2e-conformance/post.yaml
-    nodeset: ubuntu-focal
+    nodeset: ubuntu-focal-large
     vars:
       cpo_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack'
     secrets:
@@ -822,7 +822,7 @@
     parent: cloud-provider-openstack-acceptance-test-e2e-conformance
     description: |
       Run Kubernetes E2E Conformance tests against v1.20 release of Kubernetes(k3s)
-    nodeset: ubuntu-focal
+    nodeset: ubuntu-focal-large
     vars:
       k8s_release: 'release-1.20'
     tags:
@@ -838,7 +838,7 @@
     parent: cloud-provider-openstack-acceptance-test-e2e-conformance
     description: |
       Run Kubernetes E2E Conformance tests against v1.21 release of Kubernetes(k3s)
-    nodeset: ubuntu-focal
+    nodeset: ubuntu-focal-large
     vars:
       k8s_release: 'release-1.21'
     tags:
@@ -846,6 +846,22 @@
       - Project:kubernetes/cloud-provider-openstack
       - Application:cloud-provider-openstack@release-1.21
       - Application:Kubernetes@release-1.21
+      - Arch:x86_64
+      - BuildType:Integration test
+
+- job:
+    name: cloud-provider-openstack-acceptance-test-e2e-conformance-stable-branch-v1.22
+    parent: cloud-provider-openstack-acceptance-test-e2e-conformance
+    description: |
+      Run Kubernetes E2E Conformance tests against v1.22 release of Kubernetes(k3s)
+    nodeset: ubuntu-focal-large
+    vars:
+      k8s_release: 'release-1.22'
+    tags:
+      - Category:Cloud
+      - Project:kubernetes/cloud-provider-openstack
+      - Application:cloud-provider-openstack@release-1.22
+      - Application:Kubernetes@release-1.22
       - Arch:x86_64
       - BuildType:Integration test
 
@@ -879,7 +895,7 @@
       Run cinder csi e2e tests of cloud-provider-openstack
     run: playbooks/cloud-provider-openstack-e2e-test-csi-cinder/run.yaml
     post-run: playbooks/cloud-provider-openstack-e2e-test-csi-cinder/post.yaml
-    nodeset: ubuntu-focal
+    nodeset: ubuntu-focal-citynetwork
     secrets:
       - citynetwork_credentials
       - swr
@@ -968,7 +984,19 @@
     description: |
       Functional test for openstack-cloud-controller-manager
     run: playbooks/cloud-provider-openstack-test-occm/run.yaml
-    nodeset: ubuntu-focal
+    nodeset: ubuntu-focal-large
+    vars:
+      cpo_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack'
+    secrets:
+      - swr
+
+- job:
+    name: cloud-provider-openstack-test-occm-1.22
+    parent: cloud-provider-openstack-test
+    description: |
+      Functional test for openstack-cloud-controller-manager release-1.22
+    run: playbooks/cloud-provider-openstack-test-occm/run-1.22.yaml
+    nodeset: ubuntu-focal-large
     vars:
       cpo_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack'
     secrets:
@@ -980,7 +1008,7 @@
     description: |
       Functional test for openstack-cloud-controller-manager release-1.21
     run: playbooks/cloud-provider-openstack-test-occm/run-1.21.yaml
-    nodeset: ubuntu-focal
+    nodeset: ubuntu-focal-large
     vars:
       cpo_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack'
     secrets:
@@ -992,7 +1020,7 @@
     description: |
       Functional test for openstack-cloud-controller-manager release-1.20
     run: playbooks/cloud-provider-openstack-test-occm/run-1.20.yaml
-    nodeset: ubuntu-focal
+    nodeset: ubuntu-focal-large
     vars:
       cpo_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack'
     secrets:
