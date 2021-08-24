@@ -1,0 +1,69 @@
+- hosts: all
+  become: yes
+
+  vars:
+    registry: swr.ap-southeast-3.myhuaweicloud.com
+    registry_account: openlab
+
+  roles:
+    - role: config-golang
+      vars:
+        go_version: '1.16.7'
+    - install-docker
+    - install-devstack-cpo
+
+  tasks:
+    - name: Install packages
+      apt:
+        name: "{{ packages }}"
+        state: present
+        update_cache: yes
+      vars:
+        packages:
+          - jq
+          - httpie
+
+    - name: Login SWR
+      shell:
+        executable: /bin/bash
+        cmd: |
+          docker login -u ap-southeast-3@{{ swr.ak }} -p {{ swr.sk }} {{ registry }}
+          docker pull {{ registry }}/{{ registry_account }}/alpine:3.11
+          docker tag {{ registry }}/{{ registry_account }}/alpine:3.11 alpine:3.11
+      no_log: yes
+
+    - name: Build and upload openstack-cloud-controller-manager image
+      environment: '{{ global_env }}'
+      shell:
+        executable: /bin/bash
+        chdir: '{{ cpo_src_dir }}'
+        cmd: |
+          REGISTRY={{ registry }}/{{ registry_account }} \
+          VERSION={{ zuul.change }} \
+          IMAGE_NAMES=openstack-cloud-controller-manager \
+          make upload-image-amd64
+
+    - name: Install k3s cluster
+      import_role:
+        name: install-k3s-vm
+      vars:
+        devstack_workdir: "{{ global_env.devstack_workdir }}"
+        k8s_branch: "{{ k8s_release | default(zuul.branch) }}"
+        worker_node_count: 1
+
+    - name: Deploy openstack-cloud-controller-manager
+      import_role:
+        name: install-cpo-occm
+      environment:
+        KUBECONFIG: "{{ ansible_user_dir }}/.kube/config"
+      vars:
+        devstack_workdir: "{{ global_env.devstack_workdir }}"
+        swr_ak: "{{ swr.ak }}"
+        swr_sk: "{{ swr.sk }}"
+        occm_image_tag: "{{ zuul.change }}"
+
+    - name: Run functional tests for openstack-cloud-controller-manager
+      shell:
+        executable: /bin/bash
+        chdir: '{{ cpo_src_dir }}'
+        cmd: KUBECONFIG={{ ansible_user_dir }}/.kube/config GATEWAY_IP=172.24.5.1 bash tests/e2e/cloudprovider/test-lb-service.sh
