@@ -984,7 +984,7 @@
     description: |
       Functional test for openstack-cloud-controller-manager
     run: playbooks/cloud-provider-openstack-test-occm/run.yaml
-    nodeset: ubuntu-focal-large
+    nodeset: ubuntu-focal-citynetwork
     vars:
       cpo_src_dir: '{{ ansible_user_dir }}/src/k8s.io/cloud-provider-openstack'
     secrets:
