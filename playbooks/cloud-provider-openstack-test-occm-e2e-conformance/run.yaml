@@ -8,7 +8,7 @@
   roles:
     - role: config-golang
       vars:
-        go_version: '1.15.11'
+        go_version: '1.16.7'
     - install-docker
     - install-devstack-cpo
 
