@@ -3,7 +3,7 @@
 
   roles:
     - role: config-golang
-      go_version: '1.15.11'
+      go_version: '1.16.7'
     - install-docker
     - clone-devstack-gate-to-workspace
     - role: install-devstack
