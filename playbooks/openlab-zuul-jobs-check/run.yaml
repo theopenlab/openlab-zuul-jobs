@@ -22,6 +22,7 @@
           set -x
           apt install -y python3.7-dev libre2-dev
           apt remove -y python3-yaml
+          apt upgrade -y
           git clone https://opendev.org/zuul/zuul.git
           cd zuul
           pip3 install -e .
