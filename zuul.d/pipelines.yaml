@@ -288,6 +288,81 @@
         status: 'failure'
       mysql:
 
+- pipeline:
+    name: recheck-victoria
+    description: |
+      Commenting "recheck stable/victoria" enter this pipeline to run tests on
+      stable/victoria of OpenStack and receive an initial +/-1 Verified vote.
+    manager: independent
+    trigger:
+      github:
+        - event: pull_request
+          action: comment
+          comment: (?i)^\s*recheck\s+stable\/victoria\s*$
+    start:
+      github:
+        status: pending
+        comment: false
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
+    success:
+      github:
+        status: 'success'
+      mysql:
+    failure:
+      github:
+        status: 'failure'
+      mysql:
+
+- pipeline:
+    name: recheck-wallaby
+    description: |
+      Commenting "recheck stable/wallaby" enter this pipeline to run tests on
+      stable/wallaby of OpenStack and receive an initial +/-1 Verified vote.
+    manager: independent
+    trigger:
+      github:
+        - event: pull_request
+          action: comment
+          comment: (?i)^\s*recheck\s+stable\/wallaby\s*$
+    start:
+      github:
+        status: pending
+        comment: false
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
+    success:
+      github:
+        status: 'success'
+      mysql:
+    failure:
+      github:
+        status: 'failure'
+      mysql:
+
+- pipeline:
+    name: recheck-xena
+    description: |
+      Commenting "recheck stable/xena" enter this pipeline to run tests on
+      stable/xena of OpenStack and receive an initial +/-1 Verified vote.
+    manager: independent
+    trigger:
+      github:
+        - event: pull_request
+          action: comment
+          comment: (?i)^\s*recheck\s+stable\/xena\s*$
+    start:
+      github:
+        status: pending
+        comment: false
+        status-url: https://status.openlabtesting.org/status/change/{change.number},{change.patchset}
+    success:
+      github:
+        status: 'success'
+      mysql:
+    failure:
+      github:
+        status: 'failure'
+      mysql:
+
 # NOTES: Deprecated, don't accept any new jobs, but please don't remove it,
 #        some outside projects refer name "periodic" in repository.
 - pipeline:
