@@ -292,3 +292,19 @@
     executable: /bin/bash
   when:
     - '"ironic" in enable_services'
+
+- name: Allow to override local vars for devstack
+  when: devstack_env is defined
+  block:
+  - name: create temporary file for devstack overrides
+    template:
+      src: "devstack_overrides.conf.j2"
+      dest: "/tmp/dg-local-overrides.conf"
+      mode: '0644'
+  - name: add the overrides to /tmp/dg-local.conf
+    shell:
+      cmd: |
+        set -e
+        set -x
+        cat /tmp/dg-local-overrides.conf >> /tmp/dg-local.conf
+      executable: /bin/bash
