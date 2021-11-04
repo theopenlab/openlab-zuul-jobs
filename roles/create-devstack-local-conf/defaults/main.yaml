@@ -6,3 +6,4 @@ enable_services:
   - 'keystone'
   - 'glance'
   - 'swift'
+devstack_env: {}

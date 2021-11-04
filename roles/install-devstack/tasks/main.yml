@@ -112,7 +112,7 @@
       iptables -F openstack-INPUT || true
     executable: /bin/bash
     chdir: '{{ ansible_user_dir }}/workspace'
-  environment: '{{ zuul | zuul_legacy_vars | combine(devstack_env|default({})) }}'
+  environment: '{{ zuul | zuul_legacy_vars }}'
 
 - name: Remove distutils packages that conflict with pip packages that devstack needs to install
   apt:

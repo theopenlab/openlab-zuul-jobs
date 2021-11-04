@@ -1,0 +1,8 @@
+# {{ ansible_managed }}:
+# devstack overrides for specific needs
+
+{% for key, value in devstack_env.items() %}
+{{ key }}: {{ value }}
+{% endfor %}
+
+# END of devstack overrides
