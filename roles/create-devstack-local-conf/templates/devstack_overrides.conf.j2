@@ -2,7 +2,7 @@
 # devstack overrides for specific needs
 
 {% for key, value in devstack_env.items() %}
-{{ key }}: {{ value }}
+{{ key }}={{ value }}
 {% endfor %}
 
 # END of devstack overrides
