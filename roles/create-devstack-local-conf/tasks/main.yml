@@ -294,7 +294,8 @@
     - '"ironic" in enable_services'
 
 - name: Allow to override local vars for devstack
-  when: devstack_env is defined
+  when:
+    - (devstack_env | length) > 0
   block:
   - name: create temporary file for devstack overrides
     template:
