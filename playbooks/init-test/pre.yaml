@@ -13,3 +13,10 @@
         path: "/etc/hosts"
         regexp: "^127.0.0.1"
         line: "127.0.0.1 {{ result.stdout }} localhost"
+
+    - name: Uninstall unattended-upgrades
+      become: true
+      package:
+        name: unattended-upgrades
+        state: absent
+      when: ansible_distribution == "Ubuntu"
