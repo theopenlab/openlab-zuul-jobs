@@ -293,6 +293,18 @@
   when:
     - '"ironic" in enable_services'
 
+- name: create devstack local conf with neutron-dynamic-routing enabled
+  shell:
+    cmd: |
+      set -e
+      set -x
+      cat << EOF >> /tmp/dg-local.conf
+      enable_plugin neutron-dynamic-routing https://opendev.org/openstack/neutron-dynamic-routing
+      EOF
+    executable: /bin/bash
+  when:
+    - '"neutron-dynamic-routing" in enable_services'
+
 - name: Allow to override local vars for devstack
   when:
     - (devstack_env | length) > 0
