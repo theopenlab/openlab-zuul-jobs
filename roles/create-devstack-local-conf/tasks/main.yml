@@ -222,6 +222,18 @@
   when:
     - '"fwaas-v2" in enable_services'
 
+- name: create devstack local conf with vpnaas enabled
+  shell:
+    cmd: |
+      set -e
+      set -x
+      cat << EOF >> /tmp/dg-local.conf
+      enable_plugin neutron-vpnaas https://opendev.org/openstack/neutron-vpnaas
+      EOF
+    executable: /bin/bash
+  when:
+    - '"vpnaas" in enable_services'
+
 - name: create devstack local conf with zun enabled
   shell:
     cmd: |
