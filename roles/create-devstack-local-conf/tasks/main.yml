@@ -39,7 +39,9 @@
       enable_plugin heat git://opendev.org/openstack/heat
       EOF
     executable: /bin/bash
-  when: ("heat" in enable_services)  or ("manila" in enable_services)
+  when: ("heat" in enable_services) or
+        ("manila" in enable_services) or
+        ("magnum" in enable_services)
 
 # Populate local conf with trove service enabled
 - name: create devstack local conf with Trove enabled
@@ -253,6 +255,18 @@
     - global_env.OS_BRANCH != 'stable/mitaka'
     - global_env.OS_BRANCH != 'stable/newton'
     - global_env.OS_BRANCH != 'stable/ocata'
+
+- name: create devstack local conf with magnum enabled
+  shell:
+    cmd: |
+      set -e
+      set -x
+      cat << EOF >> /tmp/dg-local.conf
+      enable_plugin magnum https://opendev.org/openstack/magnum master
+      EOF
+    executable: /bin/bash
+  when:
+    - '"magnum" in enable_services'
 
 - name: create devstack local conf with ceph enabled
   shell:
