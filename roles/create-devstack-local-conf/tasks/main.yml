@@ -262,7 +262,7 @@
       set -e
       set -x
       cat << EOF >> /tmp/dg-local.conf
-      enable_plugin magnum https://opendev.org/openstack/magnum master
+      enable_plugin magnum https://opendev.org/openstack/magnum
       EOF
     executable: /bin/bash
   when:
