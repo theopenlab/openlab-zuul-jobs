@@ -10,29 +10,29 @@
       jobs:
         - labkeeper-allinone-deployment-test
 
-- project:
-    name: moo-ai/moo-ai.github.io
-    check:
-      jobs:
-        - ai-on-openlab-test-vm:
-            files:
-              - ^user_data/.*
-        - ai-on-openlab-test-vm-with-gpu:
-            files:
-              - ^user_data_gpu/.*
+# - project:
+#     name: moo-ai/moo-ai.github.io
+#     check:
+#       jobs:
+#         - ai-on-openlab-test-vm:
+#             files:
+#               - ^user_data/.*
+#         - ai-on-openlab-test-vm-with-gpu:
+#             files:
+#               - ^user_data_gpu/.*
 
-# TODO(wxy): Only for test.
-- project:
-    name: wangxiyuan/flink
-    check:
-      jobs:
-        - flink-end-to-end-test-cron-hadoop241-test
+# # TODO(wxy): Only for test.
+# - project:
+#     name: wangxiyuan/flink
+#     check:
+#       jobs:
+#         - flink-end-to-end-test-cron-hadoop241-test
 
-- project:
-    name: wangxiyuan/frocksdb
-    check:
-      jobs:
-        - frocksdb-build-and-test-arm64
+# - project:
+#     name: wangxiyuan/frocksdb
+#     check:
+#       jobs:
+#         - frocksdb-build-and-test-arm64
 
 ####################### periodic jobs on 00:00 ##########################
 - project:
@@ -45,11 +45,11 @@
             branches: master
         - pytorch-arm64-build-daily-master-py38:
             branches: master
-        - pytorch-arm64-build-daily-v1.7.1:
+        - pytorch-arm64-build-daily-v1.8.2:
             branches: master
-        - pytorch-arm64-build-daily-v1.8.1:
+        - pytorch-arm64-build-daily-v1.9.1:
             branches: master
-        - pytorch-arm64-build-daily-v1.9.0:
+        - pytorch-arm64-build-daily-v1.10.1:
             branches: master
 
 ####################### periodic jobs on 02:00 ##########################
@@ -84,12 +84,12 @@
         - impala-build-test-arm64:
             branches: master
 
-- project:
-    name: apache/storm
-    periodic-12:
-      jobs:
-        - storm-build-test-arm64:
-            branches: master
+# - project:
+#     name: apache/storm
+#     periodic-12:
+#       jobs:
+#         - storm-build-test-arm64:
+#             branches: master
 
 ####################### periodic jobs on 14:00##########################
 - project:
@@ -153,12 +153,12 @@
 ##         - tensorflow-v2.1.0-cpu-arm64-release-build-show:
 ##             branches: master
 
-- project:
-    name: kunpengcompute/hadoop
-    periodic-18:
-      jobs:
-        - hadoop-2.7.7-openeuler-build-test:
-            branches: release-2.7.7-aarch64
+# - project:
+#     name: kunpengcompute/hadoop
+#     periodic-18:
+#       jobs:
+#         - hadoop-2.7.7-openeuler-build-test:
+#             branches: release-2.7.7-aarch64
 
 ####################### periodic jobs on 20:00##########################
 - project:
