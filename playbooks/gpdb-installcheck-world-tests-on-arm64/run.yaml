@@ -167,7 +167,7 @@
         ulimit -n 65535
         make -C gpAux/gpdemo cluster | tee "{{ ansible_user_dir }}/workspace/test_results/cluster-launch.log"
         source gpAux/gpdemo/gpdemo-env.sh
-        make installcheck-world | tee "{{ ansible_user_dir }}/workspace/test_results/installcheck-world.log"
+        make installcheck-world | tee "{{ ansible_user_dir }}/workspace/test_results/installcheck-world.log" || true
       args:
         executable: /bin/bash
         chdir: /home/zuul/gpdb
